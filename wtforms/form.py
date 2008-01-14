@@ -11,7 +11,6 @@ from .validators import ValidationError
 
 class Form(object):
     def __init__(self, formdata={}, model=None, prefix='', idprefix='', **kwargs):
-        self.jinja_allowed_attributes = None # Ugly hack to let jinja access our attributes
         if prefix:
             prefix += '_'
         self.idprefix = idprefix
@@ -56,13 +55,12 @@ class Form(object):
                 self.errors[name] = field.errors
         return success
 
-    def get_data(self):
+    def _get_data(self):
         data = {}
         for name, val in self._fields.iteritems():
             data[name] = val.data
         return data
-
-    data = property(get_data)
+    data = property(_get_data)
 
     def auto_populate(self, model):
         """
