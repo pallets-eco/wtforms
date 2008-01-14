@@ -1,0 +1,8 @@
+What The Forms is written and maintained by:
+
+- James Crasta <jcrasta@simplecodes.com>
+- Thomas Johansson <thomas@simplecodes.com>
+    
+The following people have also contributed (as listed in each file):
+
+- None so far.
