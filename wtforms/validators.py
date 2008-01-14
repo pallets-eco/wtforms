@@ -9,7 +9,7 @@
 """
 import re
 
-class ValidationError(Exception):
+class ValidationError(ValueError):
     pass
 
 def email(form, field):
