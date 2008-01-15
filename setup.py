@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import wtforms  
 import os
@@ -17,7 +18,7 @@ setup(
     author_email='jcrasta@simplecodes.com, thomas@simplecodes.com',
     description='HTTP/HTML forms handling for python',
     long_description=getdoc(wtforms),
-    zip_safe=False,
+    zip_safe=True,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
