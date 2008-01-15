@@ -27,7 +27,6 @@ class Field(object):
             return super(Field, cls).__new__(cls, *args, **kwargs)
 
     def __init__(self, *args, **kwargs):
-        self.jinja_allowed_attributes = None # Ugly hack to let jinja access our attributes
         form = kwargs['form']
         self.name = kwargs['name']
         self.id = kwargs.get('id', form._idprefix + self.name)
