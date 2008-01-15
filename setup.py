@@ -9,13 +9,13 @@ from setuptools import setup, Feature
 
 setup(
     name='WTForms',
-    version='0.1',
+    version='0.1dev',
     url='http://dev.simplecodes.com/projects/wtforms',
     download_url='http://dev.simplecodes.com/hg/wtforms', #FIXME
     license='MIT',
     author='James Crasta, Thomas Johansson',
     author_email='jcrasta@simplecodes.com, thomas@simplecodes.com',
-    description='Forms framework designed to work with multiple web',
+    description='HTTP/HTML forms handling for python',
     long_description=getdoc(wtforms),
     zip_safe=False,
     classifiers=[
