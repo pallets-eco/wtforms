@@ -42,9 +42,9 @@ class Field(object):
     def __call__(self, **kwargs):
         raise NotImplementedError
 
-    @property
-    def label(self):
+    def _get_label(self):
         return '<label for="%s">%s</label>' % (self.id, self._label)
+    label = property(_get_label)
         
     def _validate(self, *args):
         pass
