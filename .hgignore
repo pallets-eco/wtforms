@@ -1,4 +1,5 @@
 syntax: regexp
+^(build|dist|WTForms\.egg-info)/
 \.py[co]$
 \..*\.swp$
 \.eprj$
