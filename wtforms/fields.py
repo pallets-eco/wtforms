@@ -11,7 +11,7 @@ from datetime import datetime
 from cgi import escape
 from functools import partial
 
-from .validators import ValidationError
+from wtforms.validators import ValidationError
 
 def html_params(**params):
     return str.join(' ', (u'%s="%s"' % (unicode(k), escape(unicode(v), quote=True)) for k,v in params.iteritems()))
@@ -30,7 +30,7 @@ class Field(object):
         self.jinja_allowed_attributes = None # Ugly hack to let jinja access our attributes
         form = kwargs['form']
         self.name = kwargs['name']
-        self.id = kwargs.get('id', form.idprefix + self.name)
+        self.id = kwargs.get('id', form._idprefix + self.name)
         self._label = args[0]
         self.validators = args[1:]
         self.data = None
@@ -56,19 +56,19 @@ class Field(object):
         self.data = value
 
 class SelectField(Field):
-    checker = str
-
     def __init__(self, *args, **kwargs):
         super(SelectField, self).__init__(*args, **kwargs)
-        if 'checker' in kwargs:
-            self.checker = kwargs['checker']
+        self.checker = kwargs.pop('checker', str)
         self.choices = kwargs.pop('choices', None)
 
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         html = u'<select %s>' % html_params(name=self.name, **kwargs)
         for val,title in self.choices:
-            html += u'<option value="%s"%s>%s</option>' % (escape(unicode(val), quote=True), (u' selected="selected"' if self._selected(val) else ''), escape(unicode(title)))
+            options = {'value': val}
+            if self._selected(val):
+                options['selected'] = u'selected'
+            html += u'<option %s>%s</option>' % (html_params(**options), escape(unicode(title)))
         html += u'</select>'
         return html
 
@@ -105,7 +105,7 @@ class TextField(Field):
         return u'<input %s />' % html_params(name=self.name, value=self._value(), **kwargs) 
 
     def _value(self):
-        return unicode(self.data) if self.data else u''
+        return self.data and unicode(self.data) or u''
 
 class TextAreaField(TextField):
     def __call__(self, **kwargs):
@@ -121,7 +121,7 @@ class IntegerField(TextField):
     """ Can be represented by a text-input """
 
     def _value(self):
-        return unicode(self.data) if self.data else u'0'
+        return self.data and unicode(self.data) or u'0'
 
     def process_formdata(self, valuelist):
         try:
@@ -143,7 +143,7 @@ class BooleanField(Field):
         self.data = valuelist[0] == u'y'
 
     def process_modeldata(self, value, in_form):
-        self.data = False if in_form else value
+        self.data = in_form and False or value
 
 class DateTimeField(TextField):
     """ Can be represented by one or multiple text-inputs """
@@ -152,12 +152,12 @@ class DateTimeField(TextField):
         self.format = kwargs.pop('format', '%Y-%m-%d %H:%M:%S')
 
     def _value(self):
-        return self.data.strftime(self.format) if self.data else u''
+        return self.data and self.data.strftime(self.format) or u''
 
     def process_formdata(self, valuelist):
         if valuelist and valuelist[0]:
             try:
-                self.data = datetime.strptime(str.join(" ", valuelist), self.format)
+                self.data = datetime.strptime(str.join(' ', valuelist), self.format)
             except ValueError:
                 return u'Date is invalid.'
 

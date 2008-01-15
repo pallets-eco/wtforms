@@ -7,18 +7,18 @@
     :copyright: 2007 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
-from .validators import ValidationError
+from wtforms.validators import ValidationError
 
 class Form(object):
-    def __init__(self, formdata={}, model=None, prefix='', idprefix='', **kwargs):
+    def __init__(self, formdata=None, model=None, prefix='', idprefix='', **kwargs):
         if prefix:
             prefix += '_'
-        self.idprefix = idprefix
+        self._idprefix = idprefix
 
         # populate data from form and optional instance and defaults
         self.errors = {}
         self._fields = {}
-        in_form = True if formdata else False
+        in_form = bool(formdata)
         for name in dir(self.__class__):
             f = getattr(self.__class__, name, None)
             if name.startswith('_') or not getattr(f, '_formfield', False):
@@ -33,7 +33,7 @@ class Form(object):
                 field.data = kwargs[name]
             if hasattr(model, name):
                 field.process_modeldata(getattr(model, name), in_form)
-            if form_name in formdata:
+            if in_form and form_name in formdata:
                 field.process_formdata(formdata.getlist(form_name))
             
     def validate(self):
