@@ -13,8 +13,15 @@ from functools import partial
 
 from wtforms.validators import ValidationError
 
-def html_params(**params):
-    return str.join(' ', (u'%s="%s"' % (unicode(k), escape(unicode(v), quote=True)) for k,v in params.iteritems()))
+def html_params(**kwargs):
+    params = []
+    for k,v in kwargs.iteritems():
+        if k in ('class_', 'class__'):
+            k = k[:-1]
+        k = unicode(k)
+        v = escape(unicode(v), quote=True)
+        params.append(u'%s="%s"' % (k, v))
+    return str.join(' ', params)
 
 class Field(object):
     _formfield = True
