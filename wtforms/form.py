@@ -10,7 +10,7 @@
 from wtforms.validators import ValidationError
 
 class Form(object):
-    def __init__(self, formdata=None, model=None, prefix='', idprefix='', **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', idprefix='', **kwargs):
         if prefix:
             prefix += '_'
         self._idprefix = idprefix
@@ -18,22 +18,21 @@ class Form(object):
         # populate data from form and optional instance and defaults
         self.errors = {}
         self._fields = {}
-        in_form = bool(formdata)
+        has_formdata = bool(formdata)
         for name in dir(self.__class__):
             f = getattr(self.__class__, name, None)
             if name.startswith('_') or not getattr(f, '_formfield', False):
                 continue
 
             form_name = prefix + name
-
             self._fields[name] = field = f(name=form_name, form=self)
             setattr(self, name, field)
 
             if name in kwargs:
-                field.data = kwargs[name]
-            if hasattr(model, name):
-                field.process_modeldata(getattr(model, name), in_form)
-            if in_form and form_name in formdata:
+                field.process_data(kwargs[name], has_formdata)
+            if hasattr(obj, name):
+                field.process_data(getattr(obj, name), has_formdata)
+            if has_formdata and form_name in formdata:
                 field.process_formdata(formdata.getlist(form_name))
             
     def validate(self):

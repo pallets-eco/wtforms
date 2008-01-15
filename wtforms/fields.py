@@ -55,11 +55,11 @@ class Field(object):
     def _validate(self, *args):
         pass
 
+    def process_data(self, value, has_formdata):
+        self.data = value
+
     def process_formdata(self, valuelist):
         self.data = valuelist[0]
-
-    def process_modeldata(self, value, in_form):
-        self.data = value
 
 class SelectField(Field):
     def __init__(self, *args, **kwargs):
@@ -81,7 +81,7 @@ class SelectField(Field):
     def _selected(self, value):
         return (self.checker(value) == self.data)
 
-    def process_modeldata(self, value, in_form):
+    def process_data(self, value, has_formdata):
         self.data = self.checker(getattr(value, 'id', value))
 
     def process_formdata(self, valuelist):
@@ -145,11 +145,11 @@ class BooleanField(Field):
             kwargs['checked'] = u'checked'
         return u'<input %s />' % html_params(name=self.name, value=u'y', **kwargs)
     
+    def process_data(self, value, has_formdata):
+        self.data = has_formdata and False or value
+
     def process_formdata(self, valuelist):
         self.data = valuelist[0] == u'y'
-
-    def process_modeldata(self, value, in_form):
-        self.data = in_form and False or value
 
 class DateTimeField(TextField):
     """ Can be represented by one or multiple text-inputs """
