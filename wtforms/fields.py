@@ -37,8 +37,12 @@ class Field(object):
         form = kwargs['form']
         self.name = kwargs['name']
         self.id = kwargs.get('id', form._idprefix + self.name)
-        self._label = args[0]
-        self.validators = args[1:]
+        if args and isinstance(args[0], basestring):
+            self._label = args[0]
+            self.validators = args[1:]
+        else:
+            self._label = self.name
+            self.validators = args
         self.data = None
         self.errors = []
 
