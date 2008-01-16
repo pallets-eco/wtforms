@@ -56,7 +56,7 @@ class Field(object):
         raise NotImplementedError
 
     def _get_label(self):
-        return '<label for="%s">%s</label>' % (self.id, self._label)
+        return u'<label for="%s">%s</label>' % (self.id, self._label)
     label = property(_get_label)
         
     def _validate(self, *args):
