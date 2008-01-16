@@ -9,7 +9,10 @@
 """
 from datetime import datetime
 from cgi import escape
-from functools import partial
+try:
+    from functools import partial
+except ImportError:
+    from wtforms.utils import partial
 
 from wtforms.validators import ValidationError
 
@@ -106,7 +109,7 @@ class SelectMultipleField(SelectField):
         return (self.checker(value) in self.data)
         
     def process_formdata(self, valuelist):
-        self.data = list(self.checker(x) for x in valuelist)
+        self.data = [self.checker(x) for x in valuelist]
         
 class TextField(Field):
     def __call__(self, **kwargs):
