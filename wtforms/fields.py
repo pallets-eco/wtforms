@@ -120,6 +120,11 @@ class TextField(Field):
     def _value(self):
         return self.data and unicode(self.data) or u''
 
+class HiddenField(TextField):
+    def __call__(self, **kwargs):
+        kwargs.setdefault('type', 'hidden')
+        return super(HiddenField, self).__call__(**kwargs)
+
 class TextAreaField(TextField):
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
@@ -185,4 +190,4 @@ class SubmitField(BooleanField):
     def process_formdata(self, valuelist):
         self.data = (len(valuelist) > 0 and valuelist[0] != u'')
 
-__all__ = ('SelectField', 'SelectMultipleField', 'TextField', 'IntegerField', 'BooleanField', 'DateTimeField', 'PasswordField', 'TextAreaField', 'SubmitField')
+__all__ = ('SelectField', 'SelectMultipleField', 'TextField', 'IntegerField', 'BooleanField', 'DateTimeField', 'PasswordField', 'TextAreaField', 'SubmitField', 'HiddenField')
