@@ -34,7 +34,12 @@ class Form(object):
                 field.process_data(getattr(obj, name), has_formdata)
             if has_formdata and form_name in formdata:
                 field.process_formdata(formdata.getlist(form_name))
-            
+
+
+ 	def __iter__(self): 
+        for name, field in self._fields.itervalues(): 
+            yield field
+
     def validate(self):
         success = True
         for name, field in self._fields.iteritems():
