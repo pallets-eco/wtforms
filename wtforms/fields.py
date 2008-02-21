@@ -158,7 +158,10 @@ class BooleanField(Field):
         return u'<input %s />' % html_params(name=self.name, value=u'y', **kwargs)
     
     def process_data(self, value, has_formdata):
-        self.data = has_formdata and False or value
+        if has_formdata:
+            self.data = False
+        else:
+            self.data = value
 
     def process_formdata(self, valuelist):
         self.data = valuelist[0] == u'y'
