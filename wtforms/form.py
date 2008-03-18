@@ -8,6 +8,7 @@
     :license: MIT, see LICENSE.txt for details.
 """
 from wtforms.validators import ValidationError
+import types
 
 class Form(object):
     def __init__(self, formdata=None, obj=None, prefix='', idprefix='', **kwargs):
@@ -21,6 +22,8 @@ class Form(object):
         has_formdata = bool(formdata)
         for name in dir(self.__class__):
             f = getattr(self.__class__, name, None)
+	    if isinstance(f, types.UnboundMethodType):
+	    	f = f.im_func
             if name.startswith('_') or not getattr(f, '_formfield', False):
                 continue
 
