@@ -54,8 +54,8 @@ class Form(object):
             for validator in validators:
                 try:
                     validator(self, field)
-                except ValidationError, e:
-                    field.errors.append(e.message)
+                except ValueError, e:
+                    field.errors.append(e.args[0])
             if field.errors:
                 success = False
                 self.errors[name] = field.errors
