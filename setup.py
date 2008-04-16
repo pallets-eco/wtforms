@@ -30,6 +30,12 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     packages=['wtforms'],
+    features={
+        'contrib': Feature('optional contribute addon modules',
+            standard=True,
+            packages=['wtforms.contrib']
+        )
+    },
     platforms=['any'],
     include_package_data=True,
 )
