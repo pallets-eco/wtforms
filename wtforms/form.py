@@ -20,12 +20,8 @@ class Form(object):
         self.errors = {}
         self._fields = {}
         has_formdata = bool(formdata)
-        for name in dir(self.__class__):
+        for name,f in self._unbound_fields:
             f = getattr(self.__class__, name, None)
-	    if isinstance(f, types.UnboundMethodType):
-	    	f = f.im_func
-            if name.startswith('_') or not getattr(f, '_formfield', False):
-                continue
 
             form_name = prefix + name
             self._fields[name] = field = f(name=form_name, form=self)
@@ -38,9 +34,22 @@ class Form(object):
             if has_formdata and form_name in formdata:
                 field.process_formdata(formdata.getlist(form_name))
 
+    def __new__(cls, *args, **kw):
+        """
+        Use the field creation counter to create an ordered list of form fields.
+        """
+        if not hasattr(cls, '_unbound_fields'):
+            fields = []
+            for k, v in cls.__dict__.items():
+                if hasattr(v, '_formfield'):
+                    fields.append((k, v))
+            fields.sort(lambda x,y: cmp(x[1].creation_counter, y[1].creation_counter))
+            cls._unbound_fields = fields
+        return super(Form, cls).__new__(cls, *args, **kw)
+
     def __iter__(self): 
-        for field in self._fields.itervalues(): 
-            yield field
+        for name,_ in self._unbound_fields:
+            yield self._fields[name]
 
     def validate(self):
         success = True

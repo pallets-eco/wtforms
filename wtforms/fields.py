@@ -28,10 +28,13 @@ def html_params(**kwargs):
 
 class Field(object):
     _formfield = True
+    creation_counter = 0
     def __new__(cls, *args, **kwargs):
         if 'name' not in kwargs:
             x = partial(cls, *args, **kwargs)
             x._formfield = True
+            x.creation_counter = Field.creation_counter
+            Field.creation_counter += 1
             return x
         else:
             return super(Field, cls).__new__(cls, *args, **kwargs)
