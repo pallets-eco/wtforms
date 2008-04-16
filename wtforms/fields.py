@@ -135,6 +135,17 @@ class PasswordField(TextField):
         kwargs.setdefault('type', 'password')
         return super(PasswordField, self).__call__(**kwargs)
         
+class FileField(TextField):
+    """
+    Can render a file-upload field.  Will take any passed filename value, if
+    any is sent by the browser in the post params.  This field will NOT 
+    actually handle the file upload portion, as wtforms does not deal with 
+    individual frameworks' file handling capabilities.
+    """
+    def __call__(self, **kwargs):
+        kwargs.setdefault('type', 'file')
+        return super(FileField, self).__call__(**kwargs)
+
 class IntegerField(TextField):
     """ Can be represented by a text-input """
 
@@ -193,4 +204,4 @@ class SubmitField(BooleanField):
     def process_formdata(self, valuelist):
         self.data = (len(valuelist) > 0 and valuelist[0] != u'')
 
-__all__ = ('SelectField', 'SelectMultipleField', 'TextField', 'IntegerField', 'BooleanField', 'DateTimeField', 'PasswordField', 'TextAreaField', 'SubmitField', 'HiddenField')
+__all__ = ('SelectField', 'SelectMultipleField', 'TextField', 'IntegerField', 'BooleanField', 'DateTimeField', 'PasswordField', 'TextAreaField', 'SubmitField', 'HiddenField', 'FileField')
