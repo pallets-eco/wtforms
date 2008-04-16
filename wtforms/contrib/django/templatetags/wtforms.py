@@ -1,3 +1,12 @@
+"""
+    wtforms.contrib.django.templatetags.wtforms
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    Template Tags for easy wtforms access in Django templates
+    
+    :copyright: 2007-2008 by James Crasta, Thomas Johansson.
+    :license: MIT, see LICENSE.txt for details.
+"""
 from django import template
 from django.template import resolve_variable
 import re
