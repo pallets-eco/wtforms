@@ -18,13 +18,12 @@ class Form(object):
 
         # populate data from form and optional instance and defaults
         self.errors = {}
-        self._fields = {}
+        self._fields = []
         has_formdata = bool(formdata)
-        for name,f in self._unbound_fields:
-            f = getattr(self.__class__, name, None)
-
+        for name, f in self._unbound_fields:
             form_name = prefix + name
-            self._fields[name] = field = f(name=form_name, form=self)
+            field = f(name=form_name, form=self)
+            self._fields.append((name, field))
             setattr(self, name, field)
 
             if name in kwargs:
@@ -48,12 +47,12 @@ class Form(object):
         return super(Form, cls).__new__(cls, *args, **kw)
 
     def __iter__(self): 
-        for name,_ in self._unbound_fields:
-            yield self._fields[name]
+        for name, field in self._fields:
+            yield field
 
     def validate(self):
         success = True
-        for name, field in self._fields.iteritems():
+        for name, field in self._fields:
             field.errors = []
             validators = list(field.validators)
             validators.append(field._validate)
@@ -72,8 +71,8 @@ class Form(object):
 
     def _get_data(self):
         data = {}
-        for name, val in self._fields.iteritems():
-            data[name] = val.data
+        for name, field in self._fields:
+            data[name] = field.data
         return data
     data = property(_get_data)
 
@@ -84,5 +83,5 @@ class Form(object):
         This can be very dangerous if not used properly, so make sure to only use
         this in forms with proper validators and the right attributes.
         """
-        for name, val in self._fields.iteritems():
-            setattr(model, name, val.data)
+        for name, field in self._fields:
+            setattr(model, name, field.data)
