@@ -39,9 +39,11 @@ class Form(object):
         """
         if '_unbound_fields' not in cls.__dict__:
             fields = []
-            for k, v in cls.__dict__.items():
-                if hasattr(v, '_formfield'):
-                    fields.append((k, v))
+            for name in dir(cls):
+                if not name.startswith('_'):
+                    field = getattr(cls, name)
+                    if  hasattr(field, '_formfield'):
+                        fields.append((name, field))
             fields.sort(lambda x,y: cmp(x[1].creation_counter, y[1].creation_counter))
             cls._unbound_fields = fields
         return super(Form, cls).__new__(cls, *args, **kw)
