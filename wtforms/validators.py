@@ -41,4 +41,9 @@ def not_empty(message=None):
             raise ValidationError(message or u'Field must not be empty.')
     return _not_empty
 
+def ip_address(form, field):
+    if not re.match(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', field.data):
+        raise ValidationError(u'Invalid email address.')
+    
+
 __all__ = ('ValidationError', 'email', 'length', 'url', 'not_empty')
