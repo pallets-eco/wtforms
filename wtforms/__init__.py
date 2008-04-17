@@ -15,4 +15,4 @@ from wtforms.fields import *
 from wtforms.validators import ValidationError
 from wtforms import validators
 
-_version__ = "devel"
+__version__ = "devel"

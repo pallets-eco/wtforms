@@ -37,7 +37,7 @@ class Form(object):
         """
         Use the field creation counter to create an ordered list of form fields.
         """
-        if not hasattr(cls, '_unbound_fields'):
+        if '_unbound_fields' not in cls.__dict__:
             fields = []
             for k, v in cls.__dict__.items():
                 if hasattr(v, '_formfield'):
