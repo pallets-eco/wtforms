@@ -30,7 +30,7 @@ def url(allow_blank=False):
     def _url(form, field):
         if allow_blank and not field.data:
             return
-        match = re.match(r'[a-z]+://.*', field.data, re.I)
+        match = re.match(r'[a-z]+://.*\.[a-z]{2,4}(\/.*)?', field.data, re.I)
         if not match:
             raise ValidationError(u'Is not a valid URL.')
     return _url
@@ -43,7 +43,7 @@ def not_empty(message=None):
 
 def ip_address(form, field):
     if not re.match(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', field.data):
-        raise ValidationError(u'Invalid email address.')
+        raise ValidationError(u'Invalid ip address.')
     
 
-__all__ = ('ValidationError', 'email', 'length', 'url', 'not_empty')
+__all__ = ('ValidationError', 'email', 'length', 'url', 'not_empty', 'ip_address')
