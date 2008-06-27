@@ -25,13 +25,13 @@ def test_email():
     assert email(form, DummyField('123@bar.dk')) == None
     assert email(form, DummyField('foo@456.dk')) == None
     assert email(form, DummyField('foo@bar456.info')) == None
-    raises(ValidationError, email, form, DummyField('foo')) == None
-    raises(ValidationError, email, form, DummyField('bar.dk')) == None
-    raises(ValidationError, email, form, DummyField('foo@')) == None
-    raises(ValidationError, email, form, DummyField('@bar.dk')) == None
-    raises(ValidationError, email, form, DummyField('foo@bar')) == None
-    raises(ValidationError, email, form, DummyField('foo@bar.ab12')) == None
-    raises(ValidationError, email, form, DummyField('foo@bar.abcde')) == None
+    raises(ValidationError, email, form, DummyField('foo'))
+    raises(ValidationError, email, form, DummyField('bar.dk'))
+    raises(ValidationError, email, form, DummyField('foo@'))
+    raises(ValidationError, email, form, DummyField('@bar.dk'))
+    raises(ValidationError, email, form, DummyField('foo@bar'))
+    raises(ValidationError, email, form, DummyField('foo@bar.ab12'))
+    raises(ValidationError, email, form, DummyField('foo@bar.abcde'))
 
 def test_length():
     field = DummyField('foobar')
