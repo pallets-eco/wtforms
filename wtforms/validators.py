@@ -14,7 +14,7 @@ class ValidationError(ValueError):
 
 def email(message=u'Invalid email address.'):
     def _email(form, field):
-        if not re.match(r'^.+@[^.].+\.[a-z]{2,4}$', field.data, re.IGNORECASE):
+        if not re.match(r'^.+@[^.].*\.[a-z]{2,4}$', field.data, re.IGNORECASE):
             raise ValidationError(message)
     return _email
 
