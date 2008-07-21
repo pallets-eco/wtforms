@@ -18,13 +18,15 @@ def email(message=u'Invalid email address.'):
             raise ValidationError(message)
     return _email
 
-def equal_to(fieldname, message=u'Must be equal to %s'):
+def equal_to(fieldname, message=None):
+    if not message:
+        message = u'Field must be equal to %s' % fieldname
     def _equal_to(form, field):
         other = getattr(form, fieldname, None)
         if not other:
             raise ValidationError(u"Invalid field name '%s'" % fieldname)
         elif field.data != other.data:
-            raise ValidationError(message % fieldname)
+            raise ValidationError(message)
     return _equal_to
 
 def ip_address(message=u'Invalid IP address.'):
@@ -39,12 +41,13 @@ def is_checked(message=u'Field must tbe checked.'):
             raise ValidationError(message)
     return _is_checked
 
-def length(min=-1, max=-1, message=u'Field must be between %(min)i and %(max)i characters long.'):
-    fmt_args = {'min': min, 'max': max}
+def length(min=-1, max=-1, message=None):
+    if not message:
+        message = u'Field must be between %i and %i characters long.' % (min, max)
     def _length(form, field):
         l = field.data and len(field.data) or 0
         if l < min or max != -1 and l > max:
-            raise ValidationError(message % fmt_args)
+            raise ValidationError(message)
     return _length
 
 def not_empty(message=u'Field must not be empty.'):
