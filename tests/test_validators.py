@@ -9,7 +9,7 @@
 """
 
 from py.test import raises
-from wtforms.validators import ValidationError, email, ip_address, is_checked, length, not_empty, url
+from wtforms.validators import ValidationError, email, equal_to, ip_address, is_checked, length, not_empty, url
 
 class DummyForm(object):
     pass
@@ -32,6 +32,13 @@ def test_email():
     raises(ValidationError, email(), form, DummyField('foo@bar'))
     raises(ValidationError, email(), form, DummyField('foo@bar.ab12'))
     raises(ValidationError, email(), form, DummyField('foo@bar.abcde'))
+
+def test_equal_to():
+    form = DummyForm()
+    form.foo = DummyField('test')
+    assert equal_to('foo')(form, form.foo) == None
+    raises(ValidationError, equal_to('invalid_field_name'), form, DummyField('test'))
+    raises(ValidationError, equal_to('foo'), form, DummyField('different_value'))
 
 def test_ip_address():
     assert ip_address()(form, DummyField('127.0.0.1')) == None

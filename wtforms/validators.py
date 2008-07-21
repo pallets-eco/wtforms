@@ -18,6 +18,15 @@ def email(message=u'Invalid email address.'):
             raise ValidationError(message)
     return _email
 
+def equal_to(fieldname, message=u'Must be equal to %s'):
+    def _equal_to(form, field):
+        other = getattr(form, fieldname, None)
+        if not other:
+            raise ValidationError(u"Invalid field name '%s'" % fieldname)
+        elif field.data != other.data:
+            raise ValidationError(message % fieldname)
+    return _equal_to
+
 def ip_address(message=u'Invalid IP address.'):
     def _ip_address(form, field):
         if not re.match(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', field.data):
@@ -30,7 +39,7 @@ def is_checked(message=u'Field must tbe checked.'):
             raise ValidationError(message)
     return _is_checked
 
-def length(message=u'Field must be between %(min)i and %(max)i characters long.', min=-1, max=-1):
+def length(min=-1, max=-1, message=u'Field must be between %(min)i and %(max)i characters long.'):
     fmt_args = {'min': min, 'max': max}
     def _length(form, field):
         l = field.data and len(field.data) or 0
@@ -44,7 +53,7 @@ def not_empty(message=u'Field must not be empty.'):
             raise ValidationError(message)
     return _not_empty
 
-def url(message=u'Invalid URL.', allow_blank=False):
+def url(allow_blank=False, message=u'Invalid URL.'):
     def _url(form, field):
         if allow_blank and not field.data:
             return
@@ -52,4 +61,4 @@ def url(message=u'Invalid URL.', allow_blank=False):
             raise ValidationError(message)
     return _url
 
-__all__ = ('ValidationError', 'email', 'ip_address', 'is_checked', 'length', 'not_empty', 'url')
+__all__ = ('ValidationError', 'email', 'equal_to', 'ip_address', 'is_checked', 'length', 'not_empty', 'url')
