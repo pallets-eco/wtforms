@@ -119,13 +119,21 @@ class SelectField(Field):
 
 class SelectMultipleField(SelectField):
     def __call__(self, **kwargs):
-        super(SelectMultipleField, self).__call__(multiple="multiple", **kwargs)
+        return super(SelectMultipleField, self).__call__(multiple="multiple", **kwargs)
 
     def _selected(self, value):
-        return (self.checker(value) in self.data)
+        if self.data is not None:
+            return (self.checker(value) in self.data)
         
     def process_formdata(self, valuelist):
         self.data = [self.checker(x) for x in valuelist]
+
+    def _validate(self, *args):
+        choices = [c[0] for c in self.choices]
+        for d in self.data:
+            if d not in choices:
+                raise ValidationError("'%s' is not a valid choice for this field" % d)
+        
         
 class TextField(Field):
     def __call__(self, **kwargs):
