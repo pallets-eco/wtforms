@@ -2,10 +2,13 @@
     wtforms
     ~~~~~~~
     
-    What The Forms is a framework-agnostic way of generating HTML forms, handling
-    form submissions, and validating it.
+    WTForms is a HTTP/HTML forms handling library, written in Python.
+    
+    It handles definition, validation and rendering in a flexible and i18n
+    friendly way. It heavily reduces boilerplate and is completely unicode
+    aware.
 
-    Check out our trac wiki at http://dev.simplecodes.com/projects/wtforms
+    Check out the hg repository at http://www.bitbucket.org/prencher/wtforms/.
     
     :copyright: 2007-2008 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
