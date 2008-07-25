@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import wtforms  
 import os
 import ez_setup
@@ -10,9 +9,9 @@ from setuptools import setup, Feature
 
 setup(
     name='WTForms',
-    version='0.1dev',
-    url='http://dev.simplecodes.com/projects/wtforms',
-    download_url='http://dev.simplecodes.com/hg/wtforms', #FIXME
+    version='0.1',
+    url='http://www.bitbucket.org/prencher/wtforms/',
+    download_url='http://www.bitbucket.org/prencher/wtforms/', #FIXME
     license='MIT',
     author='James Crasta, Thomas Johansson',
     author_email='jcrasta@simplecodes.com, thomas@simplecodes.com',
