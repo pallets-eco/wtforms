@@ -9,7 +9,7 @@ from setuptools import setup, Feature
 
 setup(
     name='WTForms',
-    version='0.1',
+    version='0.2dev',
     url='http://www.bitbucket.org/prencher/wtforms/',
     download_url='http://www.bitbucket.org/prencher/wtforms/', #FIXME
     license='MIT',
