@@ -59,7 +59,7 @@ class Field(object):
         raise NotImplementedError
 
     def _get_label(self):
-        return u'<label for="%s">%s</label>' % (self.id, self._label)
+        return Label(self.id, self._label) 
     label = property(_get_label)
         
     def _validate(self, *args):
@@ -70,6 +70,19 @@ class Field(object):
 
     def process_formdata(self, valuelist):
         self.data = valuelist[0]
+
+class Label(object):
+    def __init__(self, field_id, text):
+        self.field_id = field_id
+        self.text = text
+
+    def __unicode__(self):
+        return self()
+
+    def __call__(self, **kwargs):
+        kwargs['for'] = self.field_id
+        attributes = html_params(**kwargs)
+        return u'<label %s>%s</label>' % (attributes, self.text)
 
 class SelectField(Field):
     def __init__(self, *args, **kwargs):
