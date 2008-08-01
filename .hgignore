@@ -3,3 +3,4 @@ syntax: regexp
 \.py[co]$
 \..*\.swp$
 \.eprj$
+^docs/_build
