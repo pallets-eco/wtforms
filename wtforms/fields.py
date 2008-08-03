@@ -43,7 +43,7 @@ class Field(object):
         form = kwargs['form']
         self.name = kwargs['name']
         self.id = kwargs.get('id', form._idprefix + self.name)
-        self._label = label
+        self.label = Label(self.id, label)
         self.validators = validators
         self.required = required
         self.data = None
@@ -54,10 +54,6 @@ class Field(object):
 
     def __call__(self, **kwargs):
         raise NotImplementedError
-
-    def _get_label(self):
-        return Label(self.id, self._label) 
-    label = property(_get_label)
         
     def _validate(self, *args):
         pass
