@@ -79,10 +79,10 @@ class Label(object):
     def __unicode__(self):
         return self()
 
-    def __call__(self, **kwargs):
+    def __call__(self, text=None, **kwargs):
         kwargs['for'] = self.field_id
         attributes = html_params(**kwargs)
-        return u'<label %s>%s</label>' % (attributes, self.text)
+        return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
     def __init__(self, *args, **kwargs):
