@@ -43,8 +43,9 @@ class Field(object):
         form = kwargs['form']
         self.name = kwargs['name']
         self.id = kwargs.get('id', form._idprefix + self.name)
-        self.validators = validators
         self._label = label
+        self.validators = validators
+        self.required = required
         self.data = None
         self.errors = []
 

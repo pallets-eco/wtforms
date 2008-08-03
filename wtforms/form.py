@@ -56,6 +56,8 @@ class Form(object):
         success = True
         for name, field in self._fields:
             field.errors = []
+            if not field.required and not field.data:
+                continue
             validators = list(field.validators)
             validators.append(field._validate)
             inline_validator = getattr(self.__class__, '_validate_%s' % name, None)
