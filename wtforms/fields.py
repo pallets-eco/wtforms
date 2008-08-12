@@ -54,6 +54,10 @@ class Field(object):
 
     def __call__(self, **kwargs):
         raise NotImplementedError
+
+    def _get_type(self):
+        return type(self).__name__
+    type = property(_get_type)
         
     def _validate(self, *args):
         pass
