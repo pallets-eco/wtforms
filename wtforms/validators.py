@@ -56,6 +56,12 @@ def not_empty(message=u'Field must not be empty.'):
             raise ValidationError(message)
     return _not_empty
 
+def regexp(regex, flags=None, message=u'Invalid input.'):
+    def _regexp(form, field):
+        if not re.match(regex, field.data, flags):
+            raise ValidationError(message)
+    return _regexp
+
 def url(allow_blank=False, message=u'Invalid URL.'):
     def _url(form, field):
         if allow_blank and not field.data:
@@ -64,4 +70,4 @@ def url(allow_blank=False, message=u'Invalid URL.'):
             raise ValidationError(message)
     return _url
 
-__all__ = ('ValidationError', 'email', 'equal_to', 'ip_address', 'is_checked', 'length', 'not_empty', 'url')
+__all__ = ('ValidationError', 'email', 'equal_to', 'ip_address', 'is_checked', 'length', 'not_empty', 'regexp', 'url')
