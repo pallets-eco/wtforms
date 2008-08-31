@@ -1,5 +1,5 @@
-What The Forms Changelog
-========================
+WTForms Changelog
+=================
 
 For a complete history, view the repository history at:
 - http://www.bitbucket.org/prencher/wtforms/

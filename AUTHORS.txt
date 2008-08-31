@@ -1,8 +1,8 @@
-What The Forms is written and maintained by:
+WTForms is written and maintained by:
 
-- James Crasta <jcrasta@simplecodes.com>
-- Thomas Johansson <thomas@simplecodes.com>
+- James Crasta <jcrasta@gmail.com>
+- Thomas Johansson <prencher@gmail.com>
     
 The following people have also contributed (as listed in each file):
 
-- None so far.
+- Ali Aafshar
