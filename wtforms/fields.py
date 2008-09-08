@@ -17,6 +17,9 @@ except ImportError:
 from wtforms.validators import ValidationError
 
 def html_params(**kwargs):
+    """
+    Generate HTML paramters for keywords
+    """
     params = []
     for k,v in kwargs.iteritems():
         if k in ('class_', 'class__'):
@@ -27,6 +30,31 @@ def html_params(**kwargs):
     return str.join(' ', params)
 
 class Field(object):
+    """
+    Base field class.
+
+    `label`
+        The label of the field.
+    `validators`
+        A list of validators to apply to the field.
+    `required`
+        Whether the field is required to be entered in the form.
+    `**kwargs`
+        Keywords to pass to the constructor.
+
+    This constructor is used in two different circumstances. These depend on
+    whether the keys `form`, and `name` are persent in the `kwargs`:
+
+    1. When declaring a form (`name` and `form` are not present in the
+    `kwargs`, the constructor `__init__` is not actually called, but `__new__`
+    creates a partial object which holds the necessary configuration to
+    perform real construction.
+
+    2. When a form is instantiated, each field is instantiated with both the
+    `name` and `form` in `kwargs`, and thus the field is really instantiated,
+    but with the configuration previously stored during form declaration.
+    """
+
     _formfield = True
     creation_counter = 0
     def __new__(cls, *args, **kwargs):
@@ -53,6 +81,16 @@ class Field(object):
         return self()
 
     def __call__(self, **kwargs):
+        """
+        Render the form field.
+
+        `kwargs`
+            html attributes to render the field with
+
+        This method renders an HTML representation of the field. The default
+        implementation raises `NotImplementedError` and so must be overriden
+        in subclasses.
+        """
         raise NotImplementedError
 
     def _get_type(self):
@@ -63,12 +101,27 @@ class Field(object):
         pass
 
     def process_data(self, value, has_formdata):
+        """
+        Process the Python data applied to this field and store the result.
+
+        This will be called during form construction by the form's `kwargs` or
+        `obj` argument.
+        """
         self.data = value
 
     def process_formdata(self, valuelist):
+        """
+        Process data received over the wire from a form.
+
+        This will be called during form cvonstruction with data supplied
+        through the `formdata` argument.
+        """
         self.data = valuelist[0]
 
 class Label(object):
+    """
+    An HTML form label.
+    """
     def __init__(self, field_id, text):
         self.field_id = field_id
         self.text = text
