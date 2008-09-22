@@ -10,7 +10,9 @@
 import re
 
 class ValidationError(ValueError):
-    pass
+    """ Raised when a validator fails to validate it's input. """
+    def __init__(*args, **kwargs):
+        super(ValidationError, self).__init__(*args, **kwargs)
 
 def email(message=u'Invalid email address.'):
     """
