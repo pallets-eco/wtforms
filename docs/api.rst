@@ -57,7 +57,14 @@ chain any number of validators on fields.
 Built-in validators
 ~~~~~~~~~~~~~~~~~~~
 
-(TODO)
+.. autofunction:: wtforms.validators.email
+.. autofunction:: wtforms.validators.equal_to
+.. autofunction:: wtforms.validators.ip_address
+.. autofunction:: wtforms.validators.is_checked
+.. autofunction:: wtforms.validators.length
+.. autofunction:: wtforms.validators.not_empty
+.. autofunction:: wtforms.validators.regexp
+.. autofunction:: wtforms.validators.url
 
 Custom validators
 ~~~~~~~~~~~~~~~~~
