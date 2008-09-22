@@ -1,1 +1,1 @@
-from models import form_for_model
+from models import model_form
