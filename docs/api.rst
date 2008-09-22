@@ -86,7 +86,7 @@ Let's look at one of the built-in validators, not_empty::
 
 And the way it's used::
 
-    username = PasswordField(u'Password', [validators.not_empty(u'Please provide a password.')])
+    password = PasswordField(u'Password', [validators.not_empty(u'Please provide a password.')])
 
 The outer function sets configuration directives, in this case just the
 message. The inner function provides the actual validation: If the field
