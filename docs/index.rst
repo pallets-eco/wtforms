@@ -6,10 +6,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
    
-   introduction
+   intro
    crashcourse
-   highlevel
    api
+   ext
 
 Indices and tables
 ==================
