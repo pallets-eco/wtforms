@@ -1,5 +1,8 @@
+.. _api:
+
 API
 ===
+
 .. module:: wtforms
 
 (TODO)
@@ -37,12 +40,12 @@ validators for data validation.
 Field definitions
 ~~~~~~~~~~~~~~~~~
 
-(TODO)
+.. autoclass:: wtforms.fields.Field
 
 Built-in fields
 ~~~~~~~~~~~~~~~
 
-(TODO)
+.. autoclass:: wtforms.fields.SelectField
 
 Custom fields
 ~~~~~~~~~~~~~

@@ -1,3 +1,5 @@
+.. _intro:
+
 Introduction
 ============
 
@@ -26,6 +28,8 @@ Prerequisites
 To use WTForms, you will need **Python 2.4** or later. There are no external
 dependencies for the core, but some :ref:`extensions <extensions>` may assume
 certain libraries.
+
+.. _installation:
 
 Installation
 ------------
