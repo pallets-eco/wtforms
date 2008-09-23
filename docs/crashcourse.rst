@@ -3,16 +3,14 @@
 Crash Course
 ============
 
-currently in progress.
+This Crash Course will provide a brief overview of how one would go about creating their first forms in WTForms. It will expose key features of the framework through mainly code examples. For in-depth description of the modules, you'll want to read the :ref:`api` documentation.
 
 Getting Started
 ---------------
 
-If you have easy_install set up, you can simply execute *easy_install WTForms* 
-to get it installed.  Otherwise, you can get it from 
-`PyPI <http://pypi.python.org/pypi/WTForms/>`_ and install it with *setup.py install*.
-
-Once you've done that, you can begin writing your first Form::
+If you have not installed WTForms yet, the :ref:`introduction <installation>`
+will get you started.  Once you've done that, you can begin writing your first
+Form::
 
     from wtforms import Form, BooleanField, TextField, PasswordField, validators
 
@@ -21,11 +19,32 @@ Once you've done that, you can begin writing your first Form::
         email        = TextField('Email Address', [validators.length(min=6, max=35)])
         accept_rules = BooleanField('I accept the site rules')
 
+When you create a form, you define the fields in a way which is very similar
+to the way many ORM's have you define their columns, by defining class
+variables which are instantiations of the fields. 
 
-Using it in a view
-------------------
+Since a form is a regular python class, they can even be extended as needed::
 
-::
+    from wtforms import Form, DateTimeField, TextField, TextAreaField, validators
+
+    class ProfileForm(Form):
+        birthday  = DateTimeField('Your Birthday', format='%m/%d/%y')
+        signature = TextAreaField('Forum Signature')
+
+    class AdminProfileForm(ProfileForm):
+        title  = TextField('User Title', [validators.length(max=40)])
+
+In the above, AdminProfileForm would inherit all the fields of the
+ProfileForm, thus having 3 fields.  While showing additional fields could also
+be performed at the template level, validation would be performed even on
+fields the user couldn't see. Because of this, it's often better to define
+separate forms which inherit each other. 
+
+
+Using forms in a view
+---------------------
+
+Using a form in a view is as simple as instantiating it::
 
     def register(request):
         form = RegistrationForm(request.POST, prefix='register')
@@ -34,9 +53,18 @@ Using it in a view
             pass
         return render_to_response('account/register', {'form': form})
     
+The form can be given a prefix, which will be prepended to the form variable
+names. By using different prefixes, one can use multiple forms on the same
+page, as well. You then pass your form to your template so you can use it for
+rendering the fields to HTML.
+
 
 Rendering your form in templates
 --------------------------------
+
+Rendering your fields in a template involves simply accessing the field on the
+form object.  The label and description are available as properties on the
+field as well.
 
 .. code-block:: jinja
 
@@ -57,17 +85,19 @@ Rendering your form in templates
     <input type="submit" value="Register!" />
     </form>
 
-If you inspect the above carefully, you will notice a few things.  While wtforms will 
-generate input fields, it will not generate the <form> tags.  It can be made to 
-generate submit buttons if you feel the need to check for submit button inputs 
-(more about that in the future) but you're not forced to.
+If you inspect the above carefully, you will notice a few things.  While
+WTForms will generate input fields, it will not generate the <form> tags.  It
+can be made to generate submit buttons if you feel the need to check for submit
+button inputs (more about that in the future) but you're not forced to.
+Rendering the label will generate the appropriate ``<label for="id">``
+enclosure for the field as well.
 
 Field customization in Jinja templates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to add customization to your form fields (such as CSS 
 classes, onclick events, etc) you can do so by passing keyword 
-args to the form fields as such:
+arguments to the form fields as such:
 
 .. code-block:: jinja
 
@@ -88,17 +118,17 @@ attributes to form fields similar to the usage in jinja:
   {% form_field form.username class="big_text" onclick="do_something()" %}
 
 
-**Note** if you're using the newest development version of Django, output from 
-wtforms using the `{{ form.field }}` syntax will be auto-escaped.  
-To avoid this happening, use the Django's `{% autoescape off %}` block tag or 
-use WTForms' `form_field` template tag.
+**Note:** By default in Django, output from WTForms using the 
+``{{form.field}}`` syntax will be auto-escaped.  To avoid this happening, 
+use Django's ``{% autoescape off %}`` block tag or use 
+WTForms' `form_field` template tag.
 
 
 Adding custom validation
 ------------------------
 
-In the example above, you can see we are using some of the built-in validators 
-from the :mod:`wtforms.validators` module. You can also define your own validators 
+In previous examples, you can see we used some of the built-in validators from
+the :mod:`wtforms.validators` module. You can also define your own validators
 like so::
 
     from wtforms.validators import ValidationError
@@ -127,10 +157,11 @@ developed a way to write them inline::
 Using select fields
 -------------------
 
-Select fields keep a `choices` property which is a sequence of `(value, label)` 
-pairs.  The value portion can be any type in theory, but as form data is sent 
-as strings, you will need to provide a function which can coerce the string 
-representation back to a comparable object.  More about this later.
+Select fields keep a `choices` property which is a sequence of `(value,
+label)` pairs.  The value portion can be any type in theory, but as form data
+is sent by the browser as strings, you will need to provide a function which
+can coerce the string representation back to a comparable object.  More about
+this later.
 
 
 Select fields with static choice values
@@ -141,9 +172,9 @@ Select fields with static choice values
     class PastebinEntry(Form):
         language = SelectField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
 
-Note that the `choices` keyword is only evaluated once, so if you want to make 
-a dynamic drop-down list that could change during the runtime of the application, 
-you'll want to look at the next section.
+Note that the `choices` keyword is only evaluated once, so if you want to make
+a dynamic drop-down list that could be different for each instance of the
+form, you'll want to look at the next section.
 
 
 Select fields with dynamic choice values
@@ -166,12 +197,14 @@ Select fields with dynamic choice values
 
         return render_to_response('edit_user.html', {'form': form})
 
-Note we didn't pass a `choices=` to the :class:`wtforms.SelectField` constructor, 
-but rather created the list in the view function. Also, the `checker=` keyword 
-arg to `wtforms.SelectField` says that we use :func:`int()` to coerce form data.  
-The default checker is :func:`unicode()`. 
+Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField` 
+constructor, but rather created the list in the view function. Also, the 
+`checker` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
+use :func:`int()` to coerce form data.  The default checker is 
+:func:`unicode()`. 
 
-This code example also highlights another feature of wtforms: having a form's default 
-values be that of a model object, and then copying the fields back to the model object 
-on save  (Unlike other forms frameworks, we do not directly modify your db model 
-object, it is up to you when and if you want this to happen.)
+This code example also highlights another feature of wtforms: having a form's
+default values be that of a model object, and then copying the fields back to
+the model object on save  (Unlike other forms frameworks, WTForms will not
+directly modify your db model object, it is up to you when and if you want
+this to happen.)
