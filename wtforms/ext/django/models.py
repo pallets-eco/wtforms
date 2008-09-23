@@ -10,15 +10,15 @@ FIELDS_MAP = {
     'DateField': [f.DateTimeField, {'format': '%Y-%m-%d'}],
     'DateTimeField': [f.DateTimeField],
     'EmailField': [f.TextField, {}, validators.email()],
-    # 'FileField:  [f.FileField],
+    # 'FileField':  [f.FileField],
     'FilePathField': [f.FileField],
     'FloatField': [f.TextField],
     'IPAddressField': [f.TextField, {}, validators.ip_address()],
-    # 'ImageField
+    # 'ImageField'
     'IntegerField': [f.IntegerField],
-    # 'ManyToManyField
-    # 'NullBooleanField
-    # 'OneToOneField
+    # 'ManyToManyField'
+    # 'NullBooleanField'
+    # 'OneToOneField'
     'PhoneNumberField': [f.TextField], # TODO: determine phone number validator?
     'PositiveIntegerField': [f.IntegerField],
     'PositiveSmallIntegerField': [f.IntegerField],
@@ -28,7 +28,7 @@ FIELDS_MAP = {
     'TimeField': [f.DateTimeField, {'format': '%Y-%m-%d'}],
     'URLField': [f.TextField],
     'USStateField': [f.TextField],
-    # 'XMLField
+    # 'XMLField'
 }
 
 def model_form(model, base_class=Form, include_pk=False):
