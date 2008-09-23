@@ -1,8 +1,10 @@
 WTForms is written and maintained by:
 
-- James Crasta <jcrasta@gmail.com>
-- Thomas Johansson <prencher@gmail.com>
+- James Crasta / crast <jcrasta@gmail.com>
+- Thomas Johansson / prencher <prencher@gmail.com>
     
-The following people have also contributed (as listed in each file):
+We'd like to thank the following people for helping improve WTForms, whether by
+code, documentation or otherwise. We appreciate it.
 
 - Ali Aafshar
+- Adam Lowry / RobotAdam 
