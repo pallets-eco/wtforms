@@ -1,5 +1,6 @@
 API
 ===
+.. module:: wtforms
 
 (TODO)
 
@@ -10,6 +11,7 @@ Basics
 
 Forms
 -----
+.. module:: wtforms.form
 
 Forms provide the highest level API in WTForms. They contain your field
 definitions, delegate validation, take input, aggregate errors, and in
@@ -27,6 +29,7 @@ Using forms
 
 Fields
 ------
+.. module:: wtforms.fields
 
 Fields are responsible for rendering and data conversion. They delegate to
 validators for data validation.
@@ -48,6 +51,7 @@ Custom fields
 
 Validators
 ----------
+.. module:: wtforms.validators
 
 Validators simply takes an input, verifies it fulfills some criterion, such as
 a maximum length for a string and returns. Or, if the validation fails, raises

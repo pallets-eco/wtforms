@@ -2,12 +2,14 @@
 
 Extensions
 ==========
+.. module:: wtforms.ext
 
 WTForms ships with a number of extensions that make it easier to work with
 other frameworks and libraries, such as Django.
 
 Django
 ------
+.. module:: wtforms.ext.django
 
 This extension provides templatetags to make it easier to work with Django
 templates and WTForms' html attribute rendering. It also provides a generator
@@ -15,6 +17,7 @@ for automatically creating forms based on Django ORM models.
 
 Templatetags
 ~~~~~~~~~~~~
+.. module:: wtforms.ext.django.templatetags
 
 Django templates does not allow arbitrarily calling functions with parameters,
 making it impossible to use the html attribute rendering feature of WTForms. To
@@ -35,8 +38,9 @@ wtforms using the `{{ form.field }}` syntax will be auto-escaped.
 To avoid this happening, use the Django's `{% autoescape off %}` block tag or 
 use WTForms' `form_field` template tag.
 
-Autogenerating forms based on models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Model forms
+~~~~~~~~~~~
+.. module:: wtforms.ext.django.models
 
 Similar to the ModelForm available in Django's newforms, wtforms can generate
 forms from your Django models.  To do this, use the
