@@ -8,6 +8,18 @@ Version 0.2
 -----------
 (Not yet released)
 
+- We have documentation!
+- Fields now have a `required` argument which if set to False allows fields to
+  accept either a fully validated value, or no value at all. Defaults to True.
+- Changed the way fields take parameters, they are no longer quasi magic. This
+  is a breaking change. Please see the documentation for the new syntax.
+- Added optional description argument to Field, acessible on the field as
+  `description`. This provides an easy way to define e.g. help text in the same
+  place as the form.
+- Added a regexp validator.
+- Renamed wtforms.contrib to wtforms.ext and reorganised wtforms.ext.django.
+  This is a breaking change if you were using the django extensions, but should
+  only require changing your imports around a little.
 
 Version 0.1
 -----------
