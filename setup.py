@@ -9,7 +9,7 @@ from setuptools import setup, Feature
 
 setup(
     name='WTForms',
-    version='0.2dev',
+    version=wtforms.__version__,
     url='http://wtforms.simplecodes.com/',
     download_url='http://wtforms.simplecodes.com/',
     license='MIT',
