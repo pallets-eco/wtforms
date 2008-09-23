@@ -1,3 +1,5 @@
+.. _crashcourse:
+
 Crash Course
 ============
 
@@ -8,15 +10,15 @@ Getting Started
 
 If you have easy_install set up, you can simply execute *easy_install WTForms* 
 to get it installed.  Otherwise, you can get it from 
-`PyPI <http://pypi.python.org/pypi/WTForms/>` and install it with *setup.py install*.
+`PyPI <http://pypi.python.org/pypi/WTForms/>`_ and install it with *setup.py install*.
 
 Once you've done that, you can begin writing your first Form::
 
     from wtforms import Form, BooleanField, TextField, PasswordField, validators
 
     class RegistrationForm(Form):
-        username     = TextField('Username', validators.length(min=4, max=25))
-        email        = TextField('Email Address', validators.length(min=6, max=35))
+        username     = TextField('Username', [validators.length(min=4, max=25)])
+        email        = TextField('Email Address', [validators.length(min=6, max=35)])
         accept_rules = BooleanField('I accept the site rules')
 
 
@@ -167,8 +169,7 @@ Select fields with dynamic choice values
 Note we didn't pass a `choices=` to the :class:`wtforms.SelectField` constructor, 
 but rather created the list in the view function. Also, the `checker=` keyword 
 arg to `wtforms.SelectField` says that we use :func:`int()` to coerce form data.  
-The default checker is :func:`str`.  '''Note:''' this will be changing to 
-:func:`unicode` in future releases.
+The default checker is :func:`unicode()`. 
 
 This code example also highlights another feature of wtforms: having a form's default 
 values be that of a model object, and then copying the fields back to the model object 
