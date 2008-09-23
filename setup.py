@@ -10,11 +10,11 @@ from setuptools import setup, Feature
 setup(
     name='WTForms',
     version='0.2dev',
-    url='http://www.bitbucket.org/prencher/wtforms/',
-    download_url='http://www.bitbucket.org/prencher/wtforms/', #FIXME
+    url='http://wtforms.simplecodes.com/',
+    download_url='http://wtforms.simplecodes.com/',
     license='MIT',
     author='James Crasta, Thomas Johansson',
-    author_email='jcrasta@simplecodes.com, thomas@simplecodes.com',
+    author_email='jcrasta@gmail.com, prencher@gmail.com',
     description='HTTP/HTML forms handling for python',
     long_description=getdoc(wtforms),
     zip_safe=True,
@@ -30,9 +30,9 @@ setup(
     ],
     packages=['wtforms'],
     features={
-        'contrib': Feature('optional contribute addon modules',
+        'ext': Feature('Extensions to WTForms providing extra functionality',
             standard=True,
-            packages=['wtforms.contrib']
+            packages=['wtforms.ext']
         )
     },
     platforms=['any'],
