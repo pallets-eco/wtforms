@@ -31,7 +31,11 @@ class Form(object):
             if hasattr(obj, name):
                 field.process_data(getattr(obj, name), has_formdata)
             if has_formdata and form_name in formdata:
-                field.process_formdata(formdata.getlist(form_name))
+                try:
+                    data = formdata.getlist(form_name)
+                except AttributeError:
+                    data = formdata.getall(form_name)
+                field.process_formdata(data)
 
     def __new__(cls, *args, **kw):
         """
