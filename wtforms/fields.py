@@ -136,7 +136,7 @@ class Label(object):
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
-    def __init__(self, label=u'', validators=[], required=True, checker=str, choices=None, *args, **kwargs):
+    def __init__(self, label=u'', validators=[], required=True, checker=unicode, choices=None, *args, **kwargs):
         super(SelectField, self).__init__(label, validators, required, *args, **kwargs)
         self.checker = checker
         self.choices = choices
