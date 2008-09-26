@@ -9,7 +9,7 @@
 """
 
 from py.test import raises
-from wtforms.validators import ValidationError, email, equal_to, ip_address, is_checked, length, not_empty, url
+from wtforms.validators import ValidationError, email, equal_to, ip_address, is_checked, length, not_empty, regexp, url
 
 class DummyForm(object):
     pass
@@ -62,6 +62,13 @@ def test_not_empty():
     assert not_empty()(form, DummyField('foobar')) == None
     raises(ValidationError, not_empty(), form, DummyField(''))
     raises(ValidationError, not_empty(), form, DummyField(' '))
+
+def test_regexp():
+    import re
+    assert regexp('^a')(form, DummyField('abcd')) == None
+    assert regexp('^a', re.I)(form, DummyField('ABcd')) == None
+    raises(ValidationError, regexp('^a'), form, DummyField('foo'))
+    raises(ValidationError, regexp('^a'), form, DummyField(None))
 
 def test_url():
     assert url()(form, DummyField('http://foobar.dk')) == None

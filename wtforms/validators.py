@@ -110,7 +110,7 @@ def not_empty(message=u'Field must not be empty.'):
             raise ValidationError(message)
     return _not_empty
 
-def regexp(regex, flags=None, message=u'Invalid input.'):
+def regexp(regex, flags=0, message=u'Invalid input.'):
     """
     Validates the field against a user provided regexp.
 
@@ -124,7 +124,8 @@ def regexp(regex, flags=None, message=u'Invalid input.'):
         Error message to raise in case of a validation error.
     """
     def _regexp(form, field):
-        if not re.match(regex, field.data, flags):
+        data = field.data or ''
+        if not re.match(regex, data, flags):
             raise ValidationError(message)
     return _regexp
 
