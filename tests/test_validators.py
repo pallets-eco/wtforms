@@ -25,6 +25,8 @@ def test_email():
     assert email()(form, DummyField('123@bar.dk')) == None
     assert email()(form, DummyField('foo@456.dk')) == None
     assert email()(form, DummyField('foo@bar456.info')) == None
+    raises(ValidationError, email(), form, DummyField(None))
+    raises(ValidationError, email(), form, DummyField(''))
     raises(ValidationError, email(), form, DummyField('foo'))
     raises(ValidationError, email(), form, DummyField('bar.dk'))
     raises(ValidationError, email(), form, DummyField('foo@'))

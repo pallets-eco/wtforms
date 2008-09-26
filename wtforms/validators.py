@@ -24,7 +24,8 @@ def email(message=u'Invalid email address.'):
         Error message to raise in case of a validation error.
     """
     def _email(form, field):
-        if not re.match(r'^.+@[^.].*\.[a-z]{2,4}$', field.data, re.IGNORECASE):
+        data = field.data is not None and field.data or ''
+        if not re.match(r'^.+@[^.].*\.[a-z]{2,4}$', data, re.IGNORECASE):
             raise ValidationError(message)
     return _email
 
