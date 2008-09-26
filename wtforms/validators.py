@@ -35,7 +35,6 @@ def equal_to(fieldname, message=None):
 
     `fieldname`
         The name of the field to compare to.
-
     `message`
         Error message to raise in case of a validation error. A default
         containing the field name is provided.
@@ -80,12 +79,10 @@ def length(min=-1, max=-1, message=None):
     
     `min`
         The minimum required length of the string. If not provided, minimum
-        length will not be checked.
-        
+        length will not be checked.        
     `max`
         The maximum length of the string. If not provided, maximum length will
         not be checked.
-
     `message`
         Error message to raise in case of a validation error. A default
         containing min and max length is provided.
@@ -115,17 +112,21 @@ def regexp(regex, flags=0, message=u'Invalid input.'):
     Validates the field against a user provided regexp.
 
     `regex`
-        The regular expression string to use.
-
+        The regular expression string to use. Can also be a compiled regular
+        expression pattern.
     `flags`
-        The regexp flags to use, for example re.IGNORECASE.
-        
+        The regexp flags to use, for example re.IGNORECASE. Ignored if `regex`
+        is not a string.  
     `message`
         Error message to raise in case of a validation error.
     """
     def _regexp(form, field):
         data = field.data or ''
-        if not re.match(regex, data, flags):
+        if isinstance(regex, basestring):
+            result = re.match(regex, data, flags)
+        else:
+            result = regex.match(data)
+        if not result:
             raise ValidationError(message)
     return _regexp
 
@@ -138,8 +139,7 @@ def url(allow_blank=False, message=u'Invalid URL.'):
     `allow_blank`
         If true, must either have no value or a valid url. This option is
         deprecated and will be removed soon. Use required=False on the field
-        itself instead.
-        
+        itself instead.        
     `message`
         Error message to raise in case of a validation error.
     """

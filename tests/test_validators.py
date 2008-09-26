@@ -65,10 +65,16 @@ def test_not_empty():
 
 def test_regexp():
     import re
+    # String regexp
     assert regexp('^a')(form, DummyField('abcd')) == None
     assert regexp('^a', re.I)(form, DummyField('ABcd')) == None
     raises(ValidationError, regexp('^a'), form, DummyField('foo'))
     raises(ValidationError, regexp('^a'), form, DummyField(None))
+    # Compiled regexp
+    assert regexp(re.compile('^a'))(form, DummyField('abcd')) == None
+    assert regexp(re.compile('^a', re.I))(form, DummyField('ABcd')) == None
+    raises(ValidationError, regexp(re.compile('^a')), form, DummyField('foo'))
+    raises(ValidationError, regexp(re.compile('^a')), form, DummyField(None))
 
 def test_url():
     assert url()(form, DummyField('http://foobar.dk')) == None
