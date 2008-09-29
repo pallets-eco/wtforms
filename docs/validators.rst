@@ -10,7 +10,7 @@ flexible, and allows you to chain any number of validators on fields.
 .. autoclass:: wtforms.validators.ValidationError
 
 Built-in validators
-===================
+-------------------
 
 .. autofunction:: wtforms.validators.email
 .. autofunction:: wtforms.validators.equal_to
@@ -22,7 +22,7 @@ Built-in validators
 .. autofunction:: wtforms.validators.url
 
 Custom validators
-=================
+-----------------
 
 Defining your own validators is easy. You simply make a function that takes a
 list of configuration directives, and then returns a callable. The validator
