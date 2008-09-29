@@ -33,14 +33,6 @@ class Field(object):
     """
     Stores and processes data, and generates HTML for an form field.
 
-    Fields are defined as members on a form in a declarative fashion::
-
-        class MyForm(Form):
-            name = TextField(u'Full Name', [validators.length(max=10)], required=True)
-
-    When a field is defined on a form, the construction parameters are saved
-    and a copy of the field is instantiated when the form is instantiated.
-
     Field instances contain the data of that instance as well as the
     functionality to render it within your Form. They also contain a number of
     properties which can be used within your templates to render the field and
@@ -60,7 +52,6 @@ class Field(object):
             return super(Field, cls).__new__(cls, *args, **kwargs)
 
     def __init__(self, label=u'', validators=[], required=True, description=u'', id=None, **kwargs):
-        """hai"""
         form = kwargs['form']
         self.name = kwargs['name']
         self.id = id or (form._idprefix + self.name)
@@ -81,20 +72,15 @@ class Field(object):
 
         Any HTML attribute passed to the constructor will be added to the tag
         and entity-escaped properly.   
-        
-        If one wants to pass the "class" argument which is a reserved keyword
-        in some python-based templating languages, one can do::
-            
-            form.field(class_="text_blob")
-
-        This will output (for a text field)::
-            
-            <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
-
         """
         raise NotImplementedError
 
     def _validate(self, *args):
+        """
+        Run any built-in implicit validation provided by this field.
+
+        Most fields don't need to implement this, but any field can if needed.
+        """
         pass
 
     def process_data(self, value, has_formdata):

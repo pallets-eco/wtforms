@@ -9,9 +9,29 @@ validators for data validation.
 Field definitions
 -----------------
 
-.. autoclass:: Field
-    :members: __call__, _validate, process_data, process_formdata 
+Fields are defined as members on a form in a declarative fashion::
 
+    class MyForm(Form):
+        name    = TextField(u'Full Name', [validators.length(max=10)], required=True)
+        address = TextAreaField(u'Mailing Address', [validators.length(max=200)], required=False)
+
+When a field is defined on a form, the construction parameters are saved until
+the form is instantiated. At form instantiation time, a copy of the field is 
+made with all the parameters specified in the definition. Each instance of the
+field keeps its own field data and errors list.
+
+The label and validators can be passed to the constructor as sequential
+arguments, while all other arguments should be passed as keyword arguments.
+Some fields (such as :class:`SelectField`) can also take additional
+field-specific keyword arguments. Consult the built-in fields reference for
+information on those.
+
+
+The Field base class
+--------------------
+
+.. autoclass:: Field
+    :members: _validate, process_data, process_formdata 
 
     **Properties**
 
@@ -28,7 +48,7 @@ Field definitions
     .. attribute:: label
 
         This is a :class:`Label` instance which when evaluated as a string 
-        returns an html ``<label for="id">`` construct.
+        returns an HTML ``<label for="id">`` construct.
 
     .. attribute:: description
         
@@ -65,7 +85,20 @@ Field definitions
 
     **Methods**
 
-     
+    .. automethod:: __call__
+        
+        If one wants to pass the "class" argument which is a reserved keyword
+        in some python-based templating languages, one can do::
+            
+            form.field(class_="text_blob")
+
+        This will output (for a text field):
+
+        .. code-block:: html
+            
+            <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
+
+
 
 Built-in fields
 ---------------
