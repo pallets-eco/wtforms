@@ -31,28 +31,20 @@ def html_params(**kwargs):
 
 class Field(object):
     """
-    Base field class.
+    Stores and processes data, and generates HTML for an form field.
 
-    `label`
-        The label of the field.
-    `validators`
-        A list of validators to apply to the field.
-    `required`
-        Whether the field is required to be entered in the form.
-    `**kwargs`
-        Keywords to pass to the constructor.
+    Fields are defined as members on a form in a declarative fashion::
 
-    This constructor is used in two different circumstances. These depend on
-    whether the keys `form`, and `name` are persent in the `kwargs`:
+        class MyForm(Form):
+            name = TextField(u'Full Name', [validators.length(max=10)], required=True)
 
-    1. When declaring a form (`name` and `form` are not present in the
-    `kwargs`, the constructor `__init__` is not actually called, but `__new__`
-    creates a partial object which holds the necessary configuration to
-    perform real construction.
+    When a field is defined on a form, the construction parameters are saved
+    and a copy of the field is instantiated when the form is instantiated.
 
-    2. When a form is instantiated, each field is instantiated with both the
-    `name` and `form` in `kwargs`, and thus the field is really instantiated,
-    but with the configuration previously stored during form declaration.
+    Field instances contain the data of that instance as well as the
+    functionality to render it within your Form. They also contain a number of
+    properties which can be used within your templates to render the field and
+    label.  
     """
 
     _formfield = True
@@ -67,14 +59,16 @@ class Field(object):
         else:
             return super(Field, cls).__new__(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=[], required=True, description=u'', **kwargs):
+    def __init__(self, label=u'', validators=[], required=True, description=u'', id=None, **kwargs):
+        """hai"""
         form = kwargs['form']
         self.name = kwargs['name']
-        self.id = kwargs.get('id', form._idprefix + self.name)
+        self.id = id or (form._idprefix + self.name)
         self.label = Label(self.id, label)
         self.validators = validators
         self.required = required
         self.description = description
+        self.type = type(self).__name__
         self.data = None
         self.errors = []
 
@@ -83,21 +77,23 @@ class Field(object):
 
     def __call__(self, **kwargs):
         """
-        Render the form field.
+        Render this field as HTML, using keyword args as additional attributes.
 
-        `kwargs`
-            html attributes to render the field with
+        Any HTML attribute passed to the constructor will be added to the tag
+        and entity-escaped properly.   
+        
+        If one wants to pass the "class" argument which is a reserved keyword
+        in some python-based templating languages, one can do::
+            
+            form.field(class_="text_blob")
 
-        This method renders an HTML representation of the field. The default
-        implementation raises `NotImplementedError` and so must be overriden
-        in subclasses.
+        This will output (for a text field)::
+            
+            <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
+
         """
         raise NotImplementedError
 
-    def _get_type(self):
-        return type(self).__name__
-    type = property(_get_type)
-        
     def _validate(self, *args):
         pass
 
