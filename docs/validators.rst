@@ -1,59 +1,5 @@
-.. _api:
-
-API
-===
-
-.. module:: wtforms
-
-(TODO)
-
-Basics
-------
-
-(TODO)
-
-Forms
------
-.. module:: wtforms.form
-
-Forms provide the highest level API in WTForms. They contain your field
-definitions, delegate validation, take input, aggregate errors, and in
-general function as the glue holding everything together.
-
-Defining forms
-~~~~~~~~~~~~~~
-
-(TODO)
-
-Using forms
-~~~~~~~~~~~
-
-(TODO)
-
-Fields
-------
-.. module:: wtforms.fields
-
-Fields are responsible for rendering and data conversion. They delegate to
-validators for data validation.
-
-Field definitions
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: wtforms.fields.Field
-
-Built-in fields
-~~~~~~~~~~~~~~~
-
-.. autoclass:: wtforms.fields.SelectField
-
-Custom fields
-~~~~~~~~~~~~~
-
-(TODO)
-
 Validators
-----------
+==========
 .. module:: wtforms.validators
 
 Validators simply takes an input, verifies it fulfills some criterion, such as
@@ -64,7 +10,7 @@ flexible, and allows you to chain any number of validators on fields.
 .. autoclass:: wtforms.validators.ValidationError
 
 Built-in validators
-~~~~~~~~~~~~~~~~~~~
+===================
 
 .. autofunction:: wtforms.validators.email
 .. autofunction:: wtforms.validators.equal_to
@@ -76,7 +22,7 @@ Built-in validators
 .. autofunction:: wtforms.validators.url
 
 Custom validators
-~~~~~~~~~~~~~~~~~
+=================
 
 Defining your own validators is easy. You simply make a function that takes a
 list of configuration directives, and then returns a callable. The validator

@@ -14,7 +14,9 @@ heavily reduces boilerplate and is completely unicode aware.
    
    intro
    crashcourse
-   api
+   forms
+   fields
+   validators
    ext
 
 **Indices and tables:**

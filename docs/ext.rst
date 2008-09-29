@@ -51,4 +51,4 @@ forms from your Django models.  To do this, use the
 
     UserForm = model_form(User)
 
-You can even extend UserForm and add additional fields as you need.
+You can then further extend UserForm and add additional fields as you need.
