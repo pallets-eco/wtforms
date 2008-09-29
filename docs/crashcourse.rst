@@ -3,12 +3,15 @@
 Crash Course
 ============
 
-This Crash Course will provide a brief overview of how one would go about creating their first forms in WTForms. It will expose key features of the framework through mainly code examples. For in-depth description of the modules, you'll want to read the :ref:`api` documentation.
+This Crash Course will provide a brief overview of how one would go about
+creating their first forms in WTForms. It will expose key features of the
+framework through mainly code examples. For in-depth description of the
+modules, you'll want to read the :ref:`API <api>` documentation.
 
 Getting Started
 ---------------
 
-If you have not installed WTForms yet, the :ref:`introduction <installation>`
+If you have not installed WTForms yet, the :ref:`installation docs <installation>`
 will get you started.  Once you've done that, you can begin writing your first
 Form::
 

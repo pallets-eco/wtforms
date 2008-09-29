@@ -1,19 +1,24 @@
 WTForms |version| Documentation
 ===============================
 
-This is the documentation for WTForms |version|, updated |today|.
+Welcome! This is the documentation for WTForms |version|, updated |today|.
 
-WTForms is a HTTP/HTML forms handling library, written in Python. It handles
-definition, validation and rendering in a flexible and i18n friendly way. It
-heavily reduces boilerplate and is completely unicode aware. 
-
-**Table of contents:**
+**First Steps:**
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    
    intro
+   installation
    crashcourse
+
+.. _api:
+
+**API:**
+
+.. toctree::
+   :maxdepth: 2
+
    forms
    fields
    validators
