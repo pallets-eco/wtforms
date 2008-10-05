@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
     test_validators
     ~~~~~~~~~~~~~~~
@@ -80,6 +81,12 @@ def test_url():
     assert url()(form, DummyField('http://foobar.dk')) == None
     assert url()(form, DummyField('http://foobar.dk/')) == None
     assert url()(form, DummyField('http://foobar.dk/foobar')) == None
+    assert url()(form, DummyField('http://127.0.0.1/foobar')) == None
+    assert url()(form, DummyField('http://127.0.0.1:9000/fake')) == None
+    assert url(require_tld=False)(form, DummyField('http://localhost/foobar')) == None
+    assert url(require_tld=False)(form, DummyField('http://foobar')) == None
     raises(ValidationError, url(), form, DummyField('http://foobar'))
     raises(ValidationError, url(), form, DummyField('foobar.dk'))
+    raises(ValidationError, url(), form, DummyField('http://127.0.0/asdf'))
     raises(ValidationError, url(), form, DummyField('http://foobar.12'))
+    raises(ValidationError, url(), form, DummyField('http://localhost:abc/a'))

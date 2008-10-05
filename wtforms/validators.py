@@ -130,7 +130,7 @@ def regexp(regex, flags=0, message=u'Invalid input.'):
             raise ValidationError(message)
     return _regexp
 
-def url(allow_blank=False, message=u'Invalid URL.'):
+def url(allow_blank=False, require_tld=True, message=u'Invalid URL.'):
     """
     Simple regexp based url validation. Much like the email validator, you
     probably want to validate the url later by other means if the url must 
@@ -143,10 +143,13 @@ def url(allow_blank=False, message=u'Invalid URL.'):
     `message`
         Error message to raise in case of a validation error.
     """
+    BASE_REGEXP = r'''[a-z]+://(.*\.[a-z]{2,4}%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?''' 
+    url_regexp = re.compile(BASE_REGEXP % ((not require_tld) and r'|[a-z0-9]+' or ''), re.IGNORECASE)
+
     def _url(form, field):
         if allow_blank and not field.data:
             return
-        if not re.match(r'[a-z]+://.*\.[a-z]{2,4}(\/.*)?', field.data, re.I):
+        if not url_regexp.match(field.data):
             raise ValidationError(message)
     return _url
 
