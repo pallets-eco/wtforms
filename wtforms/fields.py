@@ -257,7 +257,7 @@ class SubmitField(BooleanField):
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'submit')
-        kwargs.setdefault('value', self._label)
+        kwargs.setdefault('value', self.label.text)
         return u'<input %s />' % html_params(name=self.name, **kwargs) 
 
     def process_formdata(self, valuelist):
