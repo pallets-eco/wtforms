@@ -51,11 +51,13 @@ class Field(object):
         else:
             return super(Field, cls).__new__(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=[], required=True, description=u'', id=None, **kwargs):
+    def __init__(self, label=u'', validators=None, required=True, description=u'', id=None, **kwargs):
         form = kwargs['form']
         self.name = kwargs['name']
         self.id = id or (form._idprefix + self.name)
         self.label = Label(self.id, label)
+        if validators is None:
+            validators = []
         self.validators = validators
         self.required = required
         self.description = description
