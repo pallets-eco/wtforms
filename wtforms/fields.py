@@ -153,6 +153,12 @@ class SelectField(Field):
             raise ValidationError('Not a valid choice')
 
 class SelectMultipleField(SelectField):
+    """
+    No different from a normal select field, except this one can take (and
+    validate) multiple choices.  You'll need to specify the HTML `rows`
+    attribute to the select field when rendering.
+    """
+
     def __call__(self, **kwargs):
         return super(SelectMultipleField, self).__call__(multiple="multiple", **kwargs)
 
@@ -171,6 +177,11 @@ class SelectMultipleField(SelectField):
         
         
 class TextField(Field):
+    """
+    This field is the base for most of the more complicated fields, and
+    represents an ``<input type="text">``.  
+    """
+
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'text')
@@ -180,16 +191,28 @@ class TextField(Field):
         return self.data and unicode(self.data) or u''
 
 class HiddenField(TextField):
+    """
+    Represents an ``<input type="hidden">``.
+    """
+
     def __call__(self, **kwargs):
         kwargs.setdefault('type', 'hidden')
         return super(HiddenField, self).__call__(**kwargs)
 
 class TextAreaField(TextField):
+    """
+    This field represents an HTML ``<textarea>`` and can be used to take multi-line input.
+    """
+
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         return u'<textarea %s>%s</textarea>' % (html_params(name=self.name, **kwargs), escape(unicode(self._value())))
 
 class PasswordField(TextField):
+    """
+    Represents an ``<input type="password">``.
+    """
+
     def __call__(self, **kwargs):
         kwargs.setdefault('type', 'password')
         return super(PasswordField, self).__call__(**kwargs)
@@ -201,12 +224,16 @@ class FileField(TextField):
     actually handle the file upload portion, as wtforms does not deal with 
     individual frameworks' file handling capabilities.
     """
+
     def __call__(self, **kwargs):
         kwargs.setdefault('type', 'file')
         return super(FileField, self).__call__(**kwargs)
 
 class IntegerField(TextField):
-    """ Can be represented by a text-input """
+    """
+    A text field, except all input is coerced to an integer.  Erroneous input
+    is ignored and will not be accepted as a value.
+    """
 
     def _value(self):
         return self.data and unicode(self.data) or u'0'
@@ -218,7 +245,9 @@ class IntegerField(TextField):
             pass
 
 class BooleanField(Field):
-    """ Represents a checkbox."""
+    """ 
+    Represents an ``<input type="checkbox">``.
+    """
 
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
@@ -238,6 +267,7 @@ class BooleanField(Field):
 
 class DateTimeField(TextField):
     """ Can be represented by one or multiple text-inputs """
+
     def __init__(self, label=u'', validators=[], required=True, *args, **kwargs):
         super(DateTimeField, self).__init__(label, validators, required, *args, **kwargs)
         self.format = kwargs.pop('format', '%Y-%m-%d %H:%M:%S')
@@ -250,10 +280,14 @@ class DateTimeField(TextField):
             try:
                 self.data = datetime.strptime(str.join(' ', valuelist), self.format)
             except ValueError:
-                return u'Date is invalid.'
+                pass
 
 class SubmitField(BooleanField):
-    """Allow checking if a given submit button has been pressed"""
+    """
+    Represents an ``<input type="submit">``.  This allows checking if a given
+    submit button has been pressed
+    """
+
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'submit')

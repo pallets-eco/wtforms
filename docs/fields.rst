@@ -103,7 +103,96 @@ The Field base class
 Built-in fields
 ---------------
 
-.. autoclass:: wtforms.fields.SelectField
+.. class:: wtforms.fields.SelectField(default field arguments, choices=[], checker=unicode)
+
+    Select fields keep a `choices` property which is a sequence of `(value,
+    label)` pairs.  The value portion can be any type in theory, but as form
+    data is sent by the browser as strings, you will need to provide a function
+    which can coerce the string representation back to a comparable object.
+
+    **Select fields with static choice values**::
+
+        class PastebinEntry(Form):
+            language = SelectField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
+
+    Note that the `choices` keyword is only evaluated once, so if you want to make
+    a dynamic drop-down list, you'll want to assign the choices list to the field
+    after instantiation.
+
+    **Select fields with dynamic choice values**::
+
+        class UserDetails(Form):
+            group_id = SelectField(u'Group', checker=int)
+
+        def edit_user(request, id):
+            user = User.query.get(id)
+            form = UserDetails(request.POST, obj=user)
+            form.group_id.choices = [(g.id, g.name) for g in Group.query.order_by('name')]
+
+    Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField` 
+    constructor, but rather created the list in the view function. Also, the 
+    `checker` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
+    use :func:`int()` to coerce form data.  The default checker is 
+    :func:`unicode()`. 
+
+.. autoclass:: wtforms.fields.SelectMultipleField(default field arguments, choices=[], checker=unicode)
+
+
+.. autoclass:: wtforms.fields.TextField(default field arguments)
+
+   .. code-block: jinja
+
+        {{ form.username(size=30, maxlength=50) }}
+
+.. autoclass:: wtforms.fields.HiddenField(default field arguments)
+
+    HiddenField is useful for providing data from a model or the application to
+    be used on the form handler side for making choices or finding records.
+    Very frequently, CRUD forms will use the hidden field for an object's id.   
+    
+    Hidden fields are like any other field in that they can take validators and
+    values and be accessed on the form object.   You should consider validating
+    your hidden fields just as you'd validate an input field, to prevent from
+    malicious people playing with your data.
+
+.. autoclass:: wtforms.fields.TextAreaField(default field arguments)
+
+    .. code-block: jinja
+        
+        {{ form.textarea(rows=7, cols=90) }}
+
+.. autoclass:: wtforms.fields.PasswordField(default field arguments)
+
+    Other than the fact that this makes a password input field, this field
+    functions exactly like a text-input field.
+
+.. autoclass:: wtforms.fields.FileField(default field arguments)
+
+    Example usage::
+
+        class UploadForm(Form):
+            image        = FileField(u'Image File', [validators.regexp(u'^[^/\\]\.jpg$')])
+            description  = TextAreaField(u'Image Description')
+
+            def _validate_image(form, field):
+                if field.data:
+                    field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
+        
+        def upload(request):
+            form = UploadForm(request.POST)
+            if form.image.data:
+                image_data = request.FILES[form.image.name].read()
+                open(os.path.join(UPLOAD_PATH, form.image.data), 'w').write(image_data)
+
+
+.. autoclass:: wtforms.fields.IntegerField(default field arguments)
+
+.. autoclass:: wtforms.fields.BooleanField(default field arguments)
+
+.. autoclass:: wtforms.fields.DateTimeField(default field arguments)
+
+.. autoclass:: wtforms.fields.SubmitField(default field arguments)
+
 
 Custom fields
 -------------
