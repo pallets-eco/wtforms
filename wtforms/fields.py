@@ -71,11 +71,14 @@ class Field(object):
     def __unicode__(self):
         return self()
 
+    def __str__(self):
+        return self()
+
     def __call__(self, **kwargs):
         """
         Render this field as HTML, using keyword args as additional attributes.
 
-        Any HTML attribute passed to the constructor will be added to the tag
+        Any HTML attribute passed to the method will be added to the tag
         and entity-escaped properly.   
         """
         raise NotImplementedError
