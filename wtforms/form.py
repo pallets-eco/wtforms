@@ -56,6 +56,13 @@ class Form(object):
         for name, field in self._fields:
             yield field
 
+    def __delattr__(self, name): 
+        try: 
+            self._fields.remove((name, getattr(self, name)))
+            setattr(self, name, None)
+        except ValueError:
+            super(Form, self).__delattr__(name)
+
     def validate(self):
         success = True
         for name, field in self._fields:
