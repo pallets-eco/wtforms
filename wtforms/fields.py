@@ -51,7 +51,7 @@ class Field(object):
         else:
             return super(Field, cls).__new__(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, required=True, description=u'', id=None, **kwargs):
+    def __init__(self, label=u'', validators=None, required=True, description=u'', id=None, default=None, **kwargs):
         form = kwargs['form']
         self.name = kwargs['name']
         self.id = id or (form._idprefix + self.name)
@@ -62,7 +62,10 @@ class Field(object):
         self.required = required
         self.description = description
         self.type = type(self).__name__
-        self.data = None
+        if default is not None:
+            self.process_data(default, False)
+        else:
+            self.data = None
         self.errors = []
 
     def __unicode__(self):
