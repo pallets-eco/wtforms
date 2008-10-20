@@ -21,11 +21,13 @@ def html_params(**kwargs):
     Generate HTML paramters for keywords
     """
     params = []
-    for k,v in kwargs.iteritems():
+    keys = kwargs.keys()
+    keys.sort()
+    for k in keys:
         if k in ('class_', 'class__'):
             k = k[:-1]
         k = unicode(k)
-        v = escape(unicode(v), quote=True)
+        v = escape(unicode(kwargs[k]), quote=True)
         params.append(u'%s="%s"' % (k, v))
     return str.join(' ', params)
 
@@ -117,6 +119,9 @@ class Label(object):
         self.field_id = field_id
         self.text = text
 
+    def __str__(self):
+        return self()
+
     def __unicode__(self):
         return self()
 
@@ -126,10 +131,10 @@ class Label(object):
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
-    def __init__(self, label=u'', validators=[], required=True, checker=unicode, choices=None, *args, **kwargs):
-        super(SelectField, self).__init__(label, validators, required, *args, **kwargs)
+    def __init__(self, label=u'', validators=None, required=True, checker=unicode, choices=None, *args, **kwargs):
         self.checker = checker
         self.choices = choices
+        super(SelectField, self).__init__(label, validators, required, *args, **kwargs)
 
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
@@ -255,6 +260,10 @@ class BooleanField(Field):
     Represents an ``<input type="checkbox">``.
     """
 
+    def __init__(self, label=u'', validators=None, required=True, default=False, *args, **kwargs):
+        super(BooleanField, self).__init__(label, validators, required, default=default, *args, **kwargs)
+        self.raw_data = None
+
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'checkbox')
@@ -266,15 +275,17 @@ class BooleanField(Field):
         if has_formdata:
             self.data = False
         else:
-            self.data = value
+            self.raw_data = value
+            self.data = bool(value)
 
     def process_formdata(self, valuelist):
-        self.data = valuelist[0] == u'y'
+        self.raw_data = valuelist[0]
+        self.data = bool(valuelist[0])
 
 class DateTimeField(TextField):
     """ Can be represented by one or multiple text-inputs """
 
-    def __init__(self, label=u'', validators=[], required=True, *args, **kwargs):
+    def __init__(self, label=u'', validators=None, required=True, *args, **kwargs):
         super(DateTimeField, self).__init__(label, validators, required, *args, **kwargs)
         self.format = kwargs.pop('format', '%Y-%m-%d %H:%M:%S')
 
