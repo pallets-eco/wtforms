@@ -128,10 +128,10 @@ class Label(object):
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
-    def __init__(self, label=u'', validators=None, required=True, checker=unicode, choices=None, *args, **kwargs):
+    def __init__(self, label=u'', validators=None, required=True, checker=unicode, choices=None, **kwargs):
+        super(SelectField, self).__init__(label, validators, required, **kwargs)
         self.checker = checker
         self.choices = choices
-        super(SelectField, self).__init__(label, validators, required, *args, **kwargs)
 
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
@@ -267,9 +267,10 @@ class BooleanField(Field):
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'checkbox')
+        kwargs.setdefault('value', 'y')
         if self.data:
             kwargs['checked'] = u'checked'
-        return u'<input %s />' % html_params(name=self.name, value=u'y', **kwargs)
+        return u'<input %s />' % html_params(name=self.name, **kwargs)
     
     def process_data(self, value, has_formdata):
         if has_formdata:
@@ -279,15 +280,16 @@ class BooleanField(Field):
             self.data = bool(value)
 
     def process_formdata(self, valuelist):
-        self.raw_data = valuelist[0]
-        self.data = bool(valuelist[0])
+        if valuelist:
+            self.raw_data = valuelist[0]
+            self.data = bool(valuelist[0])
 
 class DateTimeField(TextField):
     """ Can be represented by one or multiple text-inputs """
 
-    def __init__(self, label=u'', validators=None, required=True, *args, **kwargs):
-        super(DateTimeField, self).__init__(label, validators, required, *args, **kwargs)
-        self.format = kwargs.pop('format', '%Y-%m-%d %H:%M:%S')
+    def __init__(self, label=u'', validators=None, required=True, format='%Y-%m-%d %H:%M:%S', **kwargs):
+        super(DateTimeField, self).__init__(label, validators, required, **kwargs)
+        self.format = format
 
     def _value(self):
         return self.data and self.data.strftime(self.format) or u''
@@ -302,7 +304,7 @@ class DateTimeField(TextField):
 class SubmitField(BooleanField):
     """
     Represents an ``<input type="submit">``.  This allows checking if a given
-    submit button has been pressed
+    submit button has been pressed.
     """
 
     def __call__(self, **kwargs):
@@ -310,8 +312,5 @@ class SubmitField(BooleanField):
         kwargs.setdefault('type', 'submit')
         kwargs.setdefault('value', self.label.text)
         return u'<input %s />' % html_params(name=self.name, **kwargs) 
-
-    def process_formdata(self, valuelist):
-        self.data = (len(valuelist) > 0 and valuelist[0] != u'')
 
 __all__ = ('SelectField', 'SelectMultipleField', 'TextField', 'IntegerField', 'BooleanField', 'DateTimeField', 'PasswordField', 'TextAreaField', 'SubmitField', 'HiddenField', 'FileField')
