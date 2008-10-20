@@ -44,7 +44,7 @@ class Field(object):
     _formfield = True
     creation_counter = 0
     def __new__(cls, *args, **kwargs):
-        if 'name' not in kwargs:
+        if '_name' not in kwargs:
             x = partial(cls, *args, **kwargs)
             x._formfield = True
             x.creation_counter = Field.creation_counter
@@ -53,9 +53,9 @@ class Field(object):
         else:
             return super(Field, cls).__new__(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, required=True, description=u'', id=None, default=None, **kwargs):
-        form = kwargs['form']
-        self.name = kwargs['name']
+    def __init__(self, label=u'', validators=None, required=True, description=u'', id=None, default=None, _form=None, _name=None):
+        form = _form
+        self.name = _name
         self.id = id or (form._idprefix + self.name)
         self.label = Label(self.id, label)
         if validators is None:
@@ -128,8 +128,8 @@ class Label(object):
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
-    def __init__(self, label=u'', validators=None, required=True, checker=unicode, choices=None, **kwargs):
-        super(SelectField, self).__init__(label, validators, required, **kwargs)
+    def __init__(self, label=u'', validators=None, checker=unicode, choices=None, **kwargs):
+        super(SelectField, self).__init__(label, validators, **kwargs)
         self.checker = checker
         self.choices = choices
 
@@ -260,8 +260,8 @@ class BooleanField(Field):
     Represents an ``<input type="checkbox">``.
     """
 
-    def __init__(self, label=u'', validators=None, required=True, *args, **kwargs):
-        super(BooleanField, self).__init__(label, validators, required, *args, **kwargs)
+    def __init__(self, label=u'', validators=None, **kwargs):
+        super(BooleanField, self).__init__(label, validators, **kwargs)
         self.raw_data = None
 
     def __call__(self, **kwargs):
@@ -287,8 +287,8 @@ class BooleanField(Field):
 class DateTimeField(TextField):
     """ Can be represented by one or multiple text-inputs """
 
-    def __init__(self, label=u'', validators=None, required=True, format='%Y-%m-%d %H:%M:%S', **kwargs):
-        super(DateTimeField, self).__init__(label, validators, required, **kwargs)
+    def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
+        super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
 
     def _value(self):

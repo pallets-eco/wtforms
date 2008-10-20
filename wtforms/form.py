@@ -22,7 +22,7 @@ class Form(object):
         has_formdata = bool(formdata)
         for name, f in self._unbound_fields:
             form_name = prefix + name
-            field = f(name=form_name, form=self)
+            field = f(_form=self, _name=form_name)
             self._fields.append((name, field))
             setattr(self, name, field)
 
