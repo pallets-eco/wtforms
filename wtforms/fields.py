@@ -18,7 +18,7 @@ from wtforms.validators import ValidationError
 
 def html_params(**kwargs):
     """
-    Generate HTML paramters for keywords
+    Generate HTML parameters for keywords
     """
     params = []
     keys = kwargs.keys()
@@ -64,10 +64,7 @@ class Field(object):
         self.required = required
         self.description = description
         self.type = type(self).__name__
-        if default is not None:
-            self.process_data(default, False)
-        else:
-            self.data = None
+        self._default = default
         self.errors = []
 
     def __unicode__(self):
@@ -151,7 +148,10 @@ class SelectField(Field):
         return (self.checker(value) == self.data)
 
     def process_data(self, value, has_formdata):
-        self.data = self.checker(getattr(value, 'id', value))
+        try:
+            self.data = self.checker(getattr(value, 'id', value))
+        except (ValueError, TypeError):
+            self.data = None
 
     def process_formdata(self, valuelist):
         self.data = self.checker(valuelist[0])
@@ -260,8 +260,8 @@ class BooleanField(Field):
     Represents an ``<input type="checkbox">``.
     """
 
-    def __init__(self, label=u'', validators=None, required=True, default=False, *args, **kwargs):
-        super(BooleanField, self).__init__(label, validators, required, default=default, *args, **kwargs)
+    def __init__(self, label=u'', validators=None, required=True, *args, **kwargs):
+        super(BooleanField, self).__init__(label, validators, required, *args, **kwargs)
         self.raw_data = None
 
     def __call__(self, **kwargs):

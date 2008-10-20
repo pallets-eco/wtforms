@@ -26,6 +26,7 @@ class Form(object):
             self._fields.append((name, field))
             setattr(self, name, field)
 
+            field.process_data(field._default, has_formdata)
             if name in kwargs:
                 field.process_data(kwargs[name], has_formdata)
             if hasattr(obj, name):
