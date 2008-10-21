@@ -151,7 +151,7 @@ developed a way to write them inline::
     class RegistrationForm(Form):
         username         = TextField('Username', validators.length(min=4, max=25))
         
-        def _validate_username(form, field):
+        def validate_username(form, field):
             if not re.match(r'[a-z][A-Z0-9_-]+', field.data, re.I):
                 raise ValidationError(u'Usernames must start with a letter and consist only of letters, numbers, and - _')
 

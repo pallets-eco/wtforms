@@ -11,8 +11,11 @@ import re
 
 class ValidationError(ValueError):
     """ Raised when a validator fails to validate it's input. """
-    def __init__(self, *args, **kwargs):
-        super(ValidationError, self).__init__(*args, **kwargs)
+    pass
+
+class StopValidation(ValueError):
+    def __init__(self, message=u'', *args, **kwargs):
+        super(StopValidation, self).__init__(message, *args, **kwargs)
 
 def email(message=u'Invalid email address.'):
     """
@@ -95,17 +98,27 @@ def length(min=-1, max=-1, message=None):
             raise ValidationError(message)
     return _length
 
-def not_empty(message=u'Field must not be empty.'):
+def optional(form=None, field=None):
+    """
+    Allows empty input and stops the validation chain from continuing.
+    """
+    if form is None and field is None:
+        return optional
+    elif not field.data or (isinstance(field.data, basestring) and not field.data.strip()):
+        raise StopValidation()
+
+def required(message=u'Field must not be empty.'):
     """
     Validates that the field is not empty.
     
     `message`
         Error message to raise in case of a validation error.
     """
-    def _not_empty(form, field):
-        if not field.data or not field.data.strip():
-            raise ValidationError(message)
-    return _not_empty
+    def _required(form, field):
+        if not field.data or (isinstance(field.data, basestring) and not field.data.strip()):
+            raise StopValidation(message)
+    return _required
+
 
 def regexp(regex, flags=0, message=u'Invalid input.'):
     """
@@ -130,27 +143,24 @@ def regexp(regex, flags=0, message=u'Invalid input.'):
             raise ValidationError(message)
     return _regexp
 
-def url(allow_blank=False, require_tld=True, message=u'Invalid URL.'):
+def url(require_tld=True, message=u'Invalid URL.'):
     """
     Simple regexp based url validation. Much like the email validator, you
     probably want to validate the url later by other means if the url must 
     resolve.
+
+    `require_tld`
+        If true, then the domain-name portion of the URL must contain a .tld
+        suffix.  Set this to false if you want to allow domains like 
+        `localhost`.
     
-    `allow_blank`
-        If true, must either have no value or a valid url. This option is
-        deprecated and will be removed soon. Use required=False on the field
-        itself instead.        
     `message`
         Error message to raise in case of a validation error.
     """
-    BASE_REGEXP = r'''[a-z]+://(.*\.[a-z]{2,4}%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?''' 
-    url_regexp = re.compile(BASE_REGEXP % ((not require_tld) and r'|[a-z0-9]+' or ''), re.IGNORECASE)
+    BASE_REGEXP = r"""^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$""" 
+    url_regexp = re.compile(BASE_REGEXP % (require_tld and r'\.[a-z]{2,4}' or ''), re.IGNORECASE)
 
-    def _url(form, field):
-        if allow_blank and not field.data:
-            return
-        if not url_regexp.match(field.data):
-            raise ValidationError(message)
-    return _url
+    return regexp(url_regexp, message=message) 
 
-__all__ = ('ValidationError', 'email', 'equal_to', 'ip_address', 'is_checked', 'length', 'not_empty', 'regexp', 'url')
+
+__all__ = ('ValidationError', 'StopValidation', 'email', 'equal_to', 'ip_address', 'is_checked', 'length', 'required', 'optional', 'regexp', 'url')

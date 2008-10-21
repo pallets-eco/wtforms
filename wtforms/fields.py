@@ -53,7 +53,7 @@ class Field(object):
         else:
             return super(Field, cls).__new__(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, required=True, description=u'', id=None, default=None, _form=None, _name=None):
+    def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, _form=None, _name=None):
         form = _form
         self.name = _name
         self.id = id or (form._idprefix + self.name)
@@ -61,7 +61,6 @@ class Field(object):
         if validators is None:
             validators = []
         self.validators = validators
-        self.required = required
         self.description = description
         self.type = type(self).__name__
         self._default = default

@@ -12,8 +12,8 @@ Field definitions
 Fields are defined as members on a form in a declarative fashion::
 
     class MyForm(Form):
-        name    = TextField(u'Full Name', [validators.length(max=10)], required=True)
-        address = TextAreaField(u'Mailing Address', [validators.length(max=200)], required=False)
+        name    = TextField(u'Full Name', [validators.required(), validators.length(max=10)])
+        address = TextAreaField(u'Mailing Address', [validators.optional(), validators.length(max=200)])
 
 When a field is defined on a form, the construction parameters are saved until
 the form is instantiated. At form instantiation time, a copy of the field is 
@@ -174,7 +174,7 @@ Built-in fields
             image        = FileField(u'Image File', [validators.regexp(u'^[^/\\]\.jpg$')])
             description  = TextAreaField(u'Image Description')
 
-            def _validate_image(form, field):
+            def validate_image(form, field):
                 if field.data:
                     field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
         

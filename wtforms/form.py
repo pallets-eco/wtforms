@@ -7,8 +7,7 @@
     :copyright: 2007-2008 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
-from wtforms.validators import ValidationError
-import types
+from wtforms.validators import StopValidation
 
 class Form(object):
     def __init__(self, formdata=None, obj=None, prefix='', idprefix='', **kwargs):
@@ -68,16 +67,18 @@ class Form(object):
         success = True
         for name, field in self._fields:
             field.errors = []
-            if not field.required and not field.data:
-                continue
             validators = list(field.validators)
             validators.append(field._validate)
-            inline_validator = getattr(self.__class__, '_validate_%s' % name, None)
+            inline_validator = getattr(self.__class__, 'validate_%s' % name, None)
             if inline_validator is not None:
                 validators.append(inline_validator)
             for validator in validators:
                 try:
                     validator(self, field)
+                except StopValidation, e:
+                    if e.args and e.args[0]:
+                        field.errors.append(e.args[0])
+                    break
                 except ValueError, e:
                     field.errors.append(e.args[0])
             if field.errors:
@@ -94,7 +95,7 @@ class Form(object):
 
     def auto_populate(self, model):
         """
-        Automatically copy our converted form values into the model object.
+        Automatically copy converted form values into the model object.
 
         This can be very dangerous if not used properly, so make sure to only use
         this in forms with proper validators and the right attributes.

@@ -17,7 +17,8 @@ Built-in validators
 .. autofunction:: wtforms.validators.ip_address
 .. autofunction:: wtforms.validators.is_checked
 .. autofunction:: wtforms.validators.length
-.. autofunction:: wtforms.validators.not_empty
+.. autofunction:: wtforms.validators.optional
+.. autofunction:: wtforms.validators.required
 .. autofunction:: wtforms.validators.regexp
 .. autofunction:: wtforms.validators.url
 
