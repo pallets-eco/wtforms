@@ -68,7 +68,7 @@ class Form(object):
         for name, field in self._fields:
             field.errors = []
             validators = list(field.validators)
-            validators.append(field._validate)
+            validators.append(field.validate)
             inline_validator = getattr(self.__class__, 'validate_%s' % name, None)
             if inline_validator is not None:
                 validators.append(inline_validator)

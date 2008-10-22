@@ -81,7 +81,7 @@ class Field(object):
         """
         raise NotImplementedError
 
-    def _validate(self, *args):
+    def validate(self, *args):
         """
         Run any built-in implicit validation provided by this field.
 
@@ -155,7 +155,7 @@ class SelectField(Field):
     def process_formdata(self, valuelist):
         self.data = self.checker(valuelist[0])
 
-    def _validate(self, *args):
+    def validate(self, *args):
         for v, _ in self.choices:
             if self.data == v:
                 break
@@ -179,7 +179,7 @@ class SelectMultipleField(SelectField):
     def process_formdata(self, valuelist):
         self.data = [self.checker(x) for x in valuelist]
 
-    def _validate(self, *args):
+    def validate(self, *args):
         choices = [c[0] for c in self.choices]
         for d in self.data:
             if d not in choices:
