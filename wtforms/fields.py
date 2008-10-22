@@ -14,22 +14,8 @@ try:
 except ImportError:
     from wtforms.utils import partial
 
+from wtforms.utils import html_params
 from wtforms.validators import ValidationError
-
-def html_params(**kwargs):
-    """
-    Generate HTML parameters for keywords
-    """
-    params = []
-    keys = kwargs.keys()
-    keys.sort()
-    for k in keys:
-        if k in ('class_', 'class__'):
-            k = k[:-1]
-        k = unicode(k)
-        v = escape(unicode(kwargs[k]), quote=True)
-        params.append(u'%s="%s"' % (k, v))
-    return str.join(' ', params)
 
 class Field(object):
     """
@@ -313,7 +299,7 @@ class SubmitField(BooleanField):
         return u'<input %s />' % html_params(name=self.name, **kwargs) 
 
 __all__ = (
-    'Field', 'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
+    'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
     'IntegerField', 'PasswordField', 'SelectField', 'SelectMultipleField',
     'SubmitField', 'TextField', 'TextAreaField',
 )
