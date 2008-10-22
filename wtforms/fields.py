@@ -312,4 +312,8 @@ class SubmitField(BooleanField):
         kwargs.setdefault('value', self.label.text)
         return u'<input %s />' % html_params(name=self.name, **kwargs) 
 
-__all__ = ('SelectField', 'SelectMultipleField', 'TextField', 'IntegerField', 'BooleanField', 'DateTimeField', 'PasswordField', 'TextAreaField', 'SubmitField', 'HiddenField', 'FileField')
+__all__ = (
+    'Field', 'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
+    'IntegerField', 'PasswordField', 'SelectField', 'SelectMultipleField',
+    'SubmitField', 'TextField', 'TextAreaField',
+)
