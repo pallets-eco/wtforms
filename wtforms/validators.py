@@ -64,18 +64,6 @@ def ip_address(message=u'Invalid IP address.'):
             raise ValidationError(message)
     return _ip_address
 
-def is_checked(message=u'Field must tbe checked.'):
-    """
-    Checks that the field is checked. Used with boolean fields.
-
-    `message`
-        Error message to raise in case of a validation error.
-    """
-    def _is_checked(form, field):
-        if not field.data:
-            raise ValidationError(message)
-    return _is_checked
-
 def length(min=-1, max=-1, message=None):
     """
     Validates the length of a string.
@@ -98,24 +86,25 @@ def length(min=-1, max=-1, message=None):
             raise ValidationError(message)
     return _length
 
-def optional(form=None, field=None):
+def optional():
     """
     Allows empty input and stops the validation chain from continuing.
     """
-    if form is None and field is None:
-        return optional
-    elif not field.data or (isinstance(field.data, basestring) and not field.data.strip()):
-        raise StopValidation()
+    def _optional(form, field):
+        if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+            raise StopValidation()
+    return _optional
 
-def required(message=u'Field must not be empty.'):
+def required(message=u'This field is required.'):
     """
-    Validates that the field is not empty.
-    
+    Validates that the field contains data. This validator will stop the
+    validation chain on error.
+
     `message`
         Error message to raise in case of a validation error.
     """
     def _required(form, field):
-        if not field.data or (isinstance(field.data, basestring) and not field.data.strip()):
+        if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation(message)
     return _required
 
@@ -163,4 +152,4 @@ def url(require_tld=True, message=u'Invalid URL.'):
     return regexp(url_regexp, message=message) 
 
 
-__all__ = ('ValidationError', 'StopValidation', 'email', 'equal_to', 'ip_address', 'is_checked', 'length', 'required', 'optional', 'regexp', 'url')
+__all__ = ('ValidationError', 'StopValidation', 'email', 'equal_to', 'ip_address', 'length', 'required', 'optional', 'regexp', 'url')
