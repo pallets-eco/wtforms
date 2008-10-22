@@ -13,7 +13,7 @@ class ValidationError(ValueError):
     """ Raised when a validator fails to validate it's input. """
     pass
 
-class StopValidation(ValueError):
+class StopValidation(ValidationError):
     def __init__(self, message=u'', *args, **kwargs):
         super(StopValidation, self).__init__(message, *args, **kwargs)
 
