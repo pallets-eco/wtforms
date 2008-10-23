@@ -56,6 +56,11 @@ class Form(object):
         for name, field in self._fields:
             yield field
 
+    def __contains__(self, item):
+        for name, field in self._fields:
+            if name == item:
+                return True
+
     def __delattr__(self, name): 
         try: 
             self._fields.remove((name, getattr(self, name)))
