@@ -57,9 +57,7 @@ class Form(object):
             yield field
 
     def __contains__(self, item):
-        for name, field in self._fields:
-            if name == item:
-                return True
+        return getattr(getattr(self, item, False), '_formfield', False) is True
 
     def __delattr__(self, name): 
         try: 
