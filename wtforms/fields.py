@@ -139,7 +139,10 @@ class SelectField(Field):
             self.data = None
 
     def process_formdata(self, valuelist):
-        self.data = self.checker(valuelist[0])
+        try:
+            self.data = self.checker(valuelist[0])
+        except ValueError:
+            pass
 
     def validate(self, *args):
         for v, _ in self.choices:
@@ -162,8 +165,20 @@ class SelectMultipleField(SelectField):
         if self.data is not None:
             return (self.checker(value) in self.data)
         
+    def process_data(self, value, has_formdata):
+        if has_formdata:
+            self.data = []
+        else:
+            try:
+                self.data = [self.checker(getattr(v, 'id', v)) for v in value]
+            except (ValueError, TypeError):
+                self.data = None
+
     def process_formdata(self, valuelist):
-        self.data = [self.checker(x) for x in valuelist]
+        try:
+            self.data = [self.checker(x) for x in valuelist]
+        except ValueError:
+            pass
 
     def validate(self, *args):
         choices = [c[0] for c in self.choices]

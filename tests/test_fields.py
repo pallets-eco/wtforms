@@ -51,10 +51,18 @@ def test_SelectField():
 
 def test_SelectMultipleField():
     class F(Form):
-        a = SelectMultipleField(choices=[('a', 'hello'), ('b','bye'), ('c', 'something')], default='a')
+        a = SelectMultipleField(choices=[('a', 'hello'), ('b','bye'), ('c', 'something')], default=('a', ))
+        b = SelectMultipleField(checker=int, choices=[(1, 'A'), (2, 'B'), (3, 'C')], default=("1", "3"))
+    form = F()
+    assert form.a.data == ['a']
+    assert form.b.data == [1, 3]
     form = F(DummyPostData(a=['a', 'c']))
     assert form.a.data == ['a', 'c']
     assert form.a() == u"""<select id="a" multiple="multiple" name="a"><option selected="selected" value="a">hello</option><option value="b">bye</option><option selected="selected" value="c">something</option></select>"""
+    assert form.b.data == []
+    form = F(DummyPostData(b=['1', '2']))
+    assert form.b.data == [1, 2]
+
 
 def test_TextField():
     class F(Form):
