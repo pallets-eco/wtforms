@@ -28,7 +28,7 @@ def email(message=u'Invalid email address.'):
     """
     def _email(form, field):
         data = field.data is not None and field.data or ''
-        if not re.match(r'^.+@[^.].*\.[a-z]{2,4}$', data, re.IGNORECASE):
+        if not re.match(r'^.+@[^.].*\.[a-z]{2,}$', data, re.IGNORECASE):
             raise ValidationError(message)
     return _email
 
@@ -147,7 +147,7 @@ def url(require_tld=True, message=u'Invalid URL.'):
         Error message to raise in case of a validation error.
     """
     BASE_REGEXP = r"""^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$""" 
-    url_regexp = re.compile(BASE_REGEXP % (require_tld and r'\.[a-z]{2,4}' or ''), re.IGNORECASE)
+    url_regexp = re.compile(BASE_REGEXP % (require_tld and r'\.[a-z]{2,}' or ''), re.IGNORECASE)
 
     return regexp(url_regexp, message=message) 
 

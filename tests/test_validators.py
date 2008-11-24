@@ -33,7 +33,7 @@ def test_email():
     raises(ValidationError, email(), form, DummyField('@bar.dk'))
     raises(ValidationError, email(), form, DummyField('foo@bar'))
     raises(ValidationError, email(), form, DummyField('foo@bar.ab12'))
-    raises(ValidationError, email(), form, DummyField('foo@bar.abcde'))
+    raises(ValidationError, email(), form, DummyField('foo@.bar.ab'))
 
 def test_equal_to():
     form = DummyForm()
@@ -80,7 +80,7 @@ def test_regexp():
 def test_url():
     assert url()(form, DummyField('http://foobar.dk')) == None
     assert url()(form, DummyField('http://foobar.dk/')) == None
-    assert url()(form, DummyField('http://foobar.dk/foobar')) == None
+    assert url()(form, DummyField('http://foobar.museum/foobar')) == None
     assert url()(form, DummyField('http://127.0.0.1/foobar')) == None
     assert url()(form, DummyField('http://127.0.0.1:9000/fake')) == None
     assert url(require_tld=False)(form, DummyField('http://localhost/foobar')) == None
@@ -88,5 +88,6 @@ def test_url():
     raises(ValidationError, url(), form, DummyField('http://foobar'))
     raises(ValidationError, url(), form, DummyField('foobar.dk'))
     raises(ValidationError, url(), form, DummyField('http://127.0.0/asdf'))
+    raises(ValidationError, url(), form, DummyField('http://foobar.d'))
     raises(ValidationError, url(), form, DummyField('http://foobar.12'))
     raises(ValidationError, url(), form, DummyField('http://localhost:abc/a'))
