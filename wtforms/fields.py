@@ -185,6 +185,40 @@ class SelectMultipleField(SelectField):
         for d in self.data:
             if d not in choices:
                 raise ValidationError(u"'%s' is not a valid choice for this field" % d)
+
+class RadioField(SelectField):
+    """
+    Like a SelectField, except displays a list of radio buttons.
+
+    Iterating the field will produce  subfields (each containing a label as 
+    well) in order to allow custom rendering of the individual radio fields.
+    """
+
+    def __call__(self, **kwargs):
+        kwargs.setdefault('id', self.id)
+        html = u'<ul %s>' % html_params(**kwargs)
+        for choice in self:
+            html += u'<li>%s %s</li>' % (choice, choice.label)
+        html += u'</ul>'
+        return html
+
+    def __iter__(self):
+        for i, (value, label) in enumerate(self.choices):
+            r = self._Radio(label=label, id=u'%s_%d' % (self.id, i), _name=self.name, _form=None)
+            r.process_data(value, False)
+            r.checked = self._selected(value)
+            yield r
+
+    class _Radio(Field):
+        checked = False
+        def __call__(self, **kwargs):
+            kwargs.setdefault('id', self.id)
+            kwargs.setdefault('type', 'radio')
+            if self.checked:
+                kwargs['checked'] = u'checked'
+            kwargs['name'] = self.name
+            kwargs['value'] = self.data
+            return u'<input %s />' % html_params(**kwargs)
         
         
 class TextField(Field):
@@ -315,6 +349,6 @@ class SubmitField(BooleanField):
 
 __all__ = (
     'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
-    'IntegerField', 'PasswordField', 'SelectField', 'SelectMultipleField',
+    'IntegerField', 'PasswordField', 'RadioField', 'SelectField', 'SelectMultipleField',
     'SubmitField', 'TextField', 'TextAreaField',
 )

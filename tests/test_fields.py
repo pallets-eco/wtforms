@@ -63,6 +63,18 @@ def test_SelectMultipleField():
     form = F(DummyPostData(b=['1', '2']))
     assert form.b.data == [1, 2]
 
+def test_RadioField():
+    class F(Form):
+        a = RadioField(choices=[('a', 'hello'), ('b','bye')], default='a')
+        b = RadioField(choices=[(1, 'Item 1'), (2, 'Item 2')], checker=int)
+    form = F()
+    assert form.a.data == u'a'
+    assert form.b.data == None
+    assert form.validate() == False
+    assert form.a() == u"""<ul id="a"><li><input checked="checked" id="a_0" name="a" type="radio" value="a" /> <label for="a_0">hello</label></li><li><input id="a_1" name="a" type="radio" value="b" /> <label for="a_1">bye</label></li></ul>"""
+    assert form.b() == u"""<ul id="b"><li><input id="b_0" name="b" type="radio" value="1" /> <label for="b_0">Item 1</label></li><li><input id="b_1" name="b" type="radio" value="2" /> <label for="b_1">Item 2</label></li></ul>"""
+    assert [unicode(x) for x in form.a] == [u'<input checked="checked" id="a_0" name="a" type="radio" value="a" />', u'<input id="a_1" name="a" type="radio" value="b" />']
+
 
 def test_TextField():
     class F(Form):
