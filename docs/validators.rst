@@ -2,12 +2,14 @@ Validators
 ==========
 .. module:: wtforms.validators
 
-Validators simply takes an input, verifies it fulfills some criterion, such as
+A validator simply takes an input, verifies it fulfills some criterion, such as
 a maximum length for a string and returns. Or, if the validation fails, raises
 a :class:`~wtforms.validators.ValidationError`. This system is very simple and
 flexible, and allows you to chain any number of validators on fields.
 
 .. autoclass:: wtforms.validators.ValidationError
+
+.. autoclass:: wtforms.validators.StopValidation
 
 Built-in validators
 -------------------

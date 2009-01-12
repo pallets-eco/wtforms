@@ -10,10 +10,18 @@
 import re
 
 class ValidationError(ValueError):
-    """ Raised when a validator fails to validate it's input. """
-    pass
+    """Raised when a validator fails to validate its input."""
+    def __init__(self, message=u'', *args, **kwargs):
+        super(ValidationError, self).__init__(message, *args, **kwargs)
 
 class StopValidation(ValidationError):
+    """
+    Causes the validation chain to stop.
+
+    If StopValidation is raised, no more validators in the validation chain are
+    called. If raised with a message, the message will be added to the errors
+    list.
+    """
     def __init__(self, message=u'', *args, **kwargs):
         super(StopValidation, self).__init__(message, *args, **kwargs)
 
