@@ -31,7 +31,7 @@ The Field base class
 --------------------
 
 .. autoclass:: Field
-    :members: _validate, process_data, process_formdata 
+    :members: validate, process_data, process_formdata 
 
     **Properties**
 
@@ -78,6 +78,22 @@ The Field base class
 
         Data for this field, already coerced to the python type stored by the
         field.  Not HTML escaped.
+
+    .. attribute:: flags
+        
+        An object containing boolean flags set either by the field itself, or
+        by validators on the field. For example, the buit-in
+        :func:`~wtforms.validators.required` validator sets the 'required' flag.
+        An unset flag will result in :const:`False`.
+
+        .. code-block:: django
+            
+            {% for field in form %}
+                <tr>
+                    <th>{{ field.label }} {% if field.flags.required %}*{% endif %}</th>
+                    <td>{{ field }}</td>
+                </tr>
+            {% endfor %}
 
     .. attribute:: errors
         

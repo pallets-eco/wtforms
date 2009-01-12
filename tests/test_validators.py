@@ -58,11 +58,13 @@ def test_required():
     assert required()(form, DummyField('foobar')) == None
     raises(StopValidation, required(), form, DummyField(''))
     raises(StopValidation, required(), form, DummyField(' '))
+    assert required().field_flags == ('required', )
 
 def test_optional():
     assert optional()(form, DummyField('foobar')) == None
     raises(StopValidation, optional(), form, DummyField(''))
     raises(StopValidation, optional(), form, DummyField(' '))
+    assert optional().field_flags == ('optional', )
 
 def test_regexp():
     import re

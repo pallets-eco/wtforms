@@ -12,6 +12,7 @@ from py.test import raises
 from wtforms.fields import *
 from wtforms.fields import Label
 from wtforms.form import Form
+from wtforms import validators
 from datetime import datetime
 
 class DummyPostData(dict):
@@ -29,6 +30,18 @@ def test_Label():
     assert str(label) == expected
     assert unicode(label) == expected
     assert label('hello') == u"""<label for="test">hello</label>""" 
+
+def test_Flags():
+    class F(Form):
+        a = TextField(validators=[validators.required()])
+    form = F()
+    assert form.a.flags.required is True
+    assert 'required' in form.a.flags
+    assert form.a.flags.optional is False
+    assert 'optional' not in form.a.flags
+    form.a.flags.optional = True
+    assert form.a.flags.optional is True
+    
 
 def test_SelectField():
     class F(Form):

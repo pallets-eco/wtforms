@@ -50,6 +50,11 @@ class Field(object):
         self.description = description
         self.type = type(self).__name__
         self._default = default
+        self.flags = Flags()
+        for v in validators:    
+            flags = getattr(v, 'field_flags', ())
+            for f in flags:
+                setattr(self.flags, f, True)
         self.errors = []
 
     def __unicode__(self):
@@ -88,10 +93,24 @@ class Field(object):
         """
         Process data received over the wire from a form.
 
-        This will be called during form cvonstruction with data supplied
+        This will be called during form construction with data supplied
         through the `formdata` argument.
         """
         self.data = valuelist[0]
+
+class Flags(object):
+    """
+    Holds a set of boolean flags as attributes.
+
+    Accessing a non-existing attribute returns False for its value.
+    """
+
+    def __getattr__(self, name):
+        return False
+
+    def __contains__(self, name):
+        return getattr(self, name)
+
 
 class Label(object):
     """

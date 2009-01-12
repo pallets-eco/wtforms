@@ -93,6 +93,7 @@ def optional():
     def _optional(form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation()
+    _optional.field_flags = ('optional', )
     return _optional
 
 def required(message=u'This field is required.'):
@@ -106,8 +107,8 @@ def required(message=u'This field is required.'):
     def _required(form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation(message)
+    _required.field_flags = ('required', )
     return _required
-
 
 def regexp(regex, flags=0, message=u'Invalid input.'):
     """
