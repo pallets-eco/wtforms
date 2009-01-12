@@ -82,8 +82,8 @@ The Field base class
     .. attribute:: flags
         
         An object containing boolean flags set either by the field itself, or
-        by validators on the field. For example, the buit-in
-        :func:`~wtforms.validators.required` validator sets the 'required' flag.
+        by validators on the field. For example, the built-in
+        :func:`~wtforms.validators.required` validator sets the `required` flag.
         An unset flag will result in :const:`False`.
 
         .. code-block:: django
