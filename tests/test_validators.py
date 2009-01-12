@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
     test_validators
     ~~~~~~~~~~~~~~~
@@ -8,7 +9,7 @@
     :license: MIT, see LICENSE.txt for details.
 """
 
-from py.test import raises
+from unittest import TestCase
 from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url
 
 class DummyForm(object):
@@ -18,78 +19,83 @@ class DummyField(object):
     def __init__(self, data):
         self.data = data
 
-form = DummyForm()
+class test_validators(TestCase):
+    def setUp(self):
+        self.form = DummyForm()
 
-def test_email():
-    assert email()(form, DummyField('foo@bar.dk')) == None
-    assert email()(form, DummyField('123@bar.dk')) == None
-    assert email()(form, DummyField('foo@456.dk')) == None
-    assert email()(form, DummyField('foo@bar456.info')) == None
-    raises(ValidationError, email(), form, DummyField(None))
-    raises(ValidationError, email(), form, DummyField(''))
-    raises(ValidationError, email(), form, DummyField('foo'))
-    raises(ValidationError, email(), form, DummyField('bar.dk'))
-    raises(ValidationError, email(), form, DummyField('foo@'))
-    raises(ValidationError, email(), form, DummyField('@bar.dk'))
-    raises(ValidationError, email(), form, DummyField('foo@bar'))
-    raises(ValidationError, email(), form, DummyField('foo@bar.ab12'))
-    raises(ValidationError, email(), form, DummyField('foo@.bar.ab'))
+    def test_email(self):
+        self.assertEqual(email()(self.form, DummyField('foo@bar.dk')), None)
+        self.assertEqual(email()(self.form, DummyField('123@bar.dk')), None)
+        self.assertEqual(email()(self.form, DummyField('foo@456.dk')), None)
+        self.assertEqual(email()(self.form, DummyField('foo@bar456.info')), None)
+        self.assertRaises(ValidationError, email(), self.form, DummyField(None))
+        self.assertRaises(ValidationError, email(), self.form, DummyField(''))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('bar.dk'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('@bar.dk'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar.ab12'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
 
-def test_equal_to():
-    form = DummyForm()
-    form.foo = DummyField('test')
-    assert equal_to('foo')(form, form.foo) == None
-    raises(ValidationError, equal_to('invalid_field_name'), form, DummyField('test'))
-    raises(ValidationError, equal_to('foo'), form, DummyField('different_value'))
+    def test_equal_to(self):
+        self.form.foo = DummyField('test')
+        self.assertEqual(equal_to('foo')(self.form, self.form.foo), None)
+        self.assertRaises(ValidationError, equal_to('invalid_field_name'), self.form, DummyField('test'))
+        self.assertRaises(ValidationError, equal_to('foo'), self.form, DummyField('different_value'))
 
-def test_ip_address():
-    assert ip_address()(form, DummyField('127.0.0.1')) == None
-    raises(ValidationError, ip_address(), form, DummyField('abc.0.0.1'))
-    raises(ValidationError, ip_address(), form, DummyField('1278.0.0.1'))
-    raises(ValidationError, ip_address(), form, DummyField('127.0.0.abc'))
+    def test_ip_address(self):
+        self.assertEqual(ip_address()(self.form, DummyField('127.0.0.1')), None)
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('abc.0.0.1'))
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('1278.0.0.1'))
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('127.0.0.abc'))
 
-def test_length():
-    field = DummyField('foobar')
-    assert length(min=2, max=6)(form, field) == None
-    raises(ValidationError, length(min=7), form, field)
-    raises(ValidationError, length(max=5), form, field)
+    def test_length(self):
+        field = DummyField('foobar')
+        self.assertEqual(length(min=2, max=6)(self.form, field), None)
+        self.assertRaises(ValidationError, length(min=7), self.form, field)
+        self.assertRaises(ValidationError, length(max=5), self.form, field)
     
-def test_required():
-    assert required()(form, DummyField('foobar')) == None
-    raises(StopValidation, required(), form, DummyField(''))
-    raises(StopValidation, required(), form, DummyField(' '))
-    assert required().field_flags == ('required', )
+    def test_required(self):
+        self.assertEqual(required()(self.form, DummyField('foobar')), None)
+        self.assertRaises(StopValidation, required(), self.form, DummyField(''))
+        self.assertRaises(StopValidation, required(), self.form, DummyField(' '))
+        self.assertEqual(required().field_flags, ('required', ))
 
-def test_optional():
-    assert optional()(form, DummyField('foobar')) == None
-    raises(StopValidation, optional(), form, DummyField(''))
-    raises(StopValidation, optional(), form, DummyField(' '))
-    assert optional().field_flags == ('optional', )
+    def test_optional(self):
+        self.assertEqual(optional()(self.form, DummyField('foobar')), None)
+        self.assertRaises(StopValidation, optional(), self.form, DummyField(''))
+        self.assertRaises(StopValidation, optional(), self.form, DummyField(' '))
+        self.assertEqual(optional().field_flags, ('optional', ))
 
-def test_regexp():
-    import re
-    # String regexp
-    assert regexp('^a')(form, DummyField('abcd')) == None
-    assert regexp('^a', re.I)(form, DummyField('ABcd')) == None
-    raises(ValidationError, regexp('^a'), form, DummyField('foo'))
-    raises(ValidationError, regexp('^a'), form, DummyField(None))
-    # Compiled regexp
-    assert regexp(re.compile('^a'))(form, DummyField('abcd')) == None
-    assert regexp(re.compile('^a', re.I))(form, DummyField('ABcd')) == None
-    raises(ValidationError, regexp(re.compile('^a')), form, DummyField('foo'))
-    raises(ValidationError, regexp(re.compile('^a')), form, DummyField(None))
+    def test_regexp(self):
+        import re
+        # String regexp
+        self.assertEqual(regexp('^a')(self.form, DummyField('abcd')), None)
+        self.assertEqual(regexp('^a', re.I)(self.form, DummyField('ABcd')), None)
+        self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField('foo'))
+        self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField(None))
+        # Compiled regexp
+        self.assertEqual(regexp(re.compile('^a'))(self.form, DummyField('abcd')), None)
+        self.assertEqual(regexp(re.compile('^a', re.I))(self.form, DummyField('ABcd')), None)
+        self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField('foo'))
+        self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField(None))
 
-def test_url():
-    assert url()(form, DummyField('http://foobar.dk')) == None
-    assert url()(form, DummyField('http://foobar.dk/')) == None
-    assert url()(form, DummyField('http://foobar.museum/foobar')) == None
-    assert url()(form, DummyField('http://127.0.0.1/foobar')) == None
-    assert url()(form, DummyField('http://127.0.0.1:9000/fake')) == None
-    assert url(require_tld=False)(form, DummyField('http://localhost/foobar')) == None
-    assert url(require_tld=False)(form, DummyField('http://foobar')) == None
-    raises(ValidationError, url(), form, DummyField('http://foobar'))
-    raises(ValidationError, url(), form, DummyField('foobar.dk'))
-    raises(ValidationError, url(), form, DummyField('http://127.0.0/asdf'))
-    raises(ValidationError, url(), form, DummyField('http://foobar.d'))
-    raises(ValidationError, url(), form, DummyField('http://foobar.12'))
-    raises(ValidationError, url(), form, DummyField('http://localhost:abc/a'))
+    def test_url(self):
+        self.assertEqual(url()(self.form, DummyField('http://foobar.dk')), None)
+        self.assertEqual(url()(self.form, DummyField('http://foobar.dk/')), None)
+        self.assertEqual(url()(self.form, DummyField('http://foobar.museum/foobar')), None)
+        self.assertEqual(url()(self.form, DummyField('http://127.0.0.1/foobar')), None)
+        self.assertEqual(url()(self.form, DummyField('http://127.0.0.1:9000/fake')), None)
+        self.assertEqual(url(require_tld=False)(self.form, DummyField('http://localhost/foobar')), None)
+        self.assertEqual(url(require_tld=False)(self.form, DummyField('http://foobar')), None)
+        self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField('foobar.dk'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField('http://127.0.0/asdf'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.d'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.12'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField('http://localhost:abc/a'))
+
+if __name__ == '__main__':
+    from unittest import main
+    main()
