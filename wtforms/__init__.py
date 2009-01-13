@@ -1,17 +1,12 @@
 """
-    wtforms
-    ~~~~~~~
-    
-    WTForms is a HTTP/HTML forms handling library, written in Python.
-    
-    It handles definition, validation and rendering in a flexible and i18n
-    friendly way. It heavily reduces boilerplate and is completely unicode
-    aware.
+WTForms
+=======
 
-    Check out the hg repository at http://dev.simplecodes.com/hg/wtforms
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
+WTForms is a forms handling library for web applications in python. For
+documentation and help please visit the `official website <http://wtforms.simplecodes.com/>`_.
+
+The `WTForms tip <http://dev.simplecodes.com/hg/wtforms/archive/tip.zip#egg=WTForms-dev>`_
+is installable via `easy_install` with ``easy_install WTForms==dev``.
 """
 from wtforms.form import Form
 from wtforms.fields import *
