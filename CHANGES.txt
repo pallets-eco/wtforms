@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 0.2
 -----------
-Released January 13th, 2008.
+Released January 13th, 2009.
 
 - We have documentation and unit tests!
 
