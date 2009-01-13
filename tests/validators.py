@@ -1,7 +1,7 @@
 #!/usr/bin/python
 """
-    test_validators
-    ~~~~~~~~~~~~~~~
+    validators
+    ~~~~~~~~~~
     
     Unittests for bundled validators.
     

@@ -9,7 +9,7 @@
     :license: MIT, see LICENSE.txt for details.
 """
 
-TESTS = ['test_fields', 'test_validators']
+TESTS = ['fields', 'validators']
 
 
 from unittest import defaultTestLoader, TextTestRunner, TestSuite
