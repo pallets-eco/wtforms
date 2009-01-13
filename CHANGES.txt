@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 0.2
 -----------
-Not yet released.
+Released January 13th, 2008.
 
 - We have documentation and unit tests!
 
@@ -14,16 +14,16 @@ Not yet released.
 - Changed the way fields take parameters, they are no longer quasi magic. This
   is a breaking change. Please see the documentation for the new syntax.
 
-- Added optional description argument to Field, acessible on the field as
+- Added optional description argument to Field, accessible on the field as
   `description`. This provides an easy way to define e.g. help text in the same
   place as the form.
 
 - Added new semantics for validators which can stop the validation chain, with
   or without errors.
 
-- Added a regexp validator, and removed the not_empty validator in favor of
-  two validators, optional and required. The new validators  allow control
-  over the validation chain in additional to checking emptiness.
+- Added a regexp validator, and removed the not_empty validator in favour of
+  two validators, optional and required. The new validators allow control
+  over the validation chain in addition to checking emptiness.
 
 - Renamed wtforms.contrib to wtforms.ext and reorganised wtforms.ext.django.
   This is a breaking change if you were using the django extensions, but should

@@ -1,4 +1,13 @@
 #!/usr/bin/python
+"""
+    runtests
+    ~~~~~~~~
+    
+    Runs all unittests.
+    
+    :copyright: 2009 by James Crasta, Thomas Johansson.
+    :license: MIT, see LICENSE.txt for details.
+"""
 
 TESTS = ['test_fields', 'test_validators']
 

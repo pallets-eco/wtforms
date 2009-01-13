@@ -37,7 +37,7 @@ master_doc = 'index'
 
 # General substitutions.
 project = 'WTForms'
-copyright = '2008, Thomas Johansson, James Crasta'
+copyright = '2009 by Thomas Johansson, James Crasta'
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.

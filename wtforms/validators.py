@@ -1,16 +1,18 @@
 """
     wtforms.validators
     ~~~~~~~~~~~~~~~~~~
+
+    Contains all built-in validators such as `required` and `optional`.
     
-    TODO
-    
-    :copyright: 2007-2008 by James Crasta, Thomas Johansson.
+    :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
 import re
 
 class ValidationError(ValueError):
-    """Raised when a validator fails to validate its input."""
+    """
+    Raised when a validator fails to validate its input.
+    """
     def __init__(self, message=u'', *args, **kwargs):
         super(ValidationError, self).__init__(message, *args, **kwargs)
 
@@ -159,6 +161,5 @@ def url(require_tld=True, message=u'Invalid URL.'):
     url_regexp = re.compile(BASE_REGEXP % (require_tld and r'\.[a-z]{2,}' or ''), re.IGNORECASE)
 
     return regexp(url_regexp, message=message) 
-
 
 __all__ = ('ValidationError', 'StopValidation', 'email', 'equal_to', 'ip_address', 'length', 'required', 'optional', 'regexp', 'url')

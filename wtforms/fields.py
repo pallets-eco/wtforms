@@ -2,9 +2,9 @@
     wtforms.fields
     ~~~~~~~~~~~~~~
     
-    TODO
+    Contains the `Field` base class in addition to all built-in field types.
     
-    :copyright: 2007-2008 by James Crasta, Thomas Johansson.
+    :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
 from datetime import datetime
@@ -26,9 +26,9 @@ class Field(object):
     properties which can be used within your templates to render the field and
     label.  
     """
-
     _formfield = True
     creation_counter = 0
+
     def __new__(cls, *args, **kwargs):
         if '_name' not in kwargs:
             x = partial(cls, *args, **kwargs)
@@ -104,7 +104,6 @@ class Flags(object):
 
     Accessing a non-existing attribute returns False for its value.
     """
-
     def __getattr__(self, name):
         return False
 
@@ -176,7 +175,6 @@ class SelectMultipleField(SelectField):
     validate) multiple choices.  You'll need to specify the HTML `rows`
     attribute to the select field when rendering.
     """
-
     def __call__(self, **kwargs):
         return super(SelectMultipleField, self).__call__(multiple="multiple", **kwargs)
 
@@ -212,7 +210,6 @@ class RadioField(SelectField):
     Iterating the field will produce  subfields (each containing a label as 
     well) in order to allow custom rendering of the individual radio fields.
     """
-
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         html = u'<ul %s>' % html_params(**kwargs)
@@ -245,7 +242,6 @@ class TextField(Field):
     This field is the base for most of the more complicated fields, and
     represents an ``<input type="text">``.  
     """
-
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'text')
@@ -258,7 +254,6 @@ class HiddenField(TextField):
     """
     Represents an ``<input type="hidden">``.
     """
-
     def __call__(self, **kwargs):
         kwargs.setdefault('type', 'hidden')
         return super(HiddenField, self).__call__(**kwargs)
@@ -276,7 +271,6 @@ class PasswordField(TextField):
     """
     Represents an ``<input type="password">``.
     """
-
     def __call__(self, **kwargs):
         kwargs.setdefault('type', 'password')
         return super(PasswordField, self).__call__(**kwargs)
@@ -288,7 +282,6 @@ class FileField(TextField):
     actually handle the file upload portion, as wtforms does not deal with 
     individual frameworks' file handling capabilities.
     """
-
     def __call__(self, **kwargs):
         kwargs.setdefault('type', 'file')
         return super(FileField, self).__call__(**kwargs)
@@ -298,7 +291,6 @@ class IntegerField(TextField):
     A text field, except all input is coerced to an integer.  Erroneous input
     is ignored and will not be accepted as a value.
     """
-
     def _value(self):
         return self.data and unicode(self.data) or u'0'
 
@@ -312,7 +304,6 @@ class BooleanField(Field):
     """ 
     Represents an ``<input type="checkbox">``.
     """
-
     def __init__(self, label=u'', validators=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
         self.raw_data = None
@@ -338,8 +329,9 @@ class BooleanField(Field):
             self.data = bool(valuelist[0])
 
 class DateTimeField(TextField):
-    """ Can be represented by one or multiple text-inputs """
-
+    """
+    Can be represented by one or multiple text-inputs.
+    """
     def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
@@ -359,7 +351,6 @@ class SubmitField(BooleanField):
     Represents an ``<input type="submit">``.  This allows checking if a given
     submit button has been pressed.
     """
-
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'submit')

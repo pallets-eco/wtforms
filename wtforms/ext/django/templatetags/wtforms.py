@@ -4,7 +4,7 @@
     
     Template Tags for easy wtforms access in Django templates
     
-    :copyright: 2007-2008 by James Crasta, Thomas Johansson.
+    :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
 from django import template
@@ -58,7 +58,7 @@ register.tag('form_field', do_form_field)
 
 args_split_re = re.compile(ur'''("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s=]+)''')
 def args_split(text):
-    """Split space-separated key=value arguments.  Keeps quoted strings intact.""" 
+    """ Split space-separated key=value arguments.  Keeps quoted strings intact. """ 
     for bit in args_split_re.finditer(text):
         bit = bit.group(0)
         if bit[0] == '"' and bit[-1] == '"':

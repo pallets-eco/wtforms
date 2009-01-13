@@ -5,7 +5,7 @@
     
     Unittests for bundled validators.
     
-    :copyright: 2007-2008 by James Crasta, Thomas Johansson.
+    :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
 

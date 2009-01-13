@@ -17,9 +17,9 @@ setup(
     author_email='jcrasta@gmail.com, prencher@gmail.com',
     description='HTTP/HTML forms handling for python',
     long_description=getdoc(wtforms),
-    zip_safe=True,
+    zip_safe=False,
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -28,13 +28,12 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
-    packages=['wtforms'],
-    features={
-        'ext': Feature('Extensions to WTForms providing extra functionality',
-            standard=True,
-            packages=['wtforms.ext']
-        )
-    },
+    packages=[
+        'wtforms',
+        'wtforms.ext',
+        'wtforms.ext.django',
+        'wtforms.ext.django.templatetags'
+    ],
     platforms=['any'],
     include_package_data=True,
 )
