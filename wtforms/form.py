@@ -50,7 +50,7 @@ class Form(object):
                         fields.append((name, field))
             fields.sort(lambda x,y: cmp(x[1].creation_counter, y[1].creation_counter))
             cls._unbound_fields = fields
-        return super(Form, cls).__new__(cls, *args, **kw)
+        return super(Form, cls).__new__(cls)
 
     def __iter__(self): 
         for name, field in self._fields:

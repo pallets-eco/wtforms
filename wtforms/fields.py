@@ -37,7 +37,7 @@ class Field(object):
             Field.creation_counter += 1
             return x
         else:
-            return super(Field, cls).__new__(cls, *args, **kwargs)
+            return super(Field, cls).__new__(cls)
 
     def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, _form=None, _name=None):
         form = _form
