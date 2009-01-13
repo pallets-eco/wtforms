@@ -27,35 +27,43 @@ Custom validators
 -----------------
 
 Defining your own validators is easy. You simply make a function that takes a
-list of configuration directives, and then returns a callable. The validator
-should always accept the `message` argument to provide a way to override the
-error message.
+list of configuration directives, and then returns a callable. The returned
+callable should take two positional arguments, which are a form instance and
+the field instance being validated. It is helpful to design your validators
+with a `message` argument to provide a way to override the error message.
 
-Let's look at one of the built-in validators, not_empty::
+Let's look at a possible validator which checks if a file upload's extension is
+that of an image::
 
-    def not_empty(message=u'Field must not be empty.'):
-        def _not_empty(form, field):
-            if not field.data or not field.data.strip():
+    def is_image(message=u'Images only!', extensions=None):
+        if not extensions:
+            extensions = ('jpg', 'jpeg', 'png', 'gif')
+        def _is_image(form, field):
+            if not field.data or field.data.split('.')[-1] not in extensions:
                 raise ValidationError(message)
-        return _not_empty
+        return _is_image
 
 And the way it's used::
 
-    password = PasswordField(u'Password', [validators.not_empty(u'Please provide a password.')])
+    avatar = FileField(u'Avatar', [is_image(u'Only images are allowed.', extensions=['gif', 'png'])])
 
-The outer function sets configuration directives, in this case just the
-message. The inner function provides the actual validation: If the field
-contains no data, or only contains whitespace, a :class:`~wtforms.validators.ValidationError`
-with the message is raised. Otherwise we just the let function return normally.
+The outer function sets configuration directives, in this case the message and
+the extensions. The inner function provides the actual validation: If the
+field contains no data, or an un-approved extension,
+:class:`~wtforms.validators.ValidationError` with the message is raised.
+Otherwise we just the let function return normally.
 
 You could also define the validator as a class::
 
-    class NotEmpty(object):
-        def __init__(self, message=u'Field must not be empty.'):
+    class IsImage(object):
+        def __init__(self, message=u'Images only!', extensions=None):
             self.message = message
+            if not extensions:
+                extensions = ('jpg', 'jpeg', 'png', 'gif')
+            self.extensions = extensions
 
         def __call__(self, form, field):
-            if not field.data or not field.data.strip():
+            if not field.data or field.data.split('.')[-1] not in extensions:
                 raise ValidationError(self.message)
 
 Which option you choose is entirely down to preference.
