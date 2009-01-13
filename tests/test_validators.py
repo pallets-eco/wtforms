@@ -19,7 +19,7 @@ class DummyField(object):
     def __init__(self, data):
         self.data = data
 
-class test_validators(TestCase):
+class ValidatorsTest(TestCase):
     def setUp(self):
         self.form = DummyForm()
 

@@ -24,7 +24,7 @@ class AttrDict(dict):
     def __getattr__(self, attr):
         return self[attr]
 
-class test_Label(TestCase):
+class LabelTest(TestCase):
     def test(self):
         expected = u"""<label for="test">Caption</label>"""
         label = Label('test', u'Caption')
@@ -33,7 +33,7 @@ class test_Label(TestCase):
         self.assertEqual(unicode(label), expected)
         self.assertEqual(label('hello'), u"""<label for="test">hello</label>""")
 
-class test_Flags(TestCase):
+class FlagsTest(TestCase):
     def setUp(self):
         class F(Form):
             a = TextField(validators=[validators.required()])
@@ -56,7 +56,7 @@ class test_Flags(TestCase):
         self.assertTrue('required' not in self.flags)
     
 
-class test_SelectField(TestCase):
+class SelectFieldTest(TestCase):
     class F(Form):
         a = SelectField(choices=[('a', 'hello'), ('b','bye')], default='a')
         b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], checker=int)
@@ -81,7 +81,7 @@ class test_SelectField(TestCase):
         form.b.choices = [(3, 'false')]
         self.assertEqual(form.validate(), False)
 
-class test_SelectMultipleField(TestCase):
+class SelectMultipleFieldTest(TestCase):
     class F(Form):
         a = SelectMultipleField(choices=[('a', 'hello'), ('b','bye'), ('c', 'something')], default=('a', ))
         b = SelectMultipleField(checker=int, choices=[(1, 'A'), (2, 'B'), (3, 'C')], default=("1", "3"))
@@ -99,7 +99,7 @@ class test_SelectMultipleField(TestCase):
         form = self.F(DummyPostData(b=['1', '2']))
         self.assertEqual(form.b.data, [1, 2])
 
-class test_RadioField(TestCase):
+class RadioFieldTest(TestCase):
     class F(Form):
         a = RadioField(choices=[('a', 'hello'), ('b','bye')], default='a')
         b = RadioField(choices=[(1, 'Item 1'), (2, 'Item 2')], checker=int)
@@ -113,7 +113,7 @@ class test_RadioField(TestCase):
         self.assertEqual(form.b(), u"""<ul id="b"><li><input id="b_0" name="b" type="radio" value="1" /> <label for="b_0">Item 1</label></li><li><input id="b_1" name="b" type="radio" value="2" /> <label for="b_1">Item 2</label></li></ul>""")
         self.assertEqual([unicode(x) for x in form.a], [u'<input checked="checked" id="a_0" name="a" type="radio" value="a" />', u'<input id="a_1" name="a" type="radio" value="b" />'])
 
-class test_TextField(TestCase):
+class TextFieldTest(TestCase):
     class F(Form):
         a = TextField()
 
@@ -125,7 +125,7 @@ class test_TextField(TestCase):
         self.assertEqual(form.a.data, u'hello')
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="hello" />""")
 
-class test_HiddenField(TestCase):
+class HiddenFieldTest(TestCase):
     class F(Form):
         a = HiddenField(default="LE DEFAULT")
 
@@ -133,7 +133,7 @@ class test_HiddenField(TestCase):
         form = self.F()
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="hidden" value="LE DEFAULT" />""")
 
-class test_TextAreaField(TestCase):
+class TextAreaFieldTest(TestCase):
     class F(Form):
         a = TextAreaField(default="LE DEFAULT")
 
@@ -141,7 +141,7 @@ class test_TextAreaField(TestCase):
         form = self.F()
         self.assertEqual(form.a(), u"""<textarea id="a" name="a">LE DEFAULT</textarea>""")
 
-class test_PasswordField(TestCase):
+class PasswordFieldTest(TestCase):
     class F(Form):
         a = PasswordField(default="LE DEFAULT")
 
@@ -149,7 +149,7 @@ class test_PasswordField(TestCase):
         form = self.F()
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="password" value="LE DEFAULT" />""")
 
-class test_FileField(TestCase):
+class FileFieldTest(TestCase):
     class F(Form):
         a = FileField(default="LE DEFAULT")
 
@@ -157,7 +157,7 @@ class test_FileField(TestCase):
         form = self.F()
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="file" value="LE DEFAULT" />""")
 
-class test_IntegerField(TestCase):
+class IntegerFieldTest(TestCase):
     class F(Form):
         a = IntegerField()
         b = IntegerField()
@@ -169,7 +169,7 @@ class test_IntegerField(TestCase):
         self.assertEqual(form.b.data, -15)
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15" />""")
 
-class test_BooleanField(TestCase):
+class BooleanFieldTest(TestCase):
     class BoringForm(Form):
         bool1  = BooleanField()
         bool2  = BooleanField(default=True)
@@ -198,7 +198,7 @@ class test_BooleanField(TestCase):
         self.assertEqual(form.bool1.data, True)
         self.assertEqual(form.bool2.data, False)
 
-class test_DateTimeField(TestCase):
+class DateTimeFieldTest(TestCase):
     class F(Form):
         a = DateTimeField()
         b = DateTimeField(format='%Y-%m-%d %H:%M')
@@ -212,7 +212,7 @@ class test_DateTimeField(TestCase):
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="2008-05-05 04:30" />""")
 
 
-class test_SubmitField(TestCase):
+class SubmitFieldTest(TestCase):
     class F(Form):
         a = SubmitField(u'Label')
 
