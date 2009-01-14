@@ -8,7 +8,8 @@
     :license: MIT, see LICENSE.txt for details.
 """
 from django import template
-from django.template import resolve_variable
+from django.template import Variable
+from django.conf import settings
 import re
 
 class FormFieldNode(template.Node):
@@ -17,21 +18,31 @@ class FormFieldNode(template.Node):
         self.html_attrs = html_attrs
 
     def render(self, context):
-        base, field_name = self.field_var.rsplit('.', 1)
-        field = getattr(resolve_variable(base, context), field_name)
+        try:
+            if '.' in self.field_var:
+                base, field_name = self.field_var.rsplit('.', 1)
+                field = getattr(Variable(base).resolve(context), field_name)
+            else:
+                field = context[self.field_var]
+        except (template.VariableDoesNotExist, KeyError, AttributeError):
+            return settings.TEMPLATE_STRING_IF_INVALID
         h_attrs = {}
         for k, v in self.html_attrs.iteritems():
             if v[0] in ('"', "'"):
                 h_attrs[k] = v[1:-1]
             else:
-                h_attrs[k] = resolve_variable(v, context)
+                try:
+                    h_attrs[k] = Variable(v).resolve(context)
+                except template.VariableDoesNotExist:
+                    h_attrs[k] = settings.TEMPLATE_STRING_IF_INVALID
+
         return field(**h_attrs)
 
 def do_form_field(parser, token):
     """
     Render a WTForms form field allowing optional HTML attributes.
     Invocation looks like this:
-      {% form_field form.username class="big_text" onclick=onclick_val %}
+      {% form_field form.username class="big_text" onclick="alert('hello')" %}
     where form.username is the path to the field value we want.  Any number 
     of key="value" arguments are supported. Unquoted values are resolved as
     template variables.
