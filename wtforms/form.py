@@ -100,7 +100,8 @@ class Form(object):
         if self._errors is None:
             self._errors = {}
             for name, field in self._fields:
-                self._errors[name] = field.errors
+                if field.errors:
+                    self._errors[name] = field.errors
         return self._errors
     errors = property(_get_errors)
 
