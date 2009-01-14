@@ -1,13 +1,17 @@
 WTForms Changelog
 =================
 
-Version 0.2.1
--------------
+Version 0.3
+-----------
 Not yet released.
 
 - wtforms.ext.django has been overhauled, both to mirror features and changes
   of the Django 1.0 release, and to add some useful fields for working with
   django ORM data in forms.
+ 
+- the `checker` keyword argument to SelectField, SelectMultipleField, and 
+  RadioField has been renamed to `coerce` to reflect the actual functionality
+  of this callable.
 
 
 Version 0.2

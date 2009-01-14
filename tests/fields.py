@@ -59,7 +59,7 @@ class FlagsTest(TestCase):
 class SelectFieldTest(TestCase):
     class F(Form):
         a = SelectField(choices=[('a', 'hello'), ('b','bye')], default='a')
-        b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], checker=int)
+        b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int)
 
     def test_defaults(self):
         form = self.F()
@@ -84,7 +84,7 @@ class SelectFieldTest(TestCase):
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
         a = SelectMultipleField(choices=[('a', 'hello'), ('b','bye'), ('c', 'something')], default=('a', ))
-        b = SelectMultipleField(checker=int, choices=[(1, 'A'), (2, 'B'), (3, 'C')], default=("1", "3"))
+        b = SelectMultipleField(coerce=int, choices=[(1, 'A'), (2, 'B'), (3, 'C')], default=("1", "3"))
 
     def test_defaults(self):
         form = self.F()
@@ -102,7 +102,7 @@ class SelectMultipleFieldTest(TestCase):
 class RadioFieldTest(TestCase):
     class F(Form):
         a = RadioField(choices=[('a', 'hello'), ('b','bye')], default='a')
-        b = RadioField(choices=[(1, 'Item 1'), (2, 'Item 2')], checker=int)
+        b = RadioField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int)
 
     def test(self):
         form = self.F()

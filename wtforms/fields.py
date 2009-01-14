@@ -131,9 +131,9 @@ class Label(object):
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
-    def __init__(self, label=u'', validators=None, checker=unicode, choices=None, **kwargs):
+    def __init__(self, label=u'', validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
-        self.checker = checker
+        self.coerce = coerce
         self.choices = choices
 
     def __call__(self, **kwargs):
@@ -148,17 +148,17 @@ class SelectField(Field):
         return html
 
     def _selected(self, value):
-        return (self.checker(value) == self.data)
+        return (self.coerce(value) == self.data)
 
     def process_data(self, value, has_formdata):
         try:
-            self.data = self.checker(getattr(value, 'id', value))
+            self.data = self.coerce(getattr(value, 'id', value))
         except (ValueError, TypeError):
             self.data = None
 
     def process_formdata(self, valuelist):
         try:
-            self.data = self.checker(valuelist[0])
+            self.data = self.coerce(valuelist[0])
         except ValueError:
             pass
 
@@ -180,20 +180,20 @@ class SelectMultipleField(SelectField):
 
     def _selected(self, value):
         if self.data is not None:
-            return (self.checker(value) in self.data)
+            return (self.coerce(value) in self.data)
         
     def process_data(self, value, has_formdata):
         if has_formdata:
             self.data = []
         else:
             try:
-                self.data = [self.checker(getattr(v, 'id', v)) for v in value]
+                self.data = [self.coerce(getattr(v, 'id', v)) for v in value]
             except (ValueError, TypeError):
                 self.data = None
 
     def process_formdata(self, valuelist):
         try:
-            self.data = [self.checker(x) for x in valuelist]
+            self.data = [self.coerce(x) for x in valuelist]
         except ValueError:
             pass
 
