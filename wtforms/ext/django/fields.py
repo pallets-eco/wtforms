@@ -36,7 +36,7 @@ class QSChoices(object):
             
 class QuerySetSelectField(Field):
     def __init__(self, label=u'', validators=None, queryset=None, **kwargs):
-        super(ORMSelectField, self).__init__(label, validators, **kwargs)
+        super(QuerySetSelectField, self).__init__(label, validators, **kwargs)
         self._formdata = None
         self._data = None
         if queryset is not None:
@@ -83,4 +83,4 @@ class QuerySetSelectField(Field):
 
 class ModelSelectField(QuerySetSelectField):
     def __init__(self, label=u'', validators=None, model=None, **kwargs):
-        super(ModelSelectField, self).__init__(label, validators, queryset=model.objects.all())
+        super(ModelSelectField, self).__init__(label, validators, queryset=model.objects.all(), **kwargs)

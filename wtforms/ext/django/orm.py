@@ -18,6 +18,7 @@ class ModelConverter(object):
         # TODO: 'ImageField' 'ManyToManyField' 'NullBooleanField' 'OneToOneField'
         'AutoField': f.IntegerField,
         'BooleanField': f.BooleanField,
+        'CharField': f.TextField, 
         'DateTimeField': f.DateTimeField,
         'FileField':  f.FileField,
         'FilePathField': f.FileField,
