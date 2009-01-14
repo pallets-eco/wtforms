@@ -16,7 +16,7 @@ class Form(object):
         self._idprefix = idprefix
 
         # populate data from form and optional instance and defaults
-        self.errors = {}
+        self._errors = None
         self._fields = []
         has_formdata = bool(formdata)
         for name, f in self._unbound_fields:
@@ -67,6 +67,7 @@ class Form(object):
             super(Form, self).__delattr__(name)
 
     def validate(self):
+        self._errors = None
         success = True
         for name, field in self._fields:
             field.errors = []
@@ -86,7 +87,6 @@ class Form(object):
                     field.errors.append(e.args[0])
             if field.errors:
                 success = False
-                self.errors[name] = field.errors
         return success
 
     def _get_data(self):
@@ -95,6 +95,14 @@ class Form(object):
             data[name] = field.data
         return data
     data = property(_get_data)
+
+    def _get_errors(self):
+        if self._errors is None:
+            self._errors = {}
+            for name, field in self._fields:
+                self._errors[name] = field.errors
+        return self._errors
+    errors = property(_get_errors)
 
     def auto_populate(self, model):
         """
