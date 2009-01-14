@@ -67,25 +67,20 @@ class Form(object):
             super(Form, self).__delattr__(name)
 
     def validate(self):
+        """
+        Validates the form by calling `validate` on each field, passing any
+        extra `Form.validate_<fieldname>` validators to the field validator.
+        
+        Returns True or False.
+        """
         self._errors = None
         success = True
         for name, field in self._fields:
-            field.errors = []
-            validators = list(field.validators)
-            validators.append(field.validate)
-            inline_validator = getattr(self.__class__, 'validate_%s' % name, None)
-            if inline_validator is not None:
-                validators.append(inline_validator)
-            for validator in validators:
-                try:
-                    validator(self, field)
-                except StopValidation, e:
-                    if e.args and e.args[0]:
-                        field.errors.append(e.args[0])
-                    break
-                except ValueError, e:
-                    field.errors.append(e.args[0])
-            if field.errors:
+            extra = []
+            inline = getattr(self.__class__, 'validate_%s' % name, None)
+            if inline is not None:
+                extra.append(inline)
+            if not field.validate(self, extra):
                 success = False
         return success
 

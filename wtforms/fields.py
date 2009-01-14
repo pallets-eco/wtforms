@@ -15,7 +15,7 @@ except ImportError:
     from wtforms.utils import partial
 
 from wtforms.utils import html_params
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, StopValidation
 
 class Field(object):
     """
@@ -72,11 +72,74 @@ class Field(object):
         """
         raise NotImplementedError
 
-    def validate(self, *args):
+    def validate(self, form, extra_validators=[]):
         """
-        Run any built-in implicit validation provided by this field.
+        Validates the field and returns True or False. `self.errors` will
+        contain any errors raised during validation. This is usually only
+        called by `Form.validate`.
+        
+        Subfields shouldn't override this, but rather override either
+        `pre_validate`, `post_validate` or both, depending on needs.
+        
+        `form`
+            The form the field belongs to.
+        `extra_validators`
+            A list of extra validators to run.
+        """
+        self.errors = []
+        stop_validation = False
 
-        Most fields don't need to implement this, but any field can if needed.
+        # Call pre_validate
+        try:
+            self.pre_validate(form)
+        except StopValidation, e:
+            if e.args and e.args[0]:
+                self.errors.append(e.args[0])
+            stop_validation = True
+        except ValueError, e:
+            self.errors.append(e.args[0])
+
+        # Run validators
+        if not stop_validation:
+            validators = self.validators + extra_validators
+            for validator in validators:
+                try:
+                    validator(form, self)
+                except StopValidation, e:
+                    if e.args and e.args[0]:
+                        self.errors.append(e.args[0])
+                    stop_validation = True
+                    break
+                except ValueError, e:
+                    self.errors.append(e.args[0])
+        
+        # Call post_validate
+        try:
+            self.post_validate(form, stop_validation)
+        except ValueError, e:
+            self.errors.append(e.args[0])
+
+        return len(self.errors) == 0
+
+    def pre_validate(self, form):
+        """
+        Override if you need field-level validation. Runs before any other
+        validators.
+        
+        `form`
+            The form the field belongs to.
+        """
+        pass
+        
+    def post_validate(self, form, validation_stopped):
+        """
+        Override if you need to run any field-level validation tasks after
+        normal validation. This shouldn't be needed in most cases.
+        
+        `form`
+            The form the field belongs to.
+        `validation_stopped`
+            Set to True if any validator raised StopValidation.
         """
         pass
 
@@ -162,7 +225,7 @@ class SelectField(Field):
         except ValueError:
             pass
 
-    def validate(self, *args):
+    def pre_validate(self, form):
         for v, _ in self.choices:
             if self.data == v:
                 break
@@ -197,7 +260,7 @@ class SelectMultipleField(SelectField):
         except ValueError:
             pass
 
-    def validate(self, *args):
+    def pre_validate(self, form):
         choices = [c[0] for c in self.choices]
         for d in self.data:
             if d not in choices:
