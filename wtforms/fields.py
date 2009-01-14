@@ -225,7 +225,7 @@ class SelectField(Field):
         except ValueError:
             pass
 
-    def validate(self, *args):
+    def pre_validate(self, form):
         for v, _ in self.choices:
             if self.data == v:
                 break
@@ -260,7 +260,7 @@ class SelectMultipleField(SelectField):
         except ValueError:
             pass
 
-    def validate(self, *args):
+    def pre_validate(self, form):
         choices = [c[0] for c in self.choices]
         for d in self.data:
             if d not in choices:
