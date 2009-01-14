@@ -1,7 +1,7 @@
-WTForms |version| Documentation
-===============================
+WTForms Documentation
+=====================
 
-Welcome! This is the documentation for WTForms |version|, updated |today|.
+This is the documentation for WTForms |version|, updated |today|.
 
 **First Steps:**
 
