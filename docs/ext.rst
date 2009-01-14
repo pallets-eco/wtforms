@@ -29,26 +29,51 @@ attributes to form fields similar to the usage in jinja:
 
 .. code-block:: django
 
-  {% load wtforms %}
+    {% load wtforms %}
 
     {% form_field form.username class="big_text" onclick="do_something()" %}
 
-**Note** if you're using the newest development version of Django, output from 
-wtforms using the `{{ form.field }}` syntax will be auto-escaped.  
-To avoid this happening, use the Django's `{% autoescape off %}` block tag or 
-use WTForms' `form_field` template tag.
+**Note** By default, using the `{{ form.field }}` syntax in django models will
+be auto-escaped.  To avoid this happening, use Django's `{% autoescape off %}`
+block tag or use WTForms' `form_field` template tag.
 
 Model forms
 ~~~~~~~~~~~
-.. module:: wtforms.ext.django.models
+.. module:: wtforms.ext.django.orm
 
-Similar to the ModelForm available in Django's newforms, wtforms can generate
-forms from your Django models.  To do this, use the
-:func:`wtforms.ext.django.models.model_form` function::
+.. autofunction:: model_form(model, base_class=Form, include_pk=False)
 
-    from wtforms.ext.django import model_form
-    from myproject.myapp.models import User
+    :func:`model_form` attempts to glean as much metadata as possible from
+    inspecting the model's fields, and will even attempt to guess at what
+    validation might be wanted based on the field type. For example, converting
+    an `EmailField` will result in a :class:`~wtforms.fields.TextField` with
+    the :func:`~wtforms.validators.email` validator on it. if the `blank`
+    property is set on a model field, the resulting form field will have the
+    :func:`~wtforms.validators.optional` validator set.
 
-    UserForm = model_form(User)
+    Just like any other Form, forms created by ModelForm can be extended via
+    inheritance::
+        
+        UserFormBase = model_form(User)
 
-You can then further extend UserForm and add additional fields as you need.
+        class UserForm(UserFormBase):
+            new_pass     = PasswordField('', [validators.optional(), validators.equal_to('confirm_pass')])
+            confirm_pass = PasswordField()
+
+    When combined with :meth:`form iteration <wtforms.form.Form.__iter__>`,
+    model_form is a handy way to generate dynamic CRUD forms which update with
+    added fields to the model. One must be careful though, as it's possible the
+    generated form fields won't be as strict with validation as a hand-written
+    form might be.
+
+ORM-backed fields
+~~~~~~~~~~~~~~~~~
+.. module:: wtforms.ext.django.fields
+
+TODO
+
+.. autoclass:: QuerySetChoices
+
+.. autoclass:: QuerySetSelectField
+
+.. autoclass:: ModelSelectField 

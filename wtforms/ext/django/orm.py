@@ -91,13 +91,15 @@ class ModelConverter(object):
 
 def model_form(model, base_class=Form, include_pk=False):
     """
-    Create a wtforms form for a given django model class.
+    Create a wtforms form for a given django model class::
+        
+        from wtforms.ext.django.orm import model_form
+        from myproject.myapp.models import User
+        UserForm = model_form(User)
 
-    >>> UserForm = model_form(User)
-
-    The form can be made to extend your own form by passing the `base_class` 
-    parameter.  The generated form can be subclassed as needed.
-    Primary key fields are not included unless you specify include_pk=True.
+    The form can be made to extend your own form by passing the ``base_class``
+    parameter. Primary key fields are not included unless you specify
+    ``include_pk=True``.
     """
     meta = model._meta
     f_dict = {}

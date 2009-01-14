@@ -5,6 +5,11 @@ Version 0.2.1
 -------------
 Not yet released.
 
+- wtforms.ext.django has been overhauled, both to mirror features and changes
+  of the Django 1.0 release, and to add some useful fields for working with
+  django ORM data in forms.
+
+
 Version 0.2
 -----------
 Released January 13th, 2009.

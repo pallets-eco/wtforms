@@ -9,7 +9,7 @@
 """
 from wtforms.fields import Field
 
-class QSChoices(object):
+class QuerySetChoices(object):
     """
     Iterable which yields a set of (id, object) pairs given a queryset.
 
