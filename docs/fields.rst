@@ -119,7 +119,61 @@ The Field base class
 Built-in fields
 ---------------
 
-.. class:: wtforms.fields.SelectField(default field arguments, choices=[], checker=unicode)
+.. autoclass:: BooleanField(default field arguments)
+
+.. autoclass:: DateTimeField(default field arguments)
+
+.. autoclass:: FileField(default field arguments)
+
+    Example usage::
+
+        class UploadForm(Form):
+            image        = FileField(u'Image File', [validators.regexp(u'^[^/\\]\.jpg$')])
+            description  = TextAreaField(u'Image Description')
+
+            def validate_image(form, field):
+                if field.data:
+                    field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
+        
+        def upload(request):
+            form = UploadForm(request.POST)
+            if form.image.data:
+                image_data = request.FILES[form.image.name].read()
+                open(os.path.join(UPLOAD_PATH, form.image.data), 'w').write(image_data)
+
+.. autoclass:: HiddenField(default field arguments)
+
+    HiddenField is useful for providing data from a model or the application to
+    be used on the form handler side for making choices or finding records.
+    Very frequently, CRUD forms will use the hidden field for an object's id.   
+    
+    Hidden fields are like any other field in that they can take validators and
+    values and be accessed on the form object.   You should consider validating
+    your hidden fields just as you'd validate an input field, to prevent from
+    malicious people playing with your data.
+
+.. autoclass:: IntegerField(default field arguments)
+
+.. autoclass:: PasswordField(default field arguments)
+
+    Other than the fact that this makes a password input field, this field
+    functions exactly like a text-input field.
+
+.. autoclass:: RadioField(default field arguments, choices=[], coerce=unicode)
+
+    .. code-block:: jinja
+
+        {% for subfield in form.radio %}
+            <tr>
+                <td>{{ subfield }}</td>
+                <td>{{ subfield.label }}</td>
+            </tr>
+        {% endfor %}
+
+    Simply outputting the field without iterating its subfields will result in
+    a ``<ul>`` list of radio choices.
+
+.. class:: SelectField(default field arguments, choices=[], coerce=unicode)
 
     Select fields keep a `choices` property which is a sequence of `(value,
     label)` pairs.  The value portion can be any type in theory, but as form
@@ -138,7 +192,7 @@ Built-in fields
     **Select fields with dynamic choice values**::
 
         class UserDetails(Form):
-            group_id = SelectField(u'Group', checker=int)
+            group_id = SelectField(u'Group', coerce=int)
 
         def edit_user(request, id):
             user = User.query.get(id)
@@ -147,67 +201,31 @@ Built-in fields
 
     Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField` 
     constructor, but rather created the list in the view function. Also, the 
-    `checker` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
-    use :func:`int()` to coerce form data.  The default checker is 
+    `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
+    use :func:`int()` to coerce form data.  The default coerce is 
     :func:`unicode()`. 
 
-.. autoclass:: wtforms.fields.SelectMultipleField(default field arguments, choices=[], checker=unicode)
+.. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=unicode)
 
+   The data on the SelectMultipleField is stored as a list of objects, each of
+   which is checked and coerced from the form input.  Any inputted choices
+   which are not in the given choices list will cause validation on the field
+   to fail.
 
-.. autoclass:: wtforms.fields.TextField(default field arguments)
+.. autoclass:: SubmitField(default field arguments)
 
-   .. code-block: jinja
-
-        {{ form.username(size=30, maxlength=50) }}
-
-.. autoclass:: wtforms.fields.HiddenField(default field arguments)
-
-    HiddenField is useful for providing data from a model or the application to
-    be used on the form handler side for making choices or finding records.
-    Very frequently, CRUD forms will use the hidden field for an object's id.   
-    
-    Hidden fields are like any other field in that they can take validators and
-    values and be accessed on the form object.   You should consider validating
-    your hidden fields just as you'd validate an input field, to prevent from
-    malicious people playing with your data.
-
-.. autoclass:: wtforms.fields.TextAreaField(default field arguments)
+.. autoclass:: TextAreaField(default field arguments)
 
     .. code-block: jinja
         
         {{ form.textarea(rows=7, cols=90) }}
 
-.. autoclass:: wtforms.fields.PasswordField(default field arguments)
+.. autoclass:: TextField(default field arguments)
 
-    Other than the fact that this makes a password input field, this field
-    functions exactly like a text-input field.
+   .. code-block:: jinja
 
-.. autoclass:: wtforms.fields.FileField(default field arguments)
+        {{ form.username(size=30, maxlength=50) }}
 
-    Example usage::
-
-        class UploadForm(Form):
-            image        = FileField(u'Image File', [validators.regexp(u'^[^/\\]\.jpg$')])
-            description  = TextAreaField(u'Image Description')
-
-            def validate_image(form, field):
-                if field.data:
-                    field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
-        
-        def upload(request):
-            form = UploadForm(request.POST)
-            if form.image.data:
-                image_data = request.FILES[form.image.name].read()
-                open(os.path.join(UPLOAD_PATH, form.image.data), 'w').write(image_data)
-
-
-.. autoclass:: wtforms.fields.IntegerField(default field arguments)
-
-.. autoclass:: wtforms.fields.BooleanField(default field arguments)
-
-.. autoclass:: wtforms.fields.DateTimeField(default field arguments)
-
-.. autoclass:: wtforms.fields.SubmitField(default field arguments)
 
 
 Custom fields
