@@ -5,6 +5,13 @@ Version 0.3
 -----------
 Not yet released.
 
+- Validation overhaul: Fields are now responsible for their own validation,
+  instead of mostly relying on Form. There are also new pre_validate and
+  post_validate hooks on subfields, adding a great deal of flexibility when
+  dealing with field-level validation. Note that this is an API breaking change
+  if you have any subfields that override `Field.validate`. These will need to
+  be updated to use the new hooks.
+
 - wtforms.ext.django has been overhauled, both to mirror features and changes
   of the Django 1.0 release, and to add some useful fields for working with
   django ORM data in forms.
