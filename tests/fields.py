@@ -72,7 +72,7 @@ class SelectFieldTest(TestCase):
     def test_value_coercion(self):
         form = self.F(DummyPostData(b=u'2'))
         self.assertEqual(form.b.data, 2)
-        self.assertTrue(form.validate())
+        self.assertTrue(form.b.validate(form))
 
     def test_id_attribute(self):
         form = self.F(obj=AttrDict(b=AttrDict(id=1)))

@@ -151,7 +151,7 @@ class Field(object):
         """
         pass
 
-    def process_data(self, value, has_formdata):
+    def process_data(self, value):
         """
         Process the Python data applied to this field and store the result.
 
@@ -160,8 +160,6 @@ class Field(object):
         
         `value`
             The python object containing the value to process.
-        `has_formdata`
-            `True` if the form got any formdata for this field.
         """
         self.data = value
 
@@ -175,7 +173,8 @@ class Field(object):
         `valuelist`
             A list of strings to process.
         """
-        self.data = valuelist[0]
+        if valuelist:
+            self.data = valuelist[0]
 
 class Flags(object):
     """
@@ -229,17 +228,18 @@ class SelectField(Field):
     def _selected(self, value):
         return (self.coerce(value) == self.data)
 
-    def process_data(self, value, has_formdata):
+    def process_data(self, value):
         try:
             self.data = self.coerce(getattr(value, 'id', value))
         except (ValueError, TypeError):
             self.data = None
 
     def process_formdata(self, valuelist):
-        try:
-            self.data = self.coerce(valuelist[0])
-        except ValueError:
-            pass
+        if valuelist:
+            try:
+                self.data = self.coerce(valuelist[0])
+            except ValueError:
+                pass
 
     def pre_validate(self, form):
         for v, _ in self.choices:
@@ -261,14 +261,11 @@ class SelectMultipleField(SelectField):
         if self.data is not None:
             return (self.coerce(value) in self.data)
         
-    def process_data(self, value, has_formdata):
-        if has_formdata:
-            self.data = []
-        else:
-            try:
-                self.data = [self.coerce(getattr(v, 'id', v)) for v in value]
-            except (ValueError, TypeError):
-                self.data = None
+    def process_data(self, value):
+        try:
+            self.data = [self.coerce(getattr(v, 'id', v)) for v in value]
+        except (ValueError, TypeError):
+            self.data = None
 
     def process_formdata(self, valuelist):
         try:
@@ -300,7 +297,7 @@ class RadioField(SelectField):
     def __iter__(self):
         for i, (value, label) in enumerate(self.choices):
             r = self._Radio(label=label, id=u'%s_%d' % (self.id, i), _name=self.name, _form=None)
-            r.process_data(value, False)
+            r.process_data(value)
             r.checked = self._selected(value)
             yield r
 
@@ -325,6 +322,12 @@ class TextField(Field):
         kwargs.setdefault('id', self.id)
         kwargs.setdefault('type', 'text')
         return u'<input %s />' % html_params(name=self.name, value=self._value(), **kwargs) 
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = valuelist[0]
+        else:
+            self.data = u''
 
     def _value(self):
         return self.data and unicode(self.data) or u''
@@ -389,23 +392,23 @@ class BooleanField(Field):
 
     def __call__(self, **kwargs):
         kwargs.setdefault('id', self.id)
-        kwargs.setdefault('type', 'checkbox')
-        kwargs.setdefault('value', 'y')
+        kwargs.setdefault('type', u'checkbox')
+        kwargs.setdefault('value', u'y')
         if self.data:
             kwargs['checked'] = u'checked'
         return u'<input %s />' % html_params(name=self.name, **kwargs)
     
-    def process_data(self, value, has_formdata):
-        if has_formdata:
-            self.data = False
-        else:
-            self.raw_data = value
-            self.data = bool(value)
+    def process_data(self, value):
+        self.raw_data = value
+        self.data = bool(value)
 
     def process_formdata(self, valuelist):
         if valuelist:
             self.raw_data = valuelist[0]
             self.data = bool(valuelist[0])
+        else:
+            self.raw_data = None
+            self.data = False
 
 class DateTimeField(TextField):
     """

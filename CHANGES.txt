@@ -11,6 +11,16 @@ Not yet released.
   dealing with field-level validation. Note that this is an API breaking change
   if you have any subfields that override `Field.validate`. These will need to
   be updated to use the new hooks.
+ 
+- Changes in how `process_data` and `process_formdata` are called: 
+    * `process_data` no longer accepts the `has_formdata` parameter.
+    * At form instantiation time, `process_data` will be called only once for
+      each field. If a model object is provided which contains the property,
+      then this value is used. Otherwise, a keyword argument if specified is 
+      used. Failing that, the field's default value is used.
+    * If any form data is sent, `process_formdata` will be called after
+      `process_data` for each field.  If no form data is available for the
+      given field, it is called with an empty list.
 
 - wtforms.ext.django has been overhauled, both to mirror features and changes
   of the Django 1.0 release, and to add some useful fields for working with
