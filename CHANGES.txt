@@ -1,6 +1,11 @@
 WTForms Changelog
 =================
 
+Version 0.4
+-----------
+Not yet released.
+
+
 Version 0.3
 -----------
 Released January 18th, 2009.
@@ -60,6 +65,7 @@ Released January 13th, 2009.
   only require changing your imports around a little.
 
 - Better support for other frameworks such as Pylons.
+
 
 Version 0.1
 -----------
