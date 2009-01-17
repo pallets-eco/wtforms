@@ -17,7 +17,7 @@ for automatically creating forms based on Django ORM models.
 
 Templatetags
 ~~~~~~~~~~~~
-.. module:: wtforms.ext.django.templatetags.django
+.. module:: wtforms.ext.django.templatetags.wtforms
 
 Django templates does not allow arbitrarily calling functions with parameters,
 making it impossible to use the html attribute rendering feature of WTForms. To
