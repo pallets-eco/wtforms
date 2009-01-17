@@ -13,6 +13,7 @@ try:
     from functools import partial
 except ImportError:
     from wtforms.utils import partial
+from itertools import chain
 
 from wtforms.utils import html_params
 from wtforms.validators import ValidationError, StopValidation
@@ -80,7 +81,7 @@ class Field(object):
         """
         raise NotImplementedError
 
-    def validate(self, form, extra_validators=[]):
+    def validate(self, form, extra_validators=tuple()):
         """
         Validates the field and returns True or False. `self.errors` will
         contain any errors raised during validation. This is usually only
@@ -109,8 +110,7 @@ class Field(object):
 
         # Run validators
         if not stop_validation:
-            validators = self.validators + extra_validators
-            for validator in validators:
+            for validator in chain(self.validators, extra_validators):
                 try:
                     validator(form, self)
                 except StopValidation, e:
