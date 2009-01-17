@@ -17,7 +17,7 @@ for automatically creating forms based on Django ORM models.
 
 Templatetags
 ~~~~~~~~~~~~
-.. module:: wtforms.ext.django.templatetags
+.. module:: wtforms.ext.django.templatetags.django
 
 Django templates does not allow arbitrarily calling functions with parameters,
 making it impossible to use the html attribute rendering feature of WTForms. To
@@ -70,10 +70,29 @@ ORM-backed fields
 ~~~~~~~~~~~~~~~~~
 .. module:: wtforms.ext.django.fields
 
-TODO
+    
+While linking data to most fields is fairly easy, making drop-down select lists
+using django ORM data can be quite repetetive. To this end, we have added some
+helpful tools to use the django ORM along with wtforms
 
-.. autoclass:: QuerySetChoices
 
-.. autoclass:: QuerySetSelectField
+.. autoclass:: QuerySetSelectField(default field args, queryset=None, label_attr='', allow_blank=False)
 
-.. autoclass:: ModelSelectField 
+    .. code-block:: python
+        
+        class ArticleEdit(Form):
+            title    = TextField()
+            column   = QuerySetSelectField(label_attr='title', allow_blank='True')
+            category = QuerySetSelectField(queryset=Category.objects.all())
+
+        def edit_article(request, id):
+            article = Article.objects.get(pk=id)
+            form = ArticleEdit(obj=article)
+            form.column.queryset = Column.objects.filter(author=request.user)
+
+    As shown in the above example, the queryset can be set dynamically in the
+    view if needed instead of at form construction time, allowing the select
+    field to consist of choices only relevant to the user.
+
+.. autoclass:: ModelSelectField(default field args, model=None, label_attr='', allow_blank=False)
+

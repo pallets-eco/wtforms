@@ -9,68 +9,33 @@
 """
 from wtforms.fields import Field
 
-class QuerySetChoices(object):
-    """
-    Iterable which yields a set of (id, object) pairs given a queryset.
-
-    if `label_attr` is specified, instead yield (id, getattr(object, label_attr)). 
-    """
-    def __init__(self, queryset, label_attr=None):
-        self.queryset = queryset
-        self.pk_attr = queryset.model._meta.pk.name
-        self.label_attr = label_attr
-        
-    def __iter__(self):
-        if self._label_attr:
-            for entry in self.queryset:
-                yield (getattr(entry, self.pk_attr), getattr(entry, self.label_attr))
-        else:
-            for entry in self.queryset:
-                yield (getattr(entry, self.pk_attr), entry)
-
-    def __contains__(self, key):
-        for entry in self._queryset:
-            if getattr(entry, self.pk_attr) == key:
-                return True
-        return False
-            
 class QuerySetSelectField(Field):
-    def __init__(self, label=u'', validators=None, queryset=None, **kwargs):
+    """
+    Given a QuerySet either at initialization or inside a view, will display a
+    select drop-down field of choices. The `data` property actually will
+    store/keep an ORM model instance, not the ID. Submitting a choice which is
+    not in the queryset will result in a validation error. 
+
+    Specifying `label_attr` in the constructor will use that property of the
+    model instance for display in the list, else the model object's `__str__`
+    or `__unicode__` will be used.
+
+    If `allow_blank` is set to :const:`True`, then a blank choice will be added
+    to the top of the list. Selecting this choice will result in the `data`
+    property being :const:`None`.
+    """
+    def __init__(self, label=u'', validators=None, queryset=None, label_attr='', allow_blank=False, **kwargs):
         super(QuerySetSelectField, self).__init__(label, validators, **kwargs)
-        self._formdata = None
-        self._data = None
+        self.label_attr = label_attr
+        self.allow_blank = allow_blank
+        self._set_data(None)
         if queryset is not None:
             self.queryset = queryset.all() # Make sure the queryset is fresh
 
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        primary_key = self.queryset.model._meta.pk.name
-        html = u'<select %s>' % html_params(name=self.name, **kwargs)
-        for obj in queryset:
-            pk = getattr(obj, primary_key)
-            options = {'value': pk}
-            if obj == self.data:
-                options['selected'] = u'selected'
-            html += u'<option %s>%s</option>' % (html_params(**options), escape(unicode(title)))
-        html += u'</select>'
-        return html
-
-    def process_formdata(self, valuelist):
-        if valuelist:
-            self._formdata = int(valuelist[0])
-
-    def validate(self, *args):
-        for obj in self.queryset:
-            if self.data == v:
-                break
-        else:
-            raise ValidationError('Not a valid choice')
-
     def _get_data(self):
         if self._formdata is not None:
-            primary_key = self.queryset.model._meta.pk.name
             for obj in self.queryset:
-                if getattr(obj, primary_key) == self._formdata:
+                if obj.pk == self._formdata:
                     self._set_data(obj)
                     break
         return self._data
@@ -81,6 +46,41 @@ class QuerySetSelectField(Field):
 
     data = property(_get_data, _set_data)
 
+    def __call__(self, **kwargs):
+        kwargs.setdefault('id', self.id)
+        primary_key = self.queryset.model._meta.pk.name
+        html = u'<select %s>' % html_params(name=self.name, **kwargs)
+        if self.allow_blank:
+            html += u'<option value="__None"></option>'
+        for obj in queryset:
+            pk = getattr(obj, primary_key)
+            options = {'value': pk}
+            if obj == self.data:
+                options['selected'] = u'selected'
+            label = self.label_attr and getattr(obj, self.label_attr) or obj
+            html += u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label)))
+        html += u'</select>'
+        return html
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            if valuelist[0] == '__None':
+                self.data = None
+            else:
+                self._formdata = int(valuelist[0])
+
+    def pre_validate(self, form):
+        if self.data is not None:
+            for obj in self.queryset:
+                if self.data == v:
+                    break
+            else:
+                raise ValidationError('Not a valid choice')
+
 class ModelSelectField(QuerySetSelectField):
+    """
+    Like a QuerySetSelectField, except takes a model class instead of a
+    queryset and lists everything in it.
+    """
     def __init__(self, label=u'', validators=None, model=None, **kwargs):
-        super(ModelSelectField, self).__init__(label, validators, queryset=model.objects.all(), **kwargs)
+        super(ModelSelectField, self).__init__(label, validators, queryset=model._default_manager.all(), **kwargs)
