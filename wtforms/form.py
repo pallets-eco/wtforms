@@ -26,16 +26,16 @@ class Form(object):
             setattr(self, name, field)
 
             field.process_data(field._default, has_formdata)
-            if name in kwargs:
-                field.process_data(kwargs[name], has_formdata)
-            if hasattr(obj, name):
-                field.process_data(getattr(obj, name), has_formdata)
             if has_formdata and form_name in formdata:
                 try:
                     data = formdata.getlist(form_name)
                 except AttributeError:
                     data = formdata.getall(form_name)
                 field.process_formdata(data)
+            elif hasattr(obj, name):
+                field.process_data(getattr(obj, name), has_formdata)
+            elif name in kwargs:
+                field.process_data(kwargs[name], has_formdata)
 
     def __new__(cls, *args, **kw):
         """
