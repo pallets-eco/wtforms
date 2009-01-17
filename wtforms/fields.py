@@ -58,9 +58,17 @@ class Field(object):
         self.errors = []
 
     def __unicode__(self):
+        """
+        Returns a HTML representation of the field. For more powerful rendering,
+        see the `__call__` method.
+        """
         return self()
 
     def __str__(self):
+        """
+        Returns a HTML representation of the field. For more powerful rendering,
+        see the `__call__` method.
+        """
         return self()
 
     def __call__(self, **kwargs):
@@ -139,7 +147,7 @@ class Field(object):
         `form`
             The form the field belongs to.
         `validation_stopped`
-            Set to True if any validator raised StopValidation.
+            `True` if any validator raised StopValidation.
         """
         pass
 
@@ -149,6 +157,11 @@ class Field(object):
 
         This will be called during form construction by the form's `kwargs` or
         `obj` argument.
+        
+        `value`
+            The python object containing the value to process.
+        `has_formdata`
+            `True` if the form got any formdata for this field.
         """
         self.data = value
 
@@ -158,6 +171,9 @@ class Field(object):
 
         This will be called during form construction with data supplied
         through the `formdata` argument.
+        
+        `valuelist`
+            A list of strings to process.
         """
         self.data = valuelist[0]
 

@@ -31,7 +31,6 @@ The Field base class
 --------------------
 
 .. autoclass:: Field
-    :members: validate, process_data, process_formdata 
 
     **Properties**
 
@@ -101,6 +100,12 @@ The Field base class
 
     **Methods**
 
+    .. automethod:: validate
+    .. automethod:: pre_validate
+    .. automethod:: post_validate
+    .. automethod:: process_data
+    .. automethod:: process_formdata 
+
     .. automethod:: __call__
         
         If one wants to pass the "class" argument which is a reserved keyword
@@ -113,8 +118,9 @@ The Field base class
         .. code-block:: html
             
             <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
-
-
+            
+        Note: Simply coercing the field to a string or unicode will render it as
+        if it was called with no arguments.
 
 Built-in fields
 ---------------
