@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 0.3
 -----------
-Not yet released.
+Released January 18th, 2009.
 
 - Validation overhaul: Fields are now responsible for their own validation,
   instead of mostly relying on Form. There are also new pre_validate and
