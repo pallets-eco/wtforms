@@ -1,0 +1,12 @@
+[
+  {
+     "model": "ext_django.group",
+     "pk": 1,
+     "fields": {"name": "Users" }
+  },
+  {
+     "model": "ext_django.group",
+     "pk": 2,
+     "fields": {"name": "Admins" }
+  }
+]

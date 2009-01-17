@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 """
-    ext_django
-    ~~~~~~~~~~
+    ext_django.tests
+    ~~~~~~~~~~~~~~~~
     
     Unittests for wtforms.ext.django
     
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
+
+import sys, os
+TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, TESTS_DIR)
 
 ##########################################################################
 # -- Django Initialization
@@ -17,45 +21,17 @@
 # control the order in which tests are run, so making a throwaway test won't
 # work either.
 
-import sys, types
-
 from django.conf import settings
-settings.configure(INSTALLED_APPS=['wtforms.ext.django'])
+settings.configure(INSTALLED_APPS=['ext_django', 'wtforms.ext.django'], DATABASE_ENGINE='sqlite3', TEST_DATABASE_NAME=':memory:')
 
-from django.db import models
-from django.contrib.localflavor.us.models import USStateField
-
-import wtforms.ext.django
-wtforms.ext.django.models = sys.modules['wtforms.ext.django.models'] = types.ModuleType('wtforms.ext.django.models')
-
-class Group(models.Model):
-    __module__ = 'wtforms.ext.django.models'
-    name = models.CharField(max_length=75)
-
-class User(models.Model):
-    __module__ = 'wtforms.ext.django.models'
-    username = models.CharField(max_length=40)
-    group    = models.ForeignKey(Group)
-    birthday = models.DateField(help_text="Teh Birthday")
-    email    = models.EmailField(blank=True)
-    posts    = models.PositiveSmallIntegerField()
-    state    = USStateField()
-    reg_ip   = models.IPAddressField("IP Addy")
-    url      = models.URLField()
-    file     = models.FilePathField()
-    file2    = models.FileField()
-    bool     = models.BooleanField()
-    time1    = models.TimeField()
-    slug     = models.SlugField()
-
-
-from wtforms.ext.django import models as test_models 
-test_models.User = User
-test_models.Group = Group
+from django.db import connection
+connection.creation.create_test_db(verbosity=0)
 
 # -- End hacky Django initialization
 
 from django.template import Context, Template
+from django.test import TestCase as DjangoTestCase
+from ext_django import models as test_models 
 from unittest import TestCase
 from wtforms import Form, fields, validators
 from wtforms.ext.django.orm import model_form
@@ -63,6 +39,10 @@ from wtforms.ext.django.fields import QuerySetSelectField, ModelSelectField
 
 def validator_names(field):
     return [x.func_name for x in field.validators]
+
+class DummyPostData(dict):
+    def getlist(self, key):
+        return self[key]
 
 class TemplateTagsTest(TestCase):
     TEST_TEMPLATE = """{% load wtforms %}
@@ -126,11 +106,14 @@ class ModelFormTest(TestCase):
     def test_us_states(self):
         self.assertTrue(len(self.form.state.choices) >= 50)
 
-class QuerySetSelectFieldTest(TestCase):
+class QuerySetSelectFieldTest(DjangoTestCase):
+    fixtures = ['ext_django.json']
+
     def setUp(self):
-        self.queryset = User.objects.all()
+        from django.core.management import call_command
+        self.queryset = test_models.Group.objects.all()
         class F(Form):
-            a = QuerySetSelectField(allow_blank=True)
+            a = QuerySetSelectField(allow_blank=True, label_attr='name')
             b = QuerySetSelectField(queryset=self.queryset)
 
         self.F = F
@@ -139,13 +122,38 @@ class QuerySetSelectFieldTest(TestCase):
         form = self.F()
         self.assertTrue(form.b.queryset is not self.queryset)
 
-class ModelSelectFieldTest(TestCase):
-    class F(Form):
-        a = ModelSelectField(model=User)
-
-    def test_construction_worked(self):
+    def test_with_data(self):
         form = self.F()
-        self.assertTrue(form.a.queryset is not None)
+        form.a.queryset = self.queryset[1:]
+        self.assertEqual(form.a(), u'''<select id="a" name="a"><option selected="selected" value="__None"></option><option value="2">Admins</option></select>''')
+        self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a.validate(form), True)
+        self.assertEqual(form.b.validate(form), False)
+        form.b.data = test_models.Group.objects.get(pk=1)
+        self.assertEqual(form.b.validate(form), True)
+        self.assertEqual(form.b(), u'''<select id="b" name="b"><option selected="selected" value="1">1: Users</option><option value="2">2: Admins</option></select>''')
+
+    def test_formdata(self):
+        form = self.F(DummyPostData(a=['1'], b=['3']))
+        form.a.queryset = self.queryset[1:]
+        self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a.validate(form), True)
+        self.assertEqual(form.b.data, None)
+        self.assertEqual(form.b.validate(form), False)
+        form = self.F(DummyPostData(b=[2]))
+        self.assertEqual(form.b.data.pk, 2)
+        self.assertEqual(form.b.validate(form), True)
+        
+
+class ModelSelectFieldTest(DjangoTestCase):
+    fixtures = ['ext_django.json']
+
+    class F(Form):
+        a = ModelSelectField(model=test_models.Group)
+
+    def test(self):
+        form = self.F()
+        self.assertEqual(form.a(), u'''<select id="a" name="a"><option value="1">1: Users</option><option value="2">2: Admins</option></select>''')
 
         
 if __name__ == '__main__':

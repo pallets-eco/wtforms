@@ -8,6 +8,8 @@
     :license: MIT, see LICENSE.txt for details.
 """
 from wtforms.fields import Field
+from wtforms.utils import escape, html_params
+from wtforms.validators import ValidationError
 
 class QuerySetSelectField(Field):
     """
@@ -20,9 +22,9 @@ class QuerySetSelectField(Field):
     model instance for display in the list, else the model object's `__str__`
     or `__unicode__` will be used.
 
-    If `allow_blank` is set to :const:`True`, then a blank choice will be added
+    If `allow_blank` is set to `True`, then a blank choice will be added
     to the top of the list. Selecting this choice will result in the `data`
-    property being :const:`None`.
+    property being `None`.
     """
     def __init__(self, label=u'', validators=None, queryset=None, label_attr='', allow_blank=False, **kwargs):
         super(QuerySetSelectField, self).__init__(label, validators, **kwargs)
@@ -50,29 +52,37 @@ class QuerySetSelectField(Field):
         kwargs.setdefault('id', self.id)
         primary_key = self.queryset.model._meta.pk.name
         html = u'<select %s>' % html_params(name=self.name, **kwargs)
-        if self.allow_blank:
-            html += u'<option value="__None"></option>'
-        for obj in queryset:
-            pk = getattr(obj, primary_key)
-            options = {'value': pk}
-            if obj == self.data:
-                options['selected'] = u'selected'
-            label = self.label_attr and getattr(obj, self.label_attr) or obj
-            html += u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label)))
+        for option in self:
+            html += option
         html += u'</select>'
         return html
+
+    def __iter__(self):
+        if self.allow_blank:
+            yield self._option(u'__None', u'', self.data is None)
+
+        for obj in self.queryset:
+            label = self.label_attr and getattr(obj, self.label_attr) or obj
+            yield self._option(obj.pk, label, obj == self.data)
+
+    def _option(self, value, label, selected):
+        options = {'value': value}
+        if selected:
+            options['selected'] = u'selected'
+        return u'<option %s>%s</option>' % (html_params(**options), label)
 
     def process_formdata(self, valuelist):
         if valuelist:
             if valuelist[0] == '__None':
                 self.data = None
             else:
+                self._data = None
                 self._formdata = int(valuelist[0])
 
     def pre_validate(self, form):
-        if self.data is not None:
+        if not self.allow_blank or self.data is not None:
             for obj in self.queryset:
-                if self.data == v:
+                if self.data == obj:
                     break
             else:
                 raise ValidationError('Not a valid choice')
