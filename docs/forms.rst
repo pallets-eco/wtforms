@@ -7,39 +7,33 @@ definitions, delegate validation, take input, aggregate errors, and in
 general function as the glue holding everything together.
 
 .. autoclass:: Form
-    :members:
 
     **Properties**
 
+    .. attribute:: data
+
+        A dict containing the data for each field.
+        
+        Note that this is generated each time you access the property, so care
+        should be taken when using it, as it can potentially be very expensive
+        if you repeatedly access it. Typically used if you need to iterate all
+        data in the form. If you just need to access the data for known fields,
+        you should use `form.<field>.data`, not this proxy property.
+
     .. attribute:: errors
 
-        A dict, containing field names on this form as keys, with the value
-        portion being the list of errors for that field.  The dict is empty
-        until after :meth:`validate` is called.
-
-    .. attribute:: data
+        A dict containing a list of errors for each field. Empty if the form
+        hasn't been validated, or there were no errors.
         
-        A dict that is generated on the fly which contains field names as keys
-        mapped to the `.data` attribute of the field.
+        Note that this is a lazy property, and will only be generated when you
+        first access it. If you call :meth:`validate` after accessing it, the
+        cached result will be invalidated and regenerated on next access.
 
     **Methods**
 
     .. automethod:: validate
 
-        Runs validation on each field in the form, collecting any errors.
-        Returns `True` if no errors occur.  
-
-        For each field, the validators are called in this order:
-
-        1. Any validators passed via a list to the field's constructor.
-        2. The field's built-in validation.
-        3. Any inline validator for the field defined on the form itself.
-
-        If any of the validators in the chain raises a
-        :class:`~wtforms.validators.StopValidation`, then the validation chain
-        for that field is stopped.
-
-    .. automethod:: auto_populate
+    .. function:: auto_populate
 
         One common usage of this is an edit profile view::
             
@@ -59,9 +53,6 @@ general function as the glue holding everything together.
 
     .. automethod:: __iter__
 
-        Iterate form fields in their order of definition on the form.  Useful 
-        for generating forms in templates:
-
         .. code-block:: django
 
             {% for field in form %}
@@ -72,8 +63,6 @@ general function as the glue holding everything together.
             {% endfor %}
 
     .. automethod:: __contains__
-        
-        Returns :const:`True` if the named field is a member of this form.
 
 Defining forms
 --------------

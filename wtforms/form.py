@@ -53,10 +53,16 @@ class Form(object):
         return super(Form, cls).__new__(cls)
 
     def __iter__(self): 
+        """
+        Iterate form fields in their order of definition on the form.
+        """
         for name, field in self._fields:
             yield field
 
     def __contains__(self, item):
+        """      
+        Returns `True` if the named field is a member of this form.
+        """
         return getattr(getattr(self, item, False), '_formfield', False) is True
 
     def __delattr__(self, name): 
@@ -71,7 +77,7 @@ class Form(object):
         Validates the form by calling `validate` on each field, passing any
         extra `Form.validate_<fieldname>` validators to the field validator.
         
-        Returns True or False.
+        Returns `True` if no errors occur.
         """
         self._errors = None
         success = True
