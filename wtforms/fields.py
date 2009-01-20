@@ -27,10 +27,10 @@ class Field(object):
     _formfield = True
 
     def __new__(cls, *args, **kwargs):
-        if '_form' not in kwargs:
-            return UnboundField(cls, *args, **kwargs)
-        else:
+        if '_form' in kwargs and '_name' in kwargs:
             return super(Field, cls).__new__(cls)
+        else:
+            return UnboundField(cls, *args, **kwargs)
 
     def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, _form=None, _name=None):
         self.name = _name
