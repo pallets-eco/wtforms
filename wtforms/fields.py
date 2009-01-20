@@ -10,6 +10,7 @@
 from datetime import datetime
 from cgi import escape
 from itertools import chain
+import time
 
 from wtforms.utils import html_params
 from wtforms.validators import ValidationError, StopValidation
@@ -437,7 +438,8 @@ class DateTimeField(TextField):
     def process_formdata(self, valuelist):
         if valuelist and valuelist[0]:
             try:
-                self.data = datetime.strptime(str.join(' ', valuelist), self.format)
+                timetuple = time.strptime(str.join(' ', valuelist), self.format)
+		self.data = datetime(*timetuple[:7])
             except ValueError:
                 pass
 

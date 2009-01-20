@@ -14,7 +14,7 @@ class ValidationError(ValueError):
     Raised when a validator fails to validate its input.
     """
     def __init__(self, message=u'', *args, **kwargs):
-        super(ValidationError, self).__init__(message, *args, **kwargs)
+        ValueError.__init__(self, message, *args, **kwargs)
 
 class StopValidation(ValidationError):
     """
@@ -25,7 +25,7 @@ class StopValidation(ValidationError):
     list.
     """
     def __init__(self, message=u'', *args, **kwargs):
-        super(StopValidation, self).__init__(message, *args, **kwargs)
+        ValidationError.__init__(self, message, *args, **kwargs)
 
 def email(message=u'Invalid email address.'):
     """
