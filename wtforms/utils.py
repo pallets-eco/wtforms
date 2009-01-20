@@ -23,13 +23,3 @@ def html_params(**kwargs):
         v = escape(unicode(kwargs[k]), quote=True)
         params.append(u'%s="%s"' % (k, v))
     return str.join(' ', params)
-
-def partial(func, *args, **keywords):
-    def newfunc(*fargs, **fkeywords):
-        newkeywords = keywords.copy()
-        newkeywords.update(fkeywords)
-        return func(*(args + fargs), **newkeywords)
-    newfunc.func = func
-    newfunc.args = args
-    newfunc.keywords = keywords
-    return newfunc

@@ -40,6 +40,22 @@ class FormTest(TestCase):
         form.validate()
         self.assertEqual(form.errors, {'test': ['error']})
 
+    def test_ordered_fields(self):
+        class MyForm(Form):
+            strawberry = TextField()
+            banana     = TextField()
+            kiwi       = TextField()
+
+        self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi'])
+        self.assertEqual(MyForm.strawberry.name, 'strawberry')
+        MyForm.apple = TextField()
+        self.assertEqual(MyForm.apple.name, 'apple')
+        self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi', 'apple'])
+        del MyForm.banana
+        self.assertEqual([x.name for x in MyForm()], ['strawberry', 'kiwi', 'apple'])
+        MyForm.strawberry = TextField()
+        self.assertEqual([x.name for x in MyForm()], ['kiwi', 'apple', 'strawberry'])
+
 if __name__ == '__main__':
     from unittest import main
     main()

@@ -9,7 +9,39 @@
 """
 from wtforms.validators import StopValidation
 
+class FormMeta(type):
+    def __init__(cls, name, bases, attrs):
+        type.__init__(cls, name, bases, attrs)
+        cls._unbound_fields = None
+        for name, v in attrs.iteritems():
+            if hasattr(v, '_formfield'):
+                v.name = name
+
+    def __call__(cls, *args, **kwargs):
+        if cls._unbound_fields is None:
+            fields = []
+            for name in dir(cls):
+                if not name.startswith('_'):
+                    unbound_field = getattr(cls, name)
+                    if  hasattr(unbound_field, '_formfield'):
+                        fields.append(unbound_field)
+            fields.sort()
+            cls._unbound_fields = fields
+        return type.__call__(cls, *args, **kwargs)
+
+    def __setattr__(cls, name, value):
+        if not name.startswith('_') and hasattr(value, '_formfield'):
+            value.name = name
+            cls._unbound_fields = None
+        type.__setattr__(cls, name, value)
+
+    def __delattr__(cls, name):
+        if not name.startswith('_'):
+            cls._unbound_fields = None
+        type.__delattr__(cls, name)
+
 class Form(object):
+    __metaclass__ = FormMeta
     def __init__(self, formdata=None, obj=None, prefix='', idprefix='', **kwargs):
         if prefix:
             prefix += '_'
@@ -19,9 +51,10 @@ class Form(object):
         self._errors = None
         self._fields = []
         has_formdata = bool(formdata)
-        for name, f in self._unbound_fields:
+        for u_field in self._unbound_fields:
+            name = u_field.name
             form_name = prefix + name
-            field = f(_form=self, _name=form_name)
+            field = u_field.bind(_form=self, _name=form_name)
             self._fields.append((name, field))
             setattr(self, name, field)
 
@@ -41,21 +74,6 @@ class Form(object):
                     field.process_formdata(data)
                 else:
                     field.process_formdata([])
-
-    def __new__(cls, *args, **kw):
-        """
-        Use the field creation counter to create an ordered list of form fields.
-        """
-        if '_unbound_fields' not in cls.__dict__:
-            fields = []
-            for name in dir(cls):
-                if not name.startswith('_'):
-                    field = getattr(cls, name)
-                    if  hasattr(field, '_formfield'):
-                        fields.append((name, field))
-            fields.sort(lambda x,y: cmp(x[1].creation_counter, y[1].creation_counter))
-            cls._unbound_fields = fields
-        return super(Form, cls).__new__(cls)
 
     def __iter__(self): 
         """
