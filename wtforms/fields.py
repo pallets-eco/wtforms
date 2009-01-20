@@ -27,15 +27,14 @@ class Field(object):
     _formfield = True
 
     def __new__(cls, *args, **kwargs):
-        if '_name' not in kwargs:
+        if '_form' not in kwargs:
             return UnboundField(cls, *args, **kwargs)
         else:
             return super(Field, cls).__new__(cls)
 
     def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, _form=None, _name=None):
-        form = _form
         self.name = _name
-        self.id = id or (form._idprefix + self.name)
+        self.id = id or (_form._idprefix + self.name)
         self.label = Label(self.id, label)
         if validators is None:
             validators = []
@@ -168,6 +167,27 @@ class Field(object):
         if valuelist:
             self.data = valuelist[0]
 
+class UnboundField(object):
+    _formfield = True
+    creation_counter = 0
+
+    def __init__(self, field_class, *args, **kwargs):
+        UnboundField.creation_counter += 1
+        self.field_class = field_class
+        self.args = args
+        self.kwargs = kwargs
+        self.creation_counter = UnboundField.creation_counter
+        self.name = None
+
+    def bind(self, form, name):
+        return self.field_class(_form=form, _name=name, *self.args, **self.kwargs)
+
+    def __cmp__(self, x):
+        return cmp(self.creation_counter, x.creation_counter)
+
+    def __repr__(self):
+        return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
+
 class Flags(object):
     """
     Holds a set of boolean flags as attributes.
@@ -179,28 +199,6 @@ class Flags(object):
 
     def __contains__(self, name):
         return getattr(self, name)
-
-class UnboundField(object):
-    _formfield = True
-    creation_counter = 0
-
-    def __init__(self, field_class, *args, **kwargs):
-        self.field_class = field_class
-        self.args = args
-        self.kwargs = kwargs
-        self.creation_counter = UnboundField.creation_counter
-        self.name = None
-        UnboundField.creation_counter += 1
-
-    def bind(self, **kwargs):
-        return self.field_class(*self.args, **dict(self.kwargs, **kwargs))
-
-    def __cmp__(self, x):
-        return cmp(self.creation_counter, x.creation_counter)
-
-    def __repr__(self, x):
-        name = self.name and self.name + ': ' or ''
-        return '%sUnboundField(%s, *%r, **%r)' % (name, self.field_class.__name__, self.args, self.kwargs)
 
 
 class Label(object):

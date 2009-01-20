@@ -54,7 +54,7 @@ class Form(object):
         for u_field in self._unbound_fields:
             name = u_field.name
             form_name = prefix + name
-            field = u_field.bind(_form=self, _name=form_name)
+            field = u_field.bind(form=self, name=form_name)
             self._fields.append((name, field))
             setattr(self, name, field)
 
