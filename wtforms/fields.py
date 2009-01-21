@@ -177,7 +177,6 @@ class UnboundField(object):
         self.args = args
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
-        self.name = None
 
     def bind(self, form, name):
         return self.field_class(_form=form, _name=name, *self.args, **self.kwargs)

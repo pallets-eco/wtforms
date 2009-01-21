@@ -7,35 +7,54 @@
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
-from wtforms.validators import StopValidation
 
 class FormMeta(type):
+    """
+    The metaclass for `Form` and any subclasses of `Form`.
+
+    `FormMeta`'s responsibility is to create the `_unbound_fields` list, which
+    is a list of `UnboundField` instances sorted by their order of
+    instantiation.  The list is created at the first instantiation of the form.
+    If any fields are added/removed from the form, the list is cleared to be
+    re-generated on the next instantiaton.
+
+    Any properties which begin with an underscore or are not `UnboundField`
+    instances are ignored by the metaclass.
+    """
     def __init__(cls, name, bases, attrs):
         type.__init__(cls, name, bases, attrs)
         cls._unbound_fields = None
-        for name, v in attrs.iteritems():
-            if hasattr(v, '_formfield'):
-                v.name = name
 
     def __call__(cls, *args, **kwargs):
+        """
+        Construct a new `Form` instance, creating `_unbound_fields` on the
+        class if it is empty.
+        """
         if cls._unbound_fields is None:
             fields = []
             for name in dir(cls):
                 if not name.startswith('_'):
                     unbound_field = getattr(cls, name)
-                    if  hasattr(unbound_field, '_formfield'):
-                        fields.append(unbound_field)
+                    if hasattr(unbound_field, '_formfield'):
+                        # We use an (unbound_field, name) tuple because we
+                        # want to sort on UnboundField.__cmp__, not the name.
+                        fields.append((unbound_field, name))
             fields.sort()
             cls._unbound_fields = fields
         return type.__call__(cls, *args, **kwargs)
 
     def __setattr__(cls, name, value):
+        """
+        Add an attribute to the class, clearing `_unbound_fields` if needed.
+        """
         if not name.startswith('_') and hasattr(value, '_formfield'):
-            value.name = name
             cls._unbound_fields = None
         type.__setattr__(cls, name, value)
 
     def __delattr__(cls, name):
+        """
+        Remove an attribute from the class, clearing `_unbound_fields` if needed.
+        """
         if not name.startswith('_'):
             cls._unbound_fields = None
         type.__delattr__(cls, name)
@@ -51,8 +70,7 @@ class Form(object):
         self._errors = None
         self._fields = []
         has_formdata = bool(formdata)
-        for u_field in self._unbound_fields:
-            name = u_field.name
+        for u_field, name in self._unbound_fields:
             form_name = prefix + name
             field = u_field.bind(form=self, name=form_name)
             self._fields.append((name, field))

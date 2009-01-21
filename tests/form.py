@@ -13,6 +13,25 @@ from unittest import TestCase
 from wtforms import Form, TextField
 from wtforms.validators import ValidationError
 
+class FormMetaTest(TestCase):
+    def test_monkeypatch(self):
+        class F(Form):
+            a = TextField()
+
+        self.assertEqual(F._unbound_fields, None)
+        F()
+        self.assertEqual(F._unbound_fields, [(F.a, 'a')])
+        F.b = TextField()
+        self.assertEqual(F._unbound_fields, None)
+        F()
+        self.assertEqual(F._unbound_fields, [(F.a, 'a'), (F.b, 'b')])
+        del F.a
+        self.assertRaises(AttributeError, lambda: F.a)
+        F()
+        self.assertEqual(F._unbound_fields, [(F.b, 'b')])
+        F._m = TextField()
+        self.assertEqual(F._unbound_fields, [(F.b, 'b')])
+
 class FormTest(TestCase):
     class F(Form):
         test = TextField()
@@ -47,9 +66,7 @@ class FormTest(TestCase):
             kiwi       = TextField()
 
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi'])
-        self.assertEqual(MyForm.strawberry.name, 'strawberry')
         MyForm.apple = TextField()
-        self.assertEqual(MyForm.apple.name, 'apple')
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi', 'apple'])
         del MyForm.banana
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'kiwi', 'apple'])
