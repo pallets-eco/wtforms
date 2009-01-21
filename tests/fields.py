@@ -32,6 +32,7 @@ class LabelTest(TestCase):
         self.assertEqual(str(label), expected)
         self.assertEqual(unicode(label), expected)
         self.assertEqual(label('hello'), u"""<label for="test">hello</label>""")
+        self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
 
 class FlagsTest(TestCase):
     def setUp(self):
@@ -41,19 +42,19 @@ class FlagsTest(TestCase):
 
     def test_existing_values(self):
         self.assertEqual(self.flags.required, True)
-        self.assertTrue('required' in self.flags)
+        self.assert_('required' in self.flags)
         self.assertEqual(self.flags.optional, False)
-        self.assertTrue('optional' not in self.flags)
+        self.assert_('optional' not in self.flags)
 
     def test_assignment(self):
         self.flags.optional = True
         self.assertEqual(self.flags.optional, True)
-        self.assertTrue('optional' in self.flags)
+        self.assert_('optional' in self.flags)
 
     def test_unset(self):
         self.flags.required = False
         self.assertEqual(self.flags.required, False)
-        self.assertTrue('required' not in self.flags)
+        self.assert_('required' not in self.flags)
     
 
 class SelectFieldTest(TestCase):
@@ -72,7 +73,7 @@ class SelectFieldTest(TestCase):
     def test_value_coercion(self):
         form = self.F(DummyPostData(b=u'2'))
         self.assertEqual(form.b.data, 2)
-        self.assertTrue(form.b.validate(form))
+        self.assert_(form.b.validate(form))
 
     def test_id_attribute(self):
         form = self.F(obj=AttrDict(b=AttrDict(id=1)))
