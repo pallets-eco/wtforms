@@ -18,5 +18,6 @@ import sys
 suite = TestSuite()
 suite.addTest(defaultTestLoader.loadTestsFromNames(TESTS))
 
-runner = TextTestRunner(verbosity=(sys.argv.count('-v') + 1))
-runner.run(suite)
+runner = TextTestRunner(verbosity=(sys.argv.count('-v') - sys.argv.count('-q') + 1))
+result = runner.run(suite)
+sys.exit(not result.wasSuccessful())
