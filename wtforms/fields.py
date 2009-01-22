@@ -436,7 +436,7 @@ class DateTimeField(TextField):
         if valuelist and valuelist[0]:
             try:
                 timetuple = time.strptime(str.join(' ', valuelist), self.format)
-		self.data = datetime(*timetuple[:7])
+                self.data = datetime(*timetuple[:7])
             except ValueError:
                 pass
 
