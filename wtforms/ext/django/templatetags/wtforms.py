@@ -8,8 +8,8 @@
     :license: MIT, see LICENSE.txt for details.
 """
 from django import template
-from django.template import Variable
 from django.conf import settings
+from django.template import Variable
 import re
 
 class FormFieldNode(template.Node):
@@ -26,15 +26,13 @@ class FormFieldNode(template.Node):
                 field = context[self.field_var]
         except (template.VariableDoesNotExist, KeyError, AttributeError):
             return settings.TEMPLATE_STRING_IF_INVALID
+
         h_attrs = {}
         for k, v in self.html_attrs.iteritems():
-            if v[0] in ('"', "'"):
-                h_attrs[k] = v[1:-1]
-            else:
-                try:
-                    h_attrs[k] = Variable(v).resolve(context)
-                except template.VariableDoesNotExist:
-                    h_attrs[k] = settings.TEMPLATE_STRING_IF_INVALID
+            try:
+                h_attrs[k] = v.resolve(context)
+            except template.VariableDoesNotExist:
+                h_attrs[k] = settings.TEMPLATE_STRING_IF_INVALID
 
         return field(**h_attrs)
 
@@ -57,7 +55,7 @@ def do_form_field(parser, token):
         if (len(raw_args) % 2) != 0:
             raise template.TemplateSyntaxError('%r tag received the incorrect number of key=value arguments.' % parts[0])
         for x in range(0, len(raw_args), 2):
-            html_attrs[str(raw_args[x])] = raw_args[x+1]
+            html_attrs[str(raw_args[x])] = Variable(raw_args[x+1])
 
     return FormFieldNode(parts[1], html_attrs)
 
