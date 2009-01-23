@@ -45,27 +45,24 @@ class DummyPostData(dict):
         return self[key]
 
 class TemplateTagsTest(TestCase):
-    TEST_TEMPLATE = """{% load wtforms %}
-    {% autoescape off %}{{ form.a }}{% endautoescape %}
-    {% form_field form.a %}
-    {% for field in form %}{% form_field field class=someclass onclick="alert()" %}
-    {% endfor %}
-    """
+    load_tag = u'{% load wtforms %}'
 
-    TEMPLATE_EXPECTED_OUTPUT = """
-    <input id="a" name="a" type="text" value="" />
-    <input id="a" name="a" type="text" value="" />
-    <input class="CLASSVAL!" id="a" name="a" onclick="alert()" type="text" value="" />
-    <select class="CLASSVAL!" id="b" name="b" onclick="alert()"><option value="a">hi</option><option value="b">bai</option></select>
-    """
     class F(Form):
-        a = fields.TextField()
+        a = fields.TextField(u'I r label')
         b = fields.SelectField(choices=[('a', 'hi'), ('b', 'bai')])
 
+    def _render(self, source):
+        t = Template(self.load_tag + source)
+        return t.render(Context({'form': self.F(), 'a': self.F().a,  'someclass': "CLASSVAL!"}))
+
+    def test_simple_print(self):
+        self.assertEqual(self._render(u'{% autoescape off %}{{ form.a }}{% endautoescape %}'), u'<input id="a" name="a" type="text" value="" />')
+        self.assertEqual(self._render(u'{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), u'<label for="a">I r label</label>')
+
     def test_form_field(self):
-        t = Template(self.TEST_TEMPLATE)
-        output = t.render(Context({'form': self.F(), 'someclass': "CLASSVAL!"}))
-        self.assertEqual(output.strip(), self.TEMPLATE_EXPECTED_OUTPUT.strip())
+        self.assertEqual(self._render(u'{% form_field form.a %}'), u'<input id="a" name="a" type="text" value="" />')
+        self.assertEqual(self._render(u'{% form_field a class=someclass onclick="alert()" %}'), 
+                         u'<input class="CLASSVAL!" id="a" name="a" onclick="alert()" type="text" value="" />')
 
 class ModelFormTest(TestCase):
     F = model_form(test_models.User)

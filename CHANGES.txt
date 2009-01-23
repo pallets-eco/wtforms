@@ -6,6 +6,22 @@ Version 0.4
 Not yet released.
 
 
+Version 0.3.1
+-------------
+Not yet released.
+
+- Several fixes were made to the code and tests to make WTForms compatible
+  with Python 2.3/2.4.
+
+- Form's properties can now be accessed via dictionary-style access such as
+  `form['author']`. This also has the intended effect of making variable
+  lookups in Django templates more reliable.
+
+- Form and Field construction changes: Form now uses a metaclass to handle
+  creating its `_unbound_fields` property, and Field construction now gives an
+  instance of the new `UnboundField` class instead of using a partial function
+  application.  These are both internal changes and do not change the API.
+
 Version 0.3
 -----------
 Released January 18th, 2009.

@@ -113,6 +113,15 @@ class Form(object):
         except ValueError:
             super(Form, self).__delattr__(name)
 
+    def __getitem__(self, name):
+        """
+        Dict-style access to this form for frameworks which need it.
+        """
+        try:
+            return getattr(self, name)
+        except AttributeError:
+            raise KeyError(name)
+
     def validate(self):
         """
         Validates the form by calling `validate` on each field, passing any
