@@ -185,7 +185,7 @@ Select fields with dynamic choice values
 ::
 
     class UserDetails(Form):
-        group_id = SelectField(u'Group', checker=int)
+        group_id = SelectField(u'Group', coerce=int)
         username = TextField
 
     def edit_user(request, id):
@@ -202,8 +202,8 @@ Select fields with dynamic choice values
 
 Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField` 
 constructor, but rather created the list in the view function. Also, the 
-`checker` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
-use :func:`int()` to coerce form data.  The default checker is 
+`coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
+use :func:`int()` to coerce form data.  The default coerce is 
 :func:`unicode()`. 
 
 This code example also highlights another feature of wtforms: having a form's
