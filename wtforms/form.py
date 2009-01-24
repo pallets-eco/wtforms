@@ -147,12 +147,13 @@ class Form(object):
         return self._errors
     errors = property(_get_errors)
 
-    def auto_populate(self, model):
+    def auto_populate(self, obj):
         """
-        Automatically copy converted form values into the model object.
-
-        This can be very dangerous if not used properly, so make sure to only use
-        this in forms with proper validators and the right attributes.
+        Populates the attributes of the passed `obj` with data from the form's
+        fields.
+        
+        **Note:** This is a destructive operation, any attribute with the same
+        name as a field will be overridden. Use with caution.
         """
         for name, field in self._fields:
-            setattr(model, name, field.data)
+            field.populate(obj, name)
