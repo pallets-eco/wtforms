@@ -1,14 +1,9 @@
 WTForms Changelog
 =================
 
-Version 0.4
------------
-Not yet released.
-
-
 Version 0.3.1
 -------------
-Not yet released.
+Released January 24th, 2009.
 
 - Several fixes were made to the code and tests to make WTForms compatible
   with Python 2.3/2.4.
