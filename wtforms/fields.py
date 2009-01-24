@@ -167,6 +167,15 @@ class Field(object):
         if valuelist:
             self.data = valuelist[0]
 
+    def populate(self, obj, name):
+        """
+        Populates `obj.<name>` with the field's data.
+
+        **Note:** This is a destructive operation. If `obj.<name>` already
+        exists, it will be overridden. Use with caution.
+        """
+        setattr(obj, name, self.data)
+
 class UnboundField(object):
     _formfield = True
     creation_counter = 0
@@ -353,7 +362,8 @@ class HiddenField(TextField):
 
 class TextAreaField(TextField):
     """
-    This field represents an HTML ``<textarea>`` and can be used to take multi-line input.
+    This field represents an HTML ``<textarea>`` and can be used to take
+    multi-line input.
     """
 
     def __call__(self, **kwargs):
@@ -453,6 +463,6 @@ class SubmitField(BooleanField):
 
 __all__ = (
     'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
-    'IntegerField', 'PasswordField', 'RadioField', 'SelectField', 'SelectMultipleField',
-    'SubmitField', 'TextField', 'TextAreaField',
+    'IntegerField', 'PasswordField', 'RadioField', 'SelectField',
+    'SelectMultipleField', 'SubmitField', 'TextField', 'TextAreaField',
 )
