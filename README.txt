@@ -8,5 +8,5 @@ online on the website: http://wtforms.simplecodes.com/.
 To discuss WTForms or get help, please visit the group: 
 http://groups.google.com/group/wtforms.
 
-To report bugs or request features, please create a user and file a ticket on
-trac: http://dev.simplecodes.com/wtforms/.
+To report bugs or request features, please file a ticket on
+bitbucket: http://bitbucket.org/simplecodes/wtforms/issues/new/.
