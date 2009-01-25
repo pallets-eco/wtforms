@@ -11,6 +11,6 @@ is installable via `easy_install` with ``easy_install WTForms==dev``.
 from wtforms.form import Form
 from wtforms.fields import *
 from wtforms.validators import ValidationError
-from wtforms import validators
+from wtforms import validators, widgets
 
 __version__ = "0.4dev"
