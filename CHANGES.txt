@@ -5,6 +5,7 @@ Version 0.4
 -----------
 Not yet released.
 
+- Widget support: Fields now use widgets for rendering.
 
 Version 0.3.1
 -------------
