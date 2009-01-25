@@ -24,6 +24,7 @@ class Field(object):
     properties which can be used within your templates to render the field and
     label.  
     """
+    widget = None
     _formfield = True
 
     def __new__(cls, *args, **kwargs):
@@ -32,7 +33,7 @@ class Field(object):
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, _form=None, _name=None):
+    def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, widget=None, _form=None, _name=None):
         self.name = _name
         self.id = id or (_form._idprefix + self.name)
         self.label = Label(self.id, label)
@@ -48,6 +49,8 @@ class Field(object):
             for f in flags:
                 setattr(self.flags, f, True)
         self.errors = []
+        if widget:
+            self.widget = widget
 
     def __unicode__(self):
         """
@@ -70,7 +73,7 @@ class Field(object):
         Any HTML attribute passed to the method will be added to the tag
         and entity-escaped properly.   
         """
-        raise NotImplementedError
+        return self.widget.render(self, **kwargs)
 
     def validate(self, form, extra_validators=tuple()):
         """
