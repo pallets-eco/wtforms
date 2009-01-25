@@ -12,6 +12,7 @@ from cgi import escape
 from itertools import chain
 import time
 
+from wtforms import widgets
 from wtforms.utils import html_params
 from wtforms.validators import ValidationError, StopValidation
 
@@ -232,21 +233,12 @@ class Label(object):
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
+    widget = widgets.Select()
+
     def __init__(self, label=u'', validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = choices
-
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        html = u'<select %s>' % html_params(name=self.name, **kwargs)
-        for val,title in self.choices:
-            options = {'value': val}
-            if self._selected(val):
-                options['selected'] = u'selected'
-            html += u'<option %s>%s</option>' % (html_params(**options), escape(unicode(title)))
-        html += u'</select>'
-        return html
 
     def _selected(self, value):
         return (self.coerce(value) == self.data)
@@ -277,8 +269,7 @@ class SelectMultipleField(SelectField):
     validate) multiple choices.  You'll need to specify the HTML `rows`
     attribute to the select field when rendering.
     """
-    def __call__(self, **kwargs):
-        return super(SelectMultipleField, self).__call__(multiple="multiple", **kwargs)
+    widget = widgets.Select(multiple=True)
 
     def _selected(self, value):
         if self.data is not None:
@@ -309,13 +300,7 @@ class RadioField(SelectField):
     Iterating the field will produce  subfields (each containing a label as 
     well) in order to allow custom rendering of the individual radio fields.
     """
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        html = u'<ul %s>' % html_params(**kwargs)
-        for choice in self:
-            html += u'<li>%s %s</li>' % (choice, choice.label)
-        html += u'</ul>'
-        return html
+    widget = widgets.ListWidget(prefix_label=False)
 
     def __iter__(self):
         for i, (value, label) in enumerate(self.choices):
@@ -325,26 +310,15 @@ class RadioField(SelectField):
             yield r
 
     class _Radio(Field):
+        widget = widgets.RadioInput()
         checked = False
-        def __call__(self, **kwargs):
-            kwargs.setdefault('id', self.id)
-            kwargs.setdefault('type', 'radio')
-            if self.checked:
-                kwargs['checked'] = u'checked'
-            kwargs['name'] = self.name
-            kwargs['value'] = self.data
-            return u'<input %s />' % html_params(**kwargs)
-        
         
 class TextField(Field):
     """
     This field is the base for most of the more complicated fields, and
     represents an ``<input type="text">``.  
     """
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        kwargs.setdefault('type', 'text')
-        return u'<input %s />' % html_params(name=self.name, value=self._value(), **kwargs) 
+    widget = widgets.TextInput()
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -359,27 +333,20 @@ class HiddenField(TextField):
     """
     Represents an ``<input type="hidden">``.
     """
-    def __call__(self, **kwargs):
-        kwargs.setdefault('type', 'hidden')
-        return super(HiddenField, self).__call__(**kwargs)
+    widget = widgets.HiddenInput()
 
 class TextAreaField(TextField):
     """
     This field represents an HTML ``<textarea>`` and can be used to take
     multi-line input.
     """
-
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        return u'<textarea %s>%s</textarea>' % (html_params(name=self.name, **kwargs), escape(unicode(self._value())))
+    widget = widgets.TextArea()
 
 class PasswordField(TextField):
     """
     Represents an ``<input type="password">``.
     """
-    def __call__(self, **kwargs):
-        kwargs.setdefault('type', 'password')
-        return super(PasswordField, self).__call__(**kwargs)
+    widget = widgets.PasswordInput()
         
 class FileField(TextField):
     """
@@ -388,9 +355,7 @@ class FileField(TextField):
     actually handle the file upload portion, as wtforms does not deal with 
     individual frameworks' file handling capabilities.
     """
-    def __call__(self, **kwargs):
-        kwargs.setdefault('type', 'file')
-        return super(FileField, self).__call__(**kwargs)
+    widget = widgets.FileInput()
 
 class IntegerField(TextField):
     """
@@ -410,18 +375,12 @@ class BooleanField(Field):
     """ 
     Represents an ``<input type="checkbox">``.
     """
+    widget = widgets.CheckboxInput()
+
     def __init__(self, label=u'', validators=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
         self.raw_data = None
 
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        kwargs.setdefault('type', u'checkbox')
-        kwargs.setdefault('value', u'y')
-        if self.data:
-            kwargs['checked'] = u'checked'
-        return u'<input %s />' % html_params(name=self.name, **kwargs)
-    
     def process_data(self, value):
         self.raw_data = value
         self.data = bool(value)
@@ -458,11 +417,7 @@ class SubmitField(BooleanField):
     Represents an ``<input type="submit">``.  This allows checking if a given
     submit button has been pressed.
     """
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        kwargs.setdefault('type', 'submit')
-        kwargs.setdefault('value', self.label.text)
-        return u'<input %s />' % html_params(name=self.name, **kwargs) 
+    widget = widgets.SubmitInput()
 
 __all__ = (
     'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',

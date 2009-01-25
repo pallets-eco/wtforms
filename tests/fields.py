@@ -9,12 +9,12 @@
     :license: MIT, see LICENSE.txt for details.
 """
 
+from datetime import datetime
 from unittest import TestCase
+from wtforms import validators, widgets
 from wtforms.fields import *
 from wtforms.fields import Label
 from wtforms.form import Form
-from wtforms import validators
-from datetime import datetime
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -144,11 +144,13 @@ class TextAreaFieldTest(TestCase):
 
 class PasswordFieldTest(TestCase):
     class F(Form):
-        a = PasswordField(default="LE DEFAULT")
+        a = PasswordField(widget=widgets.PasswordInput(hide_value=False), default="LE DEFAULT")
+        b = PasswordField(default="Hai")
 
     def test(self):
         form = self.F()
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="password" value="LE DEFAULT" />""")
+        self.assertEqual(form.b(), u"""<input id="b" name="b" type="password" value="" />""")
 
 class FileFieldTest(TestCase):
     class F(Form):
