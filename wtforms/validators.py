@@ -9,6 +9,12 @@
 """
 import re
 
+__all__ = (
+    'Email', 'EqualTo', 'IPAddress', 'Length', 'Required', 'Optional', 'Regexp',
+    'URL', 'email', 'equal_to', 'ip_address', 'length', 'required', 'optional',
+    'regexp', 'url'
+)
+
 class ValidationError(ValueError):
     """
     Raised when a validator fails to validate its input.
@@ -27,139 +33,193 @@ class StopValidation(ValidationError):
     def __init__(self, message=u'', *args, **kwargs):
         ValidationError.__init__(self, message, *args, **kwargs)
 
-def email(message=u'Invalid email address.'):
+class Validator(object):
+    """
+    Validator base class
+    """
+    def __call__(self, form, field):
+        """
+        Calls `validate`. Do **NOT** override this.
+        """
+        return self.validate(form, field)
+
+    def validate(self, form, field):
+        """
+        Validators should override this to implement their validation behaviour.
+        
+        `form`
+            The form the field being validated belongs to.
+        `field`
+            The field to validate.
+        """
+        raise NotImplementedError
+
+class Email(Validator):
     """
     Validates an email address. Note that this uses a very primitive regular
     expression and should only be used in instances where you later verify by
     other means, such as email activation or lookups.
-    
-    `message`
-        Error message to raise in case of a validation error.
     """
-    def _email(form, field):
+    def __init__(self, message=u'Invalid email address.'):
+        """
+        `message`
+            Error message to raise in case of a validation error.
+        """
+        self.message = message
+
+    def validate(self, form, field):
         data = field.data is not None and field.data or ''
         if not re.match(r'^.+@[^.].*\.[a-z]{2,}$', data, re.IGNORECASE):
-            raise ValidationError(message)
-    return _email
+            raise ValidationError(self.message)
 
-def equal_to(fieldname, message=None):
+class EqualTo(Validator):
     """
-    Compares the fields value with another fields. Useful for e.g. passwords.
+    Compares the values of two fields.
+    """
+    def __init__(self, fieldname, message=None):
+        """
+        `fieldname`
+            The name of the other field to compare to.
+        `message`
+            Error message to raise in case of a validation error.
+        """
+        self.fieldname = fieldname
+        if message is not None:
+            self.message = message
+        else:
+            self.message = u'Field must be equal to %s' % fieldname
 
-    `fieldname`
-        The name of the field to compare to.
-    `message`
-        Error message to raise in case of a validation error. A default
-        containing the field name is provided.
-    """
-    if not message:
-        message = u'Field must be equal to %s' % fieldname
-    def _equal_to(form, field):
-        other = getattr(form, fieldname, None)
+    def validate(self, form, field):
+        other = getattr(form, self.fieldname, None)
         if not other:
-            raise ValidationError(u"Invalid field name '%s'" % fieldname)
+            raise ValidationError(u"Invalid field name '%s'" % self.fieldname)
         elif field.data != other.data:
-            raise ValidationError(message)
-    return _equal_to
+            raise ValidationError(self.message)
 
-def ip_address(message=u'Invalid IP address.'):
+class IPAddress(Validator):
     """
-    Validates that the field contains a valid IPv4 format address.
-
-    `message`
-        Error message to raise in case of a validation error.
+    Validates an IP(v4) address.
     """
-    def _ip_address(form, field):
+    def __init__(self, message=u'Invalid IP address.'):
+        """
+        `message`
+            Error message to raise in case of a validation error.
+        """
+        self.message = message
+    
+    def validate(self, form, field):
         if not re.match(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', field.data):
-            raise ValidationError(message)
-    return _ip_address
+            raise ValidationError(self.message)
 
-def length(min=-1, max=-1, message=None):
+class Length(Validator):
     """
     Validates the length of a string.
-    
-    `min`
-        The minimum required length of the string. If not provided, minimum
-        length will not be checked.        
-    `max`
-        The maximum length of the string. If not provided, maximum length will
-        not be checked.
-    `message`
-        Error message to raise in case of a validation error. A default
-        containing min and max length is provided.
     """
-    if not message:
-        message = u'Field must be between %i and %i characters long.' % (min, max)
-    def _length(form, field):
+    def __init__(self, min=-1, max=-1, message=None):
+        """
+        `min`
+            The minimum required length of the string. If not provided, minimum
+            length will not be checked.        
+        `max`
+            The maximum length of the string. If not provided, maximum length
+            will not be checked.
+        `message`
+            Error message to raise in case of a validation error. A default
+            containing min and max length is provided.
+        """
+        if message:
+            self.message = message
+        else:
+            self.message = u'Field must be between %i and %i characters long.' % (min, max)
+        self.min = min
+        self.max = max
+    
+    def validate(self, form, field):
         l = field.data and len(field.data) or 0
-        if l < min or max != -1 and l > max:
-            raise ValidationError(message)
-    return _length
+        if l < self.min or self.max != -1 and l > self.max:
+            raise ValidationError(self.message)
 
-def optional():
+class Optional(Validator):
     """
     Allows empty input and stops the validation chain from continuing.
     """
-    def _optional(form, field):
+    field_flags = ('optional', )
+
+    def validate(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation()
-    _optional.field_flags = ('optional', )
-    return _optional
 
-def required(message=u'This field is required.'):
+class Required(Validator):
     """
     Validates that the field contains data. This validator will stop the
     validation chain on error.
-
-    `message`
-        Error message to raise in case of a validation error.
     """
-    def _required(form, field):
-        if not field.data or isinstance(field.data, basestring) and not field.data.strip():
-            raise StopValidation(message)
-    _required.field_flags = ('required', )
-    return _required
+    field_flags = ('required', )
 
-def regexp(regex, flags=0, message=u'Invalid input.'):
+    def __init__(self, message=u'This field is required.'):
+        """
+        `message`
+            Error message to raise in case of a validation error.
+        """
+        self.message = message
+
+    def validate(self, form, field):
+        if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+            raise StopValidation(self.message)
+
+class Regexp(Validator):
     """
     Validates the field against a user provided regexp.
-
-    `regex`
-        The regular expression string to use. Can also be a compiled regular
-        expression pattern.
-    `flags`
-        The regexp flags to use, for example re.IGNORECASE. Ignored if `regex`
-        is not a string.  
-    `message`
-        Error message to raise in case of a validation error.
     """
-    def _regexp(form, field):
-        data = field.data or ''
+    def __init__(self, regex, flags=0, message=u'Invalid input.'):
+        """
+        `regex`
+            The regular expression string to use. Can also be a compiled regular
+            expression pattern.
+        `flags`
+            The regexp flags to use, for example re.IGNORECASE. Ignored if
+            `regex` is not a string.  
+        `message`
+            Error message to raise in case of a validation error.
+        """
         if isinstance(regex, basestring):
-            result = re.match(regex, data, flags)
+            self.regex = re.compile(regex, flags)
         else:
-            result = regex.match(data)
+            self.regex = regex
+        self.message = message
+    
+    def validate(self, form, field):
+        data = field.data or ''
+        result = self.regex.match(data)
         if not result:
-            raise ValidationError(message)
-    return _regexp
+            raise ValidationError(self.message)
 
-def url(require_tld=True, message=u'Invalid URL.'):
+class URL(Regexp):
     """
     Simple regexp based url validation. Much like the email validator, you
     probably want to validate the url later by other means if the url must 
     resolve.
-
-    `require_tld`
-        If true, then the domain-name portion of the URL must contain a .tld
-        suffix.  Set this to false if you want to allow domains like 
-        `localhost`.
-    
-    `message`
-        Error message to raise in case of a validation error.
     """
-    BASE_REGEXP = r"""^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$""" 
-    url_regexp = re.compile(BASE_REGEXP % (require_tld and r'\.[a-z]{2,}' or ''), re.IGNORECASE)
+    def __init__(self, require_tld=True, message=u'Invalid URL.'):
+        """
+        `require_tld`
+            If true, then the domain-name portion of the URL must contain a .tld
+            suffix.  Set this to false if you want to allow domains like 
+            `localhost`.
+        
+        `message`
+            Error message to raise in case of a validation error.
+        """
+        regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (require_tld and r'\.[a-z]{2,}' or '')
+        flags = re.IGNORECASE
+        super(URL, self).__init__(regex, flags, message)
 
-    return regexp(url_regexp, message=message) 
-
-__all__ = ('ValidationError', 'StopValidation', 'email', 'equal_to', 'ip_address', 'length', 'required', 'optional', 'regexp', 'url')
+# Factory-style access - Mostly for backwards compatibility            
+email = Email
+equal_to = EqualTo
+ip_address = IPAddress
+length = Length
+optional = Optional
+required = Required
+regexp = Regexp
+url = URL
