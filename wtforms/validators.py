@@ -54,24 +54,6 @@ class Validator(object):
         """
         raise NotImplementedError
 
-class Email(Validator):
-    """
-    Validates an email address. Note that this uses a very primitive regular
-    expression and should only be used in instances where you later verify by
-    other means, such as email activation or lookups.
-    """
-    def __init__(self, message=u'Invalid email address.'):
-        """
-        `message`
-            Error message to raise in case of a validation error.
-        """
-        self.message = message
-
-    def validate(self, form, field):
-        data = field.data is not None and field.data or ''
-        if not re.match(r'^.+@[^.].*\.[a-z]{2,}$', data, re.IGNORECASE):
-            raise ValidationError(self.message)
-
 class EqualTo(Validator):
     """
     Compares the values of two fields.
@@ -193,6 +175,19 @@ class Regexp(Validator):
         result = self.regex.match(data)
         if not result:
             raise ValidationError(self.message)
+
+class Email(Regexp):
+    """
+    Validates an email address. Note that this uses a very primitive regular
+    expression and should only be used in instances where you later verify by
+    other means, such as email activation or lookups.
+    """
+    def __init__(self, message=u'Invalid email address.'):
+        """
+        `message`
+            Error message to raise in case of a validation error.
+        """
+        super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,}$', re.IGNORECASE, message)
 
 class URL(Regexp):
     """
