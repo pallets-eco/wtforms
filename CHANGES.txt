@@ -5,7 +5,12 @@ Version 0.4
 -----------
 Not yet released.
 
-- Widget support: Fields now use widgets for rendering.
+- Fields now use widgets for rendering.
+
+- There is now a Validator base class, and all built-in validators have been
+  refactored into classes. This is now the preferred way of writing validators.
+  Validator callables are still supported for simple validators however.
+
 
 Version 0.3.1
 -------------
@@ -22,6 +27,7 @@ Released January 24th, 2009.
   creating its `_unbound_fields` property, and Field construction now gives an
   instance of the new `UnboundField` class instead of using a partial function
   application.  These are both internal changes and do not change the API.
+
 
 Version 0.3
 -----------
@@ -48,7 +54,7 @@ Released January 18th, 2009.
   of the Django 1.0 release, and to add some useful fields for working with
   django ORM data in forms.
  
-- the `checker` keyword argument to SelectField, SelectMultipleField, and 
+- The `checker` keyword argument to SelectField, SelectMultipleField, and 
   RadioField has been renamed to `coerce` to reflect the actual functionality
   of this callable.
 

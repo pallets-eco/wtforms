@@ -10,9 +10,9 @@
 import re
 
 __all__ = (
-    'Email', 'EqualTo', 'IPAddress', 'Length', 'Required', 'Optional', 'Regexp',
-    'URL', 'email', 'equal_to', 'ip_address', 'length', 'required', 'optional',
-    'regexp', 'url'
+    'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
+    'Length', 'length', 'Optional', 'optional', 'Required', 'required',
+    'Regexp', 'regexp', 'URL', 'url'
 )
 
 class ValidationError(ValueError):
@@ -66,10 +66,7 @@ class EqualTo(Validator):
             Error message to raise in case of a validation error.
         """
         self.fieldname = fieldname
-        if message is not None:
-            self.message = message
-        else:
-            self.message = u'Field must be equal to %s' % fieldname
+        self.message = message or u'Field must be equal to %s' % fieldname
 
     def validate(self, form, field):
         other = getattr(form, self.fieldname, None)
@@ -109,12 +106,9 @@ class Length(Validator):
             Error message to raise in case of a validation error. A default
             containing min and max length is provided.
         """
-        if message:
-            self.message = message
-        else:
-            self.message = u'Field must be between %i and %i characters long.' % (min, max)
         self.min = min
         self.max = max
+        self.message = message or u'Field must be between %i and %i characters long.' % (min, max)
     
     def validate(self, form, field):
         l = field.data and len(field.data) or 0
@@ -164,16 +158,11 @@ class Regexp(Validator):
         `message`
             Error message to raise in case of a validation error.
         """
-        if isinstance(regex, basestring):
-            self.regex = re.compile(regex, flags)
-        else:
-            self.regex = regex
+        self.regex = isinstance(regex, basestring) and re.compile(regex, flags) or regex
         self.message = message
     
     def validate(self, form, field):
-        data = field.data or ''
-        result = self.regex.match(data)
-        if not result:
+        if not self.regex.match(field.data or ''):
             raise ValidationError(self.message)
 
 class Email(Regexp):
