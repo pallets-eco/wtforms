@@ -12,6 +12,8 @@
 # serve to show the default value.
 
 import sys, os
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import wtforms
 
 # If your extensions are in another directory, add it here. If the directory
