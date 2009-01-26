@@ -7,21 +7,21 @@ a maximum length for a string and returns. Or, if the validation fails, raises
 a :class:`~wtforms.validators.ValidationError`. This system is very simple and
 flexible, and allows you to chain any number of validators on fields.
 
+.. autoclass:: wtforms.validators.Validator
 .. autoclass:: wtforms.validators.ValidationError
-
 .. autoclass:: wtforms.validators.StopValidation
 
 Built-in validators
 -------------------
 
-.. autofunction:: wtforms.validators.email
-.. autofunction:: wtforms.validators.equal_to
-.. autofunction:: wtforms.validators.ip_address
-.. autofunction:: wtforms.validators.length
-.. autofunction:: wtforms.validators.optional
-.. autofunction:: wtforms.validators.required
-.. autofunction:: wtforms.validators.regexp
-.. autofunction:: wtforms.validators.url
+.. autoclass:: wtforms.validators.Email
+.. autoclass:: wtforms.validators.EqualTo
+.. autoclass:: wtforms.validators.IPAddress
+.. autoclass:: wtforms.validators.Length
+.. autoclass:: wtforms.validators.Optional
+.. autoclass:: wtforms.validators.Required
+.. autoclass:: wtforms.validators.Regexp
+.. autoclass:: wtforms.validators.URL
 
 Custom validators
 -----------------

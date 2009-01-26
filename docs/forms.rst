@@ -6,6 +6,9 @@ Forms provide the highest level API in WTForms. They contain your field
 definitions, delegate validation, take input, aggregate errors, and in
 general function as the glue holding everything together.
 
+The Form base class
+-------------------
+
 .. autoclass:: Form
 
     **Properties**

@@ -18,12 +18,7 @@ from wtforms.validators import ValidationError, StopValidation
 
 class Field(object):
     """
-    Stores and processes data, and generates HTML for an form field.
-
-    Field instances contain the data of that instance as well as the
-    functionality to render it within your Form. They also contain a number of
-    properties which can be used within your templates to render the field and
-    label.  
+    Field base class
     """
     widget = None
     _formfield = True
@@ -35,6 +30,37 @@ class Field(object):
             return UnboundField(cls, *args, **kwargs)
 
     def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, widget=None, _form=None, _name=None):
+        """
+        Construct a new field.
+
+        `label`
+            The label of the field. Available after construction through the
+            `label` property.
+        `description`
+            A description for the field, typically used for help text. It is
+            available through the `description` property after construction.
+        `id`
+            An id to use for the field. A reasonable default is set by the form,
+            and you shouldn't need to set this manually.
+        `validators`
+            A sequence of validators to call when `validate` is called.
+        `default`
+            The default value to assign to the field, if one is not provided by
+            the form.
+        `widget`
+            If provided, overrides the widget used to render the field.
+        `_form`
+            The form holding the field. It is passed by the form itself during
+            construction. You should never pass this value yourself.
+        `_name`
+            The name of the form holding the field. It is passed by the form
+            itself during construction. You should never pass this value
+            yourself.
+
+        **Note:** if `_form` and `_name` isn't provided, an `UnboundField` will be
+        returned instead. Call its `bind` method with a form instance and a name
+        to construct the field.
+        """
         self.name = _name
         self.id = id or (_form._idprefix + self.name)
         self.label = Label(self.id, label)

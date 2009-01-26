@@ -30,8 +30,72 @@ information on those.
 The Field base class
 --------------------
 
-.. autoclass:: Field
+.. class:: Field
 
+    Stores and processes data, and generates HTML for a form field.
+
+    Field instances contain the data of that instance as well as the
+    functionality to render it within your Form. They also contain a number of
+    properties which can be used within your templates to render the field and
+    label.
+
+    **Construction**
+    
+    .. automethod:: __init__
+
+    **Validation**
+    
+    To validate the field, call its `validate` method, providing a form and any
+    extra validators needed. To extend validation behaviour, override
+    `pre_validate` or `post_validate`.
+    
+    .. automethod:: validate
+    .. automethod:: pre_validate
+    .. automethod:: post_validate
+    .. attribute:: errors
+        
+        If `validate` encounters any errors, they will be inserted into this
+        list.
+    
+    **Data access and processing**
+    
+    To handle incoming data from python, override `process_data`. Similarly, to
+    handle incoming data from the outside, override `process_formdata`.
+    
+    .. automethod:: process_data
+    .. automethod:: process_formdata 
+    .. attribute:: data
+
+        Contains the resulting (sanitized) value of calling either of the
+        process methods. Note that it is not HTML escaped when using in
+        templates.
+        
+    **Rendering**
+
+    To render a field, simply call it, providing any values the widget expects
+    as keyword arguments. Usually the keyword arguments are used for extra HTML
+    attributes.
+
+    .. automethod:: __call__
+        
+        If one wants to pass the "class" argument which is a reserved keyword
+        in some python-based templating languages, one can do::
+            
+            form.field(class_="text_blob")
+
+        This will output (for a text field):
+
+        .. code-block:: html
+            
+            <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
+            
+        Note: Simply coercing the field to a string or unicode will render it as
+        if it was called with no arguments.
+        
+    .. attribute:: widget
+    
+        The widget used to render the field.  
+        
     **Properties**
 
     .. attribute:: name
@@ -73,11 +137,6 @@ The Field base class
                 </tr>
             {% endfor %}
 
-    .. attribute:: data
-
-        Data for this field, already coerced to the python type stored by the
-        field.  Not HTML escaped.
-
     .. attribute:: flags
         
         An object containing boolean flags set either by the field itself, or
@@ -93,34 +152,6 @@ The Field base class
                     <td>{{ field }}</td>
                 </tr>
             {% endfor %}
-
-    .. attribute:: errors
-        
-        A list of strings with the errors for this field only.
-
-    **Methods**
-
-    .. automethod:: validate
-    .. automethod:: pre_validate
-    .. automethod:: post_validate
-    .. automethod:: process_data
-    .. automethod:: process_formdata 
-
-    .. automethod:: __call__
-        
-        If one wants to pass the "class" argument which is a reserved keyword
-        in some python-based templating languages, one can do::
-            
-            form.field(class_="text_blob")
-
-        This will output (for a text field):
-
-        .. code-block:: html
-            
-            <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
-            
-        Note: Simply coercing the field to a string or unicode will render it as
-        if it was called with no arguments.
 
 Built-in fields
 ---------------

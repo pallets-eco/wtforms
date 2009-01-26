@@ -60,8 +60,30 @@ class FormMeta(type):
         type.__delattr__(cls, name)
 
 class Form(object):
+    """
+    Form base class. Provides core behaviour like field construction,
+    validation, and data and error proxying.
+    """
     __metaclass__ = FormMeta
+
     def __init__(self, formdata=None, obj=None, prefix='', idprefix='', **kwargs):
+        """
+        `formdata`
+            Used to pass data coming from the enduser, usually `request.POST` or
+            equivalent.
+        `obj`
+            If `formdata` has no data for a field, the form will try to get it
+            from the passed object.
+        `prefix`
+            If provided, all fields will have their name prefixed with the
+            value.
+        `idprefix`
+            If provided, prefixes the id's of all fields with the value.
+        `**kwargs`
+            If neither `formdata` or `obj` contains a value for a field, the
+            form will assign the value of a matching keyword argument to the
+            field, if provided.
+        """
         if prefix:
             prefix += '_'
         self._idprefix = idprefix
