@@ -206,8 +206,7 @@ class URL(Regexp):
             Error message to raise in case of a validation error.
         """
         regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (require_tld and r'\.[a-z]{2,}' or '')
-        flags = re.IGNORECASE
-        super(URL, self).__init__(regex, flags, message)
+        super(URL, self).__init__(regex, re.IGNORECASE, message)
 
 # Factory-style access - Mostly for backwards compatibility            
 email = Email
