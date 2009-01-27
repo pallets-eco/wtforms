@@ -96,7 +96,7 @@ class CheckboxInput(Input):
 
     def render(self, field, **kwargs): 
         kwargs.setdefault('value', u'y')
-        if field.checked:
+        if field.data:
             kwargs['checked'] = u'checked'
         return super(CheckboxInput, self).render(field, **kwargs)
 
