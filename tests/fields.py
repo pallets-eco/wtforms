@@ -185,6 +185,11 @@ class BooleanFieldTest(TestCase):
         self.assertEqual(form.bool1.data, False)
         self.assertEqual(form.bool2.data, True)
 
+    def test_rendering(self):
+        form = self.BoringForm()
+        self.assertEqual(form.bool1(), u'<input id="bool1" name="bool1" type="checkbox" value="y" />')
+        self.assertEqual(form.bool2(), u'<input checked="checked" id="bool2" name="bool2" type="checkbox" value="y" />')
+
     def test_with_postdata(self):
         form = self.BoringForm(DummyPostData(bool1=[u'a']))
         self.assertEqual(form.bool1.raw_data, u'a')
