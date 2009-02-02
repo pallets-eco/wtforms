@@ -7,11 +7,14 @@
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
+from wtforms import Form
 from wtforms import fields as f
 from wtforms import validators
-from wtforms import Form
 from wtforms.ext.django.fields import ModelSelectField
 
+__all__ = (
+    'model_form',
+)
 
 class ModelConverter(object):
     SIMPLE_CONVERSIONS = {
@@ -112,5 +115,3 @@ def model_form(model, base_class=Form, include_pk=False):
         if formfield is not None:
             f_dict[mfield.attname] = formfield
     return type(meta.object_name + 'Form', (base_class, ), f_dict)
-
-__all__ = ('model_form', )

@@ -7,9 +7,15 @@
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
+from cgi import escape
+
 from wtforms.fields import Field
-from wtforms.utils import escape, html_params
 from wtforms.validators import ValidationError
+from wtforms.widgets import html_params
+
+__all__ = (
+    'ModelSelectField', 'QuerySetSelectField',
+)
 
 class QuerySetSelectField(Field):
     """

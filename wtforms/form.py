@@ -8,6 +8,10 @@
     :license: MIT, see LICENSE.txt for details.
 """
 
+__all__ = (
+    'Form',
+)
+
 class FormMeta(type):
     """
     The metaclass for `Form` and any subclasses of `Form`.

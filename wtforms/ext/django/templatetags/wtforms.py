@@ -7,10 +7,11 @@
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
+import re
+
 from django import template
 from django.conf import settings
 from django.template import Variable
-import re
 
 class FormFieldNode(template.Node):
     def __init__(self, field_var, html_attrs):
@@ -76,4 +77,3 @@ def args_split(text):
             yield "'" + bit[1:-1].replace("\\'", "'").replace("\\\\", "\\") + "'"
         else:
             yield bit
-

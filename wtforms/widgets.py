@@ -10,8 +10,8 @@
 from cgi import escape
 
 __all__ = (
-    'ListWidget', 'TextInput', 'PasswordInput', 'HiddenInput', 'CheckboxInput',
-    'RadioInput', 'FileInput', 'SubmitInput', 'TextArea', 'Select',
+    'CheckboxInput', 'FileInput', 'HiddenInput', 'ListWidget', 'PasswordInput',
+    'RadioInput', 'Select', 'SubmitInput', 'TextArea', 'TextInput',
 )
 
 def html_params(**kwargs):

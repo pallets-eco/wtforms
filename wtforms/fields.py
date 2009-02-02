@@ -7,14 +7,19 @@
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
-from datetime import datetime
 from cgi import escape
+from datetime import datetime
 from itertools import chain
 import time
 
 from wtforms import widgets
-from wtforms.utils import html_params
-from wtforms.validators import ValidationError, StopValidation
+from wtforms.validators import StopValidation, ValidationError
+
+__all__ = (
+    'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
+    'IntegerField', 'PasswordField', 'RadioField', 'SelectField',
+    'SelectMultipleField', 'SubmitField', 'TextField', 'TextAreaField',
+)
 
 class Field(object):
     """
@@ -255,7 +260,7 @@ class Label(object):
 
     def __call__(self, text=None, **kwargs):
         kwargs['for'] = self.field_id
-        attributes = html_params(**kwargs)
+        attributes = widgets.html_params(**kwargs)
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
 class SelectField(Field):
@@ -444,9 +449,3 @@ class SubmitField(BooleanField):
     submit button has been pressed.
     """
     widget = widgets.SubmitInput()
-
-__all__ = (
-    'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
-    'IntegerField', 'PasswordField', 'RadioField', 'SelectField',
-    'SelectMultipleField', 'SubmitField', 'TextField', 'TextAreaField',
-)
