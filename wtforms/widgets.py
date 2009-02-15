@@ -131,11 +131,11 @@ class Select(Widget):
         kwargs.setdefault('id', field.id)
         if self.multiple:
             kwargs['multiple'] = 'multiple'
-        html = u'<select %s>' % html_params(name=field.name, **kwargs)
-        for val,title in field.choices:
+        html = [u'<select %s>' % html_params(name=field.name, **kwargs)]
+        for val, label, selected in field.iter_choices():
             options = {'value': val}
-            if field._selected(val):
+            if selected:
                 options['selected'] = u'selected'
-            html += u'<option %s>%s</option>' % (html_params(**options), escape(unicode(title)))
-        html += u'</select>'
-        return html
+            html.append(u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label))))
+        html.append(u'</select>')
+        return ''.join(html)

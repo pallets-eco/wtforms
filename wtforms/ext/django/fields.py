@@ -11,7 +11,7 @@ from cgi import escape
 
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
-from wtforms.widgets import html_params
+from wtforms import widgets
 
 __all__ = (
     'ModelSelectField', 'QuerySetSelectField',
@@ -32,6 +32,8 @@ class QuerySetSelectField(Field):
     to the top of the list. Selecting this choice will result in the `data`
     property being `None`.
     """
+    widget = widgets.Select()
+
     def __init__(self, label=u'', validators=None, queryset=None, label_attr='', allow_blank=False, **kwargs):
         super(QuerySetSelectField, self).__init__(label, validators, **kwargs)
         self.label_attr = label_attr
@@ -54,28 +56,13 @@ class QuerySetSelectField(Field):
 
     data = property(_get_data, _set_data)
 
-    def __call__(self, **kwargs):
-        kwargs.setdefault('id', self.id)
-        primary_key = self.queryset.model._meta.pk.name
-        html = u'<select %s>' % html_params(name=self.name, **kwargs)
-        for option in self:
-            html += option
-        html += u'</select>'
-        return html
-
-    def __iter__(self):
+    def iter_choices(self):
         if self.allow_blank:
-            yield self._option(u'__None', u'', self.data is None)
+            yield (u'__None', u'', self.data is None)
 
         for obj in self.queryset:
             label = self.label_attr and getattr(obj, self.label_attr) or obj
-            yield self._option(obj.pk, label, obj == self.data)
-
-    def _option(self, value, label, selected):
-        options = {'value': value}
-        if selected:
-            options['selected'] = u'selected'
-        return u'<option %s>%s</option>' % (html_params(**options), label)
+            yield (obj.pk, label, obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:

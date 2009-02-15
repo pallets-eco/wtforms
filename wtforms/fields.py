@@ -271,8 +271,9 @@ class SelectField(Field):
         self.coerce = coerce
         self.choices = choices
 
-    def _selected(self, value):
-        return (self.coerce(value) == self.data)
+    def iter_choices(self):
+        for value, label in self.choices:
+            yield (value, label, self.coerce(value) == self.data)
 
     def process_data(self, value):
         try:
@@ -302,10 +303,11 @@ class SelectMultipleField(SelectField):
     """
     widget = widgets.Select(multiple=True)
 
-    def _selected(self, value):
-        if self.data is not None:
-            return (self.coerce(value) in self.data)
-        
+    def iter_choices(self):
+        for value, label in self.choices:
+            selected = self.data is not None and self.coerce(value) in self.data
+            yield (value, label, selected)
+
     def process_data(self, value):
         try:
             self.data = [self.coerce(getattr(v, 'id', v)) for v in value]
@@ -334,10 +336,10 @@ class RadioField(SelectField):
     widget = widgets.ListWidget(prefix_label=False)
 
     def __iter__(self):
-        for i, (value, label) in enumerate(self.choices):
+        for i, (value, label, checked) in enumerate(self.iter_choices()):
             r = self._Radio(label=label, id=u'%s_%d' % (self.id, i), _name=self.name, _form=None)
             r.process_data(value)
-            r.checked = self._selected(value)
+            r.checked = checked
             yield r
 
     class _Radio(Field):
