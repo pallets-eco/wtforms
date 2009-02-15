@@ -37,8 +37,11 @@ from wtforms import Form, fields, validators
 from wtforms.ext.django.orm import model_form
 from wtforms.ext.django.fields import QuerySetSelectField, ModelSelectField
 
-def validator_names(field):
-    return [x.func_name for x in field.validators]
+def contains_validator(field, v_type):
+    for v in field.validators:
+        if isinstance(v, v_type):
+            return True
+    return False
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -82,11 +85,11 @@ class ModelFormTest(TestCase):
         self.assertEqual(self.form.birthday.description, 'Teh Birthday')
 
     def test_max_length(self):
-        self.assertTrue('_length' in validator_names(self.form.username))
-        self.assertTrue('_length' not in validator_names(self.form.posts))
+        self.assert_(contains_validator(self.form.username, validators.Length))
+        self.assert_(not contains_validator(self.form.posts, validators.Length))
 
     def test_optional(self):
-        self.assertTrue('_optional' in validator_names(self.form.email))
+        self.assert_(contains_validator(self.form.email, validators.Optional))
 
     def test_simple_fields(self):
         self.assertEqual(type(self.form.file), fields.FileField)
@@ -96,12 +99,12 @@ class ModelFormTest(TestCase):
 
     def test_custom_converters(self):
         self.assertEqual(type(self.form.email), fields.TextField)
-        self.assertTrue('_email' in validator_names(self.form.email))
+        self.assert_(contains_validator(self.form.email, validators.Email))
         self.assertEqual(type(self.form.reg_ip), fields.TextField)
-        self.assertTrue('_ip_address' in validator_names(self.form.reg_ip))
+        self.assert_(contains_validator(self.form.reg_ip, validators.IPAddress))
 
     def test_us_states(self):
-        self.assertTrue(len(self.form.state.choices) >= 50)
+        self.assert_(len(self.form.state.choices) >= 50)
 
 class QuerySetSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
@@ -117,7 +120,7 @@ class QuerySetSelectFieldTest(DjangoTestCase):
 
     def test_queryset_freshness(self):
         form = self.F()
-        self.assertTrue(form.b.queryset is not self.queryset)
+        self.assert_(form.b.queryset is not self.queryset)
 
     def test_with_data(self):
         form = self.F()
