@@ -171,6 +171,8 @@ class IntegerFieldTest(TestCase):
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="0" />""")
         self.assertEqual(form.b.data, -15)
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15" />""")
+        form = self.F(DummyPostData(a=[]))
+        self.assertEqual(form.a.data, None)
 
 class BooleanFieldTest(TestCase):
     class BoringForm(Form):

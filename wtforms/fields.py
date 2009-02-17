@@ -399,10 +399,11 @@ class IntegerField(TextField):
         return self.data and unicode(self.data) or u'0'
 
     def process_formdata(self, valuelist):
-        try:
-            self.data = int(valuelist[0])
-        except ValueError:
-            pass
+        if valuelist:
+            try:
+                self.data = int(valuelist[0])
+            except ValueError:
+                pass
 
 class BooleanField(Field):
     """ 
