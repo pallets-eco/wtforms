@@ -395,15 +395,31 @@ class IntegerField(TextField):
     A text field, except all input is coerced to an integer.  Erroneous input
     is ignored and will not be accepted as a value.
     """
+    def __init__(self, label=u'', validators=None, **kwargs):
+        super(IntegerField, self).__init__(label, validators, **kwargs)
+        self.raw_data = None
+
     def _value(self):
-        return self.data and unicode(self.data) or u'0'
+        if self.raw_data is not None:
+            return self.raw_data
+        else:
+            return self.data and unicode(self.data) or u'0'
 
     def process_formdata(self, valuelist):
         if valuelist:
+            self.raw_data = valuelist[0]
             try:
                 self.data = int(valuelist[0])
             except ValueError:
                 pass
+
+    def post_validate(self, form, validation_stopped):
+        if not validation_stopped and self.raw_data:
+            try:
+                int(self.raw_data)
+            except ValueError:
+                raise ValidationError(u'Not a valid integer value')
+
 
 class BooleanField(Field):
     """ 

@@ -163,16 +163,20 @@ class FileFieldTest(TestCase):
 class IntegerFieldTest(TestCase):
     class F(Form):
         a = IntegerField()
-        b = IntegerField()
+        b = IntegerField(default=48)
 
     def test(self):
         form = self.F(DummyPostData(a=['v'], b=['-15']))
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="0" />""")
+        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="v" />""")
         self.assertEqual(form.b.data, -15)
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15" />""")
-        form = self.F(DummyPostData(a=[]))
+        self.assert_(not form.validate())
+        form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
+        self.assertEqual(form.b.data, 48)
+        self.assertEqual(form.b.raw_data, '')
+        self.assert_(form.validate())
 
 class BooleanFieldTest(TestCase):
     class BoringForm(Form):
