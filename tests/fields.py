@@ -59,7 +59,7 @@ class FlagsTest(TestCase):
 
 class SelectFieldTest(TestCase):
     class F(Form):
-        a = SelectField(choices=[('a', 'hello'), ('b','bye')], default='a')
+        a = SelectField(choices=[('a', 'hello'), ('btest','bye')], default='a')
         b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int)
 
     def test_defaults(self):
@@ -67,11 +67,16 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.a.data, u'a')
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.validate(), False)
-        self.assertEqual(form.a(), u"""<select id="a" name="a"><option selected="selected" value="a">hello</option><option value="b">bye</option></select>""")
+        self.assertEqual(form.a(), u"""<select id="a" name="a"><option selected="selected" value="a">hello</option><option value="btest">bye</option></select>""")
         self.assertEqual(form.b(), u"""<select id="b" name="b"><option value="1">Item 1</option><option value="2">Item 2</option></select>""")
 
+    def test_with_data(self):
+        form = self.F(DummyPostData(a=[u'btest']))
+        self.assertEqual(form.a.data, u'btest')
+        self.assertEqual(form.a(), u"""<select id="a" name="a"><option value="a">hello</option><option selected="selected" value="btest">bye</option></select>""")
+
     def test_value_coercion(self):
-        form = self.F(DummyPostData(b=u'2'))
+        form = self.F(DummyPostData(b=[u'2']))
         self.assertEqual(form.b.data, 2)
         self.assert_(form.b.validate(form))
 
