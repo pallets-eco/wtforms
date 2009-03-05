@@ -7,8 +7,6 @@
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
-from cgi import escape
-
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
 from wtforms import widgets
