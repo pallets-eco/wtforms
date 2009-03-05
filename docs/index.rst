@@ -22,6 +22,7 @@ This is the documentation for WTForms |version|, generated |today|.
    forms
    fields
    validators
+   widgets
    ext
 
 **Indices and tables:**
