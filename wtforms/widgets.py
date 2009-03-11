@@ -22,12 +22,12 @@ def html_params(**kwargs):
     keys = kwargs.keys()
     keys.sort()
     for k in keys:
+        v = escape(unicode(kwargs[k]), quote=True)
         if k in ('class_', 'class__'):
             k = k[:-1]
         k = unicode(k)
-        v = escape(unicode(kwargs[k]), quote=True)
         params.append(u'%s="%s"' % (k, v))
-    return str.join(' ', params)
+    return u' '.join(params)
 
 class Widget(object):
     """
