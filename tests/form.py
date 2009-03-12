@@ -13,6 +13,10 @@ from unittest import TestCase
 from wtforms import Form, TextField
 from wtforms.validators import ValidationError
 
+class DummyPostData(dict):
+    def getlist(self, key):
+        return self[key]
+
 class FormMetaTest(TestCase):
     def test_monkeypatch(self):
         class F(Form):
@@ -107,6 +111,9 @@ class FormTest(TestCase):
         self.assertEqual(self.F(prefix='foo').test.name, 'foo_test')
         self.assertEqual(self.F(prefix='foo').test.id, 'foo_test')
         self.assertEqual(self.F(idprefix='id_', prefix='foo').test.id, 'id_foo_test')
+        form = self.F(DummyPostData(foo_test=[u'hello'], test=[u'bye']), prefix='foo')
+        self.assertEqual(form.test.data, u'hello')
+
 
 if __name__ == '__main__':
     from unittest import main

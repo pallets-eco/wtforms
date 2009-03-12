@@ -61,7 +61,8 @@ The Field base class
     
     To handle incoming data from python, override `process_data`. Similarly, to
     handle incoming data from the outside, override `process_formdata`.
-    
+   
+    .. automethod:: process(formdata [, data])
     .. automethod:: process_data
     .. automethod:: process_formdata 
     .. attribute:: data
@@ -180,6 +181,32 @@ Built-in fields
 
 .. autoclass:: FormField(form_class, default field arguments)
 
+    FormFields are useful for editing child objects or enclosing multiple
+    related forms on a page which are submitted and validated together.  While
+    subclassing forms captures most desired behaviours, sometimes for
+    reusability or purpose of combining with `ListField`, FormField makes
+    sense.
+
+    For example, take the example of a contact form which uses a similar set of
+    three fields to represent telephone numbers::
+
+        class TelephoneForm(Form):
+            country_code = IntegerField('Country Code', [validators.required()])
+            area_code    = IntegerField('Area Code/Exchange', [validators.required()])
+            number       = TextField('Number')
+
+        class ContactForm(Form):
+            first_name   = TextField()
+            last_name    = TextField()
+            mobile_phone = FormField(TelephoneForm)
+            office_phone = FormField(TelephoneForm)
+
+    In the example, we reused the TelephoneForm to encapsulate the common
+    telephone entry instead of writing a custom field to handle the 3
+    sub-fields. The `data` property of the mobile_phone field will return the
+    :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the 
+    `errors` property encapsulate the forms' errors.
+
 .. autoclass:: HiddenField(default field arguments)
 
     HiddenField is useful for providing data from a model or the application to
@@ -264,7 +291,6 @@ Built-in fields
    .. code-block:: jinja
 
         {{ form.username(size=30, maxlength=50) }}
-
 
 
 Custom fields

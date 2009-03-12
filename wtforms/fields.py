@@ -186,10 +186,11 @@ class Field(object):
         """
         Process incoming data, calling process_data, process_formdata as needed, and run filters.
 
+        If `data` is not provided, process_data will be called on the field's default.
+
         Field subclasses usually won't override this, instead overriding the
         process_formdata and process_data methods. Only override this for
-        special advanced processing, such as when a field represents many form
-        inputs.
+        special advanced processing, such as when a field encapsulates many inputs.
         """
         if data is _unset_value:
             self.process_data(self._default)
@@ -504,9 +505,6 @@ class FormField(Field):
     """
     Encapsulate a form as a field in another form.
     
-    Useful for editing child objects or enclosing multiple related forms on a
-    page.
-
     The required `form_class` argument to the constructor should be a subclass
     of `Form`.
     """
@@ -515,6 +513,11 @@ class FormField(Field):
     def __init__(self, form_class, label=u'', validators=None, **kwargs):
         super(FormField, self).__init__(label, validators, **kwargs)
         self.form_class = form_class
+        if self.filters:
+            raise TypeError('FormField cannot take filters, as the encapsulated data is not mutable.')
+        if validators:
+            raise TypeError('FormField does not accept any validators. Instead, define them on the enclosed form.')
+
         if '_form' in kwargs and kwargs['_form']:
             self._idprefix = kwargs['_form']._idprefix
         else:
@@ -526,6 +529,8 @@ class FormField(Field):
         self.form = self.form_class(formdata=formdata, obj=data, prefix=self.name, idprefix=self._idprefix)
 
     def validate(self, form, extra_validators=tuple()):
+        if extra_validators:
+            raise TypeError('FormField does not accept in-line validators, as it gets errors from the enclosed form.')
         return self.form.validate()
 
     def populate(self, obj, name):

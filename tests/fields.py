@@ -280,6 +280,21 @@ class FormFieldTest(TestCase):
     def test_widget(self):
         self.assertEqual(self.F1().a(), u'''<tr><th><label for="a_a"></label><th><td><input id="a_a" name="a_a" type="text" value="" /></td></tr><tr><th><label for="a_b"></label><th><td><input id="a_b" name="a_b" type="text" value="" /></td></tr>''')
 
+    def test_no_validators_or_filters(self):
+        class A(Form):
+            a = FormField(self.F1, validators=[validators.required()])
+        self.assertRaises(TypeError, A)
+        class B(Form):
+            a = FormField(self.F1, filters=[lambda x: x])
+        self.assertRaises(TypeError, B)
+
+        class C(Form):
+            a = FormField(self.F1)
+            def validate_a(form, field):
+                pass 
+        form = C()
+        self.assertRaises(TypeError, form.validate)
+        
 if __name__ == '__main__':
     from unittest import main
     main()
