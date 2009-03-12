@@ -14,7 +14,7 @@ along with nearly any template framework, or even in the absence of one.
 Because there are minor differences between various frameworks, it is often
 difficult to write code examples that will work exactly the same on every
 framework. Due to this, we have opted to write this guide tailored to users of
-a Django-like framework with Django-like templates. We aim to make the examples
+a Django-like framework with Jinja-like templates. We aim to make the examples
 clear enough that users of any other framework will see how WTForms can be
 applied to their own framework.
 
@@ -62,39 +62,43 @@ sample application, we will take you through simple forms such as those which
 simply take in a few scalar values, then to forms which interact with DB-backed
 data, and finally to more complicated composed forms.
 
-Taking normal input: Login
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Taking normal input: Registration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to edit entries on your blog, you will need a login page to
-authenticate you, so evil people cannot start posting in your stead. For our
-login page, we will define a Form::
+We want to set up a way for people to register accounts on the blog so that
+users can post with confidence nobody is impersonating them.  For the
+registration page, we define a Form::
 
     from wtforms import Form, BooleanField, TextField, PasswordField, validators
 
-    class LoginForm(Form):
-        username    = TextField('Username', [validators.required()])
-        password    = PasswordField('Password', [validators.length(max=50)])
-        remember_me = BooleanField('Remember me')
+    class RegistrationForm(Form):
+        email        = TextField('Email Address', [validators.Length(min=4, max=35)])
+        password     = PasswordField('Password', [validators.Length(min=6)])
+        accept_rules = BooleanField('I accept the site rules', [validators.Required('You must accept to continue.'])
 
-The `LoginForm` class can be defined in any python file in your project.  Some
-people put their forms alongside the associated views in their `views.py`,
+The `RegistrationForm` class can be defined in any python file in your project.
+Some people put their forms alongside the associated views in their `views.py`,
 while others prefer to create a `forms.py` to place their form defintions.
 
-Now that the form definition is out of the way, let's write our login view::
+Now that the form definition is out of the way, let's write our register view::
 
-    from django.contrib.auth import authenticate, login
-
-    def login(request):
-        form = LoginForm(request.POST)
+    def register(request):
+        form = RegistrationForm(request.POST)
         if request.POST and form.validate():
-            user = authenticate(username=form.username.data, password=form.password.data)
-            if user.is_active:
-                login(request, user)
-                response = HttpResponseRedirect('/blog_admin')
-                if form.remember_me.data:
-                    response.set_cookie('hash', user.get_hash())
-                return response
+            user = User(form.email.data, form.password.data)
+            # save new user here
+            return render('confirmation.html', {'user': user})
+        return render('register.html', {'form': form})
 
-        return render_to_response('login.html', {'form': form})
+In the register view, we instantiate the form and pass it any received post
+data. The form will pass this along to all its fields, who will pick up any
+data they care about, converting it as needed.  This converted data is
+available, naturally, on the `data` property of the field.
 
-TODO: get a better example for the simple view.
+
+TODO: CRUD forms using auto_populate, composed forms using ListField/FormField,
+explain validators and widgets and how to switch them around, and neat
+rendering things.
+
+TODO: At end, provide links to other parts of documentation as needed.
+
