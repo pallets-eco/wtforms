@@ -79,6 +79,10 @@ class TableWidget(Widget):
 
     If `with_table_tag` is True, then an enclosing <table> is placed around the
     rows.
+
+    Hidden fields will not be displayed with a row, instead the field will be 
+    pushed into a subsequent table row to ensure XHTML validity. Hidden fields
+    at the end of the field list will appear outside the table.
     """
     def __init__(self, with_table_tag=True):
         self.with_table_tag = with_table_tag
@@ -88,10 +92,17 @@ class TableWidget(Widget):
         if self.with_table_tag:
             kwargs.setdefault('id', field.id)
             html.append(u'<table %s>' % html_params(**kwargs))
+        hidden = u''
         for subfield in field:
-            html.append(u'<tr><th>%s<th><td>%s</td></tr>' % (unicode(subfield.label), unicode(subfield)))
+            if subfield.type == 'HiddenField':
+                hidden += unicode(subfield)
+            else:
+                html.append(u'<tr><th>%s<th><td>%s%s</td></tr>' % (unicode(subfield.label), hidden, unicode(subfield)))
+                hidden = u''
         if self.with_table_tag:
             html.append(u'</table>')
+        if hidden:
+            html.append(hidden)
         return u''.join(html)
 
 class Input(Widget):

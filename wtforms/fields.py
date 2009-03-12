@@ -9,16 +9,17 @@
 """
 from cgi import escape
 from datetime import datetime
-from itertools import chain
+from itertools import chain, count
 import time
 
 from wtforms import widgets
 from wtforms.validators import StopValidation, ValidationError
 
 __all__ = (
-    'BooleanField', 'DateTimeField', 'FileField', 'FormField', 'HiddenField',
-    'IntegerField', 'PasswordField', 'RadioField', 'SelectField',
-    'SelectMultipleField', 'SubmitField', 'TextField', 'TextAreaField',
+    'BooleanField', 'DateTimeField', 'FieldList', 'FileField', 'FormField',
+    'HiddenField', 'IntegerField', 'PasswordField', 'RadioField',
+    'SelectField', 'SelectMultipleField', 'SubmitField', 'TextField',
+    'TextAreaField',
 )
 
 _unset_value = object()
@@ -254,8 +255,8 @@ class UnboundField(object):
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
 
-    def bind(self, form, name):
-        return self.field_class(_form=form, _name=name, *self.args, **self.kwargs)
+    def bind(self, form, name, **kwargs):
+        return self.field_class(_form=form, _name=name, *self.args, **dict(self.kwargs, **kwargs))
 
     def __cmp__(self, x):
         return cmp(self.creation_counter, x.creation_counter)
@@ -508,7 +509,7 @@ class FormField(Field):
     The required `form_class` argument to the constructor should be a subclass
     of `Form`.
     """
-    widget = widgets.TableWidget(with_table_tag=False)
+    widget = widgets.TableWidget()
 
     def __init__(self, form_class, label=u'', validators=None, **kwargs):
         super(FormField, self).__init__(label, validators, **kwargs)
@@ -522,6 +523,8 @@ class FormField(Field):
             self._idprefix = kwargs['_form']._idprefix
         else:
             self._idprefix = ''
+        self._hidden_field = HiddenField(id=self.id + '-_marker', default='__FormField', _form=None, _name=self.name)
+        self._hidden_field.process(None)
     
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
@@ -537,7 +540,9 @@ class FormField(Field):
         self.form.auto_populate(getattr(obj, name))
 
     def __iter__(self):
-        return iter(self.form)
+        yield self._hidden_field
+        for field in self.form:
+            yield field
 
     def _get_data(self):
         return self.form.data
@@ -546,3 +551,70 @@ class FormField(Field):
     def _get_errors(self):
         return self.form.errors
     errors = property(_get_errors)
+
+class FieldList(Field):
+    """
+    Encapsulate an ordered list of multiple instances of the same field type,
+    keeping data as a list.
+
+    >>> authors = FieldList(TextField('Name', [validators.required()]), 
+    ...                     blank_entries=1)
+
+    `unbound_field`
+        A partially-instantiated field definition, just like that would be
+        defined on a form directly.
+    `blank_entries`
+        If set to a non-zero value, will add a number of blank subfields to the
+        list with no data; useful for sub-record edit forms.
+    """
+    widget=widgets.ListWidget()
+
+    def __init__(self, unbound_field, label=u'', validators=None, blank_entries=0, **kwargs):
+        super(FieldList, self).__init__(label, validators, **kwargs)
+        assert isinstance(field, UnboundField), 'Field must be unbound, not a field class'
+        self.unbound_field = unbound_field
+        self.blank_entries = blank_entries
+
+    def process(self, formdata, data=_unset_value):
+        if data is _unset_value or not data:
+            data = ()
+        self.fields = []
+        for i in count():
+            name = '%s-%d' % (self.name, i)
+            try:
+                obj_data = data[i]
+            except IndexError:
+                if not formdata or name not in formdata:
+                    break # If there's no data or formdata, we're done
+                obj_data = _unset_value
+            f = self.add_entry(False)
+            f.process(formdata, obj_data)
+        if not formdata and self.blank_entries:
+            for _ in xrange(self.blank_entries):
+                self.add_entry()
+
+    def validate(self, form, extra_validators=tuple()):
+        self.errors = []
+        success = True
+        for subfield in self.fields:
+            if not subfield.validate(form):
+                success = False
+                self.errors.extend(subfield.errors)
+        return success
+
+    def add_entry(self, process=True):
+        new_index = len(self.fields)
+        name = '%s-%d' % (self.name, new_index)
+        id   = '%s-%d' % (self.id, new_index)
+        f = self.unbound_field.bind(form=None, name=name, id=id)
+        if process:
+            f.process(None)
+        self.fields.append(f)
+        return f
+
+    def __iter__(self):
+        return iter(self.fields)
+
+    def _get_data(self):
+        return [f.data for f in self.fields]
+    data = property(_get_data)

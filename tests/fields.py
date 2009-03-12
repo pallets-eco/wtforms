@@ -263,7 +263,7 @@ class FormFieldTest(TestCase):
         self.assert_(form.validate())
 
     def test_iteration(self):
-        self.assertEqual([x.name for x in self.F1().a], ['a-a', 'a-b'])
+        self.assertEqual([x.name for x in self.F1().a], ['a', 'a-a', 'a-b'])
 
     def test_with_obj(self):
         obj = AttrDict(a=AttrDict(a=u'mmm'))
@@ -278,7 +278,7 @@ class FormFieldTest(TestCase):
         self.assertEqual(obj_inner.b, None)
 
     def test_widget(self):
-        self.assertEqual(self.F1().a(), u'''<tr><th><label for="a-a"></label><th><td><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b"></label><th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr>''')
+        self.assertEqual(self.F1().a(), u'''<table id="a"><tr><th><label for="a-a"></label><th><td><input id="a-_marker" name="a" type="hidden" value="__FormField" /><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b"></label><th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr></table>''')
 
     def test_no_validators_or_filters(self):
         class A(Form):
@@ -294,6 +294,27 @@ class FormFieldTest(TestCase):
                 pass 
         form = C()
         self.assertRaises(TypeError, form.validate)
+
+class FieldListTest(TestCase):
+    class F(Form):
+        a = FieldList(TextField(validators=[validators.required()]))
+
+    def test(self):
+        data = ['foo', 'hi', '']
+        pdata = DummyPostData({'a-0': ['bleh'], 'a-1': ['yarg'], 'a-3': ['mmm']})
+        a = self.F(a=data).a
+        self.assertEqual(a.fields[1].data, 'hi')
+        self.assertEqual(a.fields[1].name, 'a-1')
+        self.assertEqual(len(a.fields), 3)
+
+        form = self.F(pdata)
+        self.assertEqual(len(form.a.fields), 2)
+        self.assertEqual(form.a.data, [u'bleh', u'yarg'])
+        self.assert_(form.validate())
+
+        form = self.F(pdata, a=data)
+        self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
+        self.assert_(not form.validate())
         
 if __name__ == '__main__':
     from unittest import main

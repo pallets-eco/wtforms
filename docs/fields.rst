@@ -26,7 +26,6 @@ Some fields (such as :class:`SelectField`) can also take additional
 field-specific keyword arguments. Consult the built-in fields reference for
 information on those.
 
-
 The Field base class
 --------------------
 
@@ -154,8 +153,11 @@ The Field base class
                 </tr>
             {% endfor %}
 
-Built-in fields
----------------
+Basic fields
+------------
+
+Basic fields generally represent scalar data types with single values, and
+refer to a single input from the form.
 
 .. autoclass:: BooleanField(default field arguments)
 
@@ -178,34 +180,6 @@ Built-in fields
             if form.image.data:
                 image_data = request.FILES[form.image.name].read()
                 open(os.path.join(UPLOAD_PATH, form.image.data), 'w').write(image_data)
-
-.. autoclass:: FormField(form_class, default field arguments)
-
-    FormFields are useful for editing child objects or enclosing multiple
-    related forms on a page which are submitted and validated together.  While
-    subclassing forms captures most desired behaviours, sometimes for
-    reusability or purpose of combining with `ListField`, FormField makes
-    sense.
-
-    For example, take the example of a contact form which uses a similar set of
-    three fields to represent telephone numbers::
-
-        class TelephoneForm(Form):
-            country_code = IntegerField('Country Code', [validators.required()])
-            area_code    = IntegerField('Area Code/Exchange', [validators.required()])
-            number       = TextField('Number')
-
-        class ContactForm(Form):
-            first_name   = TextField()
-            last_name    = TextField()
-            mobile_phone = FormField(TelephoneForm)
-            office_phone = FormField(TelephoneForm)
-
-    In the example, we reused the TelephoneForm to encapsulate the common
-    telephone entry instead of writing a custom field to handle the 3
-    sub-fields. The `data` property of the mobile_phone field will return the
-    :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the 
-    `errors` property encapsulate the forms' errors.
 
 .. autoclass:: HiddenField(default field arguments)
 
@@ -292,9 +266,64 @@ Built-in fields
 
         {{ form.username(size=30, maxlength=50) }}
 
+Field Enclosures
+----------------
+
+Field enclosures allow you to have fields which represent a collection of
+fields, so that a form can be composed of multiple re-usable components or more
+complex data structures such as lists and nested objects can be represented.
+
+.. autoclass:: FormField(form_class, default field arguments)
+
+    FormFields are useful for editing child objects or enclosing multiple
+    related forms on a page which are submitted and validated together.  While
+    subclassing forms captures most desired behaviours, sometimes for
+    reusability or purpose of combining with `ListField`, FormField makes
+    sense.
+
+    For example, take the example of a contact form which uses a similar set of
+    three fields to represent telephone numbers::
+
+        class TelephoneForm(Form):
+            country_code = IntegerField('Country Code', [validators.required()])
+            area_code    = IntegerField('Area Code/Exchange', [validators.required()])
+            number       = TextField('Number')
+
+        class ContactForm(Form):
+            first_name   = TextField()
+            last_name    = TextField()
+            mobile_phone = FormField(TelephoneForm)
+            office_phone = FormField(TelephoneForm)
+
+    In the example, we reused the TelephoneForm to encapsulate the common
+    telephone entry instead of writing a custom field to handle the 3
+    sub-fields. The `data` property of the mobile_phone field will return the
+    :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the 
+    `errors` property encapsulate the forms' errors.
+
+.. autoclass:: FieldList(unbound_field, default field arguments, [blank_entries=0])
+
+    **Note**: Due to a limitation in how HTML sends values, FieldList cannot enclose 
+    :class:`BooleanField` or :class:`SubmitField` instances.
+
+    :class:`FieldList` is not limited to enclosing simple fields; and can
+    indeed represent a list of enclosed forms by combining FieldList with
+    FormField::
+        
+        class IMForm(Form):
+            protocol = SelectField(choices=[('aim', 'AIM'), ('msn', 'MSN')])
+            username = TextField()
+
+        class ContactForm(Form):
+            first_name  = TextField()
+            last_name   = TextField()
+            im_accounts = FieldList(FormField(IMForm), blank_entries=1)
+
+    In the above example, im_accounts will display a single blank IM form and
+    then on each subsequent submit add yet another entry to allow for more IM's
+    to be added.
 
 Custom fields
 -------------
 
 (TODO)
-
