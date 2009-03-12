@@ -510,7 +510,7 @@ class FormField(Field):
     The required `form_class` argument to the constructor should be a subclass
     of `Form`.
     """
-    widget = widgets.FormTable(with_table_tag=False)
+    widget = widgets.TableWidget(with_table_tag=False)
 
     def __init__(self, form_class, label=u'', validators=None, **kwargs):
         super(FormField, self).__init__(label, validators, **kwargs)

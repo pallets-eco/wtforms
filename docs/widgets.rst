@@ -16,6 +16,7 @@ Built-in widgets
 ----------------
 
 .. autoclass:: ListWidget
+.. autoclass:: TableWidget
 .. autoclass:: Input
 .. autoclass:: TextInput
 .. autoclass:: HiddenInput 
