@@ -21,6 +21,8 @@ __all__ = (
     'SelectMultipleField', 'SubmitField', 'TextField', 'TextAreaField',
 )
 
+_unset_value = object()
+
 class Field(object):
     """
     Field base class
@@ -34,7 +36,7 @@ class Field(object):
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, description=u'', id=None, default=None, widget=None, _form=None, _name=None):
+    def __init__(self, label=u'', validators=None, filters=None, description=u'', id=None, default=None, widget=None, _form=None, _name=None):
         """
         Construct a new field.
 
@@ -72,6 +74,9 @@ class Field(object):
         if validators is None:
             validators = []
         self.validators = validators
+        if filters is None:
+            filters = []
+        self.filters = filters
         self.description = description
         self.type = type(self).__name__
         self._default = default
@@ -177,6 +182,32 @@ class Field(object):
         """
         pass
 
+    def process(self, formdata, data=_unset_value): 
+        """
+        Process incoming data, calling process_data, process_formdata as needed, and run filters.
+
+        Field subclasses usually won't override this, instead overriding the
+        process_formdata and process_data methods. Only override this for
+        special advanced processing, such as when a field represents many form
+        inputs.
+        """
+        if data is _unset_value:
+            self.process_data(self._default)
+        else:
+            self.process_data(data)
+
+        if formdata is not None:
+            if self.name in formdata:
+                try:
+                    self.process_formdata(formdata.getlist(self.name))
+                except AttributeError:
+                    self.process_formdata(formdata.getall(self.name))
+            else:
+                self.process_formdata([])
+
+        for filter in self.filters:
+            self.data = filter(self.data)
+                
     def process_data(self, value):
         """
         Process the Python data applied to this field and store the result.

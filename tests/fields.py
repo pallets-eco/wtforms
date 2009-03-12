@@ -55,7 +55,14 @@ class FlagsTest(TestCase):
         self.flags.required = False
         self.assertEqual(self.flags.required, False)
         self.assert_('required' not in self.flags)
-    
+
+class FiltersTest(TestCase):
+    class F(Form):
+        a = TextField(default=' hello', filters=[lambda x: x.strip()])
+
+    def test(self):
+        self.assertEqual(self.F().a.data, 'hello')
+        self.assertEqual(self.F(DummyPostData(a=['  foo bar  '])).a.data, 'foo bar')
 
 class SelectFieldTest(TestCase):
     class F(Form):

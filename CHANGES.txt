@@ -5,6 +5,9 @@ Version 0.4
 -----------
 Not yet released.
 
+- Fields have much greater control over input processing. Filters have been
+  added to implement a simple way to transform input data.
+
 - Fields now use widgets for rendering.
 
 - There is now a Validator base class, and all built-in validators have been

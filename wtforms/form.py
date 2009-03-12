@@ -95,29 +95,19 @@ class Form(object):
         # populate data from form and optional instance and defaults
         self._errors = None
         self._fields = []
-        has_formdata = bool(formdata)
+        if not formdata:
+            formdata = None
         for u_field, name in self._unbound_fields:
-            form_name = prefix + name
-            field = u_field.bind(form=self, name=form_name)
+            field = u_field.bind(form=self, name=prefix + name)
             self._fields.append((name, field))
             setattr(self, name, field)
 
             if hasattr(obj, name):
-                field.process_data(getattr(obj, name))
+                field.process(formdata, getattr(obj, name))
             elif name in kwargs:
-                field.process_data(kwargs[name])
+                field.process(formdata, kwargs[name])
             else:
-                field.process_data(field._default)
-
-            if has_formdata:
-                if form_name in formdata:
-                    try:
-                        data = formdata.getlist(form_name)
-                    except AttributeError:
-                        data = formdata.getall(form_name)
-                    field.process_formdata(data)
-                else:
-                    field.process_formdata([])
+                field.process(formdata)
 
     def __iter__(self): 
         """
