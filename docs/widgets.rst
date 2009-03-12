@@ -39,5 +39,5 @@ used across many field instances.
 Let's look at a sample widget that does something rad::
 
     class RadTextWidget(Widget):
-        def __init__(self, omg):
+        def __init__(self, ):
             pass # TODO

@@ -11,6 +11,7 @@ This is the documentation for WTForms |version|, generated |today|.
    intro
    installation
    crashcourse
+   tutorial
 
 .. _api:
 

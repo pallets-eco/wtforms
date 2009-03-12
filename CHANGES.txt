@@ -7,6 +7,9 @@ Not yet released.
 
 - Fields have much greater control over input processing. Filters have been
   added to implement a simple way to transform input data.
+ 
+- Added fields that encapsulate advanced data structures such as dynamic lists
+  or child forms for more powerful field composing.
 
 - Fields now use widgets for rendering.
 
