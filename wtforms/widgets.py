@@ -71,7 +71,7 @@ class ListWidget(Widget):
             else:
                 html.append(u'<li>%s %s</li>' % (subfield(), subfield.label))
         html.append(u'</%s>' % self.html_tag)
-        return ''.join(html)
+        return u''.join(html)
 
 class Input(Widget):
     """
@@ -207,4 +207,24 @@ class Select(Widget):
                 options['selected'] = u'selected'
             html.append(u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label))))
         html.append(u'</select>')
-        return ''.join(html)
+        return u''.join(html)
+
+class FormTable(Widget):
+    """
+    Render a FormField as a set of table rows with th/td pairs.
+
+    If `with_table_tag` is True, then an enclosing <table> is placed around the
+    rows.
+    """
+    def __init__(self, with_table_tag=True):
+        self.with_table_tag = with_table_tag
+
+    def render(self, field, **kwargs):
+        html = []
+        if self.with_table_tag:
+            html.append(u'<table %s>' % html_params(**kwargs))
+        for subfield in field.form:
+            html.append(u'<tr><th>%s<th><td>%s</td></tr>' % (unicode(subfield.label), unicode(subfield)))
+        if self.with_table_tag:
+            html.append(u'</table>')
+        return u''.join(html)

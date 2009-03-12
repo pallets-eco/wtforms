@@ -178,6 +178,8 @@ Built-in fields
                 image_data = request.FILES[form.image.name].read()
                 open(os.path.join(UPLOAD_PATH, form.image.data), 'w').write(image_data)
 
+.. autoclass:: FormField(form_class, default field arguments)
+
 .. autoclass:: HiddenField(default field arguments)
 
     HiddenField is useful for providing data from a model or the application to

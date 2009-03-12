@@ -245,6 +245,41 @@ class SubmitFieldTest(TestCase):
     def test(self):
         self.assertEqual(self.F().a(), """<input id="a" name="a" type="submit" value="Label" />""")
 
+class FormFieldTest(TestCase):
+    def setUp(self):
+        class F(Form):
+            a = TextField(validators=[validators.required()])
+            b = TextField()
+
+        class F1(Form):
+            a = FormField(F)
+        self.F1 = F1
+
+    def test_formdata(self):
+        form = self.F1(DummyPostData(a_a=[u'moo']))
+        self.assertEqual(form.a.form.a.name, 'a_a')
+        self.assertEqual(form.a.form.a.data, u'moo')
+        self.assertEqual(form.a.form.b.data, u'')
+        self.assert_(form.validate())
+
+    def test_iteration(self):
+        self.assertEqual([x.name for x in self.F1().a], ['a_a', 'a_b'])
+
+    def test_with_obj(self):
+        obj = AttrDict(a=AttrDict(a=u'mmm'))
+        form = self.F1(obj=obj)
+        self.assertEqual(form.a.form.a.data, u'mmm')
+        self.assertEqual(form.a.form.b.data, None)
+        obj_inner = AttrDict(a=None, b='rawr')
+        obj2 = AttrDict(a=obj_inner)
+        form.auto_populate(obj2)
+        self.assert_(obj2.a is obj_inner)
+        self.assertEqual(obj_inner.a, u'mmm')
+        self.assertEqual(obj_inner.b, None)
+
+    def test_widget(self):
+        self.assertEqual(self.F1().a(), u'''<tr><th><label for="a_a"></label><th><td><input id="a_a" name="a_a" type="text" value="" /></td></tr><tr><th><label for="a_b"></label><th><td><input id="a_b" name="a_b" type="text" value="" /></td></tr>''')
+
 if __name__ == '__main__':
     from unittest import main
     main()

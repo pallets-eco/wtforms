@@ -16,7 +16,7 @@ from wtforms import widgets
 from wtforms.validators import StopValidation, ValidationError
 
 __all__ = (
-    'BooleanField', 'DateTimeField', 'FileField', 'HiddenField',
+    'BooleanField', 'DateTimeField', 'FileField', 'FormField', 'HiddenField',
     'IntegerField', 'PasswordField', 'RadioField', 'SelectField',
     'SelectMultipleField', 'SubmitField', 'TextField', 'TextAreaField',
 )
@@ -28,6 +28,7 @@ class Field(object):
     Field base class
     """
     widget = None
+    errors = tuple()
     _formfield = True
 
     def __new__(cls, *args, **kwargs):
@@ -36,7 +37,7 @@ class Field(object):
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, filters=None, description=u'', id=None, default=None, widget=None, _form=None, _name=None):
+    def __init__(self, label=u'', validators=None, filters=tuple(), description=u'', id=None, default=None, widget=None, _form=None, _name=None):
         """
         Construct a new field.
 
@@ -51,6 +52,8 @@ class Field(object):
             and you shouldn't need to set this manually.
         `validators`
             A sequence of validators to call when `validate` is called.
+        `filters`
+            A sequence of filters which are run on input data by `process`.
         `default`
             The default value to assign to the field, if one is not provided by
             the form.
@@ -74,8 +77,6 @@ class Field(object):
         if validators is None:
             validators = []
         self.validators = validators
-        if filters is None:
-            filters = []
         self.filters = filters
         self.description = description
         self.type = type(self).__name__
@@ -85,7 +86,6 @@ class Field(object):
             flags = getattr(v, 'field_flags', ())
             for f in flags:
                 setattr(self.flags, f, True)
-        self.errors = []
         if widget:
             self.widget = widget
 
@@ -499,3 +499,45 @@ class SubmitField(BooleanField):
     submit button has been pressed.
     """
     widget = widgets.SubmitInput()
+
+class FormField(Field):
+    """
+    Encapsulate a form as a field in another form.
+    
+    Useful for editing child objects or enclosing multiple related forms on a
+    page.
+
+    The required `form_class` argument to the constructor should be a subclass
+    of `Form`.
+    """
+    widget = widgets.FormTable(with_table_tag=False)
+
+    def __init__(self, form_class, label=u'', validators=None, **kwargs):
+        super(FormField, self).__init__(label, validators, **kwargs)
+        self.form_class = form_class
+        if '_form' in kwargs and kwargs['_form']:
+            self._idprefix = kwargs['_form']._idprefix
+        else:
+            self._idprefix = ''
+    
+    def process(self, formdata, data=_unset_value):
+        if data is _unset_value:
+            data = None
+        self.form = self.form_class(formdata=formdata, obj=data, prefix=self.name, idprefix=self._idprefix)
+
+    def validate(self, form, extra_validators=tuple()):
+        return self.form.validate()
+
+    def populate(self, obj, name):
+        self.form.auto_populate(getattr(obj, name))
+
+    def __iter__(self):
+        return iter(self.form)
+
+    def _get_data(self):
+        return self.form.data
+    data = property(_get_data)
+
+    def _get_errors(self):
+        return self.form.errors
+    errors = property(_get_errors)
