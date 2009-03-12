@@ -256,14 +256,14 @@ class FormFieldTest(TestCase):
         self.F1 = F1
 
     def test_formdata(self):
-        form = self.F1(DummyPostData(a_a=[u'moo']))
-        self.assertEqual(form.a.form.a.name, 'a_a')
+        form = self.F1(DummyPostData({'a-a':[u'moo']}))
+        self.assertEqual(form.a.form.a.name, 'a-a')
         self.assertEqual(form.a.form.a.data, u'moo')
         self.assertEqual(form.a.form.b.data, u'')
         self.assert_(form.validate())
 
     def test_iteration(self):
-        self.assertEqual([x.name for x in self.F1().a], ['a_a', 'a_b'])
+        self.assertEqual([x.name for x in self.F1().a], ['a-a', 'a-b'])
 
     def test_with_obj(self):
         obj = AttrDict(a=AttrDict(a=u'mmm'))
@@ -278,7 +278,7 @@ class FormFieldTest(TestCase):
         self.assertEqual(obj_inner.b, None)
 
     def test_widget(self):
-        self.assertEqual(self.F1().a(), u'''<tr><th><label for="a_a"></label><th><td><input id="a_a" name="a_a" type="text" value="" /></td></tr><tr><th><label for="a_b"></label><th><td><input id="a_b" name="a_b" type="text" value="" /></td></tr>''')
+        self.assertEqual(self.F1().a(), u'''<tr><th><label for="a-a"></label><th><td><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b"></label><th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr>''')
 
     def test_no_validators_or_filters(self):
         class A(Form):

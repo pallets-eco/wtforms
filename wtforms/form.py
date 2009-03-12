@@ -89,7 +89,7 @@ class Form(object):
             field, if provided.
         """
         if prefix:
-            prefix += '_'
+            prefix += '-'
         self._idprefix = idprefix
 
         # populate data from form and optional instance and defaults
