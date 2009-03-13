@@ -74,7 +74,7 @@ registration page, we define a Form::
     class RegistrationForm(Form):
         email        = TextField('Email Address', [validators.Length(min=4, max=35)])
         password     = PasswordField('Password', [validators.Length(min=6)])
-        accept_rules = BooleanField('I accept the site rules', [validators.Required('You must accept to continue.'])
+        accept_rules = BooleanField('I accept the site rules', [validators.Required('You must accept to continue.')])
 
 The `RegistrationForm` class can be defined in any python file in your project.
 Some people put their forms alongside the associated views in their `views.py`,
@@ -87,16 +87,87 @@ Now that the form definition is out of the way, let's write our register view::
         if request.POST and form.validate():
             user = User(form.email.data, form.password.data)
             # save new user here
-            return render('confirmation.html', {'user': user})
-        return render('register.html', {'form': form})
+            return render_response('confirmation.html', user=user)
+        return render_response('register.html', form=form)
 
 In the register view, we instantiate the form and pass it any received post
 data. The form will pass this along to all its fields, who will pick up any
 data they care about, converting it as needed.  This converted data is
 available, naturally, on the `data` property of the field.
 
+Now that we've got the view, all we need to do is write a template:
 
-TODO: CRUD forms using auto_populate, composed forms using ListField/FormField,
+.. code-block:: html+jinja
+
+    <form method="post" action="/register">
+    <table>
+      <tr>
+        <th>{{ form.email.label }}</th>
+        <td>{{ form.email(class="big_text") }}</td>
+      </tr>
+      <tr>
+        <th>{{ form.password.label }}</th>
+        <td>{{ form.password(class="big_text") }}</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>{{ form.accept_rules }} {{ form.accept_rules.label }}</td>
+    </table>
+    <input type="submit" value="Register!" />
+    </form>
+
+We pass the entire form into the template so that we can access its rendering
+helpers. Under the hood, rendering is done by the widget associated with a
+field. Simply printing a form field will call its widget with an empty argument
+list, and calling the field passes keyword arguments along. You'll notice that
+we use the field's `label` property which is another printable object that
+generates an HTML ``<label for=`` associated with the field.
+
+Populating model objects automatically: comment posting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When your form has more than a few fields, it becomes a bit unwieldy then to
+have to refer to each field's `data` property individually. Instead of
+explicitly moving data over, WTForms can be told to populate your model object
+automatically. This is done using the :meth:`~wtforms.form.Form.auto_populate`
+method:: 
+
+    from wtforms import Form, HiddenField, TextField, TextAreaField
+    from wtforms import validators as v
+    import re
+    
+    def strip_html(data):
+        return re.sub(r'<.*?>', '', data)
+
+    class CommentForm(Form):
+        name     = TextField('Your Name', [v.Required()]) 
+        email    = TextField('Email', [v.Optional(), v.Email()])
+        message  = TextAreaField('Comment', [v.Required()], filters=[strip_html])
+        # and so on
+
+    def post_comment(request, article_id):
+        form = CommentForm(request.POST)
+        if request.POST and form.validate():
+            comment = Comment(article_id=article_id)
+            form.auto_populate(comment)
+            # save comment here
+            return redirect('/article/' + article_id)
+        return render_response('post_comment.html', form=form)
+
+What :meth:`~wtforms.form.Form.auto_populate` does is copy the data from each
+field onto attributes of the same name on your model object.  This can be
+potentially dangerous, so use with care to only define properties you mean, and
+to validate your input. 
+
+In addition, the example uses a simple filter to strip HTML tags out of the
+input. Filters can be any one-argument callable, so you can pass library
+functions and lambdas as needed.
+        
+Advanced forms with dynamic select fields and form enclosures
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+TODO: composed forms using ListField/FormField,
 explain validators and widgets and how to switch them around, and neat
 rendering things.
 
