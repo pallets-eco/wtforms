@@ -23,8 +23,8 @@ class QuerySelectField(Field):
     will result in a validation error.
     
     This field only works for queries on models with single-column integer
-    primary keys. If the primary key is not 'id', then you should provide the
-    `pk_attr` with the name of the primary key field on the mapped model.
+    primary keys. If the primary key is not named 'id', then you should provide
+    the `pk_attr` with the name of the primary key field on the mapped model.
 
     The `query` property on the field can be set from within a view to assign
     a query per-instance to the field. If the property is not set, the
