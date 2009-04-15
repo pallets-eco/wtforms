@@ -571,7 +571,7 @@ class FieldList(Field):
 
     def __init__(self, unbound_field, label=u'', validators=None, blank_entries=0, **kwargs):
         super(FieldList, self).__init__(label, validators, **kwargs)
-        assert isinstance(field, UnboundField), 'Field must be unbound, not a field class'
+        assert isinstance(unbound_field, UnboundField), 'Field must be unbound, not a field class'
         self.unbound_field = unbound_field
         self.blank_entries = blank_entries
 

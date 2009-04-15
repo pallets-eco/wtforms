@@ -36,7 +36,7 @@ The Form base class
 
     .. automethod:: validate
 
-    .. function:: auto_populate
+    .. automethod:: auto_populate
 
         One common usage of this is an edit profile view::
             
