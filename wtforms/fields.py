@@ -81,8 +81,11 @@ class Field(object):
         self.filters = filters
         self.description = description
         self.type = type(self).__name__
-        self._default = callable(default) and default() or default
         self.flags = Flags()
+        try:
+            self._default = default()
+        except TypeError:
+            self._default = default
         for v in validators:    
             flags = getattr(v, 'field_flags', ())
             for f in flags:
