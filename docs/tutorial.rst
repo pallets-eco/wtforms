@@ -151,7 +151,7 @@ method::
             comment = Comment(article_id=article_id)
             form.auto_populate(comment)
             # save comment here
-            return redirect('/article/' + article_id)
+            return redirect('/article/%d' % article_id)
         return render_response('post_comment.html', form=form)
 
 What :meth:`~wtforms.form.Form.auto_populate` does is copy the data from each
@@ -160,12 +160,27 @@ potentially dangerous, so use with care to only define properties you mean, and
 to validate your input. 
 
 In addition, the example uses a simple filter to strip HTML tags out of the
-input. Filters can be any one-argument callable, so you can pass library
-functions and lambdas as needed.
+input. :ref:`Filters <filters>` can be any one-argument callable, so you can
+pass library functions and lambdas as needed.
         
 Advanced forms with dynamic select fields and form enclosures
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+For the administration part of your blog, you'll want a way to write articles
+
+::
+    from wtforms import Form, DateTimeField, FormField, SelectField, TextField, TextAreaField
+    from wtforms import validators as v
+
+    class ArticleContentForm(Form):
+        d
+    
+    class ArticleForm(Form):
+        title       = TextField(u'Title)
+        category_id = SelectField(u'Category')
+        posted      = DateTimeField(u'Posted date')
+        summary     = TextAreaField(u'Summary')
+        content     = FormField(ArticleContentForm)
 
 TODO: composed forms using ListField/FormField,
 explain validators and widgets and how to switch them around, and neat
