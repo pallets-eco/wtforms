@@ -24,6 +24,20 @@ class AttrDict(dict):
     def __getattr__(self, attr):
         return self[attr]
 
+class DefaultsTest(TestCase):
+    def test(self):
+        expected = 42
+        def default_callable():
+            return expected
+
+        test_value = TextField(default=expected).bind(Form(), 'a')
+        test_value.process(None)
+        self.assertEqual(test_value.data, expected)
+        
+        test_callable = TextField(default=default_callable).bind(Form(), 'a')
+        test_callable.process(None)
+        self.assertEqual(test_callable.data, expected)
+
 class LabelTest(TestCase):
     def test(self):
         expected = u"""<label for="test">Caption</label>"""
