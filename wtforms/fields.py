@@ -532,7 +532,11 @@ class FormField(Field):
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
             data = None
-        self.form = self.form_class(formdata=formdata, obj=data, prefix=self.name, idprefix=self._idprefix)
+
+        if isinstance(data, dict):
+            self.form = self.form_class(formdata=formdata, prefix=self.name, idprefix=self._idprefix, **data)
+        else:
+            self.form = self.form_class(formdata=formdata, obj=data, prefix=self.name, idprefix=self._idprefix)            
 
     def validate(self, form, extra_validators=tuple()):
         if extra_validators:
