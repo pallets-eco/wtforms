@@ -32,7 +32,8 @@ setup(
         'wtforms',
         'wtforms.ext',
         'wtforms.ext.django',
-        'wtforms.ext.django.templatetags'
+        'wtforms.ext.django.templatetags',
+        'wtforms.ext.sqlalchemy',
     ],
     platforms=['any'],
     include_package_data=True,
