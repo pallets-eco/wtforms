@@ -76,13 +76,13 @@ using django ORM data can be quite repetetive. To this end, we have added some
 helpful tools to use the django ORM along with wtforms
 
 
-.. autoclass:: QuerySetSelectField(default field args, queryset=None, label_attr='', allow_blank=False)
+.. autoclass:: QuerySetSelectField(default field args, queryset=None, label_attr='', allow_blank=False, blank_text=u'')
 
     .. code-block:: python
         
         class ArticleEdit(Form):
             title    = TextField()
-            column   = QuerySetSelectField(label_attr='title', allow_blank='True')
+            column   = QuerySetSelectField(label_attr='title', allow_blank=True)
             category = QuerySetSelectField(queryset=Category.objects.all())
 
         def edit_article(request, id):
@@ -94,5 +94,43 @@ helpful tools to use the django ORM along with wtforms
     view if needed instead of at form construction time, allowing the select
     field to consist of choices only relevant to the user.
 
-.. autoclass:: ModelSelectField(default field args, model=None, label_attr='', allow_blank=False)
+.. autoclass:: ModelSelectField(default field args, model=None, label_attr='', allow_blank=False, blank_text=u'')
+
+
+SQLAlchemy
+----------
+.. module:: wtforms.ext.sqlalchemy
+
+This extension provides SelectField integration with SQLAlchemy ORM models,
+similar to those in the Django extension.
+
+
+ORM-backed fields
+~~~~~~~~~~~~~~~~~
+.. module:: wtforms.ext.sqlalchemy.fields
+
+These fields are provided to make it easier to use data from ORM objects in
+your forms. Due to the complication of dealing with multiple-primary-keyed
+tables, currently it is only possible to use these fields with simple integer
+primary keyed ORM models.
+
+.. code-block:: python
+
+    def enabled_categories():
+        return Category.query.filter_by(enabled=True)
+
+    class BlogPostEdit(Form):
+        title    = TextField()
+        blog     = QuerySelectField()
+        category = QuerySelectField(query_factory=enabled_categories, allow_blank=True)
+
+    def edit_blog_post(request, id):
+        post = Post.query.get(id)
+        form = ArticleEdit(obj=post)
+        form.blog.query = Blog.query.filter(Blog.author == request.user).order_by(Blog.name)
+
+
+.. autoclass:: QuerySelectField(default field args, query_factory=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'')
+
+.. autoclass:: ModelSelectField(default field args, model=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'')
 
