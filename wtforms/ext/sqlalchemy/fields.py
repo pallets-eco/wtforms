@@ -35,16 +35,18 @@ class QuerySelectField(Field):
     model instance for display in the list, else the model object's `__str__`
     or `__unicode__` will be used.
 
-    If `allow_blank` is set to `True`, then a blank choice will be added
-    to the top of the list. Selecting this choice will result in the `data`
-    property being `None`.
+    If `allow_blank` is set to `True`, then a blank choice will be added to the
+    top of the list. Selecting this choice will result in the `data` property
+    being `None`. The label for this blank choice can be set by specifying the
+    `blank_text` parameter.
     """
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', label_attr='', allow_blank=False, **kwargs):
+    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'', **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.label_attr = label_attr
         self.allow_blank = allow_blank
+        self.blank_text = blank_text
         self.data = None
         self.query_factory = query_factory
         self.query = None
@@ -73,7 +75,7 @@ class QuerySelectField(Field):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield (u'__None', u'', self.data is None)
+            yield (u'__None', self.blank_text, self.data is None)
 
         for obj in self._get_object_list():
             label = self.label_attr and getattr(obj, self.label_attr) or obj
@@ -104,6 +106,6 @@ class ModelSelectField(QuerySelectField):
     queries of themselves. This field is simply a convenience for using
     `Model.query` as the factory for QuerySelectField.
     """
-    def __init__(self, label=u'', validators=None, model=None, pk_attr='id', label_attr='', allow_blank=False, **kwargs):
+    def __init__(self, label=u'', validators=None, model=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'', **kwargs):
         assert model is not None, "Must specify a model."
-        super(ModelSelectField, self).__init__(label, validators, query_factory=model.query, pk_attr=pk_attr, label_attr=label_attr, allow_blank=allow_blank, **kwargs)
+        super(ModelSelectField, self).__init__(label, validators, query_factory=model.query, pk_attr=pk_attr, label_attr=label_attr, allow_blank=allow_blank, blank_text=blank_text, **kwargs)
