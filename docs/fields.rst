@@ -92,10 +92,6 @@ The Field base class
         Note: Simply coercing the field to a string or unicode will render it as
         if it was called with no arguments.
         
-    .. attribute:: widget
-    
-        The widget used to render the field.  
-        
     **Properties**
 
     .. attribute:: name
@@ -118,12 +114,16 @@ The Field base class
         A string containing the value of the description passed in the
         constructor to the field; this is not HTML escaped.
 
+    .. attribute:: widget
+    
+        The widget used to render the field.  
+
     .. attribute:: type
 
         The type of this field, as a string. This can be used in your templates
         to do logic based on the type of field:
 
-        .. code-block:: django
+        .. code-block:: html+django
 
             {% for field in form %}
                 <tr>
@@ -144,7 +144,7 @@ The Field base class
         :func:`~wtforms.validators.required` validator sets the `required` flag.
         An unset flag will result in :const:`False`.
 
-        .. code-block:: django
+        .. code-block:: html+django
             
             {% for field in form %}
                 <tr>

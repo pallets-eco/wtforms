@@ -61,12 +61,11 @@ class Field(object):
         `widget`
             If provided, overrides the widget used to render the field.
         `_form`
-            The form holding the field. It is passed by the form itself during
+            The form holding this field. It is passed by the form itself during
             construction. You should never pass this value yourself.
         `_name`
-            The name of the form holding the field. It is passed by the form
-            itself during construction. You should never pass this value
-            yourself.
+            The name of this field, passed by the enclosing form during its
+            construction. You should never pass this value yourself.
 
         **Note:** if `_form` and `_name` isn't provided, an `UnboundField` will be
         returned instead. Call its `bind` method with a form instance and a name
