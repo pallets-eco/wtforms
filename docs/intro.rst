@@ -20,5 +20,5 @@ customize it in your templates.  This allows you to maintain separation of code
 and presentation, and keep those messy parameters out of your python code.
 Because we strive for loose coupling, you should be able to do that in any
 templating engine you like, as well.  To see examples of how it works, check out
-our :ref:`crashcourse`.
+the :ref:`tutorial`.
 
