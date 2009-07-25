@@ -2,11 +2,7 @@ WTForms Readme
 ==============
 
 The documentation is written using sphinx; To generate it run `make html`
-inside the docs subdirectory. Alternately you can browse the documentation
-online on the website: http://wtforms.simplecodes.com/.
+inside the docs subdirectory. 
 
-To discuss WTForms or get help, please visit the group: 
-http://groups.google.com/group/wtforms.
-
-To report bugs or request features, please file a ticket on
-bitbucket: http://bitbucket.org/simplecodes/wtforms/issues/new/.
+To view the documentation online, discuss WTForms, request features
+or report bugs, please visit our website: http://wtforms.simplecodes.com/.
