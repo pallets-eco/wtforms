@@ -160,7 +160,7 @@ potentially dangerous, so use with care to only define properties you mean, and
 to validate your input. 
 
 In addition, the example uses a simple filter to strip HTML tags out of the
-input. :ref:`Filters <filters>` can be any one-argument callable, so you can
+input. Filters can be any one-argument callable, so you can
 pass library functions and lambdas as needed.
         
 Advanced forms with dynamic select fields and form enclosures
