@@ -9,6 +9,7 @@
 """
 from cgi import escape
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from itertools import chain, count
 import time
 
@@ -16,7 +17,7 @@ from wtforms import widgets
 from wtforms.validators import StopValidation, ValidationError
 
 __all__ = (
-    'BooleanField', 'DateTimeField', 'FieldList', 'FileField', 'FormField',
+    'BooleanField', 'DecimalField', 'DateTimeField', 'FieldList', 'FileField', 'FormField',
     'HiddenField', 'IntegerField', 'PasswordField', 'RadioField',
     'SelectField', 'SelectMultipleField', 'SubmitField', 'TextField',
     'TextAreaField',
@@ -455,6 +456,36 @@ class IntegerField(TextField):
             except ValueError:
                 raise ValidationError(u'Not a valid integer value')
 
+class DecimalField(TextField):
+    """
+    A text field which displays and coerces data of the `decimal.Decimal` type.
+
+    Defining the `number_format` parameter to the constructor allows you to
+    customize how the number is displayed, using standard python string
+    formatting rules.
+    """
+    
+    def __init__(self, label=u'', validators=None, number_format='%0.2f', **kwargs):
+        super(DecimalField, self).__init__(label, validators, **kwargs)
+        self.raw_data = None
+        self.number_format = number_format
+
+    def _value(self):
+        if self.data is not None:
+            return self.number_format % self.data
+        elif self.raw_data is not None:
+            return self.raw_data
+        else:
+            return ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.raw_data = valuelist[0]
+            try:
+                self.data = Decimal(valuelist[0])
+            except (InvalidOperation, ValueError):
+                pass
+
 
 class BooleanField(Field):
     """ 
@@ -624,3 +655,4 @@ class FieldList(Field):
     def _get_data(self):
         return [f.data for f in self.fields]
     data = property(_get_data)
+

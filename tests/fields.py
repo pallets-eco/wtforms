@@ -15,6 +15,10 @@ from wtforms import validators, widgets
 from wtforms.fields import *
 from wtforms.fields import Label
 from wtforms.form import Form
+try:
+    from decimal import Decimal
+except ImportError:
+    pass
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -203,6 +207,15 @@ class IntegerFieldTest(TestCase):
         self.assertEqual(form.b.data, 48)
         self.assertEqual(form.b.raw_data, '')
         self.assert_(form.validate())
+
+class DecimalFieldTest(TestCase):
+    class F(Form):
+        a = DecimalField()
+
+    def test(self):
+        form = self.F(DummyPostData(a=['2.1']))
+        self.assertEqual(form.a.data, Decimal('2.1'))
+        self.assertEqual(form.a._value(), u'2.10')
 
 class BooleanFieldTest(TestCase):
     class BoringForm(Form):
