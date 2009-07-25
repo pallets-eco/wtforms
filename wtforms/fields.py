@@ -395,7 +395,7 @@ class TextField(Field):
             self.data = u''
 
     def _value(self):
-        return self.data and unicode(self.data) or u''
+        return self.data is not None and unicode(self.data) or u''
 
 class HiddenField(TextField):
     """
