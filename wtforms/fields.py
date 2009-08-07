@@ -43,34 +43,34 @@ class Field(object):
         """
         Construct a new field.
 
-        `label`
+        :param label:
             The label of the field. Available after construction through the
             `label` property.
-        `description`
+        :param description:
             A description for the field, typically used for help text. It is
             available through the `description` property after construction.
-        `id`
+        :param id:
             An id to use for the field. A reasonable default is set by the form,
             and you shouldn't need to set this manually.
-        `validators`
+        :param validators:
             A sequence of validators to call when `validate` is called.
-        `filters`
+        :param filters:
             A sequence of filters which are run on input data by `process`.
-        `default`
+        :param default:
             The default value to assign to the field, if one is not provided by
             the form.
-        `widget`
+        :param widget:
             If provided, overrides the widget used to render the field.
-        `_form`
+        :param _form:
             The form holding this field. It is passed by the form itself during
             construction. You should never pass this value yourself.
-        `_name`
+        :param _name:
             The name of this field, passed by the enclosing form during its
             construction. You should never pass this value yourself.
 
-        **Note:** if `_form` and `_name` isn't provided, an `UnboundField` will be
-        returned instead. Call its `bind` method with a form instance and a name
-        to construct the field.
+        If `_form` and `_name` isn't provided, an :class:`UnboundField` will be
+        returned instead. Call its :func:`bind` method with a form instance and
+        a name to construct the field.
         """
         self.name = _name
         self.id = id or (_form._idprefix + self.name)
@@ -125,10 +125,8 @@ class Field(object):
         Subfields shouldn't override this, but rather override either
         `pre_validate`, `post_validate` or both, depending on needs.
         
-        `form`
-            The form the field belongs to.
-        `extra_validators`
-            A list of extra validators to run.
+        :param form: The form the field belongs to.
+        :param extra_validators: A list of extra validators to run.
         """
         self.errors = []
         stop_validation = False
@@ -169,8 +167,7 @@ class Field(object):
         Override if you need field-level validation. Runs before any other
         validators.
         
-        `form`
-            The form the field belongs to.
+        :param form: The form the field belongs to.
         """
         pass
         
@@ -179,9 +176,8 @@ class Field(object):
         Override if you need to run any field-level validation tasks after
         normal validation. This shouldn't be needed in most cases.
         
-        `form`
-            The form the field belongs to.
-        `validation_stopped`
+        :param form: The form the field belongs to.
+        :param validation_stopped:
             `True` if any validator raised StopValidation.
         """
         pass
@@ -220,8 +216,7 @@ class Field(object):
         This will be called during form construction by the form's `kwargs` or
         `obj` argument.
         
-        `value`
-            The python object containing the value to process.
+        :param value: The python object containing the value to process.
         """
         self.data = value
 
@@ -232,8 +227,7 @@ class Field(object):
         This will be called during form construction with data supplied
         through the `formdata` argument.
         
-        `valuelist`
-            A list of strings to process.
+        :param valuelist: A list of strings to process.
         """
         if valuelist:
             self.data = valuelist[0]
@@ -242,8 +236,9 @@ class Field(object):
         """
         Populates `obj.<name>` with the field's data.
 
-        **Note:** This is a destructive operation. If `obj.<name>` already
-        exists, it will be overridden. Use with caution.
+        :note: 
+            This is a destructive operation. If `obj.<name>` already exists, it
+            will be overridden. Use with caution.
         """
         setattr(obj, name, self.data)
 
@@ -597,10 +592,10 @@ class FieldList(Field):
     >>> authors = FieldList(TextField('Name', [validators.required()]), 
     ...                     blank_entries=1)
 
-    `unbound_field`
+    :param unbound_field:
         A partially-instantiated field definition, just like that would be
         defined on a form directly.
-    `blank_entries`
+    :param blank_entries:
         If set to a non-zero value, will add a number of blank subfields to the
         list with no data; useful for sub-record edit forms.
     """
