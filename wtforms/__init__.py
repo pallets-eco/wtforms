@@ -3,10 +3,13 @@ WTForms
 =======
 
 WTForms is a forms handling library for web applications in python. For
-documentation and help please visit the `official website <http://wtforms.simplecodes.com/>`_.
+documentation and help please visit the `WTForms website`_.
 
-The `WTForms tip <http://dev.simplecodes.com/hg/wtforms/archive/tip.zip#egg=WTForms-dev>`_
-is installable via `easy_install` with ``easy_install WTForms==dev``.
+The `WTForms tip`_ is installable via `easy_install` with ``easy_install
+WTForms==dev``.
+
+.. _WTForms website: http://wtforms.simplecodes.com/
+.. _WTForms tip: http://dev.simplecodes.com/hg/wtforms/archive/tip.zip#egg=WTForms-dev
 """
 from wtforms.form import Form
 from wtforms.fields import *
