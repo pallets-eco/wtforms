@@ -13,4 +13,7 @@ from wtforms.fields import *
 from wtforms.validators import ValidationError
 from wtforms import validators, widgets
 
-__version__ = "0.4dev"
+try:
+    __version__ = __import__('pkg_resources').get_distribution('WTForms').version
+except:
+    __version__ = 'unknown'

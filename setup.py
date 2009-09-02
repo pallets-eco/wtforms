@@ -1,15 +1,18 @@
 #!/usr/bin/env python
-import wtforms  
-import os
+import os, sys
+sys.path.insert(0, os.path.dirname(__file__))
+
 import ez_setup
 from inspect import getdoc
 ez_setup.use_setuptools()
 
 from setuptools import setup, Feature
 
+import wtforms
+
 setup(
     name='WTForms',
-    version=wtforms.__version__,
+    version='0.4',
     url='http://wtforms.simplecodes.com/',
     download_url='http://wtforms.simplecodes.com/',
     license='MIT',
