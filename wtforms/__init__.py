@@ -19,4 +19,4 @@ from wtforms import validators, widgets
 try:
     __version__ = __import__('pkg_resources').get_distribution('WTForms').version
 except:
-    __version__ = 'unknown'
+    __version__ = 'dev'
