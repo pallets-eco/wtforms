@@ -33,28 +33,7 @@ class StopValidation(ValidationError):
     def __init__(self, message=u'', *args, **kwargs):
         ValidationError.__init__(self, message, *args, **kwargs)
 
-class Validator(object):
-    """
-    Validator base class
-    """
-    def __call__(self, form, field):
-        """
-        Calls `validate`. Do **NOT** override this.
-        """
-        return self.validate(form, field)
-
-    def validate(self, form, field):
-        """
-        Validators should override this to implement their validation behaviour.
-        
-        `form`
-            The form the field being validated belongs to.
-        `field`
-            The field to validate.
-        """
-        raise NotImplementedError
-
-class EqualTo(Validator):
+class EqualTo(object):
     """
     Compares the values of two fields.
     """
@@ -68,14 +47,14 @@ class EqualTo(Validator):
         self.fieldname = fieldname
         self.message = message or u'Field must be equal to %s' % fieldname
 
-    def validate(self, form, field):
+    def __call__(self, form, field):
         other = getattr(form, self.fieldname, None)
         if not other:
             raise ValidationError(u"Invalid field name '%s'" % self.fieldname)
         elif field.data != other.data:
             raise ValidationError(self.message)
 
-class IPAddress(Validator):
+class IPAddress(object):
     """
     Validates an IP(v4) address.
     """
@@ -86,11 +65,11 @@ class IPAddress(Validator):
         """
         self.message = message
     
-    def validate(self, form, field):
+    def __call__(self, form, field):
         if not re.match(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', field.data):
             raise ValidationError(self.message)
 
-class Length(Validator):
+class Length(object):
     """
     Validates the length of a string.
     """
@@ -110,22 +89,22 @@ class Length(Validator):
         self.max = max
         self.message = message or u'Field must be between %i and %i characters long.' % (min, max)
     
-    def validate(self, form, field):
+    def __call__(self, form, field):
         l = field.data and len(field.data) or 0
         if l < self.min or self.max != -1 and l > self.max:
             raise ValidationError(self.message)
 
-class Optional(Validator):
+class Optional(object):
     """
     Allows empty input and stops the validation chain from continuing.
     """
     field_flags = ('optional', )
 
-    def validate(self, form, field):
+    def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation()
 
-class Required(Validator):
+class Required(object):
     """
     Validates that the field contains data. This validator will stop the
     validation chain on error.
@@ -139,11 +118,11 @@ class Required(Validator):
         """
         self.message = message
 
-    def validate(self, form, field):
+    def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation(self.message)
 
-class Regexp(Validator):
+class Regexp(object):
     """
     Validates the field against a user provided regexp.
     """
@@ -161,7 +140,7 @@ class Regexp(Validator):
         self.regex = isinstance(regex, basestring) and re.compile(regex, flags) or regex
         self.message = message
     
-    def validate(self, form, field):
+    def __call__(self, form, field):
         if not self.regex.match(field.data or ''):
             raise ValidationError(self.message)
 
@@ -197,7 +176,7 @@ class URL(Regexp):
         regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (require_tld and r'\.[a-z]{2,}' or '')
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
-# Factory-style access - Mostly for backwards compatibility            
+# Factory-style aliases
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress

@@ -13,10 +13,9 @@ Not yet released.
 
 - Fields now use widgets for rendering.
 
-- There is now a Validator base class, and all built-in validators have been
-  refactored into classes. This is now the preferred way of writing validators.
-  Validator callables are still supported for simple validators however.
+- All built-in validators have been converted to classes to clean up the code.
 
+- Dropped support for Python 2.3.
 
 Version 0.3.1
 -------------
@@ -32,7 +31,7 @@ Released January 24th, 2009.
 - Form and Field construction changes: Form now uses a metaclass to handle
   creating its `_unbound_fields` property, and Field construction now gives an
   instance of the new `UnboundField` class instead of using a partial function
-  application.  These are both internal changes and do not change the API.
+  application. These are both internal changes and do not change the API.
 
 
 Version 0.3
@@ -53,7 +52,7 @@ Released January 18th, 2009.
       then this value is used. Otherwise, a keyword argument if specified is 
       used. Failing that, the field's default value is used.
     * If any form data is sent, `process_formdata` will be called after
-      `process_data` for each field.  If no form data is available for the
+      `process_data` for each field. If no form data is available for the
       given field, it is called with an empty list.
 
 - wtforms.ext.django has been overhauled, both to mirror features and changes

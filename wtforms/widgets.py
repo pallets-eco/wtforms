@@ -29,23 +29,7 @@ def html_params(**kwargs):
         params.append(u'%s="%s"' % (k, v))
     return u' '.join(params)
 
-class Widget(object):
-    """
-    Base class for all WTForms widgets.
-    """
-    def render(self, field, **kwargs):
-        """
-        Renders the widget. All widgets must implement this.
-        
-        `field`
-            The field to render.
-        `**kwargs`
-            Any parameters used for rendering. Typically used to override or
-            pass extra html attributes.
-        """
-        raise NotImplementedError()
-
-class ListWidget(Widget):
+class ListWidget(object):
     """
     Renders a list of fields as a `ul` or `ol` list.
 
@@ -62,7 +46,7 @@ class ListWidget(Widget):
         self.html_tag = html_tag
         self.prefix_label = prefix_label
 
-    def render(self, field, **kwargs):
+    def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         html = [u'<%s %s>' % (self.html_tag, html_params(**kwargs))]
         for subfield in field:
@@ -73,7 +57,7 @@ class ListWidget(Widget):
         html.append(u'</%s>' % self.html_tag)
         return u''.join(html)
 
-class TableWidget(Widget):
+class TableWidget(object):
     """
     Renders a list of fields as a set of table rows with th/td pairs.
 
@@ -87,7 +71,7 @@ class TableWidget(Widget):
     def __init__(self, with_table_tag=True):
         self.with_table_tag = with_table_tag
 
-    def render(self, field, **kwargs):
+    def __call__(self, field, **kwargs):
         html = []
         if self.with_table_tag:
             kwargs.setdefault('id', field.id)
@@ -105,7 +89,7 @@ class TableWidget(Widget):
             html.append(hidden)
         return u''.join(html)
 
-class Input(Widget):
+class Input(object):
     """
     Render a basic ``<input>`` field.
 
@@ -118,7 +102,7 @@ class Input(Widget):
         if input_type is not None:
             self.input_type = input_type
 
-    def render(self, field, **kwargs):
+    def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
@@ -144,10 +128,10 @@ class PasswordInput(Input):
     def __init__(self, hide_value=True):
         self.hide_value = hide_value
 
-    def render(self, field, **kwargs): 
+    def __call__(self, field, **kwargs): 
         if self.hide_value:
             kwargs['value'] = ''
-        return super(PasswordInput, self).render(field, **kwargs)
+        return super(PasswordInput, self).__call__(field, **kwargs)
 
 class HiddenInput(Input):
     """
@@ -165,11 +149,11 @@ class CheckboxInput(Input):
     """
     input_type = 'checkbox'
 
-    def render(self, field, **kwargs): 
+    def __call__(self, field, **kwargs): 
         kwargs.setdefault('value', u'y')
         if field.data:
             kwargs['checked'] = u'checked'
-        return super(CheckboxInput, self).render(field, **kwargs)
+        return super(CheckboxInput, self).__call__(field, **kwargs)
 
 class RadioInput(Input):
     """
@@ -180,10 +164,10 @@ class RadioInput(Input):
     """
     input_type = 'radio'
 
-    def render(self, field, **kwargs):
+    def __call__(self, field, **kwargs):
         if field.checked:
             kwargs['checked'] = u'checked'
-        return super(RadioInput, self).render(field, value=field.data, **kwargs)
+        return super(RadioInput, self).__call__(field, value=field.data, **kwargs)
         
 class FileInput(Input):
     """
@@ -200,21 +184,21 @@ class SubmitInput(Input):
     """
     input_type = 'submit'
 
-    def render(self, field, **kwargs): 
+    def __call__(self, field, **kwargs): 
         kwargs.setdefault('value', field.label.text)
-        return super(SubmitInput, self).render(field, **kwargs)
+        return super(SubmitInput, self).__call__(field, **kwargs)
 
-class TextArea(Widget):
+class TextArea(object):
     """
     Renders a multi-line text area.
 
     `rows` and `cols` ought to be passed as keyword args when rendering.
     """
-    def render(self, field, **kwargs): 
+    def __call__(self, field, **kwargs): 
         kwargs.setdefault('id', field.id)
         return u'<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(unicode(field._value())))
 
-class Select(Widget):
+class Select(object):
     """
     Renders a select field.
 
@@ -228,7 +212,7 @@ class Select(Widget):
     def __init__(self, multiple=False):
         self.multiple = multiple
         
-    def render(self, field, **kwargs):
+    def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         if self.multiple:
             kwargs['multiple'] = 'multiple'

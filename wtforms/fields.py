@@ -114,7 +114,7 @@ class Field(object):
         Any HTML attribute passed to the method will be added to the tag
         and entity-escaped properly.   
         """
-        return self.widget.render(self, **kwargs)
+        return self.widget(self, **kwargs)
 
     def validate(self, form, extra_validators=tuple()):
         """
