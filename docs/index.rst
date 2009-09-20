@@ -3,18 +3,9 @@ WTForms Documentation
 
 This is the documentation for WTForms |version|, generated |today|.
 
-**First Steps:**
+For a quick introduction, check the `WTForms website`_.
 
-.. toctree::
-   :maxdepth: 2
-   
-   intro
-   installation
-   tutorial
-
-.. _api:
-
-**API:**
+.. _WTForms website: http://wtforms.simplecodes.com/
 
 .. toctree::
    :maxdepth: 2
@@ -30,4 +21,3 @@ This is the documentation for WTForms |version|, generated |today|.
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

@@ -8,10 +8,6 @@ is to delegate the rendering to its widget. This abstraction is provided so
 that widgets can easily be created to customize the rendering of existing
 fields.
 
-.. autoclass:: Widget
-    
-    .. automethod:: render
-
 Built-in widgets
 ----------------
 
@@ -38,6 +34,6 @@ used across many field instances.
 
 Let's look at a sample widget that does something rad::
 
-    class RadTextWidget(Widget):
+    class RadTextWidget(object):
         def __init__(self, ):
             pass # TODO

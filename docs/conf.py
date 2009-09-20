@@ -14,7 +14,6 @@
 import sys, os
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import wtforms
 
 # If your extensions are in another directory, add it here. If the directory
 # is relative to the documentation root, use os.path.abspath to make it
@@ -45,9 +44,10 @@ copyright = '2009 by Thomas Johansson, James Crasta'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = wtforms.__version__
+version = '0.4'
 # The full version, including alpha/beta/rc tags.
-release = wtforms.__version__
+release = '0.4dev'
+
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:

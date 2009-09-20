@@ -7,7 +7,6 @@ a maximum length for a string and returns. Or, if the validation fails, raises
 a :class:`~wtforms.validators.ValidationError`. This system is very simple and
 flexible, and allows you to chain any number of validators on fields.
 
-.. autoclass:: wtforms.validators.Validator
 .. autoclass:: wtforms.validators.ValidationError
 .. autoclass:: wtforms.validators.StopValidation
 
