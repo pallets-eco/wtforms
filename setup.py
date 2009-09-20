@@ -6,7 +6,7 @@ import ez_setup
 from inspect import getdoc
 ez_setup.use_setuptools()
 
-from setuptools import setup, Feature
+from setuptools import setup
 
 import wtforms
 
