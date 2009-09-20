@@ -9,7 +9,7 @@ The `WTForms tip`_ is installable via `easy_install` with ``easy_install
 WTForms==dev``.
 
 .. _WTForms website: http://wtforms.simplecodes.com/
-.. _WTForms tip: http://dev.simplecodes.com/hg/wtforms/archive/tip.zip#egg=WTForms-dev
+.. _WTForms tip: http://bitbucket.org/simplecodes/wtforms/get/tip.zip#egg=WTForms-dev
 """
 from wtforms.form import Form
 from wtforms.fields import *
