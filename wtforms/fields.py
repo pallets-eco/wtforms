@@ -502,17 +502,22 @@ class DateTimeField(TextField):
     def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
+        self.raw_data = None
 
     def _value(self):
-        return self.data and self.data.strftime(self.format) or u''
+        if self.raw_data is not None:
+            return self.raw_data
+        else:
+            return self.data and self.data.strftime(self.format) or u''
 
     def process_formdata(self, valuelist):
-        if valuelist and valuelist[0]:
+        if valuelist:
+            self.raw_data = str.join(' ', valuelist)
             try:
-                timetuple = time.strptime(str.join(' ', valuelist), self.format)
+                timetuple = time.strptime(self.raw_data, self.format)
                 self.data = datetime(*timetuple[:7])
             except ValueError:
-                pass
+                self.data = None
 
 class SubmitField(BooleanField):
     """
