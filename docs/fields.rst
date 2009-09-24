@@ -328,4 +328,49 @@ complex data structures such as lists and nested objects can be represented.
 Custom fields
 -------------
 
-(TODO)
+While WTForms provides customization for existing fields using widgets and
+keyword argument attributes, sometimes it is necessary to design custom fields
+to handle special data types in your application.
+
+Let's design a field which represents a comma-separated list of tags::
+
+    class TagListField(Field):
+        widget = TextInput()
+
+        def _value(self):
+            if self.data:
+                return u', '.join(self.data)
+            else:
+                return u''
+
+        def process_formdata(self, valuelist):
+            if valuelist:
+                self.data = [x.strip() for x in valuelist[0].split(',')]
+            else:
+                self.data = []
+
+The `_value` method is called by the :class:`~wtforms.widgets.TextInput` widget
+to provide the value that is displayed in the form. Overriding the
+`process_formdata` method processes the incoming form data back into a list of
+tags.
+
+Custom fields can also override the default field constructor if needed to
+provide additional customization::
+
+    class BetterTagListField(TagListField):
+        def __init__(self, label='', validators=None, remove_duplicates=True, **kwargs):
+            super(BetterTagListField, self).__init__(label, validators, **kwargs)
+            self.remove_duplicates = remove_duplicates
+        
+        def process_formdata(self, valuelist):
+            super(BetterTagListField, self).process_formdata(valuelist)
+            if remove_duplicates:
+                self.data = list(self._remove_duplicates(self.data))
+
+        @staticmethod
+        def _remove_duplicates(seq):
+            d = {}
+            for item in seq:
+                if item.lower() not in d:
+                    d[item.lower()] = True
+                    yield item
