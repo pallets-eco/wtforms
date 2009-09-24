@@ -1,11 +1,5 @@
 """
-    wtforms.ext.sqlalchemy.fields
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    Useful form fields for use with SQLAlchemy ORM.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
+Useful form fields for use with SQLAlchemy ORM.
 """
 from wtforms.fields import Field
 from wtforms.validators import ValidationError

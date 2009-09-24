@@ -1,6 +1,8 @@
 syntax: regexp
-^(build|dist|WTForms\.egg-info)/
 \.py[co]$
 \..*\.swp$
 \.eprj$
+^build/
 ^docs/_build
+^dist/
+^MANIFEST$

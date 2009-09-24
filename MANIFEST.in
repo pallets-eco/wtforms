@@ -1,1 +1,9 @@
-include CHANGES.txt LICENSE.txt AUTHORS.txt README.txt ez_setup.py
+include AUTHORS.txt
+include CHANGES.txt
+include LICENSE.txt
+include MANIFEST.in
+include README.txt
+recursive-include docs *
+recursive-include tests *
+recursive-exclude docs/_build/doctrees *
+recursive-exclude tests *.pyc

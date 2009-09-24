@@ -1,34 +1,25 @@
-#!/usr/bin/env python
 import os, sys
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-import ez_setup
-from inspect import getdoc
-ez_setup.use_setuptools()
-
-from setuptools import setup
-
+from distutils.core import setup
 import wtforms
 
 setup(
     name='WTForms',
-    version='0.4',
+    version=wtforms.__version__,
     url='http://wtforms.simplecodes.com/',
-    download_url='http://wtforms.simplecodes.com/',
-    license='MIT',
-    author='James Crasta, Thomas Johansson',
-    author_email='jcrasta@gmail.com, prencher@gmail.com',
-    description='HTTP/HTML forms handling for python',
-    long_description=getdoc(wtforms),
-    zip_safe=False,
+    license='BSD',
+    author='Thomas Johansson',
+    author_email='prencher@gmail.com',
+    description='A flexible forms validation and rendering library for python web development',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries',
+        'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     packages=[
@@ -37,7 +28,5 @@ setup(
         'wtforms.ext.django',
         'wtforms.ext.django.templatetags',
         'wtforms.ext.sqlalchemy',
-    ],
-    platforms=['any'],
-    include_package_data=True,
+    ]
 )

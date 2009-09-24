@@ -2,14 +2,11 @@
 WTForms
 =======
 
-WTForms is a forms handling library for web applications in python. For
-documentation and help please visit the `WTForms website`_.
+WTForms is a flexible forms validation and rendering library for python web
+development.
 
-The `WTForms tip`_ is installable via `easy_install` with ``easy_install
-WTForms==dev``.
-
-.. _WTForms website: http://wtforms.simplecodes.com/
-.. _WTForms tip: http://bitbucket.org/simplecodes/wtforms/get/tip.zip#egg=WTForms-dev
+:copyright: Copyright (c) 2009 by the WTForms Team, see AUTHORS.txt.
+:license: BSD, see LICENSE.txt for details.
 """
 from wtforms.form import Form
 from wtforms.fields import *

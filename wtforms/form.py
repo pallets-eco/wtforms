@@ -1,13 +1,3 @@
-"""
-    wtforms.form
-    ~~~~~~~~~~~~
-    
-    The `Form` base class.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
-
 __all__ = (
     'Form',
 )

@@ -1,12 +1,3 @@
-"""
-    wtforms.validators
-    ~~~~~~~~~~~~~~~~~~
-
-    Contains all built-in validators such as `required` and `optional`.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
 import re
 
 __all__ = (

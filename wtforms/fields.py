@@ -1,12 +1,3 @@
-"""
-    wtforms.fields
-    ~~~~~~~~~~~~~~
-    
-    Contains the `Field` base class in addition to all built-in field types.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
 from cgi import escape
 from datetime import datetime
 from decimal import Decimal, InvalidOperation

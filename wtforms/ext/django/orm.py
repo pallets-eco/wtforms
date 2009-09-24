@@ -1,11 +1,5 @@
 """
-    wtforms.ext.django.orm
-    ~~~~~~~~~~~~~~~~~~~~~~
-    
-    tools for turning django models into a Form.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
+Tools for generating forms based on Django models.
 """
 from wtforms import Form
 from wtforms import fields as f

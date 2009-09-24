@@ -1,12 +1,3 @@
-"""
-    wtforms.widgets
-    ~~~~~~~~~~~~~~~
-    
-    The WTForms widget system.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
 from cgi import escape
 
 __all__ = (
