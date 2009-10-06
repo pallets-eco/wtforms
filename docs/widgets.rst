@@ -14,12 +14,12 @@ Built-in widgets
 .. autoclass:: ListWidget
 .. autoclass:: TableWidget
 .. autoclass:: Input
-.. autoclass:: TextInput
+.. autoclass:: TextInput()
 .. autoclass:: PasswordInput
-.. autoclass:: HiddenInput 
-.. autoclass:: CheckboxInput
-.. autoclass:: FileInput
-.. autoclass:: SubmitInput
+.. autoclass:: HiddenInput() 
+.. autoclass:: CheckboxInput()
+.. autoclass:: FileInput()
+.. autoclass:: SubmitInput()
 .. autoclass:: TextArea
 .. autoclass:: Select 
 
