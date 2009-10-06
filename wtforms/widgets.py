@@ -7,17 +7,21 @@ __all__ = (
 
 def html_params(**kwargs):
     """
-    Generate HTML parameters for keywords
+    Generate HTML parameters from inputted keyword arguments.
+
+    The output value is sorted by the passed keys, to provide consistent output
+    each time this function is called with the same parameters.  Because of the
+    frequent use of the normally reserved keywords `class` and `for`, suffixing
+    these with an underscore will allow them to be used.
+
+    >>> html_params(name='text1', id='f', class_='text')
+    u'class="text" id="f" name="text1"'
     """
     params = []
-    keys = kwargs.keys()
-    keys.sort()
-    for k in keys:
-        v = escape(unicode(kwargs[k]), quote=True)
-        if k in ('class_', 'class__'):
+    for k,v in sorted(kwargs.iteritems()):
+        if k in ('class_', 'class__', 'for_'):
             k = k[:-1]
-        k = unicode(k)
-        params.append(u'%s="%s"' % (k, v))
+        params.append(u'%s="%s"' % (unicode(k), escape(unicode(v), quote=True)))
     return u' '.join(params)
 
 class ListWidget(object):
