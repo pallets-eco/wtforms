@@ -1,23 +1,22 @@
 #!/usr/bin/env python
-from unittest import TestCase
 
 from sqlalchemy import create_engine     
 from sqlalchemy.schema import MetaData, Table, Column
 from sqlalchemy.types import String, Integer
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+from unittest import TestCase
+
 from wtforms.ext.sqlalchemy.fields import ModelSelectField, QuerySelectField
-from wtforms.widgets import Widget
 from wtforms.form import Form
 
 
-class LazySelect(Widget):
-    def render(self, field, **kwargs):
+class LazySelect(object):
+    def __call__(self, field, **kwargs):
         output = []
         for val, label, selected in field.iter_choices():
             s = selected and u'1' or u'0'
             output.append(u'%s,%s,%s' % (unicode(val), unicode(s), unicode(label)))
-
         return u'|'.join(output)
 
 class DummyPostData(dict):
@@ -29,33 +28,22 @@ class Base(object):
         for k, v in kwargs.iteritems():
             setattr(self, k, v)
 
-
-metadata = MetaData()
-
-test_table = Table('test', metadata, 
-    Column('id', Integer, primary_key=True, nullable=False),
-    Column('name', String, nullable=False),
-)
-
-pk_test_table = Table('pk_test', metadata, 
-    Column('foobar', Integer, primary_key=True, nullable=False),
-    Column('baz', String, nullable=False),
-)
-
-ROWS = (
-    (1, 'apple'),
-    (2, 'banana'),
-)
-
-
 class TestBase(TestCase):
     def _do_tables(self, mapper, engine):
-        class Test(Base):
-            pass
+        metadata = MetaData()
 
-        class PKTest(Base):
-            def __unicode__(self):
-                return self.baz
+        test_table = Table('test', metadata, 
+            Column('id', Integer, primary_key=True, nullable=False),
+            Column('name', String, nullable=False),
+        )
+
+        pk_test_table = Table('pk_test', metadata, 
+            Column('foobar', Integer, primary_key=True, nullable=False),
+            Column('baz', String, nullable=False),
+        )
+
+        Test = type('Test', (Base, ), {})
+        PKTest = type('PKTest', (Base, ), {'__unicode__': lambda x: x.baz })
 
         mapper(Test, test_table, order_by=[test_table.c.name])
         mapper(PKTest, pk_test_table, order_by=[pk_test_table.c.baz])
@@ -65,7 +53,7 @@ class TestBase(TestCase):
         metadata.create_all(bind=engine)
 
     def _fill(self, sess):
-        for i, n in ROWS:
+        for i, n in [(1, 'apple'),(2, 'banana')]:
             s = self.Test(id=i, name=n)
             p = self.PKTest(foobar=i, baz=n)
             sess.add(s)
