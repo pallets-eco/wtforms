@@ -568,13 +568,16 @@ class FormField(Field):
     def __iter__(self):
         return iter(self.form)
 
-    def _get_data(self):
-        return self.form.data
-    data = property(_get_data)
+    def __getitem__(self, name):
+        return self.form[name]
 
-    def _get_errors(self):
+    @property
+    def data(self):
+        return self.form.data
+
+    @property
+    def errors(self):
         return self.form.errors
-    errors = property(_get_errors)
 
 class FieldList(Field):
     """
@@ -628,7 +631,7 @@ class FieldList(Field):
         for subfield in self.entries:
             if not subfield.validate(form):
                 success = False
-                self.errors.extend(subfield.errors)
+                self.errors.append(subfield.errors)
         return success
 
     def add_entry(self, formdata=None, data=_unset_value):
@@ -642,6 +645,12 @@ class FieldList(Field):
 
     def __iter__(self):
         return iter(self.entries)
+
+    def __len__(self):
+        return len(self.entries)
+
+    def __getitem__(self, index):
+        return self.entries[index]
 
     @property
     def data(self):
