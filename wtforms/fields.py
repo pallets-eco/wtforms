@@ -1,7 +1,7 @@
 from cgi import escape
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
-from itertools import chain, count
+from itertools import chain
 import time
 
 from wtforms import widgets
@@ -598,21 +598,14 @@ class FieldList(Field):
         if data is _unset_value or not data:
             data = ()
         self.entries = []
-        max_index = None
-        for i in count():
-            try:
-                obj_data = data[i]
-            except IndexError:
-                if not formdata:
-                    break # If there's no data or formdata, we are done.
-                elif max_index is None:
-                    max_index = max(-1, *self._extract_indices(self.name, formdata))
-                if i > max_index:
-                    break # If we are beyond the end of formdata, we are done
-                obj_data = _unset_value
 
-            f = self.add_entry(False)
-            f.process(formdata, obj_data)
+        for obj_data in data:
+            self.add_entry(formdata, obj_data)
+
+        if formdata:
+            max_index = max(-1, *self._extract_indices(self.name, formdata))
+            for _ in range(max_index - len(self.entries) + 1):
+                self.add_entry(formdata) 
 
     def _extract_indices(self, prefix, formdata):
         """
@@ -638,13 +631,12 @@ class FieldList(Field):
                 self.errors.extend(subfield.errors)
         return success
 
-    def add_entry(self, process=True):
+    def add_entry(self, formdata=None, data=_unset_value):
         new_index = len(self.entries)
         name = '%s-%d' % (self.name, new_index)
         id   = '%s-%d' % (self.id, new_index)
         f = self.unbound_field.bind(form=None, name=name, id=id)
-        if process:
-            f.process(None)
+        f.process(formdata, data)
         self.entries.append(f)
         return f
 
