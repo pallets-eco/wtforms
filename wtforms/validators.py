@@ -1,10 +1,12 @@
 import re
 
+
 __all__ = (
     'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
     'Length', 'length', 'Optional', 'optional', 'Required', 'required',
-    'Regexp', 'regexp', 'URL', 'url'
+    'Regexp', 'regexp', 'URL', 'url',
 )
+
 
 class ValidationError(ValueError):
     """
@@ -12,6 +14,7 @@ class ValidationError(ValueError):
     """
     def __init__(self, message=u'', *args, **kwargs):
         ValueError.__init__(self, message, *args, **kwargs)
+
 
 class StopValidation(ValidationError):
     """
@@ -23,6 +26,7 @@ class StopValidation(ValidationError):
     """
     def __init__(self, message=u'', *args, **kwargs):
         ValidationError.__init__(self, message, *args, **kwargs)
+
 
 class EqualTo(object):
     """
@@ -45,6 +49,7 @@ class EqualTo(object):
         elif field.data != other.data:
             raise ValidationError(self.message)
 
+
 class IPAddress(object):
     """
     Validates an IP(v4) address.
@@ -59,6 +64,7 @@ class IPAddress(object):
     def __call__(self, form, field):
         if not re.match(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', field.data):
             raise ValidationError(self.message)
+
 
 class Length(object):
     """
@@ -85,6 +91,7 @@ class Length(object):
         if l < self.min or self.max != -1 and l > self.max:
             raise ValidationError(self.message)
 
+
 class Optional(object):
     """
     Allows empty input and stops the validation chain from continuing.
@@ -94,6 +101,7 @@ class Optional(object):
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation()
+
 
 class Required(object):
     """
@@ -112,6 +120,7 @@ class Required(object):
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             raise StopValidation(self.message)
+
 
 class Regexp(object):
     """
@@ -135,6 +144,7 @@ class Regexp(object):
         if not self.regex.match(field.data or ''):
             raise ValidationError(self.message)
 
+
 class Email(Regexp):
     """
     Validates an email address. Note that this uses a very primitive regular
@@ -147,6 +157,7 @@ class Email(Regexp):
             Error message to raise in case of a validation error.
         """
         super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,}$', re.IGNORECASE, message)
+
 
 class URL(Regexp):
     """
@@ -167,7 +178,7 @@ class URL(Regexp):
         regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (require_tld and r'\.[a-z]{2,}' or '')
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
-# Factory-style aliases
+
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress

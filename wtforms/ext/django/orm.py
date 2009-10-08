@@ -1,14 +1,16 @@
 """
 Tools for generating forms based on Django models.
 """
-from wtforms import Form
 from wtforms import fields as f
+from wtforms import Form
 from wtforms import validators
 from wtforms.ext.django.fields import ModelSelectField
+
 
 __all__ = (
     'model_form',
 )
+
 
 class ModelConverter(object):
     SIMPLE_CONVERSIONS = {
@@ -85,6 +87,7 @@ class ModelConverter(object):
             STATE_CHOICES = []
 
         return f.SelectField(choices=STATE_CHOICES, **kwargs)
+
 
 def model_form(model, base_class=Form, include_pk=False):
     """

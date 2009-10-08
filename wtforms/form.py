@@ -2,6 +2,7 @@ __all__ = (
     'Form',
 )
 
+
 class FormMeta(type):
     """
     The metaclass for `Form` and any subclasses of `Form`.
@@ -52,6 +53,7 @@ class FormMeta(type):
         if not name.startswith('_'):
             cls._unbound_fields = None
         type.__delattr__(cls, name)
+
 
 class Form(object):
     """
@@ -146,21 +148,21 @@ class Form(object):
                 success = False
         return success
 
-    def _get_data(self):
+    @property
+    def data(self):
         data = {}
         for name, field in self._fields:
             data[name] = field.data
         return data
-    data = property(_get_data)
 
-    def _get_errors(self):
+    @property
+    def errors(self):
         if self._errors is None:
             self._errors = {}
             for name, field in self._fields:
                 if field.errors:
                     self._errors[name] = field.errors
         return self._errors
-    errors = property(_get_errors)
 
     def auto_populate(self, obj):
         """

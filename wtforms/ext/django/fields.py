@@ -1,13 +1,15 @@
 """
 Useful form fields for use with the Django ORM.
 """
+from wtforms import widgets
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
-from wtforms import widgets
+
 
 __all__ = (
     'ModelSelectField', 'QuerySetSelectField',
 )
+
 
 class QuerySetSelectField(Field):
     """
@@ -73,6 +75,7 @@ class QuerySetSelectField(Field):
                     break
             else:
                 raise ValidationError('Not a valid choice')
+
 
 class ModelSelectField(QuerySetSelectField):
     """

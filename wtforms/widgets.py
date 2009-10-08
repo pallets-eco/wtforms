@@ -1,9 +1,12 @@
 from cgi import escape
 
+
 __all__ = (
     'CheckboxInput', 'FileInput', 'HiddenInput', 'ListWidget', 'PasswordInput',
-    'RadioInput', 'Select', 'SubmitInput', 'TableWidget', 'TextArea', 'TextInput',
+    'RadioInput', 'Select', 'SubmitInput', 'TableWidget', 'TextArea',
+    'TextInput',
 )
+
 
 def html_params(**kwargs):
     """
@@ -23,6 +26,7 @@ def html_params(**kwargs):
             k = k[:-1]
         params.append(u'%s="%s"' % (unicode(k), escape(unicode(v), quote=True)))
     return u' '.join(params)
+
 
 class ListWidget(object):
     """
@@ -51,6 +55,7 @@ class ListWidget(object):
                 html.append(u'<li>%s %s</li>' % (subfield(), subfield.label))
         html.append(u'</%s>' % self.html_tag)
         return u''.join(html)
+
 
 class TableWidget(object):
     """
@@ -84,6 +89,7 @@ class TableWidget(object):
             html.append(hidden)
         return u''.join(html)
 
+
 class Input(object):
     """
     Render a basic ``<input>`` field.
@@ -104,12 +110,14 @@ class Input(object):
             kwargs['value'] = field._value()
         return u'<input %s />' % html_params(name=field.name, **kwargs)
 
+
 class TextInput(Input):
     """
     Render a single-line text input.
     """
     input_type = 'text'
-    
+
+
 class PasswordInput(Input):
     """
     Render a password input.
@@ -128,11 +136,13 @@ class PasswordInput(Input):
             kwargs['value'] = ''
         return super(PasswordInput, self).__call__(field, **kwargs)
 
+
 class HiddenInput(Input):
     """
     Render a hidden input.
     """
     input_type = 'hidden'
+
 
 class CheckboxInput(Input):
     """
@@ -150,6 +160,7 @@ class CheckboxInput(Input):
             kwargs['checked'] = u'checked'
         return super(CheckboxInput, self).__call__(field, **kwargs)
 
+
 class RadioInput(Input):
     """
     Render a single radio button.
@@ -163,12 +174,14 @@ class RadioInput(Input):
         if field.checked:
             kwargs['checked'] = u'checked'
         return super(RadioInput, self).__call__(field, value=field.data, **kwargs)
-        
+
+
 class FileInput(Input):
     """
     Renders a file input chooser field.
     """
     input_type = 'file'
+
 
 class SubmitInput(Input):
     """
@@ -183,6 +196,7 @@ class SubmitInput(Input):
         kwargs.setdefault('value', field.label.text)
         return super(SubmitInput, self).__call__(field, **kwargs)
 
+
 class TextArea(object):
     """
     Renders a multi-line text area.
@@ -192,6 +206,7 @@ class TextArea(object):
     def __call__(self, field, **kwargs): 
         kwargs.setdefault('id', field.id)
         return u'<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(unicode(field._value())))
+
 
 class Select(object):
     """
@@ -219,4 +234,3 @@ class Select(object):
             html.append(u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label))))
         html.append(u'</select>')
         return u''.join(html)
-

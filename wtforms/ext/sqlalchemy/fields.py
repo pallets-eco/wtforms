@@ -1,13 +1,15 @@
 """
 Useful form fields for use with SQLAlchemy ORM.
 """
+from wtforms import widgets
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
-from wtforms import widgets
+
 
 __all__ = (
     'QuerySelectField', 'ModelSelectField',
 )
+
 
 class QuerySelectField(Field):
     """
@@ -90,6 +92,7 @@ class QuerySelectField(Field):
                     break
             else:
                 raise ValidationError('Not a valid choice')
+
 
 class ModelSelectField(QuerySelectField):
     """

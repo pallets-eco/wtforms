@@ -7,14 +7,17 @@ import time
 from wtforms import widgets
 from wtforms.validators import StopValidation, ValidationError
 
+
 __all__ = (
-    'BooleanField', 'DecimalField', 'DateTimeField', 'FieldList', 'FileField', 'FormField',
-    'HiddenField', 'IntegerField', 'PasswordField', 'RadioField',
+    'BooleanField', 'DecimalField', 'DateTimeField', 'FieldList', 'FileField',
+    'FormField', 'HiddenField', 'IntegerField', 'PasswordField', 'RadioField',
     'SelectField', 'SelectMultipleField', 'SubmitField', 'TextField',
     'TextAreaField',
 )
 
+
 _unset_value = object()
+
 
 class Field(object):
     """
@@ -233,6 +236,7 @@ class Field(object):
         """
         setattr(obj, name, self.data)
 
+
 class UnboundField(object):
     _formfield = True
     creation_counter = 0
@@ -252,6 +256,7 @@ class UnboundField(object):
 
     def __repr__(self):
         return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
+
 
 class Flags(object):
     """
@@ -285,6 +290,7 @@ class Label(object):
         attributes = widgets.html_params(**kwargs)
         return u'<label %s>%s</label>' % (attributes, text or self.text)
 
+
 class SelectField(Field):
     widget = widgets.Select()
 
@@ -317,6 +323,7 @@ class SelectField(Field):
         else:
             raise ValidationError('Not a valid choice')
 
+
 class SelectMultipleField(SelectField):
     """
     No different from a normal select field, except this one can take (and
@@ -348,6 +355,7 @@ class SelectMultipleField(SelectField):
             if d not in choices:
                 raise ValidationError(u"'%s' is not a valid choice for this field" % d)
 
+
 class RadioField(SelectField):
     """
     Like a SelectField, except displays a list of radio buttons.
@@ -367,7 +375,8 @@ class RadioField(SelectField):
     class _Radio(Field):
         widget = widgets.RadioInput()
         checked = False
-        
+
+   
 class TextField(Field):
     """
     This field is the base for most of the more complicated fields, and
@@ -384,11 +393,13 @@ class TextField(Field):
     def _value(self):
         return self.data is not None and unicode(self.data) or u''
 
+
 class HiddenField(TextField):
     """
     Represents an ``<input type="hidden">``.
     """
     widget = widgets.HiddenInput()
+
 
 class TextAreaField(TextField):
     """
@@ -397,12 +408,14 @@ class TextAreaField(TextField):
     """
     widget = widgets.TextArea()
 
+
 class PasswordField(TextField):
     """
     Represents an ``<input type="password">``.
     """
     widget = widgets.PasswordInput()
-        
+
+       
 class FileField(TextField):
     """
     Can render a file-upload field.  Will take any passed filename value, if
@@ -411,6 +424,7 @@ class FileField(TextField):
     individual frameworks' file handling capabilities.
     """
     widget = widgets.FileInput()
+
 
 class IntegerField(TextField):
     """
@@ -441,6 +455,7 @@ class IntegerField(TextField):
                 int(self.raw_data)
             except ValueError:
                 raise ValidationError(u'Not a valid integer value')
+
 
 class DecimalField(TextField):
     """
@@ -495,6 +510,7 @@ class BooleanField(Field):
             self.raw_data = None
             self.data = False
 
+
 class DateTimeField(TextField):
     """
     Can be represented by one or multiple text-inputs.
@@ -519,12 +535,14 @@ class DateTimeField(TextField):
             except ValueError:
                 self.data = None
 
+
 class SubmitField(BooleanField):
     """
     Represents an ``<input type="submit">``.  This allows checking if a given
     submit button has been pressed.
     """
     widget = widgets.SubmitInput()
+
 
 class FormField(Field):
     """
@@ -578,6 +596,7 @@ class FormField(Field):
     @property
     def errors(self):
         return self.form.errors
+
 
 class FieldList(Field):
     """

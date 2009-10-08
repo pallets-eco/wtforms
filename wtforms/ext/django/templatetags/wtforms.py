@@ -7,6 +7,10 @@ from django import template
 from django.conf import settings
 from django.template import Variable
 
+
+register = template.Library()
+
+
 class FormFieldNode(template.Node):
     def __init__(self, field_var, html_attrs):
         self.field_var = field_var
@@ -31,6 +35,8 @@ class FormFieldNode(template.Node):
 
         return field(**h_attrs)
 
+
+@register.tag(name='form_field')
 def do_form_field(parser, token):
     """
     Render a WTForms form field allowing optional HTML attributes.
@@ -55,12 +61,8 @@ def do_form_field(parser, token):
     return FormFieldNode(parts[1], html_attrs)
 
 
-register = template.Library()
-register.tag('form_field', do_form_field)
-
-# -- Utilities -------------------------------------------------------------
-
 args_split_re = re.compile(ur'''("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s=]+)''')
+
 def args_split(text):
     """ Split space-separated key=value arguments.  Keeps quoted strings intact. """ 
     for bit in args_split_re.finditer(text):
