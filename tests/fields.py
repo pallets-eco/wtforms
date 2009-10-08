@@ -356,13 +356,25 @@ class FieldListTest(TestCase):
         form = F(a=data)
         self.assertEqual(form.a.data, data)
         self.assert_(form.validate())
-        form.a.add_entry()
+        form.a.append_entry()
         self.assertEqual(form.a.data, data + [{'a': None}])
         self.assert_(not form.validate())
     
         pdata = DummyPostData({'a-0': ['fake'], 'a-0-a': ['foo'], 'a-1-a': ['bar']})
         form = F(pdata, a=data)
         self.assertEqual(form.a.data, [{'a': 'foo'}, {'a': 'bar'}])
+
+    def test_entry_management(self):
+        F = make_form(a = FieldList(self.t))
+        a = F(a=['hello', 'bye']).a
+        self.assertEqual(a.remove_entry().name, 'a-1')
+        self.assertEqual(a.data, ['hello'])
+        a.append_entry('orange')
+        self.assertEqual(a.data, ['hello', 'orange'])
+        self.assertEqual(a[-1].name, 'a-1')
+        self.assertEqual(a.remove_entry().data, 'orange')
+        self.assertEqual(a.remove_entry().name, 'a-0')
+        self.assertRaises(IndexError, a.remove_entry)
 
 
 if __name__ == '__main__':

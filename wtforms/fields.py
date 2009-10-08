@@ -603,12 +603,12 @@ class FieldList(Field):
         self.entries = []
 
         for obj_data in data:
-            self.add_entry(formdata, obj_data)
+            self._add_entry(formdata, obj_data)
 
         if formdata:
             max_index = max(-1, *self._extract_indices(self.name, formdata))
             for _ in range(max_index - len(self.entries) + 1):
-                self.add_entry(formdata) 
+                self._add_entry(formdata) 
 
     def _extract_indices(self, prefix, formdata):
         """
@@ -634,7 +634,7 @@ class FieldList(Field):
                 self.errors.append(subfield.errors)
         return success
 
-    def add_entry(self, formdata=None, data=_unset_value):
+    def _add_entry(self, formdata=None, data=_unset_value):
         new_index = len(self.entries)
         name = '%s-%d' % (self.name, new_index)
         id   = '%s-%d' % (self.id, new_index)
@@ -642,6 +642,14 @@ class FieldList(Field):
         f.process(formdata, data)
         self.entries.append(f)
         return f
+
+    def append_entry(self, data=_unset_value):
+        """Create a new entry with optional default data"""
+        return self._add_entry(data=data)
+
+    def remove_entry(self):
+        """Remove the last subfield entry"""
+        return self.entries.pop()
 
     def __iter__(self):
         return iter(self.entries)
