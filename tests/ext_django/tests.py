@@ -43,6 +43,13 @@ def contains_validator(field, v_type):
             return True
     return False
 
+def lazy_select(field, **kwargs):
+    output = []
+    for val, label, selected in field.iter_choices():
+        s = selected and u'Y' or u'N'
+        output.append(u'%s:%s:%s' % (s, unicode(val), unicode(label)))
+    return tuple(output)
+
 class DummyPostData(dict):
     def getlist(self, key):
         return self[key]
@@ -113,8 +120,8 @@ class QuerySetSelectFieldTest(DjangoTestCase):
         from django.core.management import call_command
         self.queryset = test_models.Group.objects.all()
         class F(Form):
-            a = QuerySetSelectField(allow_blank=True, label_attr='name')
-            b = QuerySetSelectField(queryset=self.queryset)
+            a = QuerySetSelectField(allow_blank=True, label_attr='name', widget=lazy_select)
+            b = QuerySetSelectField(queryset=self.queryset, widget=lazy_select)
 
         self.F = F
 
@@ -125,13 +132,13 @@ class QuerySetSelectFieldTest(DjangoTestCase):
     def test_with_data(self):
         form = self.F()
         form.a.queryset = self.queryset[1:]
-        self.assertEqual(form.a(), u'''<select id="a" name="a"><option selected="selected" value="__None"></option><option value="2">Admins</option></select>''')
+        self.assertEqual(form.a(), (u'Y:__None:', 'N:2:Admins'))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.validate(form), True)
         self.assertEqual(form.b.validate(form), False)
         form.b.data = test_models.Group.objects.get(pk=1)
         self.assertEqual(form.b.validate(form), True)
-        self.assertEqual(form.b(), u'''<select id="b" name="b"><option selected="selected" value="1">1: Users</option><option value="2">2: Admins</option></select>''')
+        self.assertEqual(form.b(), (u'Y:1:Users(1)', 'N:2:Admins(2)'))
 
     def test_formdata(self):
         form = self.F(DummyPostData(a=['1'], b=['3']))
@@ -149,11 +156,11 @@ class ModelSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
 
     class F(Form):
-        a = ModelSelectField(model=test_models.Group)
+        a = ModelSelectField(model=test_models.Group, widget=lazy_select)
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), u'''<select id="a" name="a"><option value="1">1: Users</option><option value="2">2: Admins</option></select>''')
+        self.assertEqual(form.a(), (u'N:1:Users(1)', 'N:2:Admins(2)'))
 
         
 if __name__ == '__main__':
