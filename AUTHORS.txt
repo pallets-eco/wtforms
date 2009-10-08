@@ -1,4 +1,4 @@
-WTForms is written and maintained by the WTForms team and various contributors.
+WTForms is written and maintained by the WTForms Team and various contributors.
 
 Lead Developers:
 

@@ -9,8 +9,8 @@ setup(
     version=wtforms.__version__,
     url='http://wtforms.simplecodes.com/',
     license='BSD',
-    author='Thomas Johansson',
-    author_email='prencher@gmail.com',
+    author='The WTForms Team',
+    author_email='wtforms@simplecodes.com',
     description='A flexible forms validation and rendering library for python web development',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
