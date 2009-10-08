@@ -647,8 +647,8 @@ class FieldList(Field):
         """Create a new entry with optional default data"""
         return self._add_entry(data=data)
 
-    def remove_entry(self):
-        """Remove the last subfield entry"""
+    def pop_entry(self):
+        """ Removes the last entry from the list and returns it. """
         return self.entries.pop()
 
     def __iter__(self):
@@ -663,4 +663,3 @@ class FieldList(Field):
     @property
     def data(self):
         return [f.data for f in self.entries]
-

@@ -1,19 +1,15 @@
 #!/usr/bin/env python
-"""
-    ext_sqlalchemy
-    ~~~~~~~~~~~~~~
-    
-    Unittests for `wtforms.ext.sqlalchemy`.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
-
 from unittest import TestCase
+
+from sqlalchemy import create_engine     
+from sqlalchemy.schema import MetaData, Table, Column
+from sqlalchemy.types import String, Integer
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 from wtforms.ext.sqlalchemy.fields import ModelSelectField, QuerySelectField
 from wtforms.widgets import Widget
 from wtforms.form import Form
+
 
 class LazySelect(Widget):
     def render(self, field, **kwargs):
@@ -33,12 +29,6 @@ class Base(object):
         for k, v in kwargs.iteritems():
             setattr(self, k, v)
 
-# -- SQLAlchemy initialization
-
-from sqlalchemy import create_engine     
-from sqlalchemy.schema import MetaData, Table, Column
-from sqlalchemy.types import String, Integer
-from sqlalchemy.orm import scoped_session, sessionmaker
 
 metadata = MetaData()
 
@@ -56,6 +46,7 @@ ROWS = (
     (1, 'apple'),
     (2, 'banana'),
 )
+
 
 class TestBase(TestCase):
     def _do_tables(self, mapper, engine):
@@ -132,6 +123,7 @@ class QuerySelectFieldTest(TestBase):
         form.a._object_list = None
         self.assertEqual(form.a(), u'1,1,apple|2,0,banana|3,0,meh')
 
+
 class ModelSelectFieldTest(TestBase):
     def setUp(self):
         engine = create_engine('sqlite:///:memory:', echo=False)
@@ -147,6 +139,7 @@ class ModelSelectFieldTest(TestBase):
 
         form = F()
         self.assertEqual(form.a(), u'1,0,apple|2,0,banana')
+
 
 if __name__ == '__main__':
     from unittest import main

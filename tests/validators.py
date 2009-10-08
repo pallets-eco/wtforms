@@ -1,16 +1,7 @@
 #!/usr/bin/env python
-"""
-    validators
-    ~~~~~~~~~~
-    
-    Unittests for bundled validators.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
-
 from unittest import TestCase
 from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url
+
 
 class DummyForm(object):
     pass
@@ -18,6 +9,7 @@ class DummyForm(object):
 class DummyField(object):
     def __init__(self, data):
         self.data = data
+
 
 class ValidatorsTest(TestCase):
     def setUp(self):
@@ -95,6 +87,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.d'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.12'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://localhost:abc/a'))
+
 
 if __name__ == '__main__':
     from unittest import main

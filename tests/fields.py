@@ -1,24 +1,13 @@
 #!/usr/bin/env python
-"""
-    fields
-    ~~~~~~
-    
-    Unittests for bundled fields.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
-
 from datetime import datetime
+from decimal import Decimal
 from unittest import TestCase
+
 from wtforms import validators, widgets
 from wtforms.fields import *
 from wtforms.fields import Label
 from wtforms.form import Form
-try:
-    from decimal import Decimal
-except ImportError:
-    pass
+
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -31,9 +20,11 @@ class AttrDict(dict):
 def make_form(_name='F', **fields):
     return type(_name, (Form, ), fields)
 
+
 class DefaultsTest(TestCase):
     def test(self):
         expected = 42
+
         def default_callable():
             return expected
 
@@ -45,6 +36,7 @@ class DefaultsTest(TestCase):
         test_callable.process(None)
         self.assertEqual(test_callable.data, expected)
 
+
 class LabelTest(TestCase):
     def test(self):
         expected = u"""<label for="test">Caption</label>"""
@@ -54,6 +46,7 @@ class LabelTest(TestCase):
         self.assertEqual(unicode(label), expected)
         self.assertEqual(label('hello'), u"""<label for="test">hello</label>""")
         self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
+
 
 class FlagsTest(TestCase):
     def setUp(self):
@@ -77,6 +70,7 @@ class FlagsTest(TestCase):
         self.assertEqual(self.flags.required, False)
         self.assert_('required' not in self.flags)
 
+
 class FiltersTest(TestCase):
     class F(Form):
         a = TextField(default=' hello', filters=[lambda x: x.strip()])
@@ -84,6 +78,7 @@ class FiltersTest(TestCase):
     def test(self):
         self.assertEqual(self.F().a.data, 'hello')
         self.assertEqual(self.F(DummyPostData(a=['  foo bar  '])).a.data, 'foo bar')
+
 
 class SelectFieldTest(TestCase):
     class F(Form):
@@ -115,6 +110,7 @@ class SelectFieldTest(TestCase):
         form.b.choices = [(3, 'false')]
         self.assertEqual(form.validate(), False)
 
+
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
         a = SelectMultipleField(choices=[('a', 'hello'), ('b','bye'), ('c', 'something')], default=('a', ))
@@ -133,6 +129,7 @@ class SelectMultipleFieldTest(TestCase):
         form = self.F(DummyPostData(b=['1', '2']))
         self.assertEqual(form.b.data, [1, 2])
 
+
 class RadioFieldTest(TestCase):
     class F(Form):
         a = RadioField(choices=[('a', 'hello'), ('b','bye')], default='a')
@@ -147,6 +144,7 @@ class RadioFieldTest(TestCase):
         self.assertEqual(form.b(), u"""<ul id="b"><li><input id="b_0" name="b" type="radio" value="1" /> <label for="b_0">Item 1</label></li><li><input id="b_1" name="b" type="radio" value="2" /> <label for="b_1">Item 2</label></li></ul>""")
         self.assertEqual([unicode(x) for x in form.a], [u'<input checked="checked" id="a_0" name="a" type="radio" value="a" />', u'<input id="a_1" name="a" type="radio" value="b" />'])
 
+
 class TextFieldTest(TestCase):
     class F(Form):
         a = TextField()
@@ -159,6 +157,7 @@ class TextFieldTest(TestCase):
         self.assertEqual(form.a.data, u'hello')
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="hello" />""")
 
+
 class HiddenFieldTest(TestCase):
     class F(Form):
         a = HiddenField(default="LE DEFAULT")
@@ -167,6 +166,7 @@ class HiddenFieldTest(TestCase):
         form = self.F()
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="hidden" value="LE DEFAULT" />""")
 
+
 class TextAreaFieldTest(TestCase):
     class F(Form):
         a = TextAreaField(default="LE DEFAULT")
@@ -174,6 +174,7 @@ class TextAreaFieldTest(TestCase):
     def test(self):
         form = self.F()
         self.assertEqual(form.a(), u"""<textarea id="a" name="a">LE DEFAULT</textarea>""")
+
 
 class PasswordFieldTest(TestCase):
     class F(Form):
@@ -185,6 +186,7 @@ class PasswordFieldTest(TestCase):
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="password" value="LE DEFAULT" />""")
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="password" value="" />""")
 
+
 class FileFieldTest(TestCase):
     class F(Form):
         a = FileField(default="LE DEFAULT")
@@ -192,6 +194,7 @@ class FileFieldTest(TestCase):
     def test(self):
         form = self.F()
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="file" value="LE DEFAULT" />""")
+
 
 class IntegerFieldTest(TestCase):
     class F(Form):
@@ -211,6 +214,7 @@ class IntegerFieldTest(TestCase):
         self.assertEqual(form.b.raw_data, '')
         self.assert_(form.validate())
 
+
 class DecimalFieldTest(TestCase):
     class F(Form):
         a = DecimalField()
@@ -220,10 +224,12 @@ class DecimalFieldTest(TestCase):
         self.assertEqual(form.a.data, Decimal('2.1'))
         self.assertEqual(form.a._value(), u'2.10')
 
+
 class BooleanFieldTest(TestCase):
     class BoringForm(Form):
-        bool1  = BooleanField()
-        bool2  = BooleanField(default=True)
+        bool1 = BooleanField()
+        bool2 = BooleanField(default=True)
+
     obj = AttrDict(bool1=None, bool2=True)
 
     def test_defaults(self):
@@ -254,6 +260,7 @@ class BooleanFieldTest(TestCase):
         self.assertEqual(form.bool1.data, True)
         self.assertEqual(form.bool2.data, False)
 
+
 class DateTimeFieldTest(TestCase):
     class F(Form):
         a = DateTimeField()
@@ -274,6 +281,7 @@ class SubmitFieldTest(TestCase):
 
     def test(self):
         self.assertEqual(self.F().a(), """<input id="a" name="a" type="submit" value="Label" />""")
+
 
 class FormFieldTest(TestCase):
     def setUp(self):
@@ -325,9 +333,9 @@ class FormFieldTest(TestCase):
         form = C()
         self.assertRaises(TypeError, form.validate)
 
+
 class FieldListTest(TestCase):
     t = TextField(validators=[validators.required()])
-
 
     def test_form(self):
         F = make_form(a = FieldList(self.t))
@@ -367,14 +375,14 @@ class FieldListTest(TestCase):
     def test_entry_management(self):
         F = make_form(a = FieldList(self.t))
         a = F(a=['hello', 'bye']).a
-        self.assertEqual(a.remove_entry().name, 'a-1')
+        self.assertEqual(a.pop_entry().name, 'a-1')
         self.assertEqual(a.data, ['hello'])
         a.append_entry('orange')
         self.assertEqual(a.data, ['hello', 'orange'])
         self.assertEqual(a[-1].name, 'a-1')
-        self.assertEqual(a.remove_entry().data, 'orange')
-        self.assertEqual(a.remove_entry().name, 'a-0')
-        self.assertRaises(IndexError, a.remove_entry)
+        self.assertEqual(a.pop_entry().data, 'orange')
+        self.assertEqual(a.pop_entry().name, 'a-0')
+        self.assertRaises(IndexError, a.pop_entry)
 
 
 if __name__ == '__main__':

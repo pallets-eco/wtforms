@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-"""
-    widgets
-    ~~~~~~~
-    
-    Unittests for widgets.
-"""
 from unittest import TestCase
 from wtforms.widgets import html_params
 

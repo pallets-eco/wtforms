@@ -1,19 +1,11 @@
 #!/usr/bin/env python
-"""
-    runtests
-    ~~~~~~~~
-    
-    Runs all unittests.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
+import os
+import sys
+from unittest import defaultTestLoader, TextTestRunner, TestSuite
 
 TESTS = ['form', 'fields', 'validators', 'widgets']
 
-
-from unittest import defaultTestLoader, TextTestRunner, TestSuite
-import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 suite = TestSuite()
 suite.addTest(defaultTestLoader.loadTestsFromNames(TESTS))

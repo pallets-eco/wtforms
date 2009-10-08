@@ -1,21 +1,14 @@
 #!/usr/bin/env python
-"""
-    form
-    ~~~~
-    
-    Unittests for Form.
-    
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
-
 from unittest import TestCase
+
 from wtforms import Form, TextField
 from wtforms.validators import ValidationError
+
 
 class DummyPostData(dict):
     def getlist(self, key):
         return self[key]
+
 
 class FormMetaTest(TestCase):
     def test_monkeypatch(self):
