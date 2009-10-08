@@ -303,7 +303,7 @@ complex data structures such as lists and nested objects can be represented.
     :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the 
     `errors` property encapsulate the forms' errors.
 
-.. autoclass:: FieldList(unbound_field, default field arguments, [blank_entries=0])
+.. autoclass:: FieldList(unbound_field, default field arguments)
 
     **Note**: Due to a limitation in how HTML sends values, FieldList cannot enclose 
     :class:`BooleanField` or :class:`SubmitField` instances.
@@ -319,11 +319,8 @@ complex data structures such as lists and nested objects can be represented.
         class ContactForm(Form):
             first_name  = TextField()
             last_name   = TextField()
-            im_accounts = FieldList(FormField(IMForm), blank_entries=1)
+            im_accounts = FieldList(FormField(IMForm))
 
-    In the above example, im_accounts will display a single blank IM form and
-    then on each subsequent submit add yet another entry to allow for more IM's
-    to be added.
 
 Custom fields
 -------------
@@ -369,6 +366,7 @@ provide additional customization::
 
         @staticmethod
         def _remove_duplicates(seq):
+            """Remove duplicates in a case insensitive, but case preserving manner"""
             d = {}
             for item in seq:
                 if item.lower() not in d:

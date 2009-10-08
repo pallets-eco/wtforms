@@ -547,8 +547,6 @@ class FormField(Field):
             self._idprefix = kwargs['_form']._idprefix
         else:
             self._idprefix = ''
-        self._hidden_field = HiddenField(id=self.id + '-_marker', default='__FormField', _form=None, _name=self.name)
-        self._hidden_field.process(None)
     
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
@@ -568,9 +566,7 @@ class FormField(Field):
         self.form.auto_populate(getattr(obj, name))
 
     def __iter__(self):
-        yield self._hidden_field
-        for field in self.form:
-            yield field
+        return iter(self.form)
 
     def _get_data(self):
         return self.form.data
@@ -585,65 +581,77 @@ class FieldList(Field):
     Encapsulate an ordered list of multiple instances of the same field type,
     keeping data as a list.
 
-    >>> authors = FieldList(TextField('Name', [validators.required()]), 
-    ...                     blank_entries=1)
+    >>> authors = FieldList(TextField('Name', [validators.required()])) 
 
     :param unbound_field:
         A partially-instantiated field definition, just like that would be
         defined on a form directly.
-    :param blank_entries:
-        If set to a non-zero value, will add a number of blank subfields to the
-        list with no data; useful for sub-record edit forms.
     """
     widget=widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=u'', validators=None, blank_entries=0, **kwargs):
+    def __init__(self, unbound_field, label=u'', validators=None, **kwargs):
         super(FieldList, self).__init__(label, validators, **kwargs)
         assert isinstance(unbound_field, UnboundField), 'Field must be unbound, not a field class'
         self.unbound_field = unbound_field
-        self.blank_entries = blank_entries
 
     def process(self, formdata, data=_unset_value):
         if data is _unset_value or not data:
             data = ()
-        self.fields = []
+        self.entries = []
+        max_index = None
         for i in count():
-            name = '%s-%d' % (self.name, i)
             try:
                 obj_data = data[i]
             except IndexError:
-                if not formdata or name not in formdata:
-                    break # If there's no data or formdata, we're done
+                if not formdata:
+                    break # If there's no data or formdata, we are done.
+                elif max_index is None:
+                    max_index = max(-1, *self._extract_indices(self.name, formdata))
+                if i > max_index:
+                    break # If we are beyond the end of formdata, we are done
                 obj_data = _unset_value
+
             f = self.add_entry(False)
             f.process(formdata, obj_data)
-        if not formdata and self.blank_entries:
-            for _ in xrange(self.blank_entries):
-                self.add_entry()
+
+    def _extract_indices(self, prefix, formdata):
+        """
+        Yield indices of any keys with given prefix.
+
+        formdata must be an object which will produce keys when iterated.  For
+        example, if field 'foo' contains keys 'foo-0-bar', 'foo-1-baz', then
+        the numbers 0 and 1 will be yielded, but not neccesarily in order.
+        """
+        offset = len(prefix) + 1
+        for k in formdata:
+            if k.startswith(prefix):
+                k = k[offset:].split('-')[0]
+                if k.isdigit():
+                    yield int(k)
 
     def validate(self, form, extra_validators=tuple()):
         self.errors = []
         success = True
-        for subfield in self.fields:
+        for subfield in self.entries:
             if not subfield.validate(form):
                 success = False
                 self.errors.extend(subfield.errors)
         return success
 
     def add_entry(self, process=True):
-        new_index = len(self.fields)
+        new_index = len(self.entries)
         name = '%s-%d' % (self.name, new_index)
         id   = '%s-%d' % (self.id, new_index)
         f = self.unbound_field.bind(form=None, name=name, id=id)
         if process:
             f.process(None)
-        self.fields.append(f)
+        self.entries.append(f)
         return f
 
     def __iter__(self):
-        return iter(self.fields)
+        return iter(self.entries)
 
-    def _get_data(self):
-        return [f.data for f in self.fields]
-    data = property(_get_data)
+    @property
+    def data(self):
+        return [f.data for f in self.entries]
 

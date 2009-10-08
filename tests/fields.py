@@ -28,6 +28,9 @@ class AttrDict(dict):
     def __getattr__(self, attr):
         return self[attr]
 
+def make_form(_name='F', **fields):
+    return type(_name, (Form, ), fields)
+
 class DefaultsTest(TestCase):
     def test(self):
         expected = 42
@@ -290,7 +293,7 @@ class FormFieldTest(TestCase):
         self.assert_(form.validate())
 
     def test_iteration(self):
-        self.assertEqual([x.name for x in self.F1().a], ['a', 'a-a', 'a-b'])
+        self.assertEqual([x.name for x in self.F1().a], ['a-a', 'a-b'])
 
     def test_with_obj(self):
         obj = AttrDict(a=AttrDict(a=u'mmm'))
@@ -305,7 +308,7 @@ class FormFieldTest(TestCase):
         self.assertEqual(obj_inner.b, None)
 
     def test_widget(self):
-        self.assertEqual(self.F1().a(), u'''<table id="a"><tr><th><label for="a-a"></label><th><td><input id="a-_marker" name="a" type="hidden" value="__FormField" /><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b"></label><th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr></table>''')
+        self.assertEqual(self.F1().a(), u'''<table id="a"><tr><th><label for="a-a"></label><th><td><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b"></label><th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr></table>''')
 
     def test_no_validators_or_filters(self):
         class A(Form):
@@ -323,26 +326,45 @@ class FormFieldTest(TestCase):
         self.assertRaises(TypeError, form.validate)
 
 class FieldListTest(TestCase):
-    class F(Form):
-        a = FieldList(TextField(validators=[validators.required()]))
+    t = TextField(validators=[validators.required()])
 
-    def test(self):
-        data = ['foo', 'hi', '']
+
+    def test_form(self):
+        F = make_form(a = FieldList(self.t))
+        data = ['foo', 'hi', 'rawr']
+        a = F(a=data).a
+        self.assertEqual(a.entries[1].data, 'hi')
+        self.assertEqual(a.entries[1].name, 'a-1')
+        self.assertEqual(a.data, data)
+        self.assertEqual(len(a.entries), 3)
+
         pdata = DummyPostData({'a-0': ['bleh'], 'a-1': ['yarg'], 'a-3': ['mmm']})
-        a = self.F(a=data).a
-        self.assertEqual(a.fields[1].data, 'hi')
-        self.assertEqual(a.fields[1].name, 'a-1')
-        self.assertEqual(len(a.fields), 3)
-
-        form = self.F(pdata)
-        self.assertEqual(len(form.a.fields), 2)
-        self.assertEqual(form.a.data, [u'bleh', u'yarg'])
-        self.assert_(form.validate())
-
-        form = self.F(pdata, a=data)
+        form = F(pdata)
+        self.assertEqual(len(form.a.entries), 4)
         self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
         self.assert_(not form.validate())
-        
+
+        form = F(pdata, a=data)
+        self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
+        self.assert_(not form.validate())
+    
+    def test_enclosed_subform(self):
+        F = make_form(
+            a = FieldList(FormField(make_form('FChild', a=self.t)))
+        )
+        data = [{'a': 'hello'}]
+        form = F(a=data)
+        self.assertEqual(form.a.data, data)
+        self.assert_(form.validate())
+        form.a.add_entry()
+        self.assertEqual(form.a.data, data + [{'a': None}])
+        self.assert_(not form.validate())
+    
+        pdata = DummyPostData({'a-0': ['fake'], 'a-0-a': ['foo'], 'a-1-a': ['bar']})
+        form = F(pdata, a=data)
+        self.assertEqual(form.a.data, [{'a': 'foo'}, {'a': 'bar'}])
+
+
 if __name__ == '__main__':
     from unittest import main
     main()
