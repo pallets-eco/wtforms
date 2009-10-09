@@ -9,7 +9,7 @@ setup(
     version=wtforms.__version__,
     url='http://wtforms.simplecodes.com/',
     license='BSD',
-    author='The WTForms Team',
+    author='Thomas Johansson, James Crasta',
     author_email='wtforms@simplecodes.com',
     description='A flexible forms validation and rendering library for python web development',
     classifiers=[
