@@ -568,7 +568,7 @@ class FormField(Field):
     
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
-            data = None
+            data = self._default
 
         if isinstance(data, dict):
             self.form = self.form_class(formdata=formdata, prefix=self.name, idprefix=self._idprefix, **data)
@@ -588,6 +588,9 @@ class FormField(Field):
 
     def __getitem__(self, name):
         return self.form[name]
+
+    def __getattr__(self, name):
+        return getattr(self.form, name)
 
     @property
     def data(self):
@@ -618,8 +621,8 @@ class FieldList(Field):
     """
     widget=widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=u'', validators=None, min_entries=0, max_entries=None, **kwargs):
-        super(FieldList, self).__init__(label, validators, **kwargs)
+    def __init__(self, unbound_field, label=u'', validators=None, min_entries=0, max_entries=None, default=tuple(), **kwargs):
+        super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:
             raise TypeError('FieldList does not accept any filters. Instead, define them on the enclosed field.')
         if validators:
@@ -631,7 +634,7 @@ class FieldList(Field):
 
     def process(self, formdata, data=_unset_value):
         if data is _unset_value or not data:
-            data = ()
+            data = self._default
         self.entries = []
 
         for obj_data in data:
