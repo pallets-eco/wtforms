@@ -5,18 +5,18 @@ from wtforms.widgets import *
 
 
 class DummyField(object):
-    def __init__(self, data, name='field', label='', id=''):
+    def __init__(self, data, name='f', label='', id='', type='TextField'):
         self.data = data
         self.name = name
         self.label = label
         self.id = id
+        self.type = type
 
     _value       = lambda x: x.data
     __unicode__  = lambda x: x.data
     __call__     = lambda x, **k: x.data
     __iter__     = lambda x: iter(x.data)
     iter_choices = lambda x: iter(x.data)
-    
 
 
 class HTMLParamsTest(TestCase):
@@ -28,7 +28,6 @@ class HTMLParamsTest(TestCase):
 
 
 class ListWidgetTest(TestCase):
-    
     def test(self):
         # ListWidget just expects an iterable of field-like objects as its
         # 'field' so that is what we will give it
@@ -41,7 +40,9 @@ class ListWidgetTest(TestCase):
 
 
 class TableWidgetTest(TestCase):
-    pass # TODO
+    def test(self):
+        field = DummyField([DummyField(x, label='l' + x) for x in ['foo', 'bar']], id='hai')
+        self.assertEqual(TableWidget()(field), u'<table id="hai"><tr><th>lfoo<th><td>foo</td></tr><tr><th>lbar<th><td>bar</td></tr></table>')
 
 
 class BasicWidgetsTest(TestCase):
@@ -66,17 +67,22 @@ class BasicWidgetsTest(TestCase):
         self.assert_(u'checked' not in CheckboxInput()(field2))
 
     def test_radio_input(self):
-        pass
+        pass # TODO
 
     def test_textarea(self):
         # Make sure textareas escape properly and render properly
         f = DummyField('hi<>bye')
-        self.assertEqual(TextArea()(f), '<textarea id="" name="field">hi&lt;&gt;bye</textarea>')
+        self.assertEqual(TextArea()(f), '<textarea id="" name="f">hi&lt;&gt;bye</textarea>')
 
 
 class SelectTest(TestCase):
-    pass # TODO
-    
+    field = DummyField([('foo', 'lfoo', True), ('bar', 'lbar', False)])
+
+    def test(self):
+        self.assertEqual(Select()(self.field), 
+            u'<select id="" name="f"><option selected="selected" value="foo">lfoo</option><option value="bar">lbar</option></select>')
+        self.assertEqual(Select(multiple=True)(self.field), 
+            '<select id="" multiple="multiple" name="f"><option selected="selected" value="foo">lfoo</option><option value="bar">lbar</option></select>')
 
 if __name__ == '__main__':
     from unittest import main
