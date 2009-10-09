@@ -1,0 +1,16 @@
+To install WTForms, run the following command:
+
+    python setup.py install
+
+You can also install WTForms from the Python Package Index using either pip or
+easy_install:
+
+    pip install WTForms
+    easy_install -Z WTForms
+
+If you prefer, you can also simply place the `wtforms` subdirectory somewhere on
+your python path. This is useful if you are running the latest version from
+Mercurial, or want to deploy WTForms with your application on for example Google
+App Engine.
+
+Note that you need Python 2.4 or later to use WTForms.

@@ -1,8 +1,10 @@
-WTForms Readme
-==============
+WTForms is a flexible forms validation and rendering library for python web
+development.
 
-The documentation is written using sphinx; To generate it run `make html`
-inside the docs subdirectory. 
+For installation instructions, see INSTALL.txt.
 
-To view the documentation online, discuss WTForms, request features
-or report bugs, please visit our website: http://wtforms.simplecodes.com/.
+To get started using WTForms, we recommend reading the crash course on the
+website: http://wtforms.simplecodes.com/.
+
+The documentation is located in the docs directory and written using sphinx. To
+generate it, run `make html`.
