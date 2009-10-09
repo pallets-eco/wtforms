@@ -14,12 +14,31 @@ Built-in validators
 -------------------
 
 .. autoclass:: wtforms.validators.Email
+
 .. autoclass:: wtforms.validators.EqualTo
+
+    This validator can be used to facilitate in one of the most common
+    scenarios, the password change form::
+
+        class ChangePassword(Form):
+            password = PasswordField('New Password', [Required(), EqualTo('confirm', mesage='Passwords must match')])
+            confirm  = PasswordField('Repeat Password')
+
+    In the example, we use the Required validator to prevent the EqualTo
+    validator from trying to see if the passwords do not match if there was no
+    passwords specified at all. Because Required stops the validation chain,
+    EqualTo is not run in the case the password field is left empty.
+
 .. autoclass:: wtforms.validators.IPAddress
+
 .. autoclass:: wtforms.validators.Length
+
 .. autoclass:: wtforms.validators.Optional
+
 .. autoclass:: wtforms.validators.Required
+
 .. autoclass:: wtforms.validators.Regexp
+
 .. autoclass:: wtforms.validators.URL
 
 Custom validators
