@@ -137,7 +137,7 @@ class Email(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=u'Invalid email address.'):
-        super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,}$', re.IGNORECASE, message)
+        super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,10}$', re.IGNORECASE, message)
 
 
 class IPAddress(Regexp):
@@ -165,7 +165,7 @@ class URL(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, require_tld=True, message=u'Invalid URL.'):
-        regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (require_tld and r'\.[a-z]{2,}' or '')
+        regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (require_tld and r'\.[a-z]{2,10}' or '')
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
 
