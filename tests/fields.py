@@ -11,7 +11,10 @@ from wtforms.form import Form
 
 class DummyPostData(dict):
     def getlist(self, key):
-        return self[key]
+        v = self[key]
+        if not isinstance(v, (list, tuple)):
+            v = [v]
+        return v
 
 class AttrDict(dict):
     def __getattr__(self, attr):
@@ -383,6 +386,19 @@ class FieldListTest(TestCase):
         self.assertEqual(a.pop_entry().data, 'orange')
         self.assertEqual(a.pop_entry().name, 'a-0')
         self.assertRaises(IndexError, a.pop_entry)
+
+    def test_min_max_entries(self):
+        F = make_form(a = FieldList(self.t, min_entries=1, max_entries=3))
+        a = F().a
+        self.assertEqual(len(a), 1)
+        self.assertEqual(a[0].data, None)
+        big_input = ['foo',  'flaf', 'bar', 'baz']
+        self.assertRaises(AssertionError, F, a=big_input)
+        pdata = DummyPostData(('a-%d' % i, v) for i, v in enumerate(big_input))
+        a = F(pdata).a
+        self.assertEqual(a.data, ['foo', 'flaf', 'bar'])
+        self.assertRaises(AssertionError, a.append_entry)
+
 
 
 if __name__ == '__main__':

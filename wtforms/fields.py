@@ -548,8 +548,8 @@ class FormField(Field):
     """
     Encapsulate a form as a field in another form.
     
-    The required `form_class` argument to the constructor should be a subclass
-    of `Form`.
+    :param form_class:
+        A subclass of Form that will be encapsulated.
     """
     widget = widgets.TableWidget()
 
@@ -608,13 +608,26 @@ class FieldList(Field):
     :param unbound_field:
         A partially-instantiated field definition, just like that would be
         defined on a form directly.
+    :param min_entries:
+        if provided, always have at least this many entries on the field,
+        creating blank ones if the provided input does not specify a sufficient
+        amount.
+    :param max_entries:
+        accept no more than this many entries as input, even if more exist in
+        formdata.
     """
     widget=widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=u'', validators=None, **kwargs):
+    def __init__(self, unbound_field, label=u'', validators=None, min_entries=0, max_entries=None, **kwargs):
         super(FieldList, self).__init__(label, validators, **kwargs)
+        if self.filters:
+            raise TypeError('FieldList does not accept any filters. Instead, define them on the enclosed field.')
+        if validators:
+            raise TypeError('FieldList does not accept any validators. Instead, define them on the enclosed field.')
         assert isinstance(unbound_field, UnboundField), 'Field must be unbound, not a field class'
         self.unbound_field = unbound_field
+        self.min_entries = min_entries or 0
+        self.max_entries = max_entries
 
     def process(self, formdata, data=_unset_value):
         if data is _unset_value or not data:
@@ -624,19 +637,25 @@ class FieldList(Field):
         for obj_data in data:
             self._add_entry(formdata, obj_data)
 
-        if formdata:
-            max_index = max(-1, *self._extract_indices(self.name, formdata))
-            for _ in range(max_index - len(self.entries) + 1):
+        if formdata or self.min_entries:
+            form_entries = 1 + max(self._extract_indices(self.name, formdata or []))
+            form_entries = max(form_entries, self.min_entries)
+            if self.max_entries:
+                form_entries = min(form_entries, self.max_entries)
+            for _ in range(form_entries - len(self.entries)):
                 self._add_entry(formdata) 
 
     def _extract_indices(self, prefix, formdata):
         """
         Yield indices of any keys with given prefix.
 
+        -1 is always yielded regardless of the existence of any other entries.
+
         formdata must be an object which will produce keys when iterated.  For
         example, if field 'foo' contains keys 'foo-0-bar', 'foo-1-baz', then
         the numbers 0 and 1 will be yielded, but not neccesarily in order.
         """
+        yield -1
         offset = len(prefix) + 1
         for k in formdata:
             if k.startswith(prefix):
@@ -655,6 +674,8 @@ class FieldList(Field):
 
     def _add_entry(self, formdata=None, data=_unset_value):
         new_index = len(self.entries)
+        assert not self.max_entries or new_index < self.max_entries, \
+                'You cannot have more than max_entries entries in this FieldList' 
         name = '%s-%d' % (self.name, new_index)
         id   = '%s-%d' % (self.id, new_index)
         f = self.unbound_field.bind(form=None, name=name, id=id)
