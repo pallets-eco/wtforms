@@ -49,21 +49,6 @@ class EqualTo(object):
             raise ValidationError(self.message)
 
 
-class IPAddress(object):
-    """
-    Validates an IP(v4) address.
-
-    :param message:
-        Error message to raise in case of a validation error.
-    """
-    def __init__(self, message=u'Invalid IP address.'):
-        self.message = message
-    
-    def __call__(self, form, field):
-        if not re.match(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', field.data):
-            raise ValidationError(self.message)
-
-
 class Length(object):
     """
     Validates the length of a string.
@@ -132,7 +117,9 @@ class Regexp(object):
         Error message to raise in case of a validation error.
     """
     def __init__(self, regex, flags=0, message=u'Invalid input.'):
-        self.regex = isinstance(regex, basestring) and re.compile(regex, flags) or regex
+        if isinstance(regex, basestring):
+            regex = re.compile(regex, flags)
+        self.regex = regex 
         self.message = message
     
     def __call__(self, form, field):
@@ -151,6 +138,17 @@ class Email(Regexp):
     """
     def __init__(self, message=u'Invalid email address.'):
         super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,}$', re.IGNORECASE, message)
+
+
+class IPAddress(Regexp):
+    """
+    Validates an IP(v4) address.
+
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, message=u'Invalid IP address.'):
+        super(IPAddress, self).__init__(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', message=message)
 
 
 class URL(Regexp):
