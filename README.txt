@@ -8,4 +8,4 @@ website: http://wtforms.simplecodes.com/.
 
 If you downloaded the package from PyPI, there will be a prebuilt copy of the
 html documentation in the `docs/_build/html/` directory. If not, you can
-generate it youself by running `make html` in the `docs` directory.
+generate it yourself by running `make html` in the `docs` directory.
