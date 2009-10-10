@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 0.4
 -----------
-Not yet released.
+Released October 10th, 2009.
 
 - Fields have much greater control over input processing. Filters have been
   added to implement a simple way to transform input data.
