@@ -6,5 +6,6 @@ For installation instructions, see INSTALL.txt.
 To get started using WTForms, we recommend reading the crash course on the
 website: http://wtforms.simplecodes.com/.
 
-The documentation is located in the docs directory and written using sphinx. To
-generate it, run `make html`.
+If you downloaded the package from PyPI, there will be a prebuilt copy of the
+html documentation in the `docs/_build/html/` directory. If not, you can
+generate it youself by running `make html` in the `docs` directory.
