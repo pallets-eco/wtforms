@@ -313,7 +313,7 @@ class FormFieldTest(TestCase):
         self.assertEqual(form.a.form.b.data, None)
         obj_inner = AttrDict(a=None, b='rawr')
         obj2 = AttrDict(a=obj_inner)
-        form.auto_populate(obj2)
+        form.populate_obj(obj2)
         self.assert_(obj2.a is obj_inner)
         self.assertEqual(obj_inner.a, u'mmm')
         self.assertEqual(obj_inner.b, None)

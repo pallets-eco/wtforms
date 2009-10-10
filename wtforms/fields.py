@@ -226,7 +226,7 @@ class Field(object):
         if valuelist:
             self.data = valuelist[0]
 
-    def populate(self, obj, name):
+    def populate_obj(self, obj, name):
         """
         Populates `obj.<name>` with the field's data.
 
@@ -580,8 +580,8 @@ class FormField(Field):
             raise TypeError('FormField does not accept in-line validators, as it gets errors from the enclosed form.')
         return self.form.validate()
 
-    def populate(self, obj, name):
-        self.form.auto_populate(getattr(obj, name))
+    def populate_obj(self, obj, name):
+        self.form.populate_obj(getattr(obj, name))
 
     def __iter__(self):
         return iter(self.form)
@@ -629,7 +629,7 @@ class FieldList(Field):
             raise TypeError('FieldList does not accept any validators. Instead, define them on the enclosed field.')
         assert isinstance(unbound_field, UnboundField), 'Field must be unbound, not a field class'
         self.unbound_field = unbound_field
-        self.min_entries = min_entries or 0
+        self.min_entries = min_entries
         self.max_entries = max_entries
 
     def process(self, formdata, data=_unset_value):

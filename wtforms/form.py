@@ -164,7 +164,7 @@ class Form(object):
                     self._errors[name] = field.errors
         return self._errors
 
-    def auto_populate(self, obj):
+    def populate_obj(self, obj):
         """
         Populates the attributes of the passed `obj` with data from the form's
         fields.
@@ -173,4 +173,4 @@ class Form(object):
         name as a field will be overridden. Use with caution.
         """
         for name, field in self._fields:
-            field.populate(obj, name)
+            field.populate_obj(obj, name)

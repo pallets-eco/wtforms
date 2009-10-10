@@ -36,7 +36,7 @@ The Form base class
 
     .. automethod:: validate
 
-    .. automethod:: auto_populate
+    .. automethod:: populate_obj
 
         One common usage of this is an edit profile view::
             
@@ -45,7 +45,7 @@ The Form base class
                 form = EditProfileForm(request.POST, obj=user)
 
                 if request.POST and form.validate():
-                    form.auto_populate(user)
+                    form.populate_obj(user)
                     user.save()
                     return redirect('/home')
                 return render_to_response('edit_profile.html', form=form)

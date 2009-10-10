@@ -11,7 +11,7 @@ setup(
     license='BSD',
     author='Thomas Johansson, James Crasta',
     author_email='wtforms@simplecodes.com',
-    description='A flexible forms validation and rendering library for python web development',
+    description='A flexible forms validation and rendering library for python web development.',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',

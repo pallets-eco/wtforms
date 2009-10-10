@@ -15,6 +15,10 @@ Not yet released.
 
 - All built-in validators have been converted to classes to clean up the code.
 
+- `Form.auto_populate` and `Field.populate` were renamed to `populate_obj` to
+  clarify that they populate another object, not the Form or Field. This is an
+  API breaking change.
+
 - Dropped support for Python 2.3.
 
 Version 0.3.1

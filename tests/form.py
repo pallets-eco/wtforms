@@ -80,9 +80,9 @@ class FormTest(TestCase):
         self.assert_('test' not in form)
         self.assertEqual(form.test, None)
 
-    def test_auto_populate(self):
+    def test_populate_obj(self):
         m = type('Model', (object, ), {})
-        self.F(test='foobar').auto_populate(m)
+        self.F(test='foobar').populate_obj(m)
         self.assertEqual(m.test, 'foobar')
         self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['test'])
 
