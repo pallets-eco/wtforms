@@ -52,7 +52,7 @@ class FormTest(TestCase):
     def test_validate(self):
         form = self.F(test='foobar')
         self.assertEqual(form.validate(), True)
-        
+
         form = self.F()
         self.assertEqual(form.validate(), False)
 
@@ -64,7 +64,7 @@ class FormTest(TestCase):
         form = self.F(test='foobar')
         form.validate()
         self.assertEqual(form.errors, {})
-        
+
         form = self.F()
         form.validate()
         self.assertEqual(form.errors, {'test': ['error']})

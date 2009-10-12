@@ -147,7 +147,7 @@ class HiddenInput(Input):
 class CheckboxInput(Input):
     """
     Render a checkbox.
-    
+
     The ``value=`` HTML attribute by default is 'y' unless otherwise specified
     by `value=` to render. The ``checked`` HTML attribute is set if the field's
     data is a non-false value.
@@ -221,7 +221,7 @@ class Select(object):
     """
     def __init__(self, multiple=False):
         self.multiple = multiple
-        
+
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         if self.multiple:

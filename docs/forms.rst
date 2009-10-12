@@ -16,7 +16,7 @@ The Form base class
     .. attribute:: data
 
         A dict containing the data for each field.
-        
+
         Note that this is generated each time you access the property, so care
         should be taken when using it, as it can potentially be very expensive
         if you repeatedly access it. Typically used if you need to iterate all
@@ -27,7 +27,7 @@ The Form base class
 
         A dict containing a list of errors for each field. Empty if the form
         hasn't been validated, or there were no errors.
-        
+
         Note that this is a lazy property, and will only be generated when you
         first access it. If you call :meth:`validate` after accessing it, the
         cached result will be invalidated and regenerated on next access.
@@ -39,7 +39,7 @@ The Form base class
     .. automethod:: populate_obj
 
         One common usage of this is an edit profile view::
-            
+
             def edit_profile(request):
                 user = User.objects.get(pk=request.session['userid'])
                 form = EditProfileForm(request.POST, obj=user)
@@ -78,7 +78,7 @@ declaratively as class attributes::
         last_name  = TextField(u'Last Name', validators=[validators.optional()])
 
 Field names can be any valid python identifier, with the following restrictions:
-    
+
 * Field names are case-sensitive.
 * Field names may not begin with "_" (underscore)
 * Field names may not begin with "validate"

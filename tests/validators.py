@@ -47,7 +47,7 @@ class ValidatorsTest(TestCase):
         self.assertEqual(length(min=2, max=6)(self.form, field), None)
         self.assertRaises(ValidationError, length(min=7), self.form, field)
         self.assertRaises(ValidationError, length(max=5), self.form, field)
-    
+
     def test_required(self):
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
         self.assertRaises(StopValidation, required(), self.form, DummyField(''))

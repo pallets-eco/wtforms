@@ -134,7 +134,7 @@ class Form(object):
         """
         Validates the form by calling `validate` on each field, passing any
         extra `Form.validate_<fieldname>` validators to the field validator.
-        
+
         Returns `True` if no errors occur.
         """
         self._errors = None
@@ -168,7 +168,7 @@ class Form(object):
         """
         Populates the attributes of the passed `obj` with data from the form's
         fields.
-        
+
         **Note:** This is a destructive operation, any attribute with the same
         name as a field will be overridden. Use with caution.
         """

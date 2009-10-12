@@ -60,7 +60,7 @@ class TestBase(TestCase):
             sess.add(p)
         sess.flush()
         sess.commit()
-        
+
 
 class QuerySelectFieldTest(TestBase):
     def setUp(self):

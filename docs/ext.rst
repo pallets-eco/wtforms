@@ -53,7 +53,7 @@ Model forms
 
     Just like any other Form, forms created by ModelForm can be extended via
     inheritance::
-        
+
         UserFormBase = model_form(User)
 
         class UserForm(UserFormBase):
@@ -70,7 +70,7 @@ ORM-backed fields
 ~~~~~~~~~~~~~~~~~
 .. module:: wtforms.ext.django.fields
 
-    
+
 While linking data to most fields is fairly easy, making drop-down select lists
 using django ORM data can be quite repetetive. To this end, we have added some
 helpful tools to use the django ORM along with wtforms
@@ -79,7 +79,7 @@ helpful tools to use the django ORM along with wtforms
 .. autoclass:: QuerySetSelectField(default field args, queryset=None, label_attr='', allow_blank=False, blank_text=u'')
 
     .. code-block:: python
-        
+
         class ArticleEdit(Form):
             title    = TextField()
             column   = QuerySetSelectField(label_attr='title', allow_blank=True)

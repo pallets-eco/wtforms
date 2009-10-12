@@ -39,28 +39,28 @@ The Field base class
     label.
 
     **Construction**
-    
+
     .. automethod:: __init__
 
     **Validation**
-    
+
     To validate the field, call its `validate` method, providing a form and any
     extra validators needed. To extend validation behaviour, override
     `pre_validate` or `post_validate`.
-    
+
     .. automethod:: validate
     .. automethod:: pre_validate
     .. automethod:: post_validate
     .. attribute:: errors
-        
+
         If `validate` encounters any errors, they will be inserted into this
         list.
-    
+
     **Data access and processing**
-    
+
     To handle incoming data from python, override `process_data`. Similarly, to
     handle incoming data from the outside, override `process_formdata`.
-   
+
     .. automethod:: process(formdata [, data])
     .. automethod:: process_data
     .. automethod:: process_formdata 
@@ -69,7 +69,7 @@ The Field base class
         Contains the resulting (sanitized) value of calling either of the
         process methods. Note that it is not HTML escaped when using in
         templates.
-        
+
     **Rendering**
 
     To render a field, simply call it, providing any values the widget expects
@@ -77,21 +77,21 @@ The Field base class
     attributes.
 
     .. automethod:: __call__
-        
+
         If one wants to pass the "class" argument which is a reserved keyword
         in some python-based templating languages, one can do::
-            
+
             form.field(class_="text_blob")
 
         This will output (for a text field):
 
         .. code-block:: html
-            
+
             <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
-            
+
         Note: Simply coercing the field to a string or unicode will render it as
         if it was called with no arguments.
-        
+
     **Properties**
 
     .. attribute:: name
@@ -110,12 +110,12 @@ The Field base class
         returns an HTML ``<label for="id">`` construct.
 
     .. attribute:: description
-        
+
         A string containing the value of the description passed in the
         constructor to the field; this is not HTML escaped.
 
     .. attribute:: widget
-    
+
         The widget used to render the field.  
 
     .. attribute:: type
@@ -138,14 +138,14 @@ The Field base class
             {% endfor %}
 
     .. attribute:: flags
-        
+
         An object containing boolean flags set either by the field itself, or
         by validators on the field. For example, the built-in
         :func:`~wtforms.validators.required` validator sets the `required` flag.
         An unset flag will result in :const:`False`.
 
         .. code-block:: html+django
-            
+
             {% for field in form %}
                 <tr>
                     <th>{{ field.label }} {% if field.flags.required %}*{% endif %}</th>
@@ -176,7 +176,7 @@ refer to a single input from the form.
             def validate_image(form, field):
                 if field.data:
                     field.data = re.sub(r'[^a-z0-9_.-]', '_', field.data)
-        
+
         def upload(request):
             form = UploadForm(request.POST)
             if form.image.data:
@@ -188,7 +188,7 @@ refer to a single input from the form.
     HiddenField is useful for providing data from a model or the application to
     be used on the form handler side for making choices or finding records.
     Very frequently, CRUD forms will use the hidden field for an object's id.   
-    
+
     Hidden fields are like any other field in that they can take validators and
     values and be accessed on the form object.   You should consider validating
     your hidden fields just as you'd validate an input field, to prevent from
@@ -259,7 +259,7 @@ refer to a single input from the form.
 .. autoclass:: TextAreaField(default field arguments)
 
     .. code-block: jinja
-        
+
         {{ form.textarea(rows=7, cols=90) }}
 
 .. autoclass:: TextField(default field arguments)
@@ -311,7 +311,7 @@ complex data structures such as lists and nested objects can be represented.
     :class:`FieldList` is not limited to enclosing simple fields; and can
     indeed represent a list of enclosed forms by combining FieldList with
     FormField::
-        
+
         class IMForm(Form):
             protocol = SelectField(choices=[('aim', 'AIM'), ('msn', 'MSN')])
             username = TextField()
@@ -358,7 +358,7 @@ provide additional customization::
         def __init__(self, label='', validators=None, remove_duplicates=True, **kwargs):
             super(BetterTagListField, self).__init__(label, validators, **kwargs)
             self.remove_duplicates = remove_duplicates
-        
+
         def process_formdata(self, valuelist):
             super(BetterTagListField, self).process_formdata(valuelist)
             if remove_duplicates:

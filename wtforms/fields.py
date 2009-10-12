@@ -115,10 +115,10 @@ class Field(object):
         Validates the field and returns True or False. `self.errors` will
         contain any errors raised during validation. This is usually only
         called by `Form.validate`.
-        
+
         Subfields shouldn't override this, but rather override either
         `pre_validate`, `post_validate` or both, depending on needs.
-        
+
         :param form: The form the field belongs to.
         :param extra_validators: A list of extra validators to run.
         """
@@ -147,7 +147,7 @@ class Field(object):
                     break
                 except ValueError, e:
                     self.errors.append(e.args[0])
-        
+
         # Call post_validate
         try:
             self.post_validate(form, stop_validation)
@@ -160,16 +160,16 @@ class Field(object):
         """
         Override if you need field-level validation. Runs before any other
         validators.
-        
+
         :param form: The form the field belongs to.
         """
         pass
-        
+
     def post_validate(self, form, validation_stopped):
         """
         Override if you need to run any field-level validation tasks after
         normal validation. This shouldn't be needed in most cases.
-        
+
         :param form: The form the field belongs to.
         :param validation_stopped:
             `True` if any validator raised StopValidation.
@@ -202,14 +202,14 @@ class Field(object):
 
         for filter in self.filters:
             self.data = filter(self.data)
-                
+
     def process_data(self, value):
         """
         Process the Python data applied to this field and store the result.
 
         This will be called during form construction by the form's `kwargs` or
         `obj` argument.
-        
+
         :param value: The python object containing the value to process.
         """
         self.data = value
@@ -220,7 +220,7 @@ class Field(object):
 
         This will be called during form construction with data supplied
         through the `formdata` argument.
-        
+
         :param valuelist: A list of strings to process.
         """
         if valuelist:
@@ -376,7 +376,7 @@ class RadioField(SelectField):
         widget = widgets.RadioInput()
         checked = False
 
-   
+
 class TextField(Field):
     """
     This field is the base for most of the more complicated fields, and
@@ -415,7 +415,7 @@ class PasswordField(TextField):
     """
     widget = widgets.PasswordInput()
 
-       
+
 class FileField(TextField):
     """
     Can render a file-upload field.  Will take any passed filename value, if
@@ -465,7 +465,7 @@ class DecimalField(TextField):
     customize how the number is displayed, using standard python string
     formatting rules.
     """
-    
+
     def __init__(self, label=u'', validators=None, number_format='%0.2f', **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
         self.raw_data = None
@@ -547,7 +547,7 @@ class SubmitField(BooleanField):
 class FormField(Field):
     """
     Encapsulate a form as a field in another form.
-    
+
     :param form_class:
         A subclass of Form that will be encapsulated.
     """
@@ -565,7 +565,7 @@ class FormField(Field):
             self._idprefix = kwargs['_form']._idprefix
         else:
             self._idprefix = ''
-    
+
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
             data = self._default

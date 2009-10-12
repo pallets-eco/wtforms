@@ -2,9 +2,9 @@
 """
     ext_django.tests
     ~~~~~~~~~~~~~~~~
-    
+
     Unittests for wtforms.ext.django
-    
+
     :copyright: 2009 by James Crasta, Thomas Johansson.
     :license: MIT, see LICENSE.txt for details.
 """
@@ -150,7 +150,7 @@ class QuerySetSelectFieldTest(DjangoTestCase):
         form = self.F(DummyPostData(b=[2]))
         self.assertEqual(form.b.data.pk, 2)
         self.assertEqual(form.b.validate(form), True)
-        
+
 
 class ModelSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
@@ -162,7 +162,7 @@ class ModelSelectFieldTest(DjangoTestCase):
         form = self.F()
         self.assertEqual(form.a(), (u'N:1:Users(1)', 'N:2:Admins(2)'))
 
-        
+
 if __name__ == '__main__':
     import unittest
     unittest.main()

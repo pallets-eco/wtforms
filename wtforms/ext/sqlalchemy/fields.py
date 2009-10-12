@@ -17,7 +17,7 @@ class QuerySelectField(Field):
     sqlalchemy `Query`.  The `data` property actually will store/keep an ORM
     model instance, not the ID. Submitting a choice which is not in the query
     will result in a validation error.
-    
+
     This field only works for queries on models with single-column integer
     primary keys. If the primary key is not named 'id', then you should provide
     the `pk_attr` with the name of the primary key field on the mapped model.

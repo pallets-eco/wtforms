@@ -67,7 +67,7 @@ class Length(object):
         self.min = min
         self.max = max
         self.message = message or u'Field must be between %i and %i characters long.' % (min, max)
-    
+
     def __call__(self, form, field):
         l = field.data and len(field.data) or 0
         if l < self.min or self.max != -1 and l > self.max:
@@ -121,7 +121,7 @@ class Regexp(object):
             regex = re.compile(regex, flags)
         self.regex = regex 
         self.message = message
-    
+
     def __call__(self, form, field):
         if not self.regex.match(field.data or ''):
             raise ValidationError(self.message)

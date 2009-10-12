@@ -67,11 +67,11 @@ class ModelConverter(object):
 
     def conv_DateField(self, kwargs, field):
         return f.DateTimeField(format='%Y-%m-%d', **kwargs)
-    
+
     def conv_EmailField(self, kwargs, field):
         kwargs['validators'].append(validators.email())
         return f.TextField(**kwargs)
-    
+
     def conv_IPAddressField(self, kwargs, field):
         kwargs['validators'].append(validators.ip_address())
         return f.TextField(**kwargs)
@@ -92,7 +92,7 @@ class ModelConverter(object):
 def model_form(model, base_class=Form, include_pk=False):
     """
     Create a wtforms form for a given django model class::
-        
+
         from wtforms.ext.django.orm import model_form
         from myproject.myapp.models import User
         UserForm = model_form(User)

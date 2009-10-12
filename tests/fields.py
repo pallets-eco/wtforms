@@ -34,7 +34,7 @@ class DefaultsTest(TestCase):
         test_value = TextField(default=expected).bind(Form(), 'a')
         test_value.process(None)
         self.assertEqual(test_value.data, expected)
-        
+
         test_callable = TextField(default=default_callable).bind(Form(), 'a')
         test_callable.process(None)
         self.assertEqual(test_callable.data, expected)
@@ -358,7 +358,7 @@ class FieldListTest(TestCase):
         form = F(pdata, a=data)
         self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
         self.assert_(not form.validate())
-    
+
     def test_enclosed_subform(self):
         F = make_form(
             a = FieldList(FormField(make_form('FChild', a=self.t)))
@@ -370,7 +370,7 @@ class FieldListTest(TestCase):
         form.a.append_entry()
         self.assertEqual(form.a.data, data + [{'a': None}])
         self.assert_(not form.validate())
-    
+
         pdata = DummyPostData({'a-0': ['fake'], 'a-0-a': ['foo'], 'a-1-a': ['bar']})
         form = F(pdata, a=data)
         self.assertEqual(form.a.data, [{'a': 'foo'}, {'a': 'bar'}])
