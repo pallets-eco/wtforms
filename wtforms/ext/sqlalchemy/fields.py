@@ -97,7 +97,7 @@ class QueryMultipleSelectField(Field):
     """
     Very similar to :class`QuerySelectField` with the difference
     that this will display a multiple select. The data property
-    will hold ORM model instances and will be an empty list when 
+    will hold a list with ORM model instances and will be an empty list when 
     no value is selected.
     """
     widget = widgets.Select(multiple=True)
