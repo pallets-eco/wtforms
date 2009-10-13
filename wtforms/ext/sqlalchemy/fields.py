@@ -17,7 +17,7 @@ class QuerySelectField(Field):
     sqlalchemy `Query`.  The `data` property actually will store/keep an ORM
     model instance, not the ID. Submitting a choice which is not in the query
     will result in a validation error.
-
+    
     This field only works for queries on models with single-column integer
     primary keys. If the primary key is not named 'id', then you should provide
     the `pk_attr` with the name of the primary key field on the mapped model.
@@ -92,6 +92,65 @@ class QuerySelectField(Field):
                     break
             else:
                 raise ValidationError('Not a valid choice')
+            
+class QueryMultipleSelectField(Field):
+    """
+    Very similar to :class`QuerySelectField` with the difference
+    that this will display a multiple select. The data property
+    will hold ORM model instances and will be an empty list when 
+    no value is selected.
+    """
+    widget = widgets.Select(multiple=True)
+    
+    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', 
+            label_attr='', allow_blank=False, **kwargs):
+        super(QueryMultipleSelectField, self).__init__(label, validators, **kwargs)
+        
+        self.label_attr = label_attr
+        self.allow_blank = allow_blank
+        self.data = []
+        self.query_factory = query_factory
+        self.query = None
+        self.pk_attr = pk_attr
+        self._object_list = None
+    
+    def _get_data(self):
+        if self._formdata is not None:
+            data = []
+            for obj in self._get_object_list():
+                if getattr(obj, self.pk_attr) in self._formdata:
+                    data.append(obj)
+            self._set_data(data)
+        return self._data
+    
+    def _set_data(self, data):
+        self._data = data
+        self._formdata = None
+
+    data = property(_get_data, _set_data)
+    
+    def _get_object_list(self):
+        if self._object_list is None:
+            query = self.query or self.query_factory()
+            self._object_list = query.all()
+        return self._object_list
+    
+    def iter_choices(self):
+        for obj in self._get_object_list():
+            label = self.label_attr and getattr(obj, self.label_attr) or obj
+            yield (getattr(obj, self.pk_attr), label, obj in self.data)
+            
+    def process_formdata(self, valuelist):
+        if valuelist: # Why this check?
+            self._data = []
+            self._formdata = map(int, valuelist)
+
+    def pre_validate(self, form):
+        if len(self.data) > 0:
+            obj_list = self._get_object_list()
+            for v in self.data:
+                if v not in obj_list:
+                    raise ValidationError('Not a valid choice')
 
 
 class ModelSelectField(QuerySelectField):
