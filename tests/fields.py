@@ -123,6 +123,10 @@ class SelectMultipleFieldTest(TestCase):
         form = self.F()
         self.assertEqual(form.a.data, ['a'])
         self.assertEqual(form.b.data, [1, 3])
+        # Test for possible regression with null data
+        form.a.data = None 
+        self.assert_(form.validate())
+        self.assertEqual(list(form.a.iter_choices()), [(v, l, False) for v, l in form.a.choices])
 
     def test_with_data(self):
         form = self.F(DummyPostData(a=['a', 'c']))
