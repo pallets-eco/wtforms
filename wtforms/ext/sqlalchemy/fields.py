@@ -113,6 +113,7 @@ class QueryMultipleSelectField(Field):
         self.query = None
         self.pk_attr = pk_attr
         self._object_list = None
+        self._default = []
     
     def _get_data(self):
         if self._formdata is not None:

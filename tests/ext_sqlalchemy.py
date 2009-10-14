@@ -118,6 +118,14 @@ class QueryMultipleSelectFieldTest(TestBase):
         from sqlalchemy.orm import mapper
         self._do_tables(mapper, engine)
         
+    def test_unpopulated_field_has_empty_list_as_value(self):
+        sess = self.Session()
+        self._fill(sess)
+        class F(Form):
+            a = QueryMultipleSelectField(label_attr='name', widget=LazySelect())
+        form = F()
+        self.assertEqual([], form.a.data)
+        
     def test_single_value_without_factory(self):
         sess = self.Session()
         self._fill(sess)
@@ -142,10 +150,6 @@ class QueryMultipleSelectFieldTest(TestBase):
         self.assertEqual(form.a(), u'1,1,apple|2,1,banana')
         self.assert_(form.validate())
             
-    def test_with_query_factory(self):
-        pass
-        
-
 
 class ModelSelectFieldTest(TestBase):
     def setUp(self):
