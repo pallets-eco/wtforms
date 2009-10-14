@@ -131,10 +131,14 @@ class SelectMultipleFieldTest(TestCase):
     def test_with_data(self):
         form = self.F(DummyPostData(a=['a', 'c']))
         self.assertEqual(form.a.data, ['a', 'c'])
-        self.assertEqual(form.a(), u"""<select id="a" multiple="multiple" name="a"><option selected="selected" value="a">hello</option><option value="b">bye</option><option selected="selected" value="c">something</option></select>""")
+        self.assertEqual(list(form.a.iter_choices()), [('a', 'hello', True), ('b', 'bye', False), ('c', 'something', True)])
         self.assertEqual(form.b.data, [])
         form = self.F(DummyPostData(b=['1', '2']))
         self.assertEqual(form.b.data, [1, 2])
+        self.assert_(form.validate())
+        form = self.F(DummyPostData(b=['1', '2', '4']))
+        self.assertEqual(form.b.data, [1, 2, 4])
+        self.assert_(not form.validate())
 
 
 class RadioFieldTest(TestCase):
