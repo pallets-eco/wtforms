@@ -3,10 +3,11 @@ WTForms is written and maintained by the WTForms Team and various contributors.
 Lead Developers:
 
 - Thomas Johansson <prencher@gmail.com>
-- James Crasta <jcrasta@gmail.com>
+- James Crasta <james@crasta.com>
 
-Contributors: 
+Contributors:
 
 - Ali Aafshar
 - Adam Lowry
+- Emil Vladev
 - Sebastian Wiesner

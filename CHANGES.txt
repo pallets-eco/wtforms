@@ -1,6 +1,12 @@
 WTForms Changelog
 =================
 
+Version 0.5
+-----------
+Not yet released.
+
+- ext.sqlalchemy.fields now has an additional QuerySelectMultipleField.
+
 Version 0.4
 -----------
 Released October 10th, 2009.

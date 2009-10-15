@@ -60,7 +60,7 @@ class TestBase(TestCase):
             sess.add(p)
         sess.flush()
         sess.commit()
-        
+
 
 class QuerySelectFieldTest(TestBase):
     def setUp(self):
@@ -110,55 +110,50 @@ class QuerySelectFieldTest(TestBase):
         self.assertEqual(form.a(), u'1,1,apple|2,0,banana')
         form.a._object_list = None
         self.assertEqual(form.a(), u'1,1,apple|2,0,banana|3,0,meh')
-        
+
+
 class QueryMultipleSelectFieldTest(TestBase):
     def setUp(self):
-        engine = create_engine('sqlite:///:memory:', echo=False)
-        self.Session = sessionmaker(bind=engine)
         from sqlalchemy.orm import mapper
+        engine = create_engine('sqlite:///:memory:', echo=False)
+        Session = sessionmaker(bind=engine)
         self._do_tables(mapper, engine)
-        
-    def test_unpopulated_field_has_empty_list_as_value(self):
-        sess = self.Session()
-        self._fill(sess)
-        class F(Form):
-            a = QueryMultipleSelectField(label_attr='name', widget=LazySelect())
-        form = F()
+        self.sess = Session()
+        self._fill(self.sess)
+
+    class F(Form):
+        a = QueryMultipleSelectField(label_attr='name', widget=LazySelect())
+
+    def test_unpopulated_default(self):
+        form = self.F()
         self.assertEqual([], form.a.data)
-        
+
     def test_single_value_without_factory(self):
-        sess = self.Session()
-        self._fill(sess)
-        class F(Form):
-            a = QueryMultipleSelectField(label_attr='name', widget=LazySelect())
-        form = F(DummyPostData(a=['1']))
-        form.a.query = sess.query(self.Test)
-        
-        self.assert_([1], [v.id for v in form.a.data])
+        form = self.F(DummyPostData(a=['1']))
+        form.a.query = self.sess.query(self.Test)
+        self.assertEqual([1], [v.id for v in form.a.data])
         self.assertEqual(form.a(), u'1,1,apple|2,0,banana')
         self.assert_(form.validate())
-        
+
     def test_multiple_values_without_query_factory(self):
-        sess = self.Session()
-        self._fill(sess)
-        class F(Form):
-            a = QueryMultipleSelectField(label_attr='name', widget=LazySelect())
-        form = F(DummyPostData(a=['1', '2']))
-        form.a.query = sess.query(self.Test)
-        
-        self.assert_([1, 2], [v.id for v in form.a.data])
+        form = self.F(DummyPostData(a=['1', '2']))
+        form.a.query = self.sess.query(self.Test)
+        self.assertEqual([1, 2], [v.id for v in form.a.data])
         self.assertEqual(form.a(), u'1,1,apple|2,1,banana')
         self.assert_(form.validate())
-        
+
+        form = self.F(DummyPostData(a=['1', '3']))
+        form.a.query = self.sess.query(self.Test)
+        self.assertEqual([x.id for x in form.a.data], [1])
+        self.assert_(not form.validate())
+
     def test_single_default_value(self):
-        sess = self.Session()
-        self._fill(sess)
-        first_test = sess.query(self.Test).get(2)
+        first_test = self.sess.query(self.Test).get(2)
         class F(Form):
             a = QueryMultipleSelectField(label_attr='name', default=[first_test],
-                widget=LazySelect(), query_factory=lambda: sess.query(self.Test))
+                widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
         form = F()
-        self.assert_([2], [v.id for v in form.a.data])
+        self.assertEqual([v.id for v in form.a.data], [2])
         self.assertEqual(form.a(), u'1,0,apple|2,1,banana')
         self.assert_(form.validate())
 

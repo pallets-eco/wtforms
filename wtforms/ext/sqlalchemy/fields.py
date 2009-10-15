@@ -17,7 +17,7 @@ class QuerySelectField(Field):
     sqlalchemy `Query`.  The `data` property actually will store/keep an ORM
     model instance, not the ID. Submitting a choice which is not in the query
     will result in a validation error.
-    
+
     This field only works for queries on models with single-column integer
     primary keys. If the primary key is not named 'id', then you should provide
     the `pk_attr` with the name of the primary key field on the mapped model.
@@ -39,16 +39,14 @@ class QuerySelectField(Field):
     widget = widgets.Select()
 
     def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', 
-        label_attr='', allow_blank=False, blank_text=u'', **kwargs):
-        
+                 label_attr='', allow_blank=False, blank_text=u'', **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
+        self.query_factory = query_factory
+        self.pk_attr = pk_attr
         self.label_attr = label_attr
         self.allow_blank = allow_blank
         self.blank_text = blank_text
-        self.data = None
-        self.query_factory = query_factory
         self.query = None
-        self.pk_attr = pk_attr
         self._object_list = None
 
     def _get_data(self):
@@ -94,50 +92,63 @@ class QuerySelectField(Field):
                     break
             else:
                 raise ValidationError('Not a valid choice')
-            
+
+
 class QueryMultipleSelectField(QuerySelectField):
     """
-    Very similar to :class`QuerySelectField` with the difference
-    that this will display a multiple select. The data property
-    will hold a list with ORM model instances and will be an empty list when 
-    no value is selected.
+    Very similar to QuerySelectField with the difference that this will
+    display a multiple select. The data property will hold a list with ORM
+    model instances and will be an empty list when no value is selected.
+
+    If any of the items in the data list or submitted form data cannot be
+    found in the query, this will result in a validation error.
     """
     widget = widgets.Select(multiple=True)
-    
-    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', 
-            label_attr='', **kwargs):
-        super(QueryMultipleSelectField, self).__init__(label, validators, 
-            query_factory, pk_attr, label_attr, **kwargs)
-        self.data = []
-    
+
+    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id',
+                 label_attr='', default=None, **kwargs):
+        if default is None:
+            default = []
+        super(QueryMultipleSelectField, self).__init__(label, validators, query_factory, pk_attr, label_attr, default=default, **kwargs)
+        self._invalid_formdata = False
+
     def _get_data(self):
-        if self._formdata is not None:
+        formdata = self._formdata
+        if formdata is not None:
             data = []
             for obj in self._get_object_list():
-                if getattr(obj, self.pk_attr) in self._formdata:
+                if not formdata:
+                    break
+                pk = getattr(obj, self.pk_attr)
+                if pk in formdata:
+                    formdata.remove(pk)
                     data.append(obj)
+            if formdata:
+                self._invalid_formdata = True
             self._set_data(data)
         return self._data
-    
+
     def _set_data(self, data):
-        if data is None:
-            data = []
         self._data = data
         self._formdata = None
 
     data = property(_get_data, _set_data)
-    
+
     def iter_choices(self):
         for obj in self._get_object_list():
             label = self.label_attr and getattr(obj, self.label_attr) or obj
             yield (getattr(obj, self.pk_attr), label, obj in self.data)
-            
+
     def process_formdata(self, valuelist):
-        self._data = []
-        self._formdata = map(int, valuelist)
+        try:
+            self._formdata = set(int(x) for x in valuelist)
+        except ValueError:
+            self._invalid_formdata = True
 
     def pre_validate(self, form):
-        if len(self.data) > 0:
+        if self._invalid_formdata:
+            raise ValidationError('Not a valid choice')
+        elif self.data:
             obj_list = self._get_object_list()
             for v in self.data:
                 if v not in obj_list:
