@@ -1,6 +1,8 @@
 """
 Useful form fields for use with SQLAlchemy ORM.
 """
+from operator import attrgetter
+
 from wtforms import widgets
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
@@ -51,8 +53,8 @@ class QuerySelectField(Field):
 
     def _get_data(self):
         if self._formdata is not None:
-            for obj in self._get_object_list():
-                if getattr(obj, self.pk_attr)  == self._formdata:
+            for pk, obj in self._get_object_list():
+                if pk == self._formdata:
                     self._set_data(obj)
                     break
         return self._data
@@ -66,16 +68,17 @@ class QuerySelectField(Field):
     def _get_object_list(self):
         if self._object_list is None:
             query = self.query or self.query_factory()
-            self._object_list = query.all()
+            get_pk = attrgetter(self.pk_attr)
+            self._object_list = list((get_pk(obj), obj) for obj in query)
         return self._object_list
 
     def iter_choices(self):
         if self.allow_blank:
             yield (u'__None', self.blank_text, self.data is None)
 
-        for obj in self._get_object_list():
+        for pk, obj in self._get_object_list():
             label = self.label_attr and getattr(obj, self.label_attr) or obj
-            yield (getattr(obj, self.pk_attr), label, obj == self.data)
+            yield (pk, label, obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -87,7 +90,7 @@ class QuerySelectField(Field):
 
     def pre_validate(self, form):
         if not self.allow_blank or self.data is not None:
-            for obj in self._get_object_list():
+            for pk, obj in self._get_object_list():
                 if self.data == obj:
                     break
             else:
@@ -116,11 +119,10 @@ class QueryMultipleSelectField(QuerySelectField):
         formdata = self._formdata
         if formdata is not None:
             data = []
-            for obj in self._get_object_list():
+            for pk, obj in self._get_object_list():
                 if not formdata:
                     break
-                pk = getattr(obj, self.pk_attr)
-                if pk in formdata:
+                elif pk in formdata:
                     formdata.remove(pk)
                     data.append(obj)
             if formdata:
@@ -135,9 +137,9 @@ class QueryMultipleSelectField(QuerySelectField):
     data = property(_get_data, _set_data)
 
     def iter_choices(self):
-        for obj in self._get_object_list():
+        for pk, obj in self._get_object_list():
             label = self.label_attr and getattr(obj, self.label_attr) or obj
-            yield (getattr(obj, self.pk_attr), label, obj in self.data)
+            yield (pk, label, obj in self.data)
 
     def process_formdata(self, valuelist):
         try:
@@ -149,7 +151,7 @@ class QueryMultipleSelectField(QuerySelectField):
         if self._invalid_formdata:
             raise ValidationError('Not a valid choice')
         elif self.data:
-            obj_list = self._get_object_list()
+            obj_list = list(x[1] for x in self._get_object_list())
             for v in self.data:
                 if v not in obj_list:
                     raise ValidationError('Not a valid choice')
