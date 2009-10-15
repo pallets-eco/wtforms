@@ -149,7 +149,18 @@ class QueryMultipleSelectFieldTest(TestBase):
         self.assert_([1, 2], [v.id for v in form.a.data])
         self.assertEqual(form.a(), u'1,1,apple|2,1,banana')
         self.assert_(form.validate())
-            
+        
+    def test_single_default_value(self):
+        sess = self.Session()
+        self._fill(sess)
+        first_test = sess.query(self.Test).get(2)
+        class F(Form):
+            a = QueryMultipleSelectField(label_attr='name', default=[first_test],
+                widget=LazySelect(), query_factory=lambda: sess.query(self.Test))
+        form = F()
+        self.assert_([2], [v.id for v in form.a.data])
+        self.assertEqual(form.a(), u'1,0,apple|2,1,banana')
+        self.assert_(form.validate())
 
 class ModelSelectFieldTest(TestBase):
     def setUp(self):

@@ -38,7 +38,9 @@ class QuerySelectField(Field):
     """
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'', **kwargs):
+    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', 
+        label_attr='', allow_blank=False, blank_text=u'', **kwargs):
+        
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.label_attr = label_attr
         self.allow_blank = allow_blank
@@ -93,7 +95,7 @@ class QuerySelectField(Field):
             else:
                 raise ValidationError('Not a valid choice')
             
-class QueryMultipleSelectField(Field):
+class QueryMultipleSelectField(QuerySelectField):
     """
     Very similar to :class`QuerySelectField` with the difference
     that this will display a multiple select. The data property
@@ -103,17 +105,10 @@ class QueryMultipleSelectField(Field):
     widget = widgets.Select(multiple=True)
     
     def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', 
-            label_attr='', allow_blank=False, **kwargs):
-        super(QueryMultipleSelectField, self).__init__(label, validators, **kwargs)
-        
-        self.label_attr = label_attr
-        self.allow_blank = allow_blank
+            label_attr='', **kwargs):
+        super(QueryMultipleSelectField, self).__init__(label, validators, 
+            query_factory, pk_attr, label_attr, **kwargs)
         self.data = []
-        self.query_factory = query_factory
-        self.query = None
-        self.pk_attr = pk_attr
-        self._object_list = None
-        self._default = []
     
     def _get_data(self):
         if self._formdata is not None:
@@ -125,16 +120,12 @@ class QueryMultipleSelectField(Field):
         return self._data
     
     def _set_data(self, data):
+        if data is None:
+            data = []
         self._data = data
         self._formdata = None
 
     data = property(_get_data, _set_data)
-    
-    def _get_object_list(self):
-        if self._object_list is None:
-            query = self.query or self.query_factory()
-            self._object_list = query.all()
-        return self._object_list
     
     def iter_choices(self):
         for obj in self._get_object_list():
@@ -142,7 +133,7 @@ class QueryMultipleSelectField(Field):
             yield (getattr(obj, self.pk_attr), label, obj in self.data)
             
     def process_formdata(self, valuelist):
-        if valuelist: # Why this check?
+        if valuelist:
             self._data = []
             self._formdata = map(int, valuelist)
 
