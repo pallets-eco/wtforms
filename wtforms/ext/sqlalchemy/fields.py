@@ -133,9 +133,8 @@ class QueryMultipleSelectField(QuerySelectField):
             yield (getattr(obj, self.pk_attr), label, obj in self.data)
             
     def process_formdata(self, valuelist):
-        if valuelist:
-            self._data = []
-            self._formdata = map(int, valuelist)
+        self._data = []
+        self._formdata = map(int, valuelist)
 
     def pre_validate(self, form):
         if len(self.data) > 0:
