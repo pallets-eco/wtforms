@@ -93,7 +93,7 @@ class Form(object):
         for u_field, name in self._unbound_fields:
             field = u_field.bind(form=self, name=prefix + name)
             if not field.label.text:
-                field.label.text = name.lower().capitalize().replace('_', ' ')
+                field.label.text = name.replace('_', ' ').title()
             self._fields.append((name, field))
             setattr(self, name, field)
 
