@@ -11,6 +11,10 @@ The Form base class
 
 .. autoclass:: Form
 
+    **Construction**
+    
+    .. automethod:: __init__
+
     **Properties**
 
     .. attribute:: data

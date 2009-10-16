@@ -235,9 +235,8 @@ class Field(object):
         """
         Populates `obj.<name>` with the field's data.
 
-        :note: 
-            This is a destructive operation. If `obj.<name>` already exists, it
-            will be overridden. Use with caution.
+        :note: This is a destructive operation. If `obj.<name>` already exists,
+               it will be overridden. Use with caution.
         """
         setattr(obj, name, self.data)
 

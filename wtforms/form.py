@@ -65,18 +65,18 @@ class Form(object):
 
     def __init__(self, formdata=None, obj=None, prefix='', idprefix='', **kwargs):
         """
-        `formdata`
+        :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
             equivalent.
-        `obj`
+        :param obj:
             If `formdata` has no data for a field, the form will try to get it
             from the passed object.
-        `prefix`
+        :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
-        `idprefix`
+        :param idprefix:
             If provided, prefixes the id's of all fields with the value.
-        `**kwargs`
+        :param **kwargs:
             If neither `formdata` or `obj` contains a value for a field, the
             form will assign the value of a matching keyword argument to the
             field, if provided.
@@ -105,16 +105,12 @@ class Form(object):
                 field.process(formdata)
 
     def __iter__(self): 
-        """
-        Iterate form fields in their order of definition on the form.
-        """
+        """ Iterate form fields in their order of definition on the form. """
         for name, field in self._fields:
             yield field
 
     def __contains__(self, item):
-        """      
-        Returns `True` if the named field is a member of this form.
-        """
+        """ Returns `True` if the named field is a member of this form. """
         return getattr(getattr(self, item, False), '_formfield', False) is True
 
     def __delattr__(self, name): 
@@ -125,9 +121,7 @@ class Form(object):
             super(Form, self).__delattr__(name)
 
     def __getitem__(self, name):
-        """
-        Dict-style access to this form for frameworks which need it.
-        """
+        """ Dict-style access to this form for frameworks which need it. """
         try:
             return getattr(self, name)
         except AttributeError:
@@ -172,8 +166,8 @@ class Form(object):
         Populates the attributes of the passed `obj` with data from the form's
         fields.
 
-        **Note:** This is a destructive operation, any attribute with the same
-        name as a field will be overridden. Use with caution.
+        :note: This is a destructive operation; Any attribute with the same name
+               as a field will be overridden. Use with caution.
         """
         for name, field in self._fields:
             field.populate_obj(obj, name)
