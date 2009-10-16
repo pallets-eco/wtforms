@@ -76,7 +76,7 @@ class Form(object):
             value.
         :param idprefix:
             If provided, prefixes the id's of all fields with the value.
-        :param **kwargs:
+        :param `**kwargs`:
             If neither `formdata` or `obj` contains a value for a field, the
             form will assign the value of a matching keyword argument to the
             field, if provided.
