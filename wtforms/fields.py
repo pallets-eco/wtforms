@@ -33,7 +33,9 @@ class Field(object):
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, filters=tuple(), description=u'', id=None, default=None, widget=None, _form=None, _name=None):
+    def __init__(self, label=u'', validators=None, filters=tuple(),
+                 description=u'', id=None, default=None, widget=None,
+                 _form=None, _name=None):
         """
         Construct a new field.
 
@@ -178,13 +180,16 @@ class Field(object):
 
     def process(self, formdata, data=_unset_value): 
         """
-        Process incoming data, calling process_data, process_formdata as needed, and run filters.
+        Process incoming data, calling process_data, process_formdata as needed,
+        and run filters.
 
-        If `data` is not provided, process_data will be called on the field's default.
+        If `data` is not provided, process_data will be called on the field's
+        default.
 
         Field subclasses usually won't override this, instead overriding the
         process_formdata and process_data methods. Only override this for
-        special advanced processing, such as when a field encapsulates many inputs.
+        special advanced processing, such as when a field encapsulates many
+        inputs.
         """
         if data is _unset_value:
             self.process_data(self._default)
@@ -622,7 +627,8 @@ class FieldList(Field):
     """
     widget=widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=u'', validators=None, min_entries=0, max_entries=None, default=tuple(), **kwargs):
+    def __init__(self, unbound_field, label=u'', validators=None, min_entries=0,
+                 max_entries=None, default=tuple(), **kwargs):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:
             raise TypeError('FieldList does not accept any filters. Instead, define them on the enclosed field.')
@@ -642,8 +648,8 @@ class FieldList(Field):
             self._add_entry(formdata, obj_data)
 
         if formdata or self.min_entries:
-            form_entries = 1 + max(self._extract_indices(self.name, formdata or []))
-            form_entries = max(form_entries, self.min_entries)
+            form_entries = max(self._extract_indices(self.name, formdata or []))
+            form_entries = max(form_entries + 1, self.min_entries)
             if self.max_entries:
                 form_entries = min(form_entries, self.max_entries)
             for _ in range(form_entries - len(self.entries)):
@@ -679,7 +685,7 @@ class FieldList(Field):
     def _add_entry(self, formdata=None, data=_unset_value):
         new_index = len(self.entries)
         assert not self.max_entries or new_index < self.max_entries, \
-                'You cannot have more than max_entries entries in this FieldList' 
+            'You cannot have more than max_entries entries in this FieldList'
         name = '%s-%d' % (self.name, new_index)
         id   = '%s-%d' % (self.id, new_index)
         f = self.unbound_field.bind(form=None, name=name, id=id)
