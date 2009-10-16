@@ -48,7 +48,8 @@ class FormMeta(type):
 
     def __delattr__(cls, name):
         """
-        Remove an attribute from the class, clearing `_unbound_fields` if needed.
+        Remove an attribute from the class, clearing `_unbound_fields` if
+        needed.
         """
         if not name.startswith('_'):
             cls._unbound_fields = None
@@ -91,6 +92,8 @@ class Form(object):
             formdata = None
         for u_field, name in self._unbound_fields:
             field = u_field.bind(form=self, name=prefix + name)
+            if not field.label.text:
+                field.label.text = name.lower().capitalize().replace('_', ' ')
             self._fields.append((name, field))
             setattr(self, name, field)
 
