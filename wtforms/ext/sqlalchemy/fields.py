@@ -168,4 +168,5 @@ class ModelSelectField(QuerySelectField):
     """
     def __init__(self, label=u'', validators=None, model=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'', **kwargs):
         assert model is not None, "Must specify a model."
-        super(ModelSelectField, self).__init__(label, validators, query_factory=model.query, pk_attr=pk_attr, label_attr=label_attr, allow_blank=allow_blank, blank_text=blank_text, **kwargs)
+        query_factory = lambda: model.query
+        super(ModelSelectField, self).__init__(label, validators, query_factory=query_factory, pk_attr=pk_attr, label_attr=label_attr, allow_blank=allow_blank, blank_text=blank_text, **kwargs)
