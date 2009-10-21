@@ -13,11 +13,7 @@ from wtforms.form import Form
 
 class LazySelect(object):
     def __call__(self, field, **kwargs):
-        output = []
-        for val, label, selected in field.iter_choices():
-            s = selected and u'1' or u'0'
-            output.append(u'%s,%s,%s' % (unicode(val), unicode(s), unicode(label)))
-        return u'|'.join(output)
+        return list((val, unicode(label), selected) for val, label, selected in field.iter_choices())
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -78,7 +74,7 @@ class QuerySelectFieldTest(TestBase):
         form.a.query = sess.query(self.Test)
         self.assert_(form.a.data is not None)
         self.assertEqual(form.a.data.id, 1)
-        self.assertEqual(form.a(), u'1,1,apple|2,0,banana')
+        self.assertEqual(form.a(), [(1, 'apple', True), (2, 'banana', False)])
         self.assert_(form.validate())
 
     def test_with_query_factory(self):
@@ -91,25 +87,25 @@ class QuerySelectFieldTest(TestBase):
 
         form = F()
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a(), u'1,0,apple|2,0,banana')
+        self.assertEqual(form.a(), [(1, 'apple', False), (2, 'banana', False)])
         self.assertEqual(form.b.data, None)
-        self.assertEqual(form.b(), u'__None,1,|1,0,apple|2,0,banana')
+        self.assertEqual(form.b(), [(u'__None', '', True), (1, 'apple', False), (2, 'banana', False)])
         self.assert_(not form.validate())
 
         form = F(DummyPostData(a=['1'], b=['2']))
         self.assertEqual(form.a.data.id, 1)
-        self.assertEqual(form.a(), u'1,1,apple|2,0,banana')
+        self.assertEqual(form.a(), [(1, 'apple', True), (2, 'banana', False)])
         self.assertEqual(form.b.data.baz, 'banana')
-        self.assertEqual(form.b(), u'__None,0,|1,0,apple|2,1,banana')
+        self.assertEqual(form.b(), [(u'__None', '', False), (1, 'apple', False), (2, 'banana', True)])
         self.assert_(form.validate())
 
         # Make sure the query iQueryMultipleSelectFields cached
         sess.add(self.Test(id=3, name='meh'))
         sess.flush()
         sess.commit()
-        self.assertEqual(form.a(), u'1,1,apple|2,0,banana')
+        self.assertEqual(form.a(), [(1, 'apple', True), (2, 'banana', False)])
         form.a._object_list = None
-        self.assertEqual(form.a(), u'1,1,apple|2,0,banana|3,0,meh')
+        self.assertEqual(form.a(), [(1, 'apple', True), (2, 'banana', False), (3, 'meh', False)])
 
 
 class QueryMultipleSelectFieldTest(TestBase):
@@ -132,14 +128,14 @@ class QueryMultipleSelectFieldTest(TestBase):
         form = self.F(DummyPostData(a=['1']))
         form.a.query = self.sess.query(self.Test)
         self.assertEqual([1], [v.id for v in form.a.data])
-        self.assertEqual(form.a(), u'1,1,apple|2,0,banana')
+        self.assertEqual(form.a(), [(1, 'apple', True), (2, 'banana', False)])
         self.assert_(form.validate())
 
     def test_multiple_values_without_query_factory(self):
         form = self.F(DummyPostData(a=['1', '2']))
         form.a.query = self.sess.query(self.Test)
         self.assertEqual([1, 2], [v.id for v in form.a.data])
-        self.assertEqual(form.a(), u'1,1,apple|2,1,banana')
+        self.assertEqual(form.a(), [(1, 'apple', True), (2, 'banana', True)])
         self.assert_(form.validate())
 
         form = self.F(DummyPostData(a=['1', '3']))
@@ -154,14 +150,18 @@ class QueryMultipleSelectFieldTest(TestBase):
                 widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
         form = F()
         self.assertEqual([v.id for v in form.a.data], [2])
-        self.assertEqual(form.a(), u'1,0,apple|2,1,banana')
+        self.assertEqual(form.a(), [(1, 'apple', False), (2, 'banana', True)])
         self.assert_(form.validate())
 
 class ModelSelectFieldTest(TestBase):
     def setUp(self):
+        from sqlalchemy.orm import mapper as sqla_mapper
         engine = create_engine('sqlite:///:memory:', echo=False)
-        self.Session = scoped_session(sessionmaker(autoflush=False, autocommit=False, bind=engine))
-        mapper = self.Session.mapper
+        self.Session = session = scoped_session(sessionmaker(autoflush=False, autocommit=False, bind=engine))
+
+        def mapper(cls, *arg, **kw):
+            cls.query = session.query_property()
+            return sqla_mapper(cls, *arg, **kw)
         self._do_tables(mapper, engine)
 
     def test(self):
@@ -171,7 +171,7 @@ class ModelSelectFieldTest(TestBase):
             a = ModelSelectField(label_attr='name', model=self.Test, widget=LazySelect())
 
         form = F()
-        self.assertEqual(form.a(), u'1,0,apple|2,0,banana')
+        self.assertEqual(form.a(), [(1, 'apple', False), (2, 'banana', False)])
 
 
 if __name__ == '__main__':
