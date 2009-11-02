@@ -81,7 +81,7 @@ class TableWidget(object):
             if subfield.type == 'HiddenField':
                 hidden += unicode(subfield)
             else:
-                html.append(u'<tr><th>%s<th><td>%s%s</td></tr>' % (unicode(subfield.label), hidden, unicode(subfield)))
+                html.append(u'<tr><th>%s</th><td>%s%s</td></tr>' % (unicode(subfield.label), hidden, unicode(subfield)))
                 hidden = u''
         if self.with_table_tag:
             html.append(u'</table>')
