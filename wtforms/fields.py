@@ -255,9 +255,6 @@ class UnboundField(object):
     def bind(self, form, name, **kwargs):
         return self.field_class(_form=form, _name=name, *self.args, **dict(self.kwargs, **kwargs))
 
-    def __cmp__(self, x):
-        return cmp(self.creation_counter, x.creation_counter)
-
     def __repr__(self):
         return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
 

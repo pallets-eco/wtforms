@@ -31,10 +31,10 @@ class FormMeta(type):
                 if not name.startswith('_'):
                     unbound_field = getattr(cls, name)
                     if hasattr(unbound_field, '_formfield'):
-                        # We use an (unbound_field, name) tuple because we
-                        # want to sort on UnboundField.__cmp__, not the name.
-                        fields.append((unbound_field, name))
-            fields.sort()
+                        fields.append((name, unbound_field))
+            # We keep the name as the second element of the sort
+            # to ensure a stable sort.
+            fields.sort(key=lambda x: (x[1].creation_counter, x[0]))
             cls._unbound_fields = fields
         return type.__call__(cls, *args, **kwargs)
 
@@ -90,8 +90,8 @@ class Form(object):
         self._fields = []
         if not formdata:
             formdata = None
-        for u_field, name in self._unbound_fields:
-            field = u_field.bind(form=self, name=prefix + name)
+        for name, unbound_field in self._unbound_fields:
+            field = unbound_field.bind(form=self, name=prefix + name)
             if not field.label.text:
                 field.label.text = name.replace('_', ' ').title()
             self._fields.append((name, field))
@@ -104,7 +104,7 @@ class Form(object):
             else:
                 field.process(formdata)
 
-    def __iter__(self): 
+    def __iter__(self):
         """ Iterate form fields in their order of definition on the form. """
         for name, field in self._fields:
             yield field
@@ -113,8 +113,8 @@ class Form(object):
         """ Returns `True` if the named field is a member of this form. """
         return getattr(getattr(self, item, False), '_formfield', False) is True
 
-    def __delattr__(self, name): 
-        try: 
+    def __delattr__(self, name):
+        try:
             self._fields.remove((name, getattr(self, name)))
             setattr(self, name, None)
         except ValueError:

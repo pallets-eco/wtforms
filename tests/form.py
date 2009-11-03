@@ -17,17 +17,17 @@ class FormMetaTest(TestCase):
 
         self.assertEqual(F._unbound_fields, None)
         F()
-        self.assertEqual(F._unbound_fields, [(F.a, 'a')])
+        self.assertEqual(F._unbound_fields, [('a', F.a)])
         F.b = TextField()
         self.assertEqual(F._unbound_fields, None)
         F()
-        self.assertEqual(F._unbound_fields, [(F.a, 'a'), (F.b, 'b')])
+        self.assertEqual(F._unbound_fields, [('a', F.a), ('b', F.b)])
         del F.a
         self.assertRaises(AttributeError, lambda: F.a)
         F()
-        self.assertEqual(F._unbound_fields, [(F.b, 'b')])
+        self.assertEqual(F._unbound_fields, [('b', F.b)])
         F._m = TextField()
-        self.assertEqual(F._unbound_fields, [(F.b, 'b')])
+        self.assertEqual(F._unbound_fields, [('b', F.b)])
 
     def test_subclassing(self):
         class A(Form):
@@ -39,8 +39,8 @@ class FormMetaTest(TestCase):
         A(); B()
         self.assert_(A.a is B.a)
         self.assert_(A.c is not B.c)
-        self.assertEqual(A._unbound_fields, [(A.a, 'a'), (A.c, 'c')])
-        self.assertEqual(B._unbound_fields, [(B.a, 'a'), (B.b, 'b'), (B.c, 'c')])
+        self.assertEqual(A._unbound_fields, [('a', A.a), ('c', A.c)])
+        self.assertEqual(B._unbound_fields, [('a', B.a), ('b', B.b), ('c', B.c)])
 
 class FormTest(TestCase):
     class F(Form):
@@ -99,6 +99,11 @@ class FormTest(TestCase):
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'kiwi', 'apple'])
         MyForm.strawberry = TextField()
         self.assertEqual([x.name for x in MyForm()], ['kiwi', 'apple', 'strawberry'])
+        # Ensure sort is stable: two fields with the same creation counter 
+        # should be subsequently sorted by name.
+        MyForm.cherry = MyForm.kiwi
+        self.assertEqual([x.name for x in MyForm()], ['cherry', 'kiwi', 'apple', 'strawberry'])
+
 
     def test_prefixes(self):
         self.assertEqual(self.F(prefix='foo').test.name, 'foo-test')
