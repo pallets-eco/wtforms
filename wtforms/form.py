@@ -83,7 +83,6 @@ class Form(object):
         """
         if prefix:
             prefix += '-'
-        self._idprefix = idprefix
 
         # populate data from form and optional instance and defaults
         self._errors = None
@@ -91,9 +90,7 @@ class Form(object):
         if not formdata:
             formdata = None
         for name, unbound_field in self._unbound_fields:
-            field = unbound_field.bind(form=self, name=prefix + name)
-            if not field.label.text:
-                field.label.text = name.replace('_', ' ').title()
+            field = unbound_field.bind(form=self, name=name, prefix=prefix, idprefix=idprefix)
             self._fields.append((name, field))
             setattr(self, name, field)
 

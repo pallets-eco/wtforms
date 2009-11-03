@@ -7,6 +7,10 @@ Not yet released.
 
 - ext.sqlalchemy.fields now has an additional QuerySelectMultipleField.
 
+- Field labels now default to a humanized field name.
+
+- Fields now have a `short_name` property which is the un-prefixed name.
+
 Version 0.4
 -----------
 Released October 10th, 2009.

@@ -35,7 +35,7 @@ class Field(object):
 
     def __init__(self, label=u'', validators=None, filters=tuple(),
                  description=u'', id=None, default=None, widget=None,
-                 _form=None, _name=None):
+                 _form=None, _name=None, _prefix='', _idprefix=''):
         """
         Construct a new field.
 
@@ -63,14 +63,21 @@ class Field(object):
         :param _name:
             The name of this field, passed by the enclosing form during its
             construction. You should never pass this value yourself.
+        :param _prefix:
+            The prefix to prepend to the form name of this field, passed by
+            the enclosing form during construction.
+        :param _idprefix:
+            Prefix for creating field's HTML id, only used if id isn't passed
+            explicitly. You should never pass this value yourself.
 
         If `_form` and `_name` isn't provided, an :class:`UnboundField` will be
         returned instead. Call its :func:`bind` method with a form instance and
         a name to construct the field.
         """
-        self.name = _name
-        self.id = id or (_form._idprefix + self.name)
-        self.label = Label(self.id, label)
+        self.short_name = _name
+        self.name = _prefix + _name
+        self.id = id or (_idprefix + self.name)
+        self.label = Label(self.id, label or _name.replace('_', ' ').title())
         if validators is None:
             validators = []
         self.validators = validators
@@ -252,8 +259,8 @@ class UnboundField(object):
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
 
-    def bind(self, form, name, **kwargs):
-        return self.field_class(_form=form, _name=name, *self.args, **dict(self.kwargs, **kwargs))
+    def bind(self, form, name, prefix='', idprefix='', **kwargs):
+        return self.field_class(_form=form, _prefix=prefix, _name=name, _idprefix=idprefix, *self.args, **dict(self.kwargs, **kwargs))
 
     def __repr__(self):
         return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
@@ -563,10 +570,7 @@ class FormField(Field):
         if validators:
             raise TypeError('FormField does not accept any validators. Instead, define them on the enclosed form.')
 
-        if '_form' in kwargs and kwargs['_form']:
-            self._idprefix = kwargs['_form']._idprefix
-        else:
-            self._idprefix = ''
+        self._idprefix = kwargs.get('_idprefix', '') or ''
 
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
@@ -634,6 +638,7 @@ class FieldList(Field):
         self.unbound_field = unbound_field
         self.min_entries = min_entries
         self.max_entries = max_entries
+        self._prefix = kwargs.get('_prefix', '')
 
     def process(self, formdata, data=_unset_value):
         if data is _unset_value or not data:
@@ -682,9 +687,9 @@ class FieldList(Field):
         new_index = len(self.entries)
         assert not self.max_entries or new_index < self.max_entries, \
             'You cannot have more than max_entries entries in this FieldList'
-        name = '%s-%d' % (self.name, new_index)
+        name = '%s-%d' % (self.short_name, new_index)
         id   = '%s-%d' % (self.id, new_index)
-        f = self.unbound_field.bind(form=None, name=name, id=id)
+        f = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id)
         f.process(formdata, data)
         self.entries.append(f)
         return f
