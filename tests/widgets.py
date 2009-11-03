@@ -42,7 +42,7 @@ class ListWidgetTest(TestCase):
 class TableWidgetTest(TestCase):
     def test(self):
         field = DummyField([DummyField(x, label='l' + x) for x in ['foo', 'bar']], id='hai')
-        self.assertEqual(TableWidget()(field), u'<table id="hai"><tr><th>lfoo<th><td>foo</td></tr><tr><th>lbar<th><td>bar</td></tr></table>')
+        self.assertEqual(TableWidget()(field), u'<table id="hai"><tr><th>lfoo</th><td>foo</td></tr><tr><th>lbar</th><td>bar</td></tr></table>')
 
 
 class BasicWidgetsTest(TestCase):

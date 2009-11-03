@@ -327,7 +327,7 @@ class FormFieldTest(TestCase):
         self.assertEqual(obj_inner.b, None)
 
     def test_widget(self):
-        self.assertEqual(self.F1().a(), u'''<table id="a"><tr><th><label for="a-a">A</label><th><td><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b">B</label><th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr></table>''')
+        self.assertEqual(self.F1().a(), u'''<table id="a"><tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr></table>''')
 
     def test_no_validators_or_filters(self):
         class A(Form):
