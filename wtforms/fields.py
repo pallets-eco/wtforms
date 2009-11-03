@@ -1,7 +1,7 @@
 from cgi import escape
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
-from itertools import chain
+from itertools import chain, count
 import time
 
 from wtforms import widgets
@@ -638,6 +638,7 @@ class FieldList(Field):
         self.unbound_field = unbound_field
         self.min_entries = min_entries
         self.max_entries = max_entries
+        self.last_index = -1
         self._prefix = kwargs.get('_prefix', '')
 
     def process(self, formdata, data=_unset_value):
@@ -645,32 +646,30 @@ class FieldList(Field):
             data = self._default
         self.entries = []
 
-        for obj_data in data:
-            self._add_entry(formdata, obj_data)
-
-        if formdata or self.min_entries:
-            form_entries = max(self._extract_indices(self.name, formdata or []))
-            form_entries = max(form_entries + 1, self.min_entries)
+        indices = ()
+        if formdata:
+            indices = sorted(set(self._extract_indices(self.name, formdata)), reverse=True)
             if self.max_entries:
-                form_entries = min(form_entries, self.max_entries)
-            for _ in range(form_entries - len(self.entries)):
-                self._add_entry(formdata) 
+                indices = indices[-self.max_entries:]
+
+        for obj_data in data:
+            self._add_entry(formdata, obj_data, index=(indices and indices.pop() or None))
+
+        while indices or len(self.entries) < self.min_entries:
+            self._add_entry(formdata, index=(indices and indices.pop() or None)) 
 
     def _extract_indices(self, prefix, formdata):
         """
         Yield indices of any keys with given prefix.
 
-        -1 is always yielded regardless of the existence of any other entries.
-
         formdata must be an object which will produce keys when iterated.  For
         example, if field 'foo' contains keys 'foo-0-bar', 'foo-1-baz', then
         the numbers 0 and 1 will be yielded, but not neccesarily in order.
         """
-        yield -1
         offset = len(prefix) + 1
         for k in formdata:
             if k.startswith(prefix):
-                k = k[offset:].split('-')[0]
+                k = k[offset:].split('-', 1)[0]
                 if k.isdigit():
                     yield int(k)
 
@@ -683,16 +682,16 @@ class FieldList(Field):
                 self.errors.append(subfield.errors)
         return success
 
-    def _add_entry(self, formdata=None, data=_unset_value):
-        new_index = len(self.entries)
-        assert not self.max_entries or new_index < self.max_entries, \
+    def _add_entry(self, formdata=None, data=_unset_value, index=None):
+        assert not self.max_entries or len(self.entries) < self.max_entries, \
             'You cannot have more than max_entries entries in this FieldList'
+        new_index = self.last_index = index or (self.last_index + 1)
         name = '%s-%d' % (self.short_name, new_index)
         id   = '%s-%d' % (self.id, new_index)
-        f = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id)
-        f.process(formdata, data)
-        self.entries.append(f)
-        return f
+        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id)
+        field.process(formdata, data)
+        self.entries.append(field)
+        return field
 
     def append_entry(self, data=_unset_value):
         """Create a new entry with optional default data"""
@@ -700,7 +699,9 @@ class FieldList(Field):
 
     def pop_entry(self):
         """ Removes the last entry from the list and returns it. """
-        return self.entries.pop()
+        entry = self.entries.pop()
+        self.last_index -= 1
+        return entry
 
     def __iter__(self):
         return iter(self.entries)

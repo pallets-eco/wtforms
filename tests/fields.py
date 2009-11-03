@@ -357,7 +357,7 @@ class FieldListTest(TestCase):
         self.assertEqual(a.data, data)
         self.assertEqual(len(a.entries), 3)
 
-        pdata = DummyPostData({'a-0': ['bleh'], 'a-1': ['yarg'], 'a-3': ['mmm']})
+        pdata = DummyPostData({'a-0': ['bleh'], 'a-3': ['yarg'], 'a-4': [''], 'a-7': ['mmm']})
         form = F(pdata)
         self.assertEqual(len(form.a.entries), 4)
         self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
