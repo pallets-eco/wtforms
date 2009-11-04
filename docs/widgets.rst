@@ -16,12 +16,12 @@ Built-in widgets
 .. autoclass:: Input
 .. autoclass:: TextInput()
 .. autoclass:: PasswordInput
-.. autoclass:: HiddenInput() 
+.. autoclass:: HiddenInput()
 .. autoclass:: CheckboxInput()
 .. autoclass:: FileInput()
 .. autoclass:: SubmitInput()
 .. autoclass:: TextArea
-.. autoclass:: Select 
+.. autoclass:: Select
 
 Custom widgets
 --------------
@@ -45,7 +45,7 @@ there are errors::
             if field.errors:
                 c = kwargs.pop('class', '') or kwargs.pop('class_', '')
                 kwargs['class'] = u'%s %s' % (self.error_class, c)
-            return super(MyTextInput, self).__call__(field, **kwargs) 
+            return super(MyTextInput, self).__call__(field, **kwargs)
 
 In the above example, we extended the behavior of the existing
 :class:`TextInput` widget to append a CSS class as needed. However, widgets
@@ -53,15 +53,16 @@ need not extend from an existing widget, and indeed don't even have to be a
 class.  For example, here is a widget that renders a
 :class:`~wtforms.fields.SelectMultipleField` as a collection of checkboxes::
 
-    def select_multi_checkbox(self, field, ul_class='', **kwargs):
+    def select_multi_checkbox(field, ul_class='', **kwargs):
+        kwargs.setdefault('type', 'checkbox')
         field_id = kwargs.pop('id', field.id)
         html = [u'<ul %s>' % html_params(id=field_id, class_=ul_class)]
         for value, label, checked in field.iter_choices():
             choice_id = u'%s-%s' % (field_id, value)
-            options = dict(kwargs, name=field.name, value=value, id=choice_id) 
+            options = dict(kwargs, name=field.name, value=value, id=choice_id)
             if checked:
                 options['checked'] = 'checked'
-            html.append(u'<li><input %s /> ' % html_options(**options)) 
+            html.append(u'<li><input %s /> ' % html_options(**options))
             html.append(u'<label %s>%s</label></li>')
         html.append(u'</ul>')
         return u''.join(html)
