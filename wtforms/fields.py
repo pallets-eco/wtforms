@@ -35,7 +35,7 @@ class Field(object):
 
     def __init__(self, label=u'', validators=None, filters=tuple(),
                  description=u'', id=None, default=None, widget=None,
-                 _form=None, _name=None, _prefix='', _idprefix=''):
+                 _form=None, _name=None, _prefix=''):
         """
         Construct a new field.
 
@@ -66,9 +66,6 @@ class Field(object):
         :param _prefix:
             The prefix to prepend to the form name of this field, passed by
             the enclosing form during construction.
-        :param _idprefix:
-            Prefix for creating field's HTML id, only used if id isn't passed
-            explicitly. You should never pass this value yourself.
 
         If `_form` and `_name` isn't provided, an :class:`UnboundField` will be
         returned instead. Call its :func:`bind` method with a form instance and
@@ -76,7 +73,7 @@ class Field(object):
         """
         self.short_name = _name
         self.name = _prefix + _name
-        self.id = id or (_idprefix + self.name)
+        self.id = id or self.name
         self.label = Label(self.id, label or _name.replace('_', ' ').title())
         if validators is None:
             validators = []
@@ -259,8 +256,8 @@ class UnboundField(object):
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
 
-    def bind(self, form, name, prefix='', idprefix='', **kwargs):
-        return self.field_class(_form=form, _prefix=prefix, _name=name, _idprefix=idprefix, *self.args, **dict(self.kwargs, **kwargs))
+    def bind(self, form, name, prefix='', **kwargs):
+        return self.field_class(_form=form, _prefix=prefix, _name=name, *self.args, **dict(self.kwargs, **kwargs))
 
     def __repr__(self):
         return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
@@ -570,16 +567,14 @@ class FormField(Field):
         if validators:
             raise TypeError('FormField does not accept any validators. Instead, define them on the enclosed form.')
 
-        self._idprefix = kwargs.get('_idprefix', '') or ''
-
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
             data = self._default
 
         if isinstance(data, dict):
-            self.form = self.form_class(formdata=formdata, prefix=self.name, idprefix=self._idprefix, **data)
+            self.form = self.form_class(formdata=formdata, prefix=self.name, **data)
         else:
-            self.form = self.form_class(formdata=formdata, obj=data, prefix=self.name, idprefix=self._idprefix)            
+            self.form = self.form_class(formdata=formdata, obj=data, prefix=self.name)
 
     def validate(self, form, extra_validators=tuple()):
         if extra_validators:

@@ -63,7 +63,7 @@ class Form(object):
     """
     __metaclass__ = FormMeta
 
-    def __init__(self, formdata=None, obj=None, prefix='', idprefix='', **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
@@ -74,8 +74,6 @@ class Form(object):
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
-        :param idprefix:
-            If provided, prefixes the id's of all fields with the value.
         :param `**kwargs`:
             If neither `formdata` or `obj` contains a value for a field, the
             form will assign the value of a matching keyword argument to the
@@ -90,7 +88,7 @@ class Form(object):
         if not formdata:
             formdata = None
         for name, unbound_field in self._unbound_fields:
-            field = unbound_field.bind(form=self, name=name, prefix=prefix, idprefix=idprefix)
+            field = unbound_field.bind(form=self, name=name, prefix=prefix)
             self._fields.append((name, field))
             setattr(self, name, field)
 

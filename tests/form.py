@@ -108,7 +108,6 @@ class FormTest(TestCase):
     def test_prefixes(self):
         self.assertEqual(self.F(prefix='foo').test.name, 'foo-test')
         self.assertEqual(self.F(prefix='foo').test.id, 'foo-test')
-        self.assertEqual(self.F(idprefix='f-', prefix='foo').test.id, 'f-foo-test')
         form = self.F(DummyPostData({'foo-test': [u'hello'], 'test': [u'bye']}), prefix='foo')
         self.assertEqual(form.test.data, u'hello')
 
