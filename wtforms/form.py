@@ -11,13 +11,13 @@ class BaseForm(object):
 
     def __init__(self, fields, prefix=''):
         """
-        :param unbound_fields:
-            A dict which maps field names to UnboundField instances.
+        :param fields:
+            A dict of partially-constructed fields.
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
         """
-        if prefix:
+        if prefix and prefix[-1] not in '-_;:/.':
             prefix += '-'
 
         self._errors = None
@@ -28,7 +28,7 @@ class BaseForm(object):
             self._fields[name] = field
 
     def __iter__(self):
-        """ Iterate form fields in arbitrary order"""
+        """ Iterate form fields in arbitrary order """
         return self._fields.itervalues()
 
     def __contains__(self, item):
@@ -70,6 +70,9 @@ class BaseForm(object):
 
     def process(self, formdata=None, obj=None, **kwargs):
         """
+        Take form, object data, and keyword arg input and have the fields
+        process them.
+
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
             equivalent.
