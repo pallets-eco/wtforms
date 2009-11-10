@@ -275,7 +275,7 @@ Field enclosures allow you to have fields which represent a collection of
 fields, so that a form can be composed of multiple re-usable components or more
 complex data structures such as lists and nested objects can be represented.
 
-.. autoclass:: FormField(form_class, default field arguments)
+.. autoclass:: FormField(form_class, default field arguments, separator='-')
 
     FormFields are useful for editing child objects or enclosing multiple
     related forms on a page which are submitted and validated together.  While

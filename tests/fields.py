@@ -296,13 +296,12 @@ class SubmitFieldTest(TestCase):
 
 class FormFieldTest(TestCase):
     def setUp(self):
-        class F(Form):
-            a = TextField(validators=[validators.required()])
-            b = TextField()
-
-        class F1(Form):
-            a = FormField(F)
-        self.F1 = F1
+        F = make_form(
+            a = TextField(validators=[validators.required()]),
+            b = TextField(),
+        )
+        self.F1 = make_form('F1', a = FormField(F))
+        self.F2 = make_form('F2', a = FormField(F, separator='::'))
 
     def test_formdata(self):
         form = self.F1(DummyPostData({'a-a':[u'moo']}))
@@ -328,6 +327,12 @@ class FormFieldTest(TestCase):
 
     def test_widget(self):
         self.assertEqual(self.F1().a(), u'''<table id="a"><tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" type="text" value="" /></td></tr><tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value="" /></td></tr></table>''')
+
+    def test_separator(self):
+        form = self.F2(DummyPostData({'a-a': 'fake', 'a::a': 'real'}))
+        self.assertEqual(form.a.a.name, 'a::a')
+        self.assertEqual(form.a.a.data, 'real')
+        self.assert_(form.validate())
 
     def test_no_validators_or_filters(self):
         class A(Form):

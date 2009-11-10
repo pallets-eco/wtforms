@@ -556,12 +556,16 @@ class FormField(Field):
 
     :param form_class:
         A subclass of Form that will be encapsulated.
+    :param separator:
+        A string which will be suffixed to this field's name to create the
+        prefix to enclosed fields. The default is fine for most uses.
     """
     widget = widgets.TableWidget()
 
-    def __init__(self, form_class, label=u'', validators=None, **kwargs):
+    def __init__(self, form_class, label=u'', validators=None, separator='-', **kwargs):
         super(FormField, self).__init__(label, validators, **kwargs)
         self.form_class = form_class
+        self.separator = separator
         if self.filters:
             raise TypeError('FormField cannot take filters, as the encapsulated data is not mutable.')
         if validators:
@@ -571,10 +575,11 @@ class FormField(Field):
         if data is _unset_value:
             data = self._default
 
+        prefix = self.name + self.separator
         if isinstance(data, dict):
-            self.form = self.form_class(formdata=formdata, prefix=self.name, **data)
+            self.form = self.form_class(formdata=formdata, prefix=prefix, **data)
         else:
-            self.form = self.form_class(formdata=formdata, obj=data, prefix=self.name)
+            self.form = self.form_class(formdata=formdata, obj=data, prefix=prefix)
 
     def validate(self, form, extra_validators=tuple()):
         if extra_validators:
