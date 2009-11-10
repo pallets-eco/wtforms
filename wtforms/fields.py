@@ -200,7 +200,7 @@ class Field(object):
         else:
             self.process_data(data)
 
-        if formdata is not None:
+        if formdata:
             if self.name in formdata:
                 try:
                     self.process_formdata(formdata.getlist(self.name))

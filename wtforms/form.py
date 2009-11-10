@@ -84,10 +84,6 @@ class BaseForm(object):
             form will assign the value of a matching keyword argument to the
             field, if provided.
         """
-        if not formdata:
-            # XXX This is only because Field.process checks for None, which it
-            # really shouldn't
-            formdata = None
         for name, field, in self._fields.iteritems():
             if hasattr(obj, name):
                 field.process(formdata, getattr(obj, name))
