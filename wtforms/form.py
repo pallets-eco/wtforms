@@ -1,6 +1,125 @@
 __all__ = (
+    'BaseForm',
     'Form',
 )
+
+class BaseForm(object):
+    """
+    Base Form Class.  Provides core behaviour like field construction,
+    validation, and data and error proxying.
+    """
+
+    def __init__(self, unbound_fields, prefix=''):
+        """
+        :param unbound_fields:
+            A dict which maps field names to UnboundField instances.
+        :param prefix:
+            If provided, all fields will have their name prefixed with the
+            value.
+        """
+        if prefix:
+            prefix += '-'
+
+        self._errors = None
+        self._fields = {}
+
+        for name, unbound_field in unbound_fields.iteritems():
+            field = unbound_field.bind(form=self, name=name, prefix=prefix)
+            self._fields[name] = field
+
+    def __iter__(self):
+        """ Iterate form fields in arbitrary order"""
+        return self._fields.itervalues()
+
+    def __contains__(self, item):
+        """ Returns `True` if the named field is a member of this form. """
+        return (item in self._fields)
+
+    def __getitem__(self, name):
+        """ Dict-style access to this form's fields."""
+        return self._fields[name]
+
+    def __setitem__(self, name, value):
+        self._fields[name] = value
+
+    def __delitem__(self, name):
+        del self._fields[name]
+
+    def __getattr__(self, name):
+        try:
+            return self._fields[name]
+        except KeyError:
+            raise AttributeError('Form has no field %r' % name)
+
+    def __delattr__(self, name):
+        try:
+            del self._fields[name]
+        except KeyError:
+            super(BaseForm, self).__delattr__(name)
+
+    def populate_obj(self, obj):
+        """
+        Populates the attributes of the passed `obj` with data from the form's
+        fields.
+
+        :note: This is a destructive operation; Any attribute with the same name
+               as a field will be overridden. Use with caution.
+        """
+        for name, field in self._fields.iteritems():
+            field.populate_obj(obj, name)
+
+    def process(self, formdata=None, obj=None, **kwargs):
+        """
+        :param formdata:
+            Used to pass data coming from the enduser, usually `request.POST` or
+            equivalent.
+        :param obj:
+            If `formdata` has no data for a field, the form will try to get it
+            from the passed object.
+        :param `**kwargs`:
+            If neither `formdata` or `obj` contains a value for a field, the
+            form will assign the value of a matching keyword argument to the
+            field, if provided.
+        """
+        if not formdata:
+            # XXX This is only because Field.process checks for None, which it
+            # really shouldn't
+            formdata = None
+        for name, field, in self._fields.iteritems():
+            if hasattr(obj, name):
+                field.process(formdata, getattr(obj, name))
+            elif name in kwargs:
+                field.process(formdata, kwargs[name])
+            else:
+                field.process(formdata)
+
+    def validate(self):
+        """
+        Validates the form by calling `validate` on each field, passing any
+        extra `Form.validate_<fieldname>` validators to the field validator.
+
+        Returns `True` if no errors occur.
+        """
+        self._errors = None
+        success = True
+        for name, field in self._fields.iteritems():
+            extra = []
+            inline = getattr(self.__class__, 'validate_%s' % name, None)
+            if inline is not None:
+                extra.append(inline)
+            if not field.validate(self, extra):
+                success = False
+        return success
+
+    @property
+    def data(self):
+        return dict((name, f.data) for name, f in self._fields.iteritems())
+
+    @property
+    def errors(self):
+        if self._errors is None:
+            self._errors = dict((name, f.errors) for name, f in self._fields.iteritems() if f.errors)
+        return self._errors
 
 
 class FormMeta(type):
@@ -56,10 +175,13 @@ class FormMeta(type):
         type.__delattr__(cls, name)
 
 
-class Form(object):
+class Form(BaseForm):
     """
-    Form base class. Provides core behaviour like field construction,
-    validation, and data and error proxying.
+    Declarative Form base class. Extends BaseForm's core behaviour allowing
+    fields to be defined on Form subclasses as class attributes.
+
+    In addition, form and instance input data are taken at construction time
+    and passed to `process()`.
     """
     __metaclass__ = FormMeta
 
@@ -79,90 +201,20 @@ class Form(object):
             form will assign the value of a matching keyword argument to the
             field, if provided.
         """
-        if prefix:
-            prefix += '-'
+        super(Form, self).__init__(dict(self._unbound_fields), prefix=prefix)
 
-        # populate data from form and optional instance and defaults
-        self._errors = None
-        self._fields = []
-        if not formdata:
-            formdata = None
-        for name, unbound_field in self._unbound_fields:
-            field = unbound_field.bind(form=self, name=name, prefix=prefix)
-            self._fields.append((name, field))
-            setattr(self, name, field)
+        for name in self._fields:
+            # Set all the fields to attributes so that they obscure the class
+            # attributes with the same names.
+            setattr(self, name, self._fields[name])
 
-            if hasattr(obj, name):
-                field.process(formdata, getattr(obj, name))
-            elif name in kwargs:
-                field.process(formdata, kwargs[name])
-            else:
-                field.process(formdata)
+        self.process(formdata, obj, **kwargs)
 
     def __iter__(self):
         """ Iterate form fields in their order of definition on the form. """
-        for name, field in self._fields:
-            yield field
-
-    def __contains__(self, item):
-        """ Returns `True` if the named field is a member of this form. """
-        return getattr(getattr(self, item, False), '_formfield', False) is True
+        for name, _ in self._unbound_fields:
+            yield self._fields[name]
 
     def __delattr__(self, name):
-        try:
-            self._fields.remove((name, getattr(self, name)))
-            setattr(self, name, None)
-        except ValueError:
-            super(Form, self).__delattr__(name)
-
-    def __getitem__(self, name):
-        """ Dict-style access to this form for frameworks which need it. """
-        try:
-            return getattr(self, name)
-        except AttributeError:
-            raise KeyError(name)
-
-    def validate(self):
-        """
-        Validates the form by calling `validate` on each field, passing any
-        extra `Form.validate_<fieldname>` validators to the field validator.
-
-        Returns `True` if no errors occur.
-        """
-        self._errors = None
-        success = True
-        for name, field in self._fields:
-            extra = []
-            inline = getattr(self.__class__, 'validate_%s' % name, None)
-            if inline is not None:
-                extra.append(inline)
-            if not field.validate(self, extra):
-                success = False
-        return success
-
-    @property
-    def data(self):
-        data = {}
-        for name, field in self._fields:
-            data[name] = field.data
-        return data
-
-    @property
-    def errors(self):
-        if self._errors is None:
-            self._errors = {}
-            for name, field in self._fields:
-                if field.errors:
-                    self._errors[name] = field.errors
-        return self._errors
-
-    def populate_obj(self, obj):
-        """
-        Populates the attributes of the passed `obj` with data from the form's
-        fields.
-
-        :note: This is a destructive operation; Any attribute with the same name
-               as a field will be overridden. Use with caution.
-        """
-        for name, field in self._fields:
-            field.populate_obj(obj, name)
+        super(Form, self).__delattr__(name)
+        setattr(self, name, None)
