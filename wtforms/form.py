@@ -9,7 +9,7 @@ class BaseForm(object):
     validation, and data and error proxying.
     """
 
-    def __init__(self, unbound_fields, prefix=''):
+    def __init__(self, fields, prefix=''):
         """
         :param unbound_fields:
             A dict which maps field names to UnboundField instances.
@@ -23,7 +23,7 @@ class BaseForm(object):
         self._errors = None
         self._fields = {}
 
-        for name, unbound_field in unbound_fields.iteritems():
+        for name, unbound_field in fields.iteritems():
             field = unbound_field.bind(form=self, name=name, prefix=prefix)
             self._fields[name] = field
 

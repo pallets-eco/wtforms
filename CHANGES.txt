@@ -5,6 +5,9 @@ Version 0.5
 -----------
 Not yet released.
 
+- Added a BaseForm class which provides the core processing and validation
+  functionality of Form without requiring declarative subclassing.
+
 - ext.sqlalchemy.fields now has an additional QuerySelectMultipleField.
 
 - Field labels now default to a humanized field name.
