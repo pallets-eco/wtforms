@@ -20,6 +20,7 @@ class BaseForm(object):
         if prefix and prefix[-1] not in '-_;:/.':
             prefix += '-'
 
+        self._prefix = prefix
         self._errors = None
         self._fields = {}
 
@@ -40,9 +41,11 @@ class BaseForm(object):
         return self._fields[name]
 
     def __setitem__(self, name, value):
-        self._fields[name] = value
+        """ Bind a field to this form. """
+        self._fields[name] = value.bind(form=self, name=name, prefix=self._prefix)
 
     def __delitem__(self, name):
+        """ Remove a field from this form. """
         del self._fields[name]
 
     def __getattr__(self, name):
@@ -50,12 +53,6 @@ class BaseForm(object):
             return self._fields[name]
         except KeyError:
             raise AttributeError('Form has no field %r' % name)
-
-    def __delattr__(self, name):
-        try:
-            del self._fields[name]
-        except KeyError:
-            super(BaseForm, self).__delattr__(name)
 
     def populate_obj(self, obj):
         """
@@ -212,8 +209,18 @@ class Form(BaseForm):
     def __iter__(self):
         """ Iterate form fields in their order of definition on the form. """
         for name, _ in self._unbound_fields:
-            yield self._fields[name]
+            if name in self._fields:
+                yield self._fields[name]
+
+    def __setitem__(self, name, value):
+        raise TypeError('Fields may not be added to Form instances, only classes.')
+
+    def __delitem__(self, name):
+        del self._fields[name]
+        setattr(self, name, None)
 
     def __delattr__(self, name):
-        super(Form, self).__delattr__(name)
-        setattr(self, name, None)
+        try:
+            self.__delitem__(name)
+        except KeyError:
+            super(Form, self).__delattr__(name)

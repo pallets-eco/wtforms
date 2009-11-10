@@ -41,11 +41,8 @@ class BaseFormTest(TestCase):
 
     def test_field_removal(self):
         form = self.get_form()
-        del form.test
-        self.assert_('test' not in form)
-        self.assertRaises(AttributeError, getattr, form, 'test')
-        form = self.get_form()
         del form['test']
+        self.assertRaises(AttributeError, getattr, form, 'test')
         self.assert_('test' not in form)
 
     def test_populate_obj(self):
