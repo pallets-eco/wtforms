@@ -81,17 +81,14 @@ class Field(object):
         self.filters = filters
         self.description = description
         self.type = type(self).__name__
+        self._default = default
+        if widget:
+            self.widget = widget
         self.flags = Flags()
-        try:
-            self._default = default()
-        except TypeError:
-            self._default = default
         for v in validators:    
             flags = getattr(v, 'field_flags', ())
             for f in flags:
                 setattr(self.flags, f, True)
-        if widget:
-            self.widget = widget
 
     def __unicode__(self):
         """
@@ -196,9 +193,11 @@ class Field(object):
         inputs.
         """
         if data is _unset_value:
-            self.process_data(self._default)
-        else:
-            self.process_data(data)
+            try:
+                data = self._default()
+            except TypeError:
+                data = self._default
+        self.process_data(data)
 
         if formdata:
             if self.name in formdata:
@@ -573,7 +572,10 @@ class FormField(Field):
 
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
-            data = self._default
+            try:
+                data = self._default()
+            except TypeError:
+                data = self._default
 
         prefix = self.name + self.separator
         if isinstance(data, dict):
@@ -643,7 +645,10 @@ class FieldList(Field):
 
     def process(self, formdata, data=_unset_value):
         if data is _unset_value or not data:
-            data = self._default
+            try:
+                data = self._default()
+            except TypeError:
+                data = self._default
         self.entries = []
 
         indices = ()
