@@ -63,7 +63,7 @@ class TemplateTagsTest(TestCase):
 
     def _render(self, source):
         t = Template(self.load_tag + source)
-        return t.render(Context({'form': self.F(), 'a': self.F().a,  'someclass': "CLASSVAL!"}))
+        return t.render(Context({'form': self.F(), 'a': self.F().a,  'someclass': "CLASSVAL>!"}))
 
     def test_simple_print(self):
         self.assertEqual(self._render(u'{% autoescape off %}{{ form.a }}{% endautoescape %}'), u'<input id="a" name="a" type="text" value="" />')
@@ -72,7 +72,7 @@ class TemplateTagsTest(TestCase):
     def test_form_field(self):
         self.assertEqual(self._render(u'{% form_field form.a %}'), u'<input id="a" name="a" type="text" value="" />')
         self.assertEqual(self._render(u'{% form_field a class=someclass onclick="alert()" %}'), 
-                         u'<input class="CLASSVAL!" id="a" name="a" onclick="alert()" type="text" value="" />')
+                         u'<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="" />')
 
 class ModelFormTest(TestCase):
     F = model_form(test_models.User)
