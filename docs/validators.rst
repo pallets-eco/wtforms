@@ -33,6 +33,8 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.Length
 
+.. autoclass:: wtforms.validators.NumberRange
+   
 .. autoclass:: wtforms.validators.Optional
 
 .. autoclass:: wtforms.validators.Required

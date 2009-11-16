@@ -55,7 +55,7 @@ class Length(object):
 
     :param min:
         The minimum required length of the string. If not provided, minimum
-        length will not be checked.        
+        length will not be checked.
     :param max:
         The maximum length of the string. If not provided, maximum length
         will not be checked.
@@ -71,6 +71,32 @@ class Length(object):
     def __call__(self, form, field):
         l = field.data and len(field.data) or 0
         if l < self.min or self.max != -1 and l > self.max:
+            raise ValidationError(self.message)
+
+
+class NumberRange(object):
+    """
+    Validates that a number is of a minimum and/or maximum value.
+
+    :param min:
+        The minimum required value of the integer. If not provided, minimum
+        value will not be checked.
+    :param max:
+        The maximum value of the integer. If not provided, maximum value
+        will not be checked.
+    :param message:
+        Error message to raise in case of a validation error. A default
+        containing min and max values is provided.
+    """
+    def __init__(self, min=None, max=None, message=None):
+        self.min = min
+        self.max = max
+        self.message = message or u'Number must be between %r and %r.' % (min, max)
+
+    def __call__(self, form, field):
+        data = field.data
+        if data is None or (self.min is not None and data < self.min) or \
+            (self.max is not None and data > self.max):
             raise ValidationError(self.message)
 
 

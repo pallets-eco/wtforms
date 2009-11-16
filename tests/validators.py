@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from unittest import TestCase
-from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url
+from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange
 
 
 class DummyForm(object):
@@ -87,6 +87,13 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.d'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.12'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://localhost:abc/a'))
+
+    def test_number_range(self):
+        v = NumberRange(min=5, max=10)
+        self.assertEqual(v(self.form, DummyField(7)), None)
+        self.assertRaises(ValidationError, v, self.form, DummyField(None))
+        self.assertRaises(ValidationError, v, self.form, DummyField(0))
+        self.assertRaises(ValidationError, v, self.form, DummyField(12))
 
 
 if __name__ == '__main__':
