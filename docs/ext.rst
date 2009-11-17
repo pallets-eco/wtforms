@@ -41,7 +41,7 @@ Model forms
 ~~~~~~~~~~~
 .. module:: wtforms.ext.django.orm
 
-.. autofunction:: model_form(model, base_class=Form, include_pk=False)
+.. autofunction:: model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None)
 
     :func:`model_form` attempts to glean as much metadata as possible from
     inspecting the model's fields, and will even attempt to guess at what

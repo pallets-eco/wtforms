@@ -14,20 +14,19 @@ __all__ = (
 
 class ModelConverter(object):
     SIMPLE_CONVERSIONS = {
-        # TODO: 'ImageField' 'ManyToManyField' 'NullBooleanField' 'OneToOneField'
+        # TODO: 'ImageField' 'ManyToManyField' 'OneToOneField'
         'AutoField': f.IntegerField,
         'BooleanField': f.BooleanField,
-        'CharField': f.TextField, 
+        'CharField': f.TextField,
         'DateTimeField': f.DateTimeField,
         'FileField':  f.FileField,
         'FilePathField': f.FileField,
         'FloatField': f.TextField,
         'IntegerField': f.IntegerField,
         'PhoneNumberField': f.TextField,
-        'SmallIntegerField': [f.IntegerField],
+        'SmallIntegerField': f.IntegerField,
         'FloatField': f.TextField,
         'IntegerField': f.IntegerField,
-        'PhoneNumberField': f.TextField, # TODO: determine phone number validator?
         'PositiveIntegerField': f.IntegerField,
         'PositiveSmallIntegerField': f.IntegerField,
         'SlugField': f.TextField,
@@ -35,29 +34,31 @@ class ModelConverter(object):
         'XMLField': f.TextAreaField,
     }
 
-    def convert(self, field):
+    def convert(self, model, field, field_args):
         kwargs = {
             'label': field.verbose_name,
             'description': field.help_text,
             'validators': [],
             'default': field.default,
         }
-        if field.blank:
-            kwargs['validators'].append(validators.optional())
-        if field.max_length is not None and field.max_length > 0:
-            kwargs['validators'].append(validators.length(max=field.max_length))
+        if field_args:
+            kwargs.update(field_args)
 
-        fname = type(field).__name__
+        if field.blank:
+            kwargs['validators'].append(validators.Optional())
+        if field.max_length is not None and field.max_length > 0:
+            kwargs['validators'].append(validators.Length(max=field.max_length))
 
         if field.choices:
             kwargs['choices'] = field.choices
             return f.SelectField(**kwargs)
-        elif fname in self.SIMPLE_CONVERSIONS:
-            return self.SIMPLE_CONVERSIONS[fname](**kwargs)
         else:
-            m = getattr(self, 'conv_%s' % fname, None)
-            if m is not None:
-                return m(kwargs, field)
+            ftype = type(field).__name__
+            converter = getattr(self, 'conv_%s' % ftype, None)
+            if converter is not None:
+                return converter(kwargs, field)
+            elif ftype in self.SIMPLE_CONVERSIONS:
+                return self.SIMPLE_CONVERSIONS[ftype](**kwargs)
 
     def conv_ForeignKey(self, kwargs, field):
         return ModelSelectField(model=field.rel.to, **kwargs)
@@ -88,27 +89,64 @@ class ModelConverter(object):
 
         return f.SelectField(choices=STATE_CHOICES, **kwargs)
 
+    def conv_NullBooleanField(self, kwargs, field):
+        def coerce_nullbool(value):
+            d = {'None': None, None: None, 'True': True, 'False': False}
+            if value in d:
+                return d[value]
+            else:
+                return bool(int(value))
 
-def model_form(model, base_class=Form, include_pk=False):
+        choices = ((None, 'Unknown'), (True, 'Yes'), (False, 'No'))
+        return f.SelectField(choices=choices, coerce=coerce_nullbool, **kwargs)
+
+def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
     """
-    Create a wtforms form for a given django model class::
+    Generate a dictionary of fields for a given Django model.
+
+    See `model_form` docstring for description of parameters.
+    """
+    converter = converter or ModelConverter()
+    field_args = field_args or {}
+
+    model_fields = ((f.attname, f) for f in model._meta.fields)
+    if only:
+        model_fields = (x for x in model_fields if x[0] in only)
+    elif exclude:
+        model_fields = (x for x in model_fields if x[0] not in exclude)
+
+    field_dict = {}
+    for name, model_field in model_fields:
+        field = converter.convert(model, model_field, field_args.get(name))
+        if field is not None:
+            field_dict[name] = field
+
+    return field_dict
+
+def model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None):
+    """
+    Create a wtforms Form for a given Django model class::
 
         from wtforms.ext.django.orm import model_form
         from myproject.myapp.models import User
         UserForm = model_form(User)
 
-    The form can be made to extend your own form by passing the ``base_class``
-    parameter. Primary key fields are not included unless you specify
-    ``include_pk=True``.
+    :param model:
+        A Django ORM model class
+    :param base_class:
+        Base form class to extend from. Must be a ``wtforms.Form`` subclass.
+    :param only:
+        An optional iterable with the property names that should be included in
+        the form. Only these properties will have fields.
+    :param exclude:
+        An optional iterable with the property names that should be excluded
+        from the form. All other properties will have fields.
+    :param field_args:
+        An optional dictionary of field names mapping to keyword arguments used
+        to construct each field object.
+    :param converter:
+        A converter to generate the fields based on the model properties. If
+        not set, ``ModelConverter`` is used.
     """
-    meta = model._meta
-    f_dict = {}
-    converter = ModelConverter()
-    for mfield in meta.fields:
-        if not include_pk and mfield is meta.pk:
-            continue
-        mtype = type(mfield).__name__
-        formfield = converter.convert(mfield)
-        if formfield is not None:
-            f_dict[mfield.attname] = formfield
-    return type(meta.object_name + 'Form', (base_class, ), f_dict)
+    field_dict = model_fields(model, only, exclude, field_args, converter)
+    return type(model._meta.object_name + 'Form', (base_class, ), field_dict)

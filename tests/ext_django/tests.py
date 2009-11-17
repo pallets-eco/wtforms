@@ -75,14 +75,19 @@ class TemplateTagsTest(TestCase):
                          u'<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="" />')
 
 class ModelFormTest(TestCase):
-    F = model_form(test_models.User)
+    F = model_form(test_models.User, exclude=['id'], field_args = {
+        'posts': {
+            'validators': [validators.NumberRange(min=4, max=7)],
+            'description': 'Test'
+        }
+    })
     form = F()
-    form_with_pk = model_form(test_models.User, include_pk=True)()
+    form_with_pk = model_form(test_models.User)()
 
     def test_form_sanity(self):
         self.assertEqual(self.F.__name__, 'UserForm')
-        self.assertEqual(len([x for x in self.form]), 13) 
-        self.assertEqual(len([x for x in self.form_with_pk]), 14) 
+        self.assertEqual(len([x for x in self.form]), 13)
+        self.assertEqual(len([x for x in self.form_with_pk]), 14)
 
     def test_label(self):
         self.assertEqual(self.form.reg_ip.label.text, 'IP Addy')
@@ -112,6 +117,10 @@ class ModelFormTest(TestCase):
 
     def test_us_states(self):
         self.assert_(len(self.form.state.choices) >= 50)
+
+    def test_field_args(self):
+        self.assert_(contains_validator(self.form.posts, validators.NumberRange))
+        self.assertEqual(self.form.posts.description, 'Test')
 
 class QuerySetSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
