@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP, ROUND_DOWN
 from unittest import TestCase
 
 from wtforms import validators, widgets
@@ -227,13 +227,26 @@ class IntegerFieldTest(TestCase):
 
 
 class DecimalFieldTest(TestCase):
-    class F(Form):
-        a = DecimalField()
-
     def test(self):
-        form = self.F(DummyPostData(a=['2.1']))
+        F = make_form(a=DecimalField())
+        form = F(DummyPostData(a='2.1'))
         self.assertEqual(form.a.data, Decimal('2.1'))
         self.assertEqual(form.a._value(), u'2.10')
+        self.assert_(form.validate())
+        form = F(DummyPostData(a='2,1'), a=Decimal(5))
+        self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a.raw_data, '2,1')
+        self.assert_(not form.validate())
+
+
+    def test_quantize(self):
+        F = make_form(a=DecimalField(places=3, rounding=ROUND_UP))
+        form = F(a=Decimal('3.1415926535'))
+        self.assertEqual(form.a._value(), u'3.142')
+        form.a.rounding = ROUND_DOWN
+        self.assertEqual(form.a._value(), u'3.141')
+        form = F(a=3.14159265)
+        self.assertEqual(form.a._value(), u'3.142')
 
 
 class BooleanFieldTest(TestCase):

@@ -163,7 +163,7 @@ refer to a single input from the form.
 
 .. autoclass:: DateTimeField(default field arguments)
 
-.. autoclass:: DecimalField(default field arguments, number_format='%0.2f')
+.. autoclass:: DecimalField(default field arguments, places=2, rounding=None)
 
 .. autoclass:: FileField(default field arguments)
 

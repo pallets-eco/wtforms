@@ -1,6 +1,6 @@
 from cgi import escape
 from datetime import datetime
-from decimal import Decimal, InvalidOperation
+import decimal
 from itertools import chain, count
 import time
 
@@ -466,31 +466,51 @@ class DecimalField(TextField):
     """
     A text field which displays and coerces data of the `decimal.Decimal` type.
 
-    Defining the `number_format` parameter to the constructor allows you to
-    customize how the number is displayed, using standard python string
-    formatting rules.
+    :param places:
+        How many decimal places to quantize the value to for display on form.
+        If None, does not quantize value.
+    :param rounding: 
+        How to round the value during quantize, for example
+        `decimal.ROUND_UP`. If unset, uses the rounding value from the
+        current thread's context.
     """
 
-    def __init__(self, label=u'', validators=None, number_format='%0.2f', **kwargs):
+    def __init__(self, label=u'', validators=None, places=2, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
         self.raw_data = None
-        self.number_format = number_format
+        self.places = places
+        self.rounding = rounding
 
     def _value(self):
         if self.data is not None:
-            return self.number_format % self.data
+            if self.places is not None:
+                if hasattr(self.data, 'quantize'):
+                    exp = decimal.Decimal('.1') ** self.places
+                    quantized = self.data.quantize(exp, rounding=self.rounding)
+                    return unicode(quantized)
+                else:
+                    # If for some reason, data is a float or int, then format
+                    # as we would for floats using string formatting.
+                    format = u'%%0.%df' % self.places
+                    return format % self.data
+            else:
+                return unicode(self.data)
         elif self.raw_data is not None:
             return self.raw_data
         else:
             return ''
 
+    def post_validate(self, form, validation_stopped):
+        if not validation_stopped and self.raw_data is not None and self.data is None:
+            raise ValidationError(u'Not a valid decimal value')
+
     def process_formdata(self, valuelist):
         if valuelist:
             self.raw_data = valuelist[0]
             try:
-                self.data = Decimal(valuelist[0])
-            except (InvalidOperation, ValueError):
-                pass
+                self.data = decimal.Decimal(valuelist[0])
+            except (decimal.InvalidOperation, ValueError):
+                self.data = None
 
 
 class BooleanField(Field):

@@ -14,6 +14,10 @@ Not yet released.
 
 - Fields now have a `short_name` property which is the un-prefixed name.
 
+- DecimalField now rounds values for display without float coercion, the
+  `number_format` keyword arg has been removed. See docs for details on how to
+  format decimals.
+
 Version 0.4
 -----------
 Released October 10th, 2009.
