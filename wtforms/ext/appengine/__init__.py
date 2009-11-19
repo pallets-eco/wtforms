@@ -1,105 +1,98 @@
 # -*- coding: utf-8 -*-
 """
-    wtforms.ext.appengine
-    ~~~~~~~~~~~~~~~~~~~~~
+Form generation utilities for App Engine's db.Model classes.
 
-    Form generation utilities for db.Model classes, based on WTForms.
+The goal of ``model_form()`` is to provide a clean, explicit and predictable
+way to create forms based on ``db.Model`` classes. No malabarism or black
+magic should be necessary to generate a form for models, and to add custom
+non-model related fields: ``model_form()`` simply generates a form class
+that can be used as it is, or that can be extended directly or even be used
+to create other forms using ``model_form()``.
 
-    WTForms library is at http://wtforms.simplecodes.com/
+Example usage:
 
-    The goal of ``model_form()`` is to provide a clean, explicit and predictable
-    way to create forms based on ``db.Model`` classes. No malabarism or black
-    magic should be necessary to generate a form for models, and to add custom
-    non-model related fields: ``model_form()`` simply generates a form class
-    that can be used as it is, or that can be extended directly or even be used
-    to create other forms using ``model_form()``.
+    from google.appengine.ext import db
+    from tipfy.ext.model.form import model_form
 
-    Example usage:
+    # Define an example model and add a record.
+    class Contact(db.Model):
+        name = db.StringProperty(required=True)
+        city = db.StringProperty()
+        age = db.IntegerProperty(required=True)
+        is_admin = db.BooleanProperty(default=False)
 
-        from google.appengine.ext import db
-        from tipfy.ext.model.form import model_form
+    new_entity = Contact(key_name='test', name='Test Name', age=17)
+    new_entity.put()
 
-        # Define an example model and add a record.
-        class Contact(db.Model):
-            name = db.StringProperty(required=True)
-            city = db.StringProperty()
-            age = db.IntegerProperty(required=True)
-            is_admin = db.BooleanProperty(default=False)
+    # Generate a form based on the model.
+    ContactForm = model_form(Contact)
 
-        new_entity = Contact(key_name='test', name='Test Name', age=17)
-        new_entity.put()
+    # Get a form populated with entity data.
+    entity = Contact.get_by_key_name('test')
+    form = ContactForm(obj=entity)
 
-        # Generate a form based on the model.
-        ContactForm = model_form(Contact)
+Properties from the model can be excluded from the generated form, or it can
+include just a set of properties. For example:
 
-        # Get a form populated with entity data.
-        entity = Contact.get_by_key_name('test')
-        form = ContactForm(obj=entity)
+    # Generate a form based on the model, excluding 'city' and 'is_admin'.
+    ContactForm = model_form(Contact, exclude=('city', 'is_admin'))
 
-    Properties from the model can be excluded from the generated form, or it can
-    include just a set of properties. For example:
+    # or...
 
-        # Generate a form based on the model, excluding 'city' and 'is_admin'.
-        ContactForm = model_form(Contact, exclude=('city', 'is_admin'))
+    # Generate a form based on the model, only including 'name' and 'age'.
+    ContactForm = model_form(Contact, only=('name', 'age'))
 
-        # or...
+The form can be generated setting field arguments:
 
-        # Generate a form based on the model, only including 'name' and 'age'.
-        ContactForm = model_form(Contact, only=('name', 'age'))
+    ContactForm = model_form(Contact, only=('name', 'age'), field_args={
+        'name': {
+            'label': 'Full name',
+            'description': 'Your name',
+        },
+        'age': {
+            'label': 'Age',
+            'validators': [validators.NumberRange(min=14, max=99)],
+        }
+    })
 
-    The form can be generated setting field arguments:
+The class returned by ``model_form()`` can be used as a base class for forms
+mixing non-model fields and/or other model forms. For example:
 
-        ContactForm = model_form(Contact, only=('name', 'age'), field_args={
-            'name': {
-                'label': 'Full name',
-                'description': 'Your name',
-            },
-            'age': {
-                'label': 'Age',
-                'validators': [validators.NumberRange(min=14, max=99)],
-            }
-        })
+    # Generate a form based on the model.
+    BaseContactForm = model_form(Contact)
 
-    The class returned by ``model_form()`` can be used as a base class for forms
-    mixing non-model fields and/or other model forms. For example:
+    # Generate a form based on other model.
+    ExtraContactForm = model_form(MyOtherModel)
 
-        # Generate a form based on the model.
-        BaseContactForm = model_form(Contact)
+    class ContactForm(BaseContactForm):
+        # Add an extra, non-model related field.
+        subscribe_to_news = f.BooleanField()
 
-        # Generate a form based on other model.
-        ExtraContactForm = model_form(MyOtherModel)
+        # Add the other model form as a subform.
+        extra = f.FormField(ExtraContactForm)
 
-        class ContactForm(BaseContactForm):
-            # Add an extra, non-model related field.
-            subscribe_to_news = f.BooleanField()
+The class returned by ``model_form()`` can also extend an existing form
+class:
 
-            # Add the other model form as a subform.
-            extra = f.FormField(ExtraContactForm)
+    class BaseContactForm(Form):
+        # Add an extra, non-model related field.
+        subscribe_to_news = f.BooleanField()
 
-    The class returned by ``model_form()`` can also extend an existing form
-    class:
-
-        class BaseContactForm(Form):
-            # Add an extra, non-model related field.
-            subscribe_to_news = f.BooleanField()
-
-        # Generate a form based on the model.
-        ContactForm = model_form(Contact, base_class=BaseContactForm)
-
-    :copyright: 2009 by tipfy.org.
-    :license: BSD, see LICENSE.txt for more details.
+    # Generate a form based on the model.
+    ContactForm = model_form(Contact, base_class=BaseContactForm)
 """
 from wtforms import Form, validators, widgets, fields as f
 
 
 class ReferencePropertyField(f.Field):
-    """A field for ``db.ReferenceProperty``. The list items are rendered in a
+    """
+    A field for ``db.ReferenceProperty``. The list items are rendered in a
     select.
     """
     widget = widgets.Select()
 
     def __init__(self, label=u'', validators=None, reference_class=None,
-        label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
+                 label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
         super(ReferencePropertyField, self).__init__(label, validators,
             **kwargs)
         self.label_attr = label_attr
@@ -154,7 +147,8 @@ class ReferencePropertyField(f.Field):
 
 
 class StringListPropertyField(f.TextAreaField):
-    """A field for ``db.StringListProperty``. The list items are rendered in a
+    """
+    A field for ``db.StringListProperty``. The list items are rendered in a
     textarea.
     """
     def process_data(self, value):
@@ -173,7 +167,8 @@ class StringListPropertyField(f.TextAreaField):
 
 
 def get_TextField(kwargs):
-    """Returns a ``TextField``, applying the ``db.StringProperty`` length limit
+    """
+    Returns a ``TextField``, applying the ``db.StringProperty`` length limit
     of 500 bytes.
     """
     kwargs['validators'].append(validators.length(max=500))
@@ -181,7 +176,8 @@ def get_TextField(kwargs):
 
 
 def get_IntegerField(kwargs):
-    """Returns an ``IntegerField``, applying the ``db.IntegerProperty`` range
+    """
+    Returns an ``IntegerField``, applying the ``db.IntegerProperty`` range
     limits.
     """
     kwargs['validators'].append(validators.NumberRange(min=0x8000000000000000,
@@ -322,7 +318,8 @@ def convert_RatingProperty(model, prop, kwargs):
 
 
 class ModelConverter(object):
-    """Converts properties from a ``db.Model`` class to form fields.
+    """
+    Converts properties from a ``db.Model`` class to form fields.
 
     Default conversions between properties and fields:
 
@@ -409,7 +406,8 @@ class ModelConverter(object):
     }
 
     def __init__(self, converters=None):
-        """Constructs the converter, setting the converter callables.
+        """
+        Constructs the converter, setting the converter callables.
 
         :param converters:
             A dictionary of converter callables for each property type. The
@@ -418,7 +416,8 @@ class ModelConverter(object):
         self.converters = converters or self.default_converters
 
     def convert(self, model, prop, field_args):
-        """Returns a form field for a single model property.
+        """
+        Returns a form field for a single model property.
 
         :param model:
             The ``db.Model`` class that contains the property.
@@ -449,8 +448,9 @@ class ModelConverter(object):
 
 
 def model_fields(model, only=None, exclude=None, field_args=None,
-    converter=None):
-    """Extracts and returns a dictionary of form fields for a given
+                 converter=None):
+    """
+    Extracts and returns a dictionary of form fields for a given
     ``db.Model`` class.
 
     :param model:
@@ -491,8 +491,9 @@ def model_fields(model, only=None, exclude=None, field_args=None,
 
 
 def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
-    converter=None):
-    """Creates and returns a dynamic ``wtforms.Form`` class for a given
+               converter=None):
+    """
+    Creates and returns a dynamic ``wtforms.Form`` class for a given
     ``db.Model`` class. The form class can be used as it is or serve as a base
     for extended form classes, which can then mix non-model related fields,
     subforms with other model forms, among other possibilities.
