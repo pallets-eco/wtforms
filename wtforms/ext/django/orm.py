@@ -8,37 +8,20 @@ from wtforms.ext.django.fields import ModelSelectField
 
 
 __all__ = (
-    'model_form',
+    'model_fields', 'model_form',
 )
 
 
-class ModelConverter(object):
-    SIMPLE_CONVERSIONS = {
-        # TODO: 'ImageField' 'ManyToManyField' 'OneToOneField'
-        'AutoField': f.IntegerField,
-        'BooleanField': f.BooleanField,
-        'CharField': f.TextField,
-        'DateTimeField': f.DateTimeField,
-        'FileField':  f.FileField,
-        'FilePathField': f.FileField,
-        'FloatField': f.TextField,
-        'IntegerField': f.IntegerField,
-        'PhoneNumberField': f.TextField,
-        'SmallIntegerField': f.IntegerField,
-        'FloatField': f.TextField,
-        'IntegerField': f.IntegerField,
-        'PositiveIntegerField': f.IntegerField,
-        'PositiveSmallIntegerField': f.IntegerField,
-        'SlugField': f.TextField,
-        'TextField': f.TextAreaField,
-        'XMLField': f.TextAreaField,
-    }
+class ModelConverterBase(object):
+    def __init__(self, converters):
+        self.converters = converters
 
     def convert(self, model, field, field_args):
         kwargs = {
             'label': field.verbose_name,
             'description': field.help_text,
             'validators': [],
+            'filters': [],
             'default': field.default,
         }
         if field_args:
@@ -49,39 +32,78 @@ class ModelConverter(object):
         if field.max_length is not None and field.max_length > 0:
             kwargs['validators'].append(validators.Length(max=field.max_length))
 
+        ftype = type(field).__name__
         if field.choices:
             kwargs['choices'] = field.choices
             return f.SelectField(**kwargs)
+        elif ftype in self.converters:
+            return self.converters[ftype](model, field, kwargs)
         else:
-            ftype = type(field).__name__
             converter = getattr(self, 'conv_%s' % ftype, None)
             if converter is not None:
-                return converter(kwargs, field)
-            elif ftype in self.SIMPLE_CONVERSIONS:
-                return self.SIMPLE_CONVERSIONS[ftype](**kwargs)
+                return converter(model, field, kwargs)
 
-    def conv_ForeignKey(self, kwargs, field):
+
+class ModelConverter(ModelConverterBase):
+    DEFAULT_SIMPLE_CONVERSIONS = {
+        f.IntegerField: ['AutoField', 'IntegerField', 'SmallIntegerField', 'PositiveIntegerField', 'PositiveSmallIntegerField'],
+        f.DecimalField: ['DecimalField', 'FloatField'],
+        f.FileField: ['FileField', 'FilePathField', 'ImageField'],
+        f.DateTimeField: ['DateTimeField'],
+        f.BooleanField: ['BooleanField'],
+        f.TextField: ['CharField', 'PhoneNumberField', 'SlugField'],
+        f.TextAreaField: ['TextField', 'XMLField'],
+    }
+
+    def __init__(self, extra_converters=None, simple_conversions=None):
+        converters = {}
+        if simple_conversions is None:
+            simple_conversions = self.DEFAULT_SIMPLE_CONVERSIONS
+        for field_type, django_fields in simple_conversions.iteritems():
+            converter = self.make_simple_converter(field_type)
+            for name in django_fields:
+                converters[name] = converter
+
+        if extra_converters:
+            converters.update(extra_converters)
+        super(ModelConverter, self).__init__(converters)
+
+    def make_simple_converter(self, field_type):
+        def _converter(model, field, kwargs):
+            return field_type(**kwargs)
+        return _converter
+
+    def conv_ForeignKey(self, model, field, kwargs):
         return ModelSelectField(model=field.rel.to, **kwargs)
 
-    def conv_TimeField(self, kwargs, field):
-        return f.DateTimeField(format='%H-%M-%S', **kwargs)
+    def conv_ManytoManyField(self, model, field, kwargs):
+        raise NotImplementedError() # TODO
 
-    def conv_DateField(self, kwargs, field):
+    def conv_TimeField(self, model, field, kwargs):
+        def time_only(obj):
+            try:
+                return obj.time()
+            except AttributeError:
+                return obj
+        kwargs['filters'].append(time_only)
+        return f.DateTimeField(format='%H:%M:%S', **kwargs)
+
+    def conv_DateField(self, model, field, kwargs):
         return f.DateTimeField(format='%Y-%m-%d', **kwargs)
 
-    def conv_EmailField(self, kwargs, field):
+    def conv_EmailField(self, model, field, kwargs):
         kwargs['validators'].append(validators.email())
         return f.TextField(**kwargs)
 
-    def conv_IPAddressField(self, kwargs, field):
+    def conv_IPAddressField(self, model, field, kwargs):
         kwargs['validators'].append(validators.ip_address())
         return f.TextField(**kwargs)
 
-    def conv_URLField(self, kwargs, field):
+    def conv_URLField(self, model, field, kwargs):
         kwargs['validators'].append(validators.url())
         return f.TextField(**kwargs)
 
-    def conv_USStateField(self, kwargs, field):
+    def conv_USStateField(self, model, field, kwargs):
         try:
             from django.contrib.localflavor.us.us_states import STATE_CHOICES
         except ImportError:
@@ -89,7 +111,7 @@ class ModelConverter(object):
 
         return f.SelectField(choices=STATE_CHOICES, **kwargs)
 
-    def conv_NullBooleanField(self, kwargs, field):
+    def conv_NullBooleanField(self, model, field, kwargs):
         def coerce_nullbool(value):
             d = {'None': None, None: None, 'True': True, 'False': False}
             if value in d:
@@ -99,6 +121,7 @@ class ModelConverter(object):
 
         choices = ((None, 'Unknown'), (True, 'Yes'), (False, 'No'))
         return f.SelectField(choices=choices, coerce=coerce_nullbool, **kwargs)
+
 
 def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
     """
@@ -122,6 +145,7 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
             field_dict[name] = field
 
     return field_dict
+
 
 def model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None):
     """
