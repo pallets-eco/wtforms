@@ -10,7 +10,7 @@
     nosetests --with-gae --without-sandbox
 """
 import sys, os
-WTFORMS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+WTFORMS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, WTFORMS_DIR)
 
 from unittest import TestCase
@@ -74,6 +74,13 @@ class DateTimeModel(db.Model):
 
 
 class TestModelForm(TestCase):
+    def tearDown(self):
+        for entity in Author.all():
+            db.delete(entity)
+
+        for entity in Book.all():
+            db.delete(entity)
+
     def test_model_form_basic(self):
         form_class = model_form(Author)
 
@@ -146,3 +153,72 @@ class TestModelForm(TestCase):
         self.assertEqual(hasattr(form_class, 'prop_time_1'), True)
         self.assertEqual(hasattr(form_class, 'prop_time_2'), False)
         self.assertEqual(hasattr(form_class, 'prop_time_3'), False)
+
+    def test_not_implemented_properties(self):
+        # This should not raise NotImplementedError.
+        form = model_form(AllPropertiesModel)
+
+        # These properties should not be included in the form.
+        self.assertRaises(AttributeError, getattr, model_form, 'prop_list')
+        self.assertRaises(AttributeError, getattr, model_form, 'prop_user')
+        self.assertRaises(AttributeError, getattr, model_form, 'prop_geo_pt')
+        self.assertRaises(AttributeError, getattr, model_form, 'prop_im')
+
+    def test_populate_form(self):
+        entity = Author(key_name='test', name='John', city='Yukon', age=25, is_admin=True)
+        entity.put()
+
+        obj = Author.get_by_key_name('test')
+        form_class = model_form(Author)
+
+        form = form_class(obj=obj)
+        self.assertEqual(form.name.data, 'John')
+        self.assertEqual(form.city.data, 'Yukon')
+        self.assertEqual(form.age.data, 25)
+        self.assertEqual(form.is_admin.data, True)
+
+    def test_field_attributes(self):
+        form_class = model_form(Author, field_args={
+            'name': {
+                'label': 'Full name',
+                'description': 'Your name',
+            },
+            'age': {
+                'label': 'Age',
+                'validators': [validators.NumberRange(min=14, max=99)],
+            },
+            'city': {
+                'label': 'City',
+                'description': 'The city in which you live, not the one in which you were born.',
+            },
+            'is_admin': {
+                'label': 'Administrative rights',
+            },
+        })
+        form = form_class()
+
+        self.assertEqual(form.name.label.text, 'Full name')
+        self.assertEqual(form.name.description, 'Your name')
+
+        self.assertEqual(form.age.label.text, 'Age')
+
+        self.assertEqual(form.city.label.text, 'City')
+        self.assertEqual(form.city.description, 'The city in which you live, not the one in which you were born.')
+
+        self.assertEqual(form.is_admin.label.text, 'Administrative rights')
+
+    def test_reference_property(self):
+        keys = []
+        for name in ['foo', 'bar', 'baz']:
+            author = Author(name=name, age=26)
+            author.put()
+            keys.append(str(author.key()))
+
+        form_class = model_form(Book)
+        form = form_class()
+
+        choices = []
+        i = 0
+        for key, name, value in form.author.iter_choices():
+            self.assertEqual(key, keys[i])
+            i += 1
