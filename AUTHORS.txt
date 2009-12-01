@@ -10,4 +10,5 @@ Contributors:
 - Ali Aafshar
 - Adam Lowry
 - Emil Vladev
+- Rodrigo Moraes
 - Sebastian Wiesner
