@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Form generation utilities for App Engine's db.Model classes.
+Form generation utilities for App Engine's ``db.Model`` class.
 
 The goal of ``model_form()`` is to provide a clean, explicit and predictable
 way to create forms based on ``db.Model`` classes. No malabarism or black
@@ -11,75 +11,86 @@ to create other forms using ``model_form()``.
 
 Example usage:
 
-    from google.appengine.ext import db
-    from tipfy.ext.model.form import model_form
+.. code-block:: python
 
-    # Define an example model and add a record.
-    class Contact(db.Model):
-        name = db.StringProperty(required=True)
-        city = db.StringProperty()
-        age = db.IntegerProperty(required=True)
-        is_admin = db.BooleanProperty(default=False)
+   from google.appengine.ext import db
+   from tipfy.ext.model.form import model_form
 
-    new_entity = Contact(key_name='test', name='Test Name', age=17)
-    new_entity.put()
+   # Define an example model and add a record.
+   class Contact(db.Model):
+       name = db.StringProperty(required=True)
+       city = db.StringProperty()
+       age = db.IntegerProperty(required=True)
+       is_admin = db.BooleanProperty(default=False)
 
-    # Generate a form based on the model.
-    ContactForm = model_form(Contact)
+   new_entity = Contact(key_name='test', name='Test Name', age=17)
+   new_entity.put()
 
-    # Get a form populated with entity data.
-    entity = Contact.get_by_key_name('test')
-    form = ContactForm(obj=entity)
+   # Generate a form based on the model.
+   ContactForm = model_form(Contact)
+
+   # Get a form populated with entity data.
+   entity = Contact.get_by_key_name('test')
+   form = ContactForm(obj=entity)
 
 Properties from the model can be excluded from the generated form, or it can
 include just a set of properties. For example:
 
-    # Generate a form based on the model, excluding 'city' and 'is_admin'.
-    ContactForm = model_form(Contact, exclude=('city', 'is_admin'))
+.. code-block:: python
 
-    # or...
+   # Generate a form based on the model, excluding 'city' and 'is_admin'.
+   ContactForm = model_form(Contact, exclude=('city', 'is_admin'))
 
-    # Generate a form based on the model, only including 'name' and 'age'.
-    ContactForm = model_form(Contact, only=('name', 'age'))
+   # or...
+
+   # Generate a form based on the model, only including 'name' and 'age'.
+   ContactForm = model_form(Contact, only=('name', 'age'))
 
 The form can be generated setting field arguments:
 
-    ContactForm = model_form(Contact, only=('name', 'age'), field_args={
-        'name': {
-            'label': 'Full name',
-            'description': 'Your name',
-        },
-        'age': {
-            'label': 'Age',
-            'validators': [validators.NumberRange(min=14, max=99)],
-        }
-    })
+.. code-block:: python
+
+   ContactForm = model_form(Contact, only=('name', 'age'), field_args={
+       'name': {
+           'label': 'Full name',
+           'description': 'Your name',
+       },
+       'age': {
+           'label': 'Age',
+           'validators': [validators.NumberRange(min=14, max=99)],
+       }
+   })
 
 The class returned by ``model_form()`` can be used as a base class for forms
 mixing non-model fields and/or other model forms. For example:
 
-    # Generate a form based on the model.
-    BaseContactForm = model_form(Contact)
+.. code-block:: python
 
-    # Generate a form based on other model.
-    ExtraContactForm = model_form(MyOtherModel)
+   # Generate a form based on the model.
+   BaseContactForm = model_form(Contact)
 
-    class ContactForm(BaseContactForm):
-        # Add an extra, non-model related field.
-        subscribe_to_news = f.BooleanField()
+   # Generate a form based on other model.
+   ExtraContactForm = model_form(MyOtherModel)
 
-        # Add the other model form as a subform.
-        extra = f.FormField(ExtraContactForm)
+   class ContactForm(BaseContactForm):
+       # Add an extra, non-model related field.
+       subscribe_to_news = f.BooleanField()
+
+       # Add the other model form as a subform.
+       extra = f.FormField(ExtraContactForm)
 
 The class returned by ``model_form()`` can also extend an existing form
 class:
 
-    class BaseContactForm(Form):
-        # Add an extra, non-model related field.
-        subscribe_to_news = f.BooleanField()
+.. code-block:: python
 
-    # Generate a form based on the model.
-    ContactForm = model_form(Contact, base_class=BaseContactForm)
+   class BaseContactForm(Form):
+       # Add an extra, non-model related field.
+       subscribe_to_news = f.BooleanField()
+
+   # Generate a form based on the model.
+   ContactForm = model_form(Contact, base_class=BaseContactForm)
+
 """
 from wtforms import Form, validators, widgets, fields as f
 
@@ -92,7 +103,7 @@ class ReferencePropertyField(f.Field):
     widget = widgets.Select()
 
     def __init__(self, label=u'', validators=None, reference_class=None,
-                 label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
+        label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
         super(ReferencePropertyField, self).__init__(label, validators,
             **kwargs)
         self.label_attr = label_attr
@@ -180,8 +191,8 @@ def get_IntegerField(kwargs):
     Returns an ``IntegerField``, applying the ``db.IntegerProperty`` range
     limits.
     """
-    kwargs['validators'].append(validators.NumberRange(min=-0x8000000000000000,
-        max=0x7fffffffffffffff))
+    v = validators.NumberRange(min=-0x8000000000000000, max=0x7fffffffffffffff)
+    kwargs['validators'].append(v)
     return f.IntegerField(**kwargs)
 
 
@@ -240,7 +251,7 @@ def convert_TimeProperty(model, prop, kwargs):
 
 def convert_ListProperty(model, prop, kwargs):
     """Returns a form field for a ``db.ListProperty``."""
-    raise NotImplementedError()
+    return None
 
 
 def convert_StringListProperty(model, prop, kwargs):
@@ -256,12 +267,12 @@ def convert_ReferenceProperty(model, prop, kwargs):
 
 def convert_SelfReferenceProperty(model, prop, kwargs):
     """Returns a form field for a ``db.SelfReferenceProperty``."""
-    raise NotImplementedError()
+    return None
 
 
 def convert_UserProperty(model, prop, kwargs):
     """Returns a form field for a ``db.UserProperty``."""
-    raise NotImplementedError()
+    return None
 
 
 def convert_BlobProperty(model, prop, kwargs):
@@ -293,12 +304,12 @@ def convert_EmailProperty(model, prop, kwargs):
 
 def convert_GeoPtProperty(model, prop, kwargs):
     """Returns a form field for a ``db.GeoPtProperty``."""
-    raise NotImplementedError()
+    return None
 
 
 def convert_IMProperty(model, prop, kwargs):
     """Returns a form field for a ``db.IMProperty``."""
-    raise NotImplementedError()
+    return None
 
 
 def convert_PhoneNumberProperty(model, prop, kwargs):
@@ -350,9 +361,9 @@ class ModelConverter(object):
     +--------------------+-------------------+--------------+------------------+
     | StringListProperty | TextAreaField     | list of str  |                  |
     +--------------------+-------------------+--------------+------------------+
-    | ReferenceProperty  | None              | db.Model     | always skipped   |
+    | ReferenceProperty  | ReferencePropertyF| db.Model     |                  |
     +--------------------+-------------------+--------------+------------------+
-    | SelfReferenceP.    | None              | db.Model     | always skipped   |
+    | SelfReferenceP.    | ReferencePropertyF| db.Model     |                  |
     +--------------------+-------------------+--------------+------------------+
     | UserProperty       | None              | users.User   | always skipped   |
     +--------------------+-------------------+--------------+------------------+
