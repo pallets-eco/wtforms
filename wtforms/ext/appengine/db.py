@@ -112,7 +112,7 @@ class ReferencePropertyField(f.Field):
         self._set_data(None)
         if reference_class is None:
             raise ValueError('Missing reference_class attribute in '
-                'ReferencePropertyField')
+                             'ReferencePropertyField')
 
         self.query = reference_class.all()
 
