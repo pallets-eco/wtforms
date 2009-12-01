@@ -103,9 +103,9 @@ class ReferencePropertyField(f.Field):
     widget = widgets.Select()
 
     def __init__(self, label=u'', validators=None, reference_class=None,
-        label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
+                 label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
         super(ReferencePropertyField, self).__init__(label, validators,
-            **kwargs)
+              **kwargs)
         self.label_attr = label_attr
         self.allow_blank = allow_blank
         self.blank_text = blank_text

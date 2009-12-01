@@ -1,0 +1,148 @@
+#!/usr/bin/env python
+"""
+    Unittests for wtforms.ext.appengine
+
+    To run the tests, use NoseGAE:
+
+    easy_install nose
+    easy_install nose-gae
+
+    nosetests --with-gae --without-sandbox
+"""
+import sys, os
+WTFORMS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, WTFORMS_DIR)
+
+from unittest import TestCase
+
+from google.appengine.ext import db
+
+from wtforms import Form, fields as f, validators
+from wtforms.ext.appengine.db import model_form
+
+
+class Author(db.Model):
+    name = db.StringProperty(required=True)
+    city = db.StringProperty()
+    age = db.IntegerProperty(required=True)
+    is_admin = db.BooleanProperty(default=False)
+
+
+class Book(db.Model):
+    author = db.ReferenceProperty(Author)
+
+
+class AllPropertiesModel(db.Model):
+    """Property names are ugly, yes."""
+    prop_string = db.StringProperty()
+    prop_byte_string = db.ByteStringProperty()
+    prop_boolean = db.BooleanProperty()
+    prop_integer = db.IntegerProperty()
+    prop_float = db.FloatProperty()
+    prop_date_time = db.DateTimeProperty()
+    prop_date = db.DateProperty()
+    prop_time = db.TimeProperty()
+    prop_list = db.ListProperty(int)
+    prop_string_list = db.StringListProperty()
+    prop_reference = db.ReferenceProperty()
+    prop_self_refeference = db.SelfReferenceProperty()
+    prop_user = db.UserProperty()
+    prop_blob = db.BlobProperty()
+    prop_text = db.TextProperty()
+    prop_category = db.CategoryProperty()
+    prop_link = db.LinkProperty()
+    prop_email = db.EmailProperty()
+    prop_geo_pt = db.GeoPtProperty()
+    prop_im = db.IMProperty()
+    prop_phone_number = db.PhoneNumberProperty()
+    prop_postal_address = db.PostalAddressProperty()
+    prop_rating = db.RatingProperty()
+
+
+class DateTimeModel(db.Model):
+    prop_date_time_1 = db.DateTimeProperty()
+    prop_date_time_2 = db.DateTimeProperty(auto_now=True)
+    prop_date_time_3 = db.DateTimeProperty(auto_now_add=True)
+
+    prop_date_1 = db.DateProperty()
+    prop_date_2 = db.DateProperty(auto_now=True)
+    prop_date_3 = db.DateProperty(auto_now_add=True)
+
+    prop_time_1 = db.TimeProperty()
+    prop_time_2 = db.TimeProperty(auto_now=True)
+    prop_time_3 = db.TimeProperty(auto_now_add=True)
+
+
+class TestModelForm(TestCase):
+    def test_model_form_basic(self):
+        form_class = model_form(Author)
+
+        self.assertEqual(hasattr(form_class, 'name'), True)
+        self.assertEqual(hasattr(form_class, 'age'), True)
+        self.assertEqual(hasattr(form_class, 'city'), True)
+        self.assertEqual(hasattr(form_class, 'is_admin'), True)
+
+        form = form_class()
+        self.assertEqual(isinstance(form.name, f.TextField), True)
+        self.assertEqual(isinstance(form.city, f.TextField), True)
+        self.assertEqual(isinstance(form.age, f.IntegerField), True)
+        self.assertEqual(isinstance(form.is_admin, f.BooleanField), True)
+
+    def test_required_field(self):
+        form_class = model_form(Author)
+
+        form = form_class()
+        self.assertEqual(form.name.flags.required, True)
+        self.assertEqual(form.city.flags.required, False)
+        self.assertEqual(form.age.flags.required, True)
+        self.assertEqual(form.is_admin.flags.required, False)
+
+    def test_default_value(self):
+        form_class = model_form(Author)
+
+        form = form_class()
+        self.assertEqual(form.name._default, None)
+        self.assertEqual(form.city._default, None)
+        self.assertEqual(form.age._default, None)
+        self.assertEqual(form.is_admin._default, False)
+
+    def test_model_form_only(self):
+        form_class = model_form(Author, only=['name', 'age'])
+
+        self.assertEqual(hasattr(form_class, 'name'), True)
+        self.assertEqual(hasattr(form_class, 'city'), False)
+        self.assertEqual(hasattr(form_class, 'age'), True)
+        self.assertEqual(hasattr(form_class, 'is_admin'), False)
+
+        form = form_class()
+        self.assertEqual(isinstance(form.name, f.TextField), True)
+        self.assertEqual(isinstance(form.age, f.IntegerField), True)
+
+    def test_model_form_exclude(self):
+        form_class = model_form(Author, exclude=['is_admin'])
+
+        self.assertEqual(hasattr(form_class, 'name'), True)
+        self.assertEqual(hasattr(form_class, 'city'), True)
+        self.assertEqual(hasattr(form_class, 'age'), True)
+        self.assertEqual(hasattr(form_class, 'is_admin'), False)
+
+        form = form_class()
+        self.assertEqual(isinstance(form.name, f.TextField), True)
+        self.assertEqual(isinstance(form.city, f.TextField), True)
+        self.assertEqual(isinstance(form.age, f.IntegerField), True)
+
+    def test_datetime_model(self):
+        """Fields marked as auto_add / auto_add_now should not be included."""
+        form_class = model_form(DateTimeModel)
+
+        self.assertEqual(hasattr(form_class, 'prop_date_time_1'), True)
+        self.assertEqual(hasattr(form_class, 'prop_date_time_2'), False)
+        self.assertEqual(hasattr(form_class, 'prop_date_time_3'), False)
+
+        self.assertEqual(hasattr(form_class, 'prop_date_1'), True)
+        self.assertEqual(hasattr(form_class, 'prop_date_2'), False)
+        self.assertEqual(hasattr(form_class, 'prop_date_3'), False)
+
+        self.assertEqual(hasattr(form_class, 'prop_time_1'), True)
+        self.assertEqual(hasattr(form_class, 'prop_time_2'), False)
+        self.assertEqual(hasattr(form_class, 'prop_time_3'), False)
