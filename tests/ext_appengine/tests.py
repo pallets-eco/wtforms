@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 """
-    Unittests for wtforms.ext.appengine
+Unittests for wtforms.ext.appengine
 
-    To run the tests, use NoseGAE:
+To run the tests, use NoseGAE:
 
-    easy_install nose
-    easy_install nose-gae
+easy_install nose
+easy_install nose-gae
 
-    nosetests --with-gae --without-sandbox
+nosetests --with-gae --without-sandbox
 """
 import sys, os
 WTFORMS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
