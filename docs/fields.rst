@@ -280,7 +280,7 @@ complex data structures such as lists and nested objects can be represented.
     FormFields are useful for editing child objects or enclosing multiple
     related forms on a page which are submitted and validated together.  While
     subclassing forms captures most desired behaviours, sometimes for
-    reusability or purpose of combining with `ListField`, FormField makes
+    reusability or purpose of combining with `FieldList`, FormField makes
     sense.
 
     For example, take the example of a contact form which uses a similar set of
@@ -361,11 +361,11 @@ provide additional customization::
 
         def process_formdata(self, valuelist):
             super(BetterTagListField, self).process_formdata(valuelist)
-            if remove_duplicates:
+            if self.remove_duplicates:
                 self.data = list(self._remove_duplicates(self.data))
 
-        @staticmethod
-        def _remove_duplicates(seq):
+        @classmethod
+        def _remove_duplicates(cls, seq):
             """Remove duplicates in a case insensitive, but case preserving manner"""
             d = {}
             for item in seq:
