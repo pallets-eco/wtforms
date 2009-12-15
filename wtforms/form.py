@@ -89,20 +89,24 @@ class BaseForm(object):
             else:
                 field.process(formdata)
 
-    def validate(self):
+    def validate(self, extra_validators=None):
         """
-        Validates the form by calling `validate` on each field, passing any
-        extra `Form.validate_<fieldname>` validators to the field validator.
+        Validates the form by calling `validate` on each field.
+        
+        :param extra_validators:
+            If provided, is a dict mapping field names to a sequence of
+            callables which will be passed as extra validators to the field's
+            `validate` method.
 
         Returns `True` if no errors occur.
         """
         self._errors = None
         success = True
         for name, field in self._fields.iteritems():
-            extra = []
-            inline = getattr(self.__class__, 'validate_%s' % name, None)
-            if inline is not None:
-                extra.append(inline)
+            if extra_validators is not None and name in extra_validators:
+                extra = extra_validators[name] 
+            else:
+                extra = tuple()
             if not field.validate(self, extra):
                 success = False
         return success
@@ -199,10 +203,10 @@ class Form(BaseForm):
         """
         super(Form, self).__init__(dict(self._unbound_fields), prefix=prefix)
 
-        for name in self._fields:
+        for name, field in self._fields.iteritems():
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
-            setattr(self, name, self._fields[name])
+            setattr(self, name, field)
 
         self.process(formdata, obj, **kwargs)
 
@@ -224,3 +228,16 @@ class Form(BaseForm):
             self.__delitem__(name)
         except KeyError:
             super(Form, self).__delattr__(name)
+
+    def validate(self):
+        """
+        Validates the form by calling `validate` on each field, passing any
+        extra `Form.validate_<fieldname>` validators to the field validator.
+        """
+        extra = {}
+        for name in self._fields:
+            inline = getattr(self.__class__, 'validate_%s' % name, None)
+            if inline is not None:
+                extra[name] = [inline]
+
+        return super(Form, self).validate(extra)
