@@ -6,13 +6,13 @@ Forms provide the highest level API in WTForms. They contain your field
 definitions, delegate validation, take input, aggregate errors, and in
 general function as the glue holding everything together.
 
-The Form base class
--------------------
+The Form class
+--------------
 
 .. autoclass:: Form
 
     **Construction**
-    
+
     .. automethod:: __init__
 
     **Properties**
@@ -71,7 +71,7 @@ The Form base class
 
     .. automethod:: __contains__
 
-Defining forms
+Defining Forms
 --------------
 
 To define a form, one makes a subclass of :class:`Form` and defines the fields
@@ -104,7 +104,7 @@ name re-used on a subclass causes the new definition to obscure the original.
         name = TextField(u'User Name')   
 
 
-In-line validators
+In-line Validators
 ~~~~~~~~~~~~~~~~~~
 
 In order to provide custom validation for a single field without needing to
@@ -118,7 +118,7 @@ method with the convention `validate_fieldname`::
             if field.data < 13:
                 raise ValidationError("We're sorry, you must be 13 or older to register")
 
-Using forms
+Using Forms
 -----------
 
 A form is most often constructed in the controller code for handling an action,
@@ -127,3 +127,99 @@ optionally an ORM object.  The constructed form can then validate any input
 data and generate errors if invalid.  The form object can then be passed along
 to template code to render the form fields along with any errors which
 occurred.
+
+
+Low-Level API
+-------------
+
+.. warning::
+
+    This section is provided for completeness; and is aimed at authors of
+    complementary libraries and those looking for very special behaviors.
+    Don't use `BaseForm` unless you know exactly *why* you are using it.
+
+For those looking to customize how WTForms works, for libraries or special
+applications, it might be worth using the :class:`BaseForm` class. `BaseForm` is
+the parent class of :class:`Form`, and most of the implementation
+logic from Form is actually handled by BaseForm.
+
+The major difference on the surface between `BaseForm` and `Form` is that
+fields are not defined declaratively on a subclass of `BaseForm`. Instead, you
+must pass a dict of fields to the constructor. Likewise, you cannot add fields
+by inheritance. In addition, `BaseForm` does not provide: sorting fields by
+definition order, or inline `validate_foo` validators.  Because of this, for
+the overwhelming majority of uses we recommend you use Form instead of BaseForm
+in your code.
+
+What `BaseForm` provides is a container for a collection of fields, which
+it will bind at instantiation, and hold in an internal dict. Dict-style access
+on a BaseForm instance will allow you to access (and modify) the enclosed
+fields.
+
+.. autoclass:: BaseForm
+
+    **Construction**
+
+    .. automethod:: __init__
+
+        .. code-block:: python
+
+            form = BaseForm({
+                'name': TextField(),
+                'customer.age': IntegerField("Customer's Age")
+            })
+
+        Because BaseForm does not require field names to be valid identifiers,
+        they can be most any python string. We recommend keeping it
+        simple to avoid incompatibility with browsers and various form input
+        frameworks where possible.
+
+    **Properties**
+
+    .. attribute:: data
+
+        see :attr:`Form.data`
+
+    .. attribute:: errors
+
+        see :attr:`Form.errors`
+
+    **Methods**
+
+    .. automethod:: process
+
+        Since BaseForm does not take its data at instantiation, you must call
+        this to provide form data to the enclosed fields. Accessing the field's
+        data before calling process is not recommended.
+
+    .. automethod:: validate
+
+    .. automethod:: __iter__
+
+        Unlike :class:`Form`, fields are not iterated in definition order, but
+        rather in whatever order the dict keys are given.
+
+    .. automethod:: __contains__
+
+    .. automethod:: __getattr__
+
+        Allow accessing fields by attribute name from the internal fields
+        dictionary for frameworks which need it. Fields which do not have valid
+        attribute names cannot be accessed this way.
+
+    .. automethod:: __getitem__
+
+    .. automethod:: __setitem__
+
+        .. code-block:: python
+
+            form['openid.name'] = TextField()
+
+        Fields can be added and replaced in this way, but this must be done
+        **before** :meth:`process` is called, or the fields will not have the
+        opportunity to receive input data. Similarly, changing fields after
+        :meth:`validate` will have undesired effects.
+
+    .. automethod:: __delitem__
+
+        The same caveats apply as with :meth:`__setitem__`.
