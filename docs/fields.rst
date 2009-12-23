@@ -161,7 +161,9 @@ refer to a single input from the form.
 
 .. autoclass:: BooleanField(default field arguments)
 
-.. autoclass:: DateTimeField(default field arguments)
+.. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
+
+.. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
 .. autoclass:: DecimalField(default field arguments, places=2, rounding=None)
 

@@ -12,3 +12,4 @@ Contributors:
 - Emil Vladev
 - Rodrigo Moraes
 - Sebastian Wiesner
+- Vinay Sajip

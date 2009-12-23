@@ -1,5 +1,5 @@
 from cgi import escape
-from datetime import datetime
+from datetime import date, datetime
 import decimal
 from itertools import chain, count
 import time
@@ -9,10 +9,10 @@ from wtforms.validators import StopValidation, ValidationError
 
 
 __all__ = (
-    'BooleanField', 'DecimalField', 'DateTimeField', 'FieldList', 'FileField',
-    'FormField', 'HiddenField', 'IntegerField', 'PasswordField', 'RadioField',
-    'SelectField', 'SelectMultipleField', 'SubmitField', 'TextField',
-    'TextAreaField',
+    'BooleanField', 'DecimalField', 'DateField', 'DateTimeField', 'FieldList',
+    'FileField', 'FormField', 'HiddenField', 'IntegerField', 'PasswordField',
+    'RadioField', 'SelectField', 'SelectMultipleField', 'SubmitField',
+    'TextField', 'TextAreaField',
 )
 
 
@@ -538,7 +538,7 @@ class BooleanField(Field):
 
 class DateTimeField(TextField):
     """
-    Can be represented by one or multiple text-inputs.
+    A text field which stores a `datetime.datetime` matching a format.
     """
     def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
@@ -560,6 +560,22 @@ class DateTimeField(TextField):
             except ValueError:
                 self.data = None
 
+
+class DateField(DateTimeField):
+    """
+    Same as DateTimeField, except stores a `datetime.date`.
+    """
+    def __init__(self, label=u'', validators=None, format='%Y-%m-%d', **kwargs):
+        super(DateField, self).__init__(label, validators, format, **kwargs)
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.raw_data = str.join(' ', valuelist)
+            try:
+                timetuple = time.strptime(self.raw_data, self.format)
+                self.data = date(*timetuple[:3])
+            except ValueError:
+                self.data = None
 
 class SubmitField(BooleanField):
     """

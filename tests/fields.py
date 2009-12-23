@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal, ROUND_UP, ROUND_DOWN
 from unittest import TestCase
 
@@ -283,6 +283,20 @@ class BooleanFieldTest(TestCase):
         form = self.BoringForm(DummyPostData(bool1=[u'y']), obj=self.obj)
         self.assertEqual(form.bool1.data, True)
         self.assertEqual(form.bool2.data, False)
+
+
+class DateFieldTest(TestCase):
+    class F(Form):
+        a = DateField()
+        b = DateField(format='%m/%d %Y')
+
+    def test(self):
+        d = date(2008, 5, 7)
+        form = self.F(DummyPostData(a=['2008-05-07'], b=['05/07', '2008']))
+        self.assertEqual(form.a.data, d)
+        self.assertEqual(form.a._value(), '2008-05-07')
+        self.assertEqual(form.b.data, d)
+        self.assertEqual(form.b._value(), '05/07 2008')
 
 
 class DateTimeFieldTest(TestCase):
