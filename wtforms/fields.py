@@ -556,7 +556,7 @@ class DateTimeField(TextField):
             self.raw_data = str.join(' ', valuelist)
             try:
                 timetuple = time.strptime(self.raw_data, self.format)
-                self.data = datetime(*timetuple[:7])
+                self.data = datetime(*timetuple[:6])
             except ValueError:
                 self.data = None
 
