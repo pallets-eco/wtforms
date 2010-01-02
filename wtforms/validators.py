@@ -42,10 +42,11 @@ class EqualTo(object):
         self.message = message or u'Field must be equal to %s' % fieldname
 
     def __call__(self, form, field):
-        other = getattr(form, self.fieldname, None)
-        if not other:
+        try:
+            other = form[self.fieldname]
+        except KeyError:
             raise ValidationError(u"Invalid field name '%s'" % self.fieldname)
-        elif field.data != other.data:
+        if field.data != other.data:
             raise ValidationError(self.message)
 
 

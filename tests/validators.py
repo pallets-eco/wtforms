@@ -3,7 +3,7 @@ from unittest import TestCase
 from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange
 
 
-class DummyForm(object):
+class DummyForm(dict):
     pass
 
 class DummyField(object):
@@ -31,8 +31,8 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
 
     def test_equal_to(self):
-        self.form.foo = DummyField('test')
-        self.assertEqual(equal_to('foo')(self.form, self.form.foo), None)
+        self.form['foo'] = DummyField('test')
+        self.assertEqual(equal_to('foo')(self.form, self.form['foo']), None)
         self.assertRaises(ValidationError, equal_to('invalid_field_name'), self.form, DummyField('test'))
         self.assertRaises(ValidationError, equal_to('foo'), self.form, DummyField('different_value'))
 
