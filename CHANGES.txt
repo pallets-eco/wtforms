@@ -18,6 +18,8 @@ Not yet released.
   `number_format` keyword arg has been removed. See docs for details on how to
   format decimals.
 
+- Added ext.dateutil for flexible date-time parsing.
+
 Version 0.4
 -----------
 Released October 10th, 2009.
