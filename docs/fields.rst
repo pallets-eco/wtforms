@@ -100,7 +100,7 @@ The Field base class
         Form prefixed with the `prefix` passed to the Form constructor.
 
     .. attribute:: short_name
-        
+
         The un-prefixed name of this field.
 
     .. attribute:: id
@@ -110,7 +110,7 @@ The Field base class
 
     .. attribute:: label
 
-        This is a :class:`Label` instance which when evaluated as a string 
+        This is a :class:`Label` instance which when evaluated as a string
         returns an HTML ``<label for="id">`` construct.
 
     .. attribute:: description
@@ -120,7 +120,7 @@ The Field base class
 
     .. attribute:: widget
 
-        The widget used to render the field.  
+        The widget used to render the field.
 
     .. attribute:: type
 
@@ -378,3 +378,29 @@ provide additional customization::
                 if item.lower() not in d:
                     d[item.lower()] = True
                     yield item
+
+
+Custom Field Considerations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For the vast majority of fields, it is not necessary to override
+:meth:`Field.process`. Most of the time, you can achieve what is needed by
+overriding ``process_data`` and/or ``process_formdata``. However, for special
+types of fields, such as form enclosures and other special cases of handling
+multiple values, it may be needed.
+
+If you are going to override ``process()``, be careful about how you deal with
+the ``formdata`` parameter. For compatibility with the maximum number of
+frameworks, we suggest you limit yourself to manipulating formdata in the
+following ways only:
+
+* Testing emptiness: ``if formdata``
+* Checking for key existence: ``key in formdata``
+* Iterating all keys: ``for key in formdata`` (note that some wrappers may
+  return multiple instances of the same key)
+* Getting the list of values for a key: ``formdata.getlist(key)``.
+
+Most importantly, you should not use dictionary-style access to work with your
+formdata wrapper, because the behavior of this is highly variant on the
+wrapper: some return the first item, others return the last, and some may
+return a list.

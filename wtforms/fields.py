@@ -201,10 +201,7 @@ class Field(object):
 
         if formdata:
             if self.name in formdata:
-                try:
-                    self.process_formdata(formdata.getlist(self.name))
-                except AttributeError:
-                    self.process_formdata(formdata.getall(self.name))
+                self.process_formdata(formdata.getlist(self.name))
             else:
                 self.process_formdata([])
 

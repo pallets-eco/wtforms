@@ -81,6 +81,12 @@ class BaseForm(object):
             form will assign the value of a matching keyword argument to the
             field, if provided.
         """
+        if formdata is not None and not hasattr(formdata, 'getlist'):
+            if hasattr(formdata, 'getall'):
+                formdata = WebobInputWrapper(formdata)
+            else:
+                raise TypeError("formdata should be a multidict-type wrapper that supports the 'getall' method")
+
         for name, field, in self._fields.iteritems():
             if hasattr(obj, name):
                 field.process(formdata, getattr(obj, name))
@@ -92,7 +98,7 @@ class BaseForm(object):
     def validate(self, extra_validators=None):
         """
         Validates the form by calling `validate` on each field.
-        
+
         :param extra_validators:
             If provided, is a dict mapping field names to a sequence of
             callables which will be passed as extra validators to the field's
@@ -241,3 +247,35 @@ class Form(BaseForm):
                 extra[name] = [inline]
 
         return super(Form, self).validate(extra)
+
+
+class WebobInputWrapper(object):
+    """
+    Wrap a webob MultiDict for use as passing as `formdata` to Field.
+
+    Since for consistency, we have decided in WTForms to support as input a
+    small subset of the API provided in common between cgi.FieldStorage,
+    Django's QueryDict, and Werkzeug's MultiDict, we need to wrap Webob, the
+    only supported framework whose multidict does not fit this API, but is
+    nevertheless used by a lot of frameworks.
+
+    While we could write a full wrapper to support all the methods, this will
+    undoubtedly result in bugs due to some subtle differences between the
+    various wrappers. So we will keep it simple.
+    """
+
+    def __init__(self, multidict):
+        self._wrapped = multidict
+
+    def __iter__(self):
+        return iter(self._wrapped)
+
+    def __len__(self):
+        return len(self._wrapped)
+
+    def __contains__(self, name):
+        return (name in self._wrapped)
+
+    def getlist(self, name):
+        return self._wrapped.getall(name)
+
