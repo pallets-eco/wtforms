@@ -61,13 +61,25 @@ class Length(object):
         The maximum length of the string. If not provided, maximum length
         will not be checked.
     :param message:
-        Error message to raise in case of a validation error. A default
-        containing min and max length is provided.
+        Error message to raise in case of a validation error. Can be
+        interpolated using `%(min)d` and `%(max)d` if desired. Useful defaults
+        are provided depending on the existence of min and max.
     """
     def __init__(self, min=-1, max=-1, message=None):
+        assert min != -1 or max!=-1, 'At least one of `min` or `max` must be specified.'
+        assert max == -1 or min <= max, '`min` cannot be more than `max`.'
         self.min = min
         self.max = max
-        self.message = message or u'Field must be between %i and %i characters long.' % (min, max)
+
+        if message is None:
+            if max == -1:
+                message = u'Field must be at least %(min)d characters long.'
+            elif min == -1:
+                message = u'Field cannot be longer than %(max)d characters.'
+            else:
+                message = u'Field must be between %(min)d and %(max)d characters long.'
+
+        self.message = message % dict(min=min, max=max)
 
     def __call__(self, form, field):
         l = field.data and len(field.data) or 0

@@ -10,6 +10,11 @@ class DummyField(object):
     def __init__(self, data):
         self.data = data
 
+def grab_error_message(callable, form, field):
+    try:
+        callable(form, field)
+    except ValidationError, e:
+        return e.args[0]
 
 class ValidatorsTest(TestCase):
     def setUp(self):
@@ -46,7 +51,19 @@ class ValidatorsTest(TestCase):
         field = DummyField('foobar')
         self.assertEqual(length(min=2, max=6)(self.form, field), None)
         self.assertRaises(ValidationError, length(min=7), self.form, field)
+        self.assertEqual(length(min=6)(self.form, field), None)
         self.assertRaises(ValidationError, length(max=5), self.form, field)
+        self.assertEqual(length(max=6)(self.form, field), None)
+
+        self.assertRaises(AssertionError, length)
+        self.assertRaises(AssertionError, length, min=5, max=2)
+
+        # Test new formatting features
+        grab = lambda **k : grab_error_message(length(**k), self.form, field)
+        self.assertEqual(grab(min=2, max=5, message='%(min)d and %(max)d'), '2 and 5')
+        self.assertEqual(grab(min=8).count(u'at least 8'), 1)
+        self.assertEqual(grab(max=5).count(u'longer than 5'), 1)
+        self.assertEqual(grab(min=2, max=5).count('between 2 and 5'), 1)
 
     def test_required(self):
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
