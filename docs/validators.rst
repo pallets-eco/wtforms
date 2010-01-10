@@ -34,7 +34,7 @@ Built-in validators
 .. autoclass:: wtforms.validators.Length
 
 .. autoclass:: wtforms.validators.NumberRange
-   
+
 .. autoclass:: wtforms.validators.Optional
 
 .. autoclass:: wtforms.validators.Required
@@ -46,44 +46,134 @@ Built-in validators
 Custom validators
 -----------------
 
-Defining your own validators is easy. You simply make a function that takes a
-list of configuration directives, and then returns a callable. The returned
-callable should take two positional arguments, which are a form instance and
-the field instance being validated. It is helpful to design your validators
-with a `message` argument to provide a way to override the error message.
+We will step through the evolution of writing a length-checking validator
+similar to the built-in :class:Length validator, starting from a case-specific
+one to a generic reusable validator.
 
-Let's look at a possible validator which checks if a file upload's extension is
-that of an image::
+Let's start with a simple form with a name field and its validation::
 
-    def is_image(message=u'Images only!', extensions=None):
-        if not extensions:
-            extensions = ('jpg', 'jpeg', 'png', 'gif')
-        def _is_image(form, field):
-            if not field.data or field.data.split('.')[-1] not in extensions:
+    class MyForm(Form):
+        name = TextField('Name', [Required()])
+
+        def validate_name(form, field):
+            if len(field.data) > 50:
+                raise ValidationError('Name must be less than 50 characters')
+
+Above, we show the use of an :ref:`in-line validator <inline-validators>` to do
+validation of a single field. In-line validators are good for validating
+special cases, but are not easily reusable.  If, in the example above, the
+`name` field were to be split into two fields for first name and surname, you
+would have to duplicate your work to check two lengths.
+
+So let's start on the process of splitting the validator out for re-use::
+
+    def my_length_check(form, field):
+        if len(field.data) > 50:
+            raise ValidationError('Field must be less than 50 characters')
+
+    class MyForm(Form):
+        name = TextField('Name', [Required(), my_length_check])
+
+All we've done here is move the exact same code out of the class and as a
+function. Since a validator can be any callable which accepts the two
+positional arguments form and field, this is perfectly fine, but the validator
+is very special-cased.
+
+Instead, we can turn our validator into a more powerful one by making it a
+factory which returns a callable::
+
+    def length(min=-1, max=-1):
+        message = 'Must be between %d and %d characters long.' % (min, max)
+
+        def _length(form, field):
+            l = field.data and len(field.data) or 0
+            if l < min or max != -1 and l > max:
                 raise ValidationError(message)
-        return _is_image
 
-And the way it's used::
+        return _length
 
-    avatar = FileField(u'Avatar', [is_image(u'Only images are allowed.', extensions=['gif', 'png'])])
+    class MyForm(Form):
+        name = TextField('Name', [Required(), length(max=50)])
 
-The outer function sets configuration directives, in this case the message and
-the extensions. The inner function provides the actual validation: If the
-field contains no data, or an un-approved extension,
-:class:`~wtforms.validators.ValidationError` with the message is raised.
-Otherwise we just the let function return normally.
+Now we have a configurable length-checking validator that handles both minimum
+and maximum lengths. When ``length(max=50)`` is passed in your validators list,
+it returns the enclosed `_length` function as a closure, which is used in the
+field's validation chain.
 
-You could also define the validator as a class::
+This is now an acceptable validator, but we recommend that for reusability, you
+use the pattern of allowing the error message to be customized via passing a
+``message=`` parameter:
 
-    class IsImage(object):
-        def __init__(self, message=u'Images only!', extensions=None):
+.. code-block:: python
+
+    class Length(object):
+        def __init__(self, min=-1, max=-1, message=None):
+            self.min = min
+            self.max = max
+            if not message:
+                message = u'Field must be between %i and %i characters long.' % (min, max)
             self.message = message
-            if not extensions:
-                extensions = ('jpg', 'jpeg', 'png', 'gif')
-            self.extensions = extensions
 
         def __call__(self, form, field):
-            if not field.data or field.data.split('.')[-1] not in extensions:
+            l = field.data and len(field.data) or 0
+            if l < self.min or self.max != -1 and l > self.max:
                 raise ValidationError(self.message)
 
-Which option you choose is entirely down to preference.
+    length = Length
+
+In addition to allowing the error message to be customized, we've now converted
+the length validator to a class. This wasn't necessary, but we did this to
+illustrate how one would do so. Because fields will accept any callable as a
+validator, callable classes are just as applicable. For complex validators, or
+using inheritance, you may prefer this.
+
+We aliased the ``Length`` class back to the original ``length`` name in the
+above example. This allows you to keep API compatibility as you move your
+validators from factories to classes, and thus we recommend this for those
+writing validators they will share.
+
+
+Setting flags on the field with validators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sometimes, it's useful to know if a validator is present on a given field, like
+for use in template code. To do this, validators are allowed to specify flags
+which will then be available on the
+:attr:`field's flags object <wtforms.fields.Field.flags>`.
+Some of the built-in validators such as `Required` already do this.
+
+To specify flags on your validator, set the ``field_flags`` attribute on your
+validator. When the Field is constructed, the flags with the same name will be
+set to True on your field. For example, let's imagine a validator that
+validates that input is valid BBCode. We can set a flag on the field then to
+signify that the field accepts BBCode::
+
+    # class implementation
+    class ValidBBCode(object):
+        field_flags = ('accepts_bbcode', )
+
+        pass # validator implementation here
+
+    # factory implementation
+    def valid_bbcode():
+        def _valid_bbcode(form, field):
+            pass # validator implementation here
+
+        _valid_bbcode.field_flags = ('accepts_bbcode', )
+        return _valid_bbcode
+
+Then we can check it in our template, so we can then place a note to the user:
+
+.. code-block:: html+jinja
+
+    {{ field(rows=7, cols=70) }}
+    {% if field.flags.accepts_bbcode %}
+        <div class="note">This field accepts BBCode formatting as input.</div>
+    {% endif %}
+
+Some considerations on using flags:
+
+* Flags can only set boolean values, and another validator cannot unset them.
+* If multiple fields set the same flag, its value is still True.
+* Flags are set from validators only in :meth:`Field.__init__`, so inline
+  validators and extra passed-in validators cannot set them.

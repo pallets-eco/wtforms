@@ -104,6 +104,8 @@ name re-used on a subclass causes the new definition to obscure the original.
         name = TextField(u'User Name')   
 
 
+.. _inline-validators:
+
 In-line Validators
 ~~~~~~~~~~~~~~~~~~
 
@@ -117,6 +119,7 @@ method with the convention `validate_fieldname`::
         def validate_age(form, field):
             if field.data < 13:
                 raise ValidationError("We're sorry, you must be 13 or older to register")
+
 
 Using Forms
 -----------
