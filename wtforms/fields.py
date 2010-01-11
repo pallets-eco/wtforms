@@ -25,6 +25,7 @@ class Field(object):
     """
     widget = None
     errors = tuple()
+    process_errors = tuple()
     _formfield = True
 
     def __new__(cls, *args, **kwargs):
@@ -85,7 +86,7 @@ class Field(object):
         if widget:
             self.widget = widget
         self.flags = Flags()
-        for v in validators:    
+        for v in validators:
             flags = getattr(v, 'field_flags', ())
             for f in flags:
                 setattr(self.flags, f, True)
@@ -125,7 +126,7 @@ class Field(object):
         :param form: The form the field belongs to.
         :param extra_validators: A list of extra validators to run.
         """
-        self.errors = []
+        self.errors = list(self.process_errors)
         stop_validation = False
 
         # Call pre_validate
@@ -192,18 +193,25 @@ class Field(object):
         special advanced processing, such as when a field encapsulates many
         inputs.
         """
+        self.process_errors = []
         if data is _unset_value:
             try:
                 data = self._default()
             except TypeError:
                 data = self._default
-        self.process_data(data)
+        try:
+            self.process_data(data)
+        except ValueError, e:
+            self.process_errors.append(e.args[0])
 
         if formdata:
-            if self.name in formdata:
-                self.process_formdata(formdata.getlist(self.name))
-            else:
-                self.process_formdata([])
+            try:
+                if self.name in formdata:
+                    self.process_formdata(formdata.getlist(self.name))
+                else:
+                    self.process_formdata([])
+            except ValueError, e:
+                self.process_errors.append(e.args[0])
 
         for filter in self.filters:
             self.data = filter(self.data)

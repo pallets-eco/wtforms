@@ -118,6 +118,15 @@ The Field base class
         A string containing the value of the description passed in the
         constructor to the field; this is not HTML escaped.
 
+    .. attribute:: errors
+
+       A sequence containing the validation errors for this field.
+
+    .. attribute:: process_errors
+
+       Errors obtained during input processing. These will be prepended to the
+       list of errors at validation time.
+
     .. attribute:: widget
 
         The widget used to render the field.
