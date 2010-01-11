@@ -214,7 +214,10 @@ class Field(object):
                 self.process_errors.append(e.args[0])
 
         for filter in self.filters:
-            self.data = filter(self.data)
+            try:
+                self.data = filter(self.data)
+            except ValueError, e:
+                self.process_errors.append(e.args[0])
 
     def process_data(self, value):
         """
@@ -323,7 +326,7 @@ class SelectField(Field):
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
-                pass
+                raise ValidationError(u'Invalid Choice: could not coerce')
 
     def pre_validate(self, form):
         for v, _ in self.choices:
@@ -356,7 +359,7 @@ class SelectMultipleField(SelectField):
         try:
             self.data = [self.coerce(x) for x in valuelist]
         except ValueError:
-            pass
+            raise ValidationError(u'Invalid choice(s): one or more data inputs could not be coerced')
 
     def pre_validate(self, form):
         if self.data:
@@ -457,13 +460,6 @@ class IntegerField(TextField):
             try:
                 self.data = int(valuelist[0])
             except ValueError:
-                pass
-
-    def post_validate(self, form, validation_stopped):
-        if not validation_stopped and self.raw_data:
-            try:
-                int(self.raw_data)
-            except ValueError:
                 raise ValidationError(u'Not a valid integer value')
 
 
@@ -505,10 +501,6 @@ class DecimalField(TextField):
         else:
             return ''
 
-    def post_validate(self, form, validation_stopped):
-        if not validation_stopped and self.raw_data is not None and self.data is None:
-            raise ValidationError(u'Not a valid decimal value')
-
     def process_formdata(self, valuelist):
         if valuelist:
             self.raw_data = valuelist[0]
@@ -516,6 +508,7 @@ class DecimalField(TextField):
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 self.data = None
+                raise ValidationError(u'Not a valid decimal value')
 
 
 class BooleanField(Field):
@@ -564,6 +557,7 @@ class DateTimeField(TextField):
                 self.data = datetime(*timetuple[:6])
             except ValueError:
                 self.data = None
+                raise ValidationError(u'Date-time input does not match format')
 
 
 class DateField(DateTimeField):
@@ -581,6 +575,7 @@ class DateField(DateTimeField):
                 self.data = date(*timetuple[:3])
             except ValueError:
                 self.data = None
+                raise ValidationError(u'Date input does not match format')
 
 class SubmitField(BooleanField):
     """
