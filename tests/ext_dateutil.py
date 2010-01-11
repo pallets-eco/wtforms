@@ -25,6 +25,9 @@ class DateutilTest(TestCase):
         self.assertEqual(f.a._value(), '2008/09/12 4:17 PM')
         self.assertEqual(f.b.data, date(2006, 4, 5))
         self.assertEqual(f.c.data, date(2004, 5, 6))
+        self.assert_(f.validate())
+        f = self.F(DummyPostData(a='Grok Grarg Rawr'))
+        self.assert_(not f.validate())
 
     def test_defaults_display(self):
         f = self.F(a=datetime(2001, 11, 15))
@@ -33,6 +36,7 @@ class DateutilTest(TestCase):
         self.assertEqual(f.b.data, date(2004, 9, 12))
         self.assertEqual(f.b._value(), u'2004-09-12')
         self.assertEqual(f.c.data, None)
+        self.assert_(f.validate())
 
 
 if __name__ == '__main__':
