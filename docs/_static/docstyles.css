@@ -23,7 +23,8 @@ a.headerlink:hover {
 }
 
 /* Links to classes/functions */
-a.reference.internal { font-weight: bold; }
+a.reference { font-weight: bold; }
+ul li a.reference { font-weight: normal; }
 
 
 /* definition links */
