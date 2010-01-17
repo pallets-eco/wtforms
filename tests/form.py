@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from wtforms.form import BaseForm, Form
-from wtforms.fields import TextField
+from wtforms.fields import TextField, IntegerField
 from wtforms.validators import ValidationError
 
 
@@ -45,6 +45,21 @@ class BaseFormTest(TestCase):
         self.assertRaises(AttributeError, getattr, form, 'test')
         self.assert_('test' not in form)
 
+    def test_field_adding(self):
+        form = self.get_form()
+        self.assertEqual(len(list(form)), 1)
+        form['foo'] = TextField()
+        self.assertEqual(len(list(form)), 2)
+        form.process(DummyPostData(foo=[u'hello']))
+        self.assertEqual(form['foo'].data, u'hello')
+        form['test'] = IntegerField()
+        self.assert_(isinstance(form['test'], IntegerField))
+        self.assertEqual(len(list(form)), 2)
+        self.assertRaises(AttributeError, getattr, form['test'], 'data')
+        form.process(DummyPostData(test=[u'1']))
+        self.assertEqual(form['test'].data, 1)
+        self.assertEqual(form['foo'].data, u'')
+
     def test_populate_obj(self):
         m = type('Model', (object, ), {})
         form = self.get_form()
@@ -55,10 +70,12 @@ class BaseFormTest(TestCase):
 
     def test_prefixes(self):
         self.assertEqual(self.get_form(prefix='foo').test.name, 'foo-test')
+        self.assertEqual(self.get_form(prefix='foo').test.short_name, 'test')
         self.assertEqual(self.get_form(prefix='foo').test.id, 'foo-test')
-        form = self.get_form(prefix='foo')
-        form.process(DummyPostData({'foo-test': [u'hello'], 'test': [u'bye']}))
+        form = self.get_form(prefix='foo.')
+        form.process(DummyPostData({'foo.test': [u'hello'], 'test': [u'bye']}))
         self.assertEqual(form.test.data, u'hello')
+        self.assertEqual(self.get_form(prefix='foo[')['test'].name, 'foo[-test')
 
 
 class FormMetaTest(TestCase):
@@ -112,6 +129,7 @@ class FormTest(TestCase):
         del form.test
         self.assert_('test' not in form)
         self.assertEqual(form.test, None)
+        self.assertEqual(len(list(form)), 0)
 
     def test_ordered_fields(self):
         class MyForm(Form):

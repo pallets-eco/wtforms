@@ -53,9 +53,8 @@ class LabelTest(TestCase):
 
 class FlagsTest(TestCase):
     def setUp(self):
-        class F(Form):
-            a = TextField(validators=[validators.required()])
-        self.flags = F().a.flags
+        t = TextField(validators=[validators.Required()]).bind(Form(), 'a')
+        self.flags = t.flags
 
     def test_existing_values(self):
         self.assertEqual(self.flags.required, True)
@@ -64,6 +63,7 @@ class FlagsTest(TestCase):
         self.assert_('optional' not in self.flags)
 
     def test_assignment(self):
+        self.assert_('optional' not in self.flags)
         self.flags.optional = True
         self.assertEqual(self.flags.optional, True)
         self.assert_('optional' in self.flags)
@@ -105,6 +105,9 @@ class SelectFieldTest(TestCase):
         form = self.F(DummyPostData(b=[u'2']))
         self.assertEqual(form.b.data, 2)
         self.assert_(form.b.validate(form))
+        form = self.F(DummyPostData(b=[u'b']))
+        self.assertEqual(form.b.data, None)
+        self.assert_(not form.b.validate(form))
 
     def test_id_attribute(self):
         form = self.F(obj=AttrDict(b=AttrDict(id=1)))
@@ -124,7 +127,7 @@ class SelectMultipleFieldTest(TestCase):
         self.assertEqual(form.a.data, ['a'])
         self.assertEqual(form.b.data, [1, 3])
         # Test for possible regression with null data
-        form.a.data = None 
+        form.a.data = None
         self.assert_(form.validate())
         self.assertEqual(list(form.a.iter_choices()), [(v, l, False) for v, l in form.a.choices])
 
@@ -215,10 +218,12 @@ class IntegerFieldTest(TestCase):
     def test(self):
         form = self.F(DummyPostData(a=['v'], b=['-15']))
         self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a.raw_data, 'v')
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="v" />""")
         self.assertEqual(form.b.data, -15)
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15" />""")
-        self.assert_(not form.validate())
+        self.assert_(not form.a.validate(form))
+        self.assert_(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.b.data, 48)
@@ -249,6 +254,7 @@ class DecimalFieldTest(TestCase):
         self.assertEqual(form.a._value(), u'3.141')
         form = F(a=3.14159265)
         self.assertEqual(form.a._value(), u'3.142')
+        self.assert_(isinstance(form.a.data, float))
 
 
 class BooleanFieldTest(TestCase):
@@ -380,7 +386,7 @@ class FormFieldTest(TestCase):
 
 
 class FieldListTest(TestCase):
-    t = TextField(validators=[validators.required()])
+    t = TextField(validators=[validators.Required()])
 
     def test_form(self):
         F = make_form(a = FieldList(self.t))
