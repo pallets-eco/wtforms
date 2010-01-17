@@ -1,0 +1,84 @@
+/* Those silly paragraph link entities */
+a.headerlink {
+    color: #B4B4B4!important;
+    font-size: 0.8em;
+    padding: 0 4px 0 4px;
+    text-decoration: none!important;
+    visibility: hidden;
+}
+
+h1:hover > a.headerlink,
+h2:hover > a.headerlink,
+h3:hover > a.headerlink,
+h4:hover > a.headerlink,
+h5:hover > a.headerlink,
+h6:hover > a.headerlink,
+dt:hover > a.headerlink {
+    visibility: visible;
+}
+
+a.headerlink:hover {
+    background-color: #B4B4B4;
+    color: #F0F0F0!important;
+}
+
+/* Links to classes/functions */
+a.reference.internal { font-weight: bold; }
+
+
+/* definition links */
+dl.function dt,
+dl.class dt,
+dl.exception dt,
+dl.method dt,
+dl.attribute dt {
+    font-weight: normal;
+}
+
+dt .descname { font-weight: bold }
+
+
+
+/* Warning boxes and other boxy things */
+div.admonition, div.warning, div#toc {
+    font-size: 0.9em;
+    margin: 1em 0 0 0;
+    border: 1px solid #86989B;
+    background-color: #f7f7f7;
+}
+
+div.admonition p, div.warning p, div#toc p {
+    margin: 0.5em 1em 0.5em 1em;
+    padding: 0;
+}
+
+div.admonition pre, div.warning pre, div#toc pre {
+    margin: 0.4em 1em 0.4em 1em;
+}
+
+div.admonition p.admonition-title,
+div.warning p.admonition-title,
+div#toc h3 {
+    margin: 0;
+    padding: 0.1em 0 0.1em 0.5em;
+    color: white;
+    border-bottom: 1px solid #86989B;
+    font-weight: bold;
+    background-color: #AFC1C4;
+}
+
+div.warning {
+    border: 1px solid #940000;
+}
+
+div.warning p.admonition-title {
+    background-color: #CF0000;
+    border-bottom-color: #940000;
+}
+
+div.admonition ul, div.admonition ol,
+div.warning ul, div.warning ol,
+div#toc ul, div#toc ol {
+    margin: 0.1em 0.5em 0.5em 3em;
+    padding: 0;
+}
