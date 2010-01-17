@@ -37,7 +37,13 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.Optional
 
+   This also sets the ``optional`` :attr:`flag <wtforms.fields.Field.flags>` on
+   fields it is used on.
+
 .. autoclass:: wtforms.validators.Required
+
+   This also sets the ``required`` :attr:`flag <wtforms.fields.Field.flags>` on
+   fields it is used on.
 
 .. autoclass:: wtforms.validators.Regexp
 
@@ -47,8 +53,8 @@ Custom validators
 -----------------
 
 We will step through the evolution of writing a length-checking validator
-similar to the built-in :class:Length validator, starting from a case-specific
-one to a generic reusable validator.
+similar to the built-in :class:`Length` validator, starting from a
+case-specific one to a generic reusable validator.
 
 Let's start with a simple form with a name field and its validation::
 
@@ -138,9 +144,9 @@ Setting flags on the field with validators
 
 Sometimes, it's useful to know if a validator is present on a given field, like
 for use in template code. To do this, validators are allowed to specify flags
-which will then be available on the
-:attr:`field's flags object <wtforms.fields.Field.flags>`.
-Some of the built-in validators such as `Required` already do this.
+which will then be available on the :attr:`field's flags object
+<wtforms.fields.Field.flags>`.  Some of the built-in validators such as
+:class:`Required` already do this.
 
 To specify flags on your validator, set the ``field_flags`` attribute on your
 validator. When the Field is constructed, the flags with the same name will be

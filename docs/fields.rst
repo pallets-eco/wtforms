@@ -154,7 +154,7 @@ The Field base class
 
         An object containing boolean flags set either by the field itself, or
         by validators on the field. For example, the built-in
-        :func:`~wtforms.validators.required` validator sets the `required` flag.
+        :class:`~wtforms.validators.Required` validator sets the `required` flag.
         An unset flag will result in :const:`False`.
 
         .. code-block:: html+django
@@ -177,6 +177,8 @@ refer to a single input from the form.
 .. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
 
 .. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')
+
+  For better date/time fields, see the :mod:`dateutil extension <wtforms.ext.dateutil.fields>`
 
 .. autoclass:: DecimalField(default field arguments, places=2, rounding=None)
 
