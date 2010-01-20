@@ -108,12 +108,14 @@ class ModelFormTest(TestCase):
         self.assertEqual(type(self.form.file2), fields.FileField)
         self.assertEqual(type(self.form_with_pk.id), fields.IntegerField)
         self.assertEqual(type(self.form.slug), fields.TextField)
+        self.assertEqual(type(self.form.birthday), fields.DateField)
 
     def test_custom_converters(self):
         self.assertEqual(type(self.form.email), fields.TextField)
         self.assert_(contains_validator(self.form.email, validators.Email))
         self.assertEqual(type(self.form.reg_ip), fields.TextField)
         self.assert_(contains_validator(self.form.reg_ip, validators.IPAddress))
+        self.assertEqual(type(self.form.group_id), ModelSelectField)
 
     def test_us_states(self):
         self.assert_(len(self.form.state.choices) >= 50)

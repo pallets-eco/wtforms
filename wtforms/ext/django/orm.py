@@ -50,6 +50,7 @@ class ModelConverter(ModelConverterBase):
         f.DecimalField: ['DecimalField', 'FloatField'],
         f.FileField: ['FileField', 'FilePathField', 'ImageField'],
         f.DateTimeField: ['DateTimeField'],
+        f.DateField : ['DateField'],
         f.BooleanField: ['BooleanField'],
         f.TextField: ['CharField', 'PhoneNumberField', 'SlugField'],
         f.TextAreaField: ['TextField', 'XMLField'],
@@ -76,9 +77,6 @@ class ModelConverter(ModelConverterBase):
     def conv_ForeignKey(self, model, field, kwargs):
         return ModelSelectField(model=field.rel.to, **kwargs)
 
-    def conv_ManytoManyField(self, model, field, kwargs):
-        raise NotImplementedError() # TODO
-
     def conv_TimeField(self, model, field, kwargs):
         def time_only(obj):
             try:
@@ -87,9 +85,6 @@ class ModelConverter(ModelConverterBase):
                 return obj
         kwargs['filters'].append(time_only)
         return f.DateTimeField(format='%H:%M:%S', **kwargs)
-
-    def conv_DateField(self, model, field, kwargs):
-        return f.DateTimeField(format='%Y-%m-%d', **kwargs)
 
     def conv_EmailField(self, model, field, kwargs):
         kwargs['validators'].append(validators.email())
