@@ -238,10 +238,12 @@ class DecimalFieldTest(TestCase):
         F = make_form(a=DecimalField())
         form = F(DummyPostData(a='2.1'))
         self.assertEqual(form.a.data, Decimal('2.1'))
+        self.assertEqual(form.a._value(), u'2.1')
+        form.a.raw_data = None
         self.assertEqual(form.a._value(), u'2.10')
         self.assert_(form.validate())
         form = F(DummyPostData(a='2,1'), a=Decimal(5))
-        self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a.data, Decimal(5))
         self.assertEqual(form.a.raw_data, '2,1')
         self.assert_(not form.validate())
 

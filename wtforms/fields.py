@@ -469,7 +469,7 @@ class DecimalField(TextField):
     :param places:
         How many decimal places to quantize the value to for display on form.
         If None, does not quantize value.
-    :param rounding: 
+    :param rounding:
         How to round the value during quantize, for example
         `decimal.ROUND_UP`. If unset, uses the rounding value from the
         current thread's context.
@@ -482,7 +482,9 @@ class DecimalField(TextField):
         self.rounding = rounding
 
     def _value(self):
-        if self.data is not None:
+        if self.raw_data is not None:
+            return self.raw_data
+        elif self.data is not None:
             if self.places is not None:
                 if hasattr(self.data, 'quantize'):
                     exp = decimal.Decimal('.1') ** self.places
@@ -495,8 +497,6 @@ class DecimalField(TextField):
                     return format % self.data
             else:
                 return unicode(self.data)
-        elif self.raw_data is not None:
-            return self.raw_data
         else:
             return u''
 
@@ -506,7 +506,6 @@ class DecimalField(TextField):
             try:
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
-                self.data = None
                 raise ValueError(u'Not a valid decimal value')
 
 
