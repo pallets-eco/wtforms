@@ -16,7 +16,7 @@ class ValidationError(ValueError):
         ValueError.__init__(self, message, *args, **kwargs)
 
 
-class StopValidation(ValidationError):
+class StopValidation(Exception):
     """
     Causes the validation chain to stop.
 
@@ -25,7 +25,7 @@ class StopValidation(ValidationError):
     list.
     """
     def __init__(self, message=u'', *args, **kwargs):
-        ValidationError.__init__(self, message, *args, **kwargs)
+        Exception.__init__(self, message, *args, **kwargs)
 
 
 class EqualTo(object):
@@ -167,7 +167,7 @@ class Regexp(object):
         self.message = message
 
     def __call__(self, form, field):
-        if not self.regex.match(field.data or ''):
+        if not self.regex.match(field.data or u''):
             raise ValidationError(self.message)
 
 
@@ -209,7 +209,8 @@ class URL(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, require_tld=True, message=u'Invalid URL.'):
-        regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (require_tld and r'\.[a-z]{2,10}' or '')
+        tld_part = (require_tld and ur'\.[a-z]{2,10}' or u'')
+        regex = ur'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
 

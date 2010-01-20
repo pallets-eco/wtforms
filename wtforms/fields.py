@@ -4,7 +4,7 @@ import itertools
 import time
 
 from wtforms import widgets
-from wtforms.validators import StopValidation, ValidationError
+from wtforms.validators import StopValidation
 
 
 __all__ = (
@@ -325,14 +325,14 @@ class SelectField(Field):
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
-                raise ValidationError(u'Invalid Choice: could not coerce')
+                raise ValueError(u'Invalid Choice: could not coerce')
 
     def pre_validate(self, form):
         for v, _ in self.choices:
             if self.data == v:
                 break
         else:
-            raise ValidationError('Not a valid choice')
+            raise ValueError('Not a valid choice')
 
 
 class SelectMultipleField(SelectField):
@@ -358,14 +358,14 @@ class SelectMultipleField(SelectField):
         try:
             self.data = [self.coerce(x) for x in valuelist]
         except ValueError:
-            raise ValidationError(u'Invalid choice(s): one or more data inputs could not be coerced')
+            raise ValueError(u'Invalid choice(s): one or more data inputs could not be coerced')
 
     def pre_validate(self, form):
         if self.data:
             values = [c[0] for c in self.choices]
             for d in self.data:
                 if d not in values:
-                    raise ValidationError(u"'%s' is not a valid choice for this field" % d)
+                    raise ValueError(u"'%s' is not a valid choice for this field" % d)
 
 
 class RadioField(SelectField):
@@ -459,7 +459,7 @@ class IntegerField(TextField):
             try:
                 self.data = int(valuelist[0])
             except ValueError:
-                raise ValidationError(u'Not a valid integer value')
+                raise ValueError(u'Not a valid integer value')
 
 
 class DecimalField(TextField):
@@ -498,7 +498,7 @@ class DecimalField(TextField):
         elif self.raw_data is not None:
             return self.raw_data
         else:
-            return ''
+            return u''
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -507,11 +507,11 @@ class DecimalField(TextField):
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 self.data = None
-                raise ValidationError(u'Not a valid decimal value')
+                raise ValueError(u'Not a valid decimal value')
 
 
 class BooleanField(Field):
-    """ 
+    """
     Represents an ``<input type="checkbox">``.
     """
     widget = widgets.CheckboxInput()
@@ -533,10 +533,12 @@ class BooleanField(Field):
             self.data = False
 
 
-class DateTimeField(TextField):
+class DateTimeField(Field):
     """
     A text field which stores a `datetime.datetime` matching a format.
     """
+    widget = widgets.TextInput()
+
     def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
@@ -556,7 +558,7 @@ class DateTimeField(TextField):
                 self.data = datetime.datetime(*timetuple[:6])
             except ValueError:
                 self.data = None
-                raise ValidationError(u'Date-time input does not match format')
+                raise
 
 
 class DateField(DateTimeField):
@@ -574,7 +576,8 @@ class DateField(DateTimeField):
                 self.data = datetime.date(*timetuple[:3])
             except ValueError:
                 self.data = None
-                raise ValidationError(u'Date input does not match format')
+                raise
+
 
 class SubmitField(BooleanField):
     """
@@ -649,7 +652,7 @@ class FieldList(Field):
     Encapsulate an ordered list of multiple instances of the same field type,
     keeping data as a list.
 
-    >>> authors = FieldList(TextField('Name', [validators.required()])) 
+    >>> authors = FieldList(TextField('Name', [validators.required()]))
 
     :param unbound_field:
         A partially-instantiated field definition, just like that would be
