@@ -69,12 +69,13 @@ class BaseFormTest(TestCase):
         self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['test'])
 
     def test_prefixes(self):
-        self.assertEqual(self.get_form(prefix='foo').test.name, 'foo-test')
-        self.assertEqual(self.get_form(prefix='foo').test.short_name, 'test')
-        self.assertEqual(self.get_form(prefix='foo').test.id, 'foo-test')
+        form = self.get_form(prefix='foo')
+        self.assertEqual(form['test'].name, 'foo-test')
+        self.assertEqual(form['test'].short_name, 'test')
+        self.assertEqual(form['test'].id, 'foo-test')
         form = self.get_form(prefix='foo.')
         form.process(DummyPostData({'foo.test': [u'hello'], 'test': [u'bye']}))
-        self.assertEqual(form.test.data, u'hello')
+        self.assertEqual(form['test'].data, u'hello')
         self.assertEqual(self.get_form(prefix='foo[')['test'].name, 'foo[-test')
 
 

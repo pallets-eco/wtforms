@@ -204,12 +204,6 @@ fields.
 
     .. automethod:: __contains__
 
-    .. automethod:: __getattr__
-
-        Allow accessing fields by attribute name from the internal fields
-        dictionary for frameworks which need it. Fields which do not have valid
-        attribute names cannot be accessed this way.
-
     .. automethod:: __getitem__
 
     .. automethod:: __setitem__

@@ -48,12 +48,6 @@ class BaseForm(object):
         """ Remove a field from this form. """
         del self._fields[name]
 
-    def __getattr__(self, name):
-        try:
-            return self._fields[name]
-        except KeyError:
-            raise AttributeError('Form has no field %r' % name)
-
     def populate_obj(self, obj):
         """
         Populates the attributes of the passed `obj` with data from the form's
