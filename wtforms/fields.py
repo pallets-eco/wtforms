@@ -1,7 +1,6 @@
-from cgi import escape
-from datetime import date, datetime
+import datetime
 import decimal
-from itertools import chain, count
+import itertools
 import time
 
 from wtforms import widgets
@@ -141,7 +140,7 @@ class Field(object):
 
         # Run validators
         if not stop_validation:
-            for validator in chain(self.validators, extra_validators):
+            for validator in itertools.chain(self.validators, extra_validators):
                 try:
                     validator(form, self)
                 except StopValidation, e:
@@ -554,7 +553,7 @@ class DateTimeField(TextField):
             self.raw_data = str.join(' ', valuelist)
             try:
                 timetuple = time.strptime(self.raw_data, self.format)
-                self.data = datetime(*timetuple[:6])
+                self.data = datetime.datetime(*timetuple[:6])
             except ValueError:
                 self.data = None
                 raise ValidationError(u'Date-time input does not match format')
@@ -572,7 +571,7 @@ class DateField(DateTimeField):
             self.raw_data = str.join(' ', valuelist)
             try:
                 timetuple = time.strptime(self.raw_data, self.format)
-                self.data = date(*timetuple[:3])
+                self.data = datetime.date(*timetuple[:3])
             except ValueError:
                 self.data = None
                 raise ValidationError(u'Date input does not match format')
