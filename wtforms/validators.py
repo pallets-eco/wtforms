@@ -116,11 +116,15 @@ class NumberRange(object):
 class Optional(object):
     """
     Allows empty input and stops the validation chain from continuing.
+
+    If input is empty, also removes prior errors (such as processing errors)
+    from the field.
     """
     field_flags = ('optional', )
 
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+            field.errors[:] = []
             raise StopValidation()
 
 
@@ -139,6 +143,7 @@ class Required(object):
 
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+            field.errors[:] = []
             raise StopValidation(self.message)
 
 

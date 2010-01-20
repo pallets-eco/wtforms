@@ -7,8 +7,9 @@ class DummyForm(dict):
     pass
 
 class DummyField(object):
-    def __init__(self, data):
+    def __init__(self, data, errors=()):
         self.data = data
+        self.errors = list(errors)
 
 def grab_error_message(callable, form, field):
     try:
@@ -70,12 +71,20 @@ class ValidatorsTest(TestCase):
         self.assertRaises(StopValidation, required(), self.form, DummyField(''))
         self.assertRaises(StopValidation, required(), self.form, DummyField(' '))
         self.assertEqual(required().field_flags, ('required', ))
+        f = DummyField('', ['Invalid Integer Value'])
+        self.assertEqual(len(f.errors), 1)
+        self.assertRaises(StopValidation, required(), self.form, f)
+        self.assertEqual(len(f.errors), 0)
 
     def test_optional(self):
         self.assertEqual(optional()(self.form, DummyField('foobar')), None)
         self.assertRaises(StopValidation, optional(), self.form, DummyField(''))
         self.assertRaises(StopValidation, optional(), self.form, DummyField(' '))
         self.assertEqual(optional().field_flags, ('optional', ))
+        f = DummyField('', ['Invalid Integer Value'])
+        self.assertEqual(len(f.errors), 1)
+        self.assertRaises(StopValidation, optional(), self.form, f)
+        self.assertEqual(len(f.errors), 0)
 
     def test_regexp(self):
         import re
