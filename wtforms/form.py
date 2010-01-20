@@ -12,7 +12,7 @@ class BaseForm(object):
     def __init__(self, fields, prefix=''):
         """
         :param fields:
-            A dict of partially-constructed fields.
+            A dict or sequence of 2-tuples of partially-constructed fields.
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
@@ -24,7 +24,10 @@ class BaseForm(object):
         self._errors = None
         self._fields = {}
 
-        for name, unbound_field in fields.iteritems():
+        if hasattr(fields, 'iteritems'):
+            fields = fields.iteritems()
+
+        for name, unbound_field in fields:
             field = unbound_field.bind(form=self, name=name, prefix=prefix)
             self._fields[name] = field
 
@@ -79,7 +82,7 @@ class BaseForm(object):
             if hasattr(formdata, 'getall'):
                 formdata = WebobInputWrapper(formdata)
             else:
-                raise TypeError("formdata should be a multidict-type wrapper that supports the 'getall' method")
+                raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
 
         for name, field, in self._fields.iteritems():
             if hasattr(obj, name):
@@ -104,7 +107,7 @@ class BaseForm(object):
         success = True
         for name, field in self._fields.iteritems():
             if extra_validators is not None and name in extra_validators:
-                extra = extra_validators[name] 
+                extra = extra_validators[name]
             else:
                 extra = tuple()
             if not field.validate(self, extra):
@@ -201,7 +204,7 @@ class Form(BaseForm):
             form will assign the value of a matching keyword argument to the
             field, if provided.
         """
-        super(Form, self).__init__(dict(self._unbound_fields), prefix=prefix)
+        super(Form, self).__init__(self._unbound_fields, prefix=prefix)
 
         for name, field in self._fields.iteritems():
             # Set all the fields to attributes so that they obscure the class
