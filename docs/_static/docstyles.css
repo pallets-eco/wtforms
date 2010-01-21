@@ -24,7 +24,11 @@ a.headerlink:hover {
 
 /* Links to classes/functions */
 a.reference { font-weight: bold; }
-ul li a.reference { font-weight: normal; }
+
+#wtforms-documentation ul li a.reference, 
+#toc ul li a.reference { 
+    font-weight: normal; 
+}
 
 
 /* definition links */

@@ -7,6 +7,8 @@ For a quick introduction, check the `WTForms website`_.
 
 .. _WTForms website: http://wtforms.simplecodes.com/
 
+**API**
+
 .. toctree::
    :maxdepth: 2
 
@@ -15,6 +17,14 @@ For a quick introduction, check the `WTForms website`_.
    validators
    widgets
    ext
+
+**Additional Help**
+
+.. toctree::
+   :maxdepth: 1
+
+   faq
+   specific_problems
 
 **Indices and tables:**
 
