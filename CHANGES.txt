@@ -8,17 +8,16 @@ Not yet released.
 - Added a BaseForm class which provides the core processing and validation
   functionality of Form without requiring declarative subclassing.
 
-- ext.sqlalchemy.fields now has an additional QuerySelectMultipleField.
+- Fields:
+  * Field labels now default to a humanized field name.
+  * Fields now have a `short_name` property which is the un-prefixed name.
+  * DecimalField now rounds values for display without float coercion.
+    See docs for details on how to format decimals.
 
-- Field labels now default to a humanized field name.
-
-- Fields now have a `short_name` property which is the un-prefixed name.
-
-- DecimalField now rounds values for display without float coercion, the
-  `number_format` keyword arg has been removed. See docs for details on how to
-  format decimals.
-
-- Added ext.dateutil for flexible date-time parsing.
+- Extensions:
+  * ext.sqlalchemy.fields now has an additional QuerySelectMultipleField.
+  * Added ext.dateutil for flexible date-time parsing.
+  * Added ext.appengine contributed by Rodrigo Moraes.
 
 Version 0.4
 -----------
@@ -68,11 +67,11 @@ Released January 18th, 2009.
   if you have any subfields that override `Field.validate`. These will need to
   be updated to use the new hooks.
 
-- Changes in how `process_data` and `process_formdata` are called: 
+- Changes in how `process_data` and `process_formdata` are called:
     * `process_data` no longer accepts the `has_formdata` parameter.
     * At form instantiation time, `process_data` will be called only once for
       each field. If a model object is provided which contains the property,
-      then this value is used. Otherwise, a keyword argument if specified is 
+      then this value is used. Otherwise, a keyword argument if specified is
       used. Failing that, the field's default value is used.
     * If any form data is sent, `process_formdata` will be called after
       `process_data` for each field. If no form data is available for the
@@ -82,7 +81,7 @@ Released January 18th, 2009.
   of the Django 1.0 release, and to add some useful fields for working with
   django ORM data in forms.
 
-- The `checker` keyword argument to SelectField, SelectMultipleField, and 
+- The `checker` keyword argument to SelectField, SelectMultipleField, and
   RadioField has been renamed to `coerce` to reflect the actual functionality
   of this callable.
 
