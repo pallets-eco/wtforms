@@ -36,8 +36,8 @@ class EqualTo(object):
         The name of the other field to compare to.
     :param message:
         Error message to raise in case of a validation error. Can be
-        interpolated with %(other_label)s and %(other_name)s to provide more
-        helpful error.
+        interpolated with `%(other_label)s` and `%(other_name)s` to provide a
+        more helpful error.
     """
     def __init__(self, fieldname, message=u'Field must be equal to %(other_name)s'):
         self.fieldname = fieldname
