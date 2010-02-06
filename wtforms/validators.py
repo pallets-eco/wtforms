@@ -35,11 +35,13 @@ class EqualTo(object):
     :param fieldname:
         The name of the other field to compare to.
     :param message:
-        Error message to raise in case of a validation error.
+        Error message to raise in case of a validation error. Can be
+        interpolated with %(other_label)s and %(other_name)s to provide more
+        helpful error.
     """
-    def __init__(self, fieldname, message=None):
+    def __init__(self, fieldname, message=u'Field must be equal to %(other_name)s'):
         self.fieldname = fieldname
-        self.message = message or u'Field must be equal to %s' % fieldname
+        self.message = message
 
     def __call__(self, form, field):
         try:
@@ -47,7 +49,11 @@ class EqualTo(object):
         except KeyError:
             raise ValidationError(u"Invalid field name '%s'" % self.fieldname)
         if field.data != other.data:
-            raise ValidationError(self.message)
+            d = {
+                'other_label': hasattr(other, 'label') and other.label.text or self.fieldname,
+                'other_name': self.fieldname
+            }
+            raise ValidationError(self.message % d)
 
 
 class Length(object):
@@ -79,38 +85,50 @@ class Length(object):
             else:
                 message = u'Field must be between %(min)d and %(max)d characters long.'
 
-        self.message = message % dict(min=min, max=max)
+        self.message = message
 
     def __call__(self, form, field):
         l = field.data and len(field.data) or 0
         if l < self.min or self.max != -1 and l > self.max:
-            raise ValidationError(self.message)
+            raise ValidationError(self.message % dict(min=self.min, max=self.max))
 
 
 class NumberRange(object):
     """
-    Validates that a number is of a minimum and/or maximum value.
+    Validates that a number is of a minimum and/or maximum value, inclusive.
+    This will work with any comparable number type, such as floats and
+    decimals, not just integers.
 
     :param min:
-        The minimum required value of the integer. If not provided, minimum
+        The minimum required value of the number. If not provided, minimum
         value will not be checked.
     :param max:
-        The maximum value of the integer. If not provided, maximum value
+        The maximum value of the number. If not provided, maximum value
         will not be checked.
     :param message:
-        Error message to raise in case of a validation error. A default
-        containing min and max values is provided.
+        Error message to raise in case of a validation error. Can be
+        interpolated using `%(min)s` and `%(max)s` if desired. Useful defaults
+        are provided depending on the existence of min and max.
     """
     def __init__(self, min=None, max=None, message=None):
         self.min = min
         self.max = max
-        self.message = message or u'Number must be between %r and %r.' % (min, max)
+        if message is None:
+            # we use %(min)s interpolation to support floats, None, and
+            # Decimals without throwing a formatting exception.
+            if max is None:
+                message = u'Number must be greater than %(min)s'
+            elif min is None:
+                message = u'Number must be less than %(max)s'
+            else:
+                message = u'Number must be between %(min)s and %(max)s'
+        self.message = message
 
     def __call__(self, form, field):
         data = field.data
         if data is None or (self.min is not None and data < self.min) or \
             (self.max is not None and data > self.max):
-            raise ValidationError(self.message)
+            raise ValidationError(self.message % dict(min=self.min, max=self.max))
 
 
 class Optional(object):

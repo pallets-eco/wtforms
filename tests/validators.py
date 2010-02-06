@@ -121,6 +121,25 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, v, self.form, DummyField(0))
         self.assertRaises(ValidationError, v, self.form, DummyField(12))
 
+    def test_lazy_proxy(self):
+        """Tests that the validators support lazy translation strings for messages."""
+
+        class ReallyLazyProxy(object):
+            def __unicode__(self):
+                raise Exception('Translator function called during form declaration: it should be called at response time.')
+            __str__ = __unicode__
+
+        message = ReallyLazyProxy()
+        self.assertRaises(Exception, str, message)
+        self.assertRaises(Exception, unicode, message)
+        self.assert_(equal_to('fieldname', message=message))
+        self.assert_(length(min=1, message=message))
+        self.assert_(NumberRange(1,5, message=message))
+        self.assert_(required(message=message))
+        self.assert_(regexp('.+', message=message))
+        self.assert_(email(message=message))
+        self.assert_(ip_address(message=message))
+        self.assert_(url(message=message))
 
 if __name__ == '__main__':
     from unittest import main
