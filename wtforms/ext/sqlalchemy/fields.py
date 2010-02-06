@@ -2,10 +2,12 @@
 Useful form fields for use with SQLAlchemy ORM.
 """
 from operator import attrgetter
+from sqlalchemy.orm.util import identity_key
 
 from wtforms import widgets
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
+
 
 
 __all__ = (
@@ -20,9 +22,12 @@ class QuerySelectField(Field):
     model instance, not the ID. Submitting a choice which is not in the query
     will result in a validation error.
 
-    This field only works for queries on models with single-column integer
-    primary keys. If the primary key is not named 'id', then you should provide
-    the `pk_attr` with the name of the primary key field on the mapped model.
+    This field only works for queries on models whose primary key column(s)
+    have a consistent string representation. This means it mostly only works
+    for those composed of string, unicode, and integer types. For the most
+    part, the primary keys will be auto-detected from the model, alternately
+    pass a one-argument callable to `get_pk` which can return a unique
+    comparable key.
 
     The `query` property on the field can be set from within a view to assign
     a query per-instance to the field. If the property is not set, the
@@ -37,14 +42,24 @@ class QuerySelectField(Field):
     top of the list. Selecting this choice will result in the `data` property
     being `None`. The label for this blank choice can be set by specifying the
     `blank_text` parameter.
+
+    The `pk_attr` parameter is deprecated and will likely be removed in a
+    future release.
     """
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id', 
-                 label_attr='', allow_blank=False, blank_text=u'', **kwargs):
+    def __init__(self, label=u'', validators=None, query_factory=None,
+                 get_pk=None, label_attr='', allow_blank=False, blank_text=u'',
+                 pk_attr=None, **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
-        self.pk_attr = pk_attr
+        if pk_attr is not None:
+            self.get_pk = attrgetter(pk_attr)
+        elif get_pk is None:
+            self.get_pk = get_pk_from_identity
+        else:
+            self.get_pk = get_pk
+
         self.label_attr = label_attr
         self.allow_blank = allow_blank
         self.blank_text = blank_text
@@ -68,8 +83,8 @@ class QuerySelectField(Field):
     def _get_object_list(self):
         if self._object_list is None:
             query = self.query or self.query_factory()
-            get_pk = attrgetter(self.pk_attr)
-            self._object_list = list((get_pk(obj), obj) for obj in query)
+            get_pk = self.get_pk
+            self._object_list = list((unicode(get_pk(obj)), obj) for obj in query)
         return self._object_list
 
     def iter_choices(self):
@@ -82,11 +97,11 @@ class QuerySelectField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            if self.allow_blank and valuelist[0] == '__None':
+            if self.allow_blank and valuelist[0] == u'__None':
                 self.data = None
             else:
                 self._data = None
-                self._formdata = int(valuelist[0])
+                self._formdata = valuelist[0]
 
     def pre_validate(self, form):
         if not self.allow_blank or self.data is not None:
@@ -108,11 +123,11 @@ class QueryMultipleSelectField(QuerySelectField):
     """
     widget = widgets.Select(multiple=True)
 
-    def __init__(self, label=u'', validators=None, query_factory=None, pk_attr='id',
+    def __init__(self, label=u'', validators=None, query_factory=None, get_pk=None,
                  label_attr='', default=None, **kwargs):
         if default is None:
             default = []
-        super(QueryMultipleSelectField, self).__init__(label, validators, query_factory, pk_attr, label_attr, default=default, **kwargs)
+        super(QueryMultipleSelectField, self).__init__(label, validators, query_factory=query_factory, get_pk=get_pk, label_attr=label_attr, default=default, **kwargs)
         self._invalid_formdata = False
 
     def _get_data(self):
@@ -142,10 +157,7 @@ class QueryMultipleSelectField(QuerySelectField):
             yield (pk, label, obj in self.data)
 
     def process_formdata(self, valuelist):
-        try:
-            self._formdata = set(int(x) for x in valuelist)
-        except ValueError:
-            self._invalid_formdata = True
+        self._formdata = set(valuelist)
 
     def pre_validate(self, form):
         if self._invalid_formdata:
@@ -166,7 +178,13 @@ class ModelSelectField(QuerySelectField):
     queries of themselves. This field is simply a convenience for using
     `Model.query` as the factory for QuerySelectField.
     """
-    def __init__(self, label=u'', validators=None, model=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'', **kwargs):
+    def __init__(self, label=u'', validators=None, model=None, get_pk=None,
+                 label_attr='', allow_blank=False, blank_text=u'', **kwargs):
         assert model is not None, "Must specify a model."
         query_factory = lambda: model.query
-        super(ModelSelectField, self).__init__(label, validators, query_factory=query_factory, pk_attr=pk_attr, label_attr=label_attr, allow_blank=allow_blank, blank_text=blank_text, **kwargs)
+        super(ModelSelectField, self).__init__(label, validators, query_factory=query_factory, get_pk=get_pk, label_attr=label_attr, allow_blank=allow_blank, blank_text=blank_text, **kwargs)
+
+
+def get_pk_from_identity(obj):
+    cls, key = identity_key(instance=obj)
+    return u':'.join(unicode(x) for x in key)

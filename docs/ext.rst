@@ -124,9 +124,7 @@ ORM-backed fields
 .. module:: wtforms.ext.sqlalchemy.fields
 
 These fields are provided to make it easier to use data from ORM objects in
-your forms. Due to the complication of dealing with multiple-primary-keyed
-tables, currently it is only possible to use these fields with simple integer
-primary keyed ORM models.
+your forms.
 
 .. code-block:: python
 
@@ -144,7 +142,8 @@ primary keyed ORM models.
         form.blog.query = Blog.query.filter(Blog.author == request.user).order_by(Blog.name)
 
 
-.. autoclass:: QuerySelectField(default field args, query_factory=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'')
+.. autoclass:: QuerySelectField(default field args, query_factory=None, get_pk=None, label_attr='', allow_blank=False, blank_text=u'')
 
-.. autoclass:: ModelSelectField(default field args, model=None, pk_attr='id', label_attr='', allow_blank=False, blank_text=u'')
+.. autoclass:: QueryMultipleSelectField(default field args, query_factory=None, get_pk=None, label_attr='', allow_blank=False, blank_text=u'')
 
+.. autoclass:: ModelSelectField(default field args, model=None, get_pk=None, label_attr='', allow_blank=False, blank_text=u'')

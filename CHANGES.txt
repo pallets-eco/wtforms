@@ -15,7 +15,8 @@ Not yet released.
     See docs for details on how to format decimals.
 
 - Extensions:
-  * ext.sqlalchemy.fields now has an additional QuerySelectMultipleField.
+  * ext.sqlalchemy.fields now has an additional QuerySelectMultipleField, and
+    all fields can now support multiple-column primary keys.
   * Added ext.dateutil for flexible date-time parsing.
   * Added ext.appengine contributed by Rodrigo Moraes.
 
