@@ -85,7 +85,7 @@ class BaseForm(object):
                 raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
 
         for name, field, in self._fields.iteritems():
-            if hasattr(obj, name):
+            if obj is not None and hasattr(obj, name):
                 field.process(formdata, getattr(obj, name))
             elif name in kwargs:
                 field.process(formdata, kwargs[name])

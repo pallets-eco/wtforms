@@ -101,7 +101,7 @@ name re-used on a subclass causes the new definition to obscure the original.
         code     = TextAreaField()
 
     class PastebinEntry(PastebinEdit):
-        name = TextField(u'User Name')   
+        name = TextField(u'User Name')
 
 
 .. _inline-validators:
@@ -200,7 +200,7 @@ fields.
     .. automethod:: __iter__
 
         Unlike :class:`Form`, fields are not iterated in definition order, but
-        rather in whatever order the dict keys are given.
+        rather in whatever order the dict decides to yield them.
 
     .. automethod:: __contains__
 
