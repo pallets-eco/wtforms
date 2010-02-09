@@ -231,6 +231,8 @@ class IntegerFieldTest(TestCase):
         self.assert_(not form.validate())
         self.assertEqual(len(form.b.process_errors), 1)
         self.assertEqual(len(form.b.errors), 1)
+        form = self.F(b=9)
+        self.assertEqual(form.b.data, 9)
 
 
 class DecimalFieldTest(TestCase):
