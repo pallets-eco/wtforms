@@ -16,9 +16,9 @@ class DummyPostData(dict):
             v = [v]
         return v
 
-class AttrDict(dict):
-    def __getattr__(self, attr):
-        return self[attr]
+class AttrDict(object):
+    def __init__(self, *args, **kw):
+        self.__dict__.update(*args, **kw)
 
 def make_form(_name='F', **fields):
     return type(_name, (Form, ), fields)
@@ -412,8 +412,9 @@ class FieldListTest(TestCase):
         self.assert_(not form.validate())
 
     def test_enclosed_subform(self):
+        make_inner = lambda: AttrDict(a=None)
         F = make_form(
-            a = FieldList(FormField(make_form('FChild', a=self.t)))
+            a = FieldList(FormField(make_form('FChild', a=self.t), default=make_inner))
         )
         data = [{'a': 'hello'}]
         form = F(a=data)
@@ -426,6 +427,16 @@ class FieldListTest(TestCase):
         pdata = DummyPostData({'a-0': ['fake'], 'a-0-a': ['foo'], 'a-1-a': ['bar']})
         form = F(pdata, a=data)
         self.assertEqual(form.a.data, [{'a': 'foo'}, {'a': 'bar'}])
+
+        inner_obj = make_inner()
+        inner_list = [inner_obj]
+        obj = AttrDict(a=inner_list)
+        form.populate_obj(obj)
+        self.assert_(obj.a is not inner_list)
+        self.assertEqual(len(obj.a), 2)
+        self.assert_(obj.a[0] is inner_obj)
+        self.assertEqual(obj.a[0].a, 'foo')
+        self.assertEqual(obj.a[1].a, 'bar')
 
     def test_entry_management(self):
         F = make_form(a = FieldList(self.t))

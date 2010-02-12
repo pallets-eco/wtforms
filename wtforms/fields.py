@@ -602,6 +602,7 @@ class FormField(Field):
         super(FormField, self).__init__(label, validators, **kwargs)
         self.form_class = form_class
         self.separator = separator
+        self._obj = None
         if self.filters:
             raise TypeError('FormField cannot take filters, as the encapsulated data is not mutable.')
         if validators:
@@ -613,6 +614,7 @@ class FormField(Field):
                 data = self._default()
             except TypeError:
                 data = self._default
+            self._obj = data
 
         prefix = self.name + self.separator
         if isinstance(data, dict):
@@ -626,7 +628,14 @@ class FormField(Field):
         return self.form.validate()
 
     def populate_obj(self, obj, name):
-        self.form.populate_obj(getattr(obj, name))
+        candidate = getattr(obj, name, None)
+        if candidate is None:
+            if self._obj is None:
+                raise TypeError('populate_obj: cannot find a value to populate from the provided obj or input data/defaults')
+            candidate = self._obj
+            setattr(obj, name, candidate)
+
+        self.form.populate_obj(candidate)
 
     def __iter__(self):
         return iter(self.form)
@@ -723,6 +732,24 @@ class FieldList(Field):
                 success = False
                 self.errors.append(subfield.errors)
         return success
+
+    def populate_obj(self, obj, name):
+        values = getattr(obj, name, None)
+        try:
+            ivalues = iter(values)
+        except TypeError:
+            ivalues = iter([])
+
+        candidates = itertools.chain(ivalues, itertools.repeat(None))
+        _fake = type('_fake', (object, ), {})
+        output = []
+        for field, data in itertools.izip(self.entries, candidates):
+            fake_obj = _fake()
+            fake_obj.data = data
+            field.populate_obj(fake_obj, 'data')
+            output.append(fake_obj.data)
+
+        setattr(obj, name, output)
 
     def _add_entry(self, formdata=None, data=_unset_value, index=None):
         assert not self.max_entries or len(self.entries) < self.max_entries, \
