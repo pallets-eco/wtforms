@@ -245,9 +245,11 @@ class AnyOf(object):
         Function used to format the list of values in the error message.
     """
     def __init__(self, values, message=u'Invalid value, must be one of: %(values)s',
-                 values_formatter=lambda v: u', '.join(v)):
+                 values_formatter=None):
         self.values = values
         self.message = message
+        if values_formatter is None:
+            values_formatter = lambda v: u', '.join(v)
         self.values_formatter = values_formatter
         
     def __call__(self, form, field):
@@ -268,9 +270,11 @@ class NoneOf(object):
         Function used to format the list of values in the error message.
     """
     def __init__(self, values, message=u'Invalid value, can\'t be any of: %(values)s',
-                 values_formatter=lambda v: u', '.join(v)):
+                 values_formatter=None):
         self.values = values
         self.message = message
+        if values_formatter is None:
+            values_formatter = lambda v: u', '.join(v)
         self.values_formatter = values_formatter
         
     def __call__(self, form, field):
