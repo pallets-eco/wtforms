@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 0.5
 -----------
-Not yet released.
+Released February 13th, 2010.
 
 - Added a BaseForm class which provides the core processing and validation
   functionality of Form without requiring declarative subclassing.
@@ -20,6 +20,8 @@ Not yet released.
   * ext.sqlalchemy.orm contains tools for making forms from ORM models.
   * Added ext.dateutil for flexible date-time parsing.
   * Added ext.appengine contributed by Rodrigo Moraes.
+  
+- Added AnyOf and NoneOf validators.
 
 Version 0.4
 -----------

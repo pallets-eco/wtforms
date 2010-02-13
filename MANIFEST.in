@@ -6,5 +6,5 @@ include MANIFEST.in
 include README.txt
 recursive-include docs *
 recursive-include tests *
-recursive-exclude docs/_build/doctrees *
+recursive-exclude docs/_build *
 recursive-exclude tests *.pyc

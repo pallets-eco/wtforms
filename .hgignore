@@ -4,5 +4,6 @@ syntax: regexp
 \.eprj$
 ^build/
 ^docs/_build
+^docs/html
 ^dist/
 ^MANIFEST$
