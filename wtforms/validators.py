@@ -4,7 +4,7 @@ import re
 __all__ = (
     'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
     'Length', 'length', 'Optional', 'optional', 'Required', 'required',
-    'Regexp', 'regexp', 'URL', 'url',
+    'Regexp', 'regexp', 'URL', 'url', 'AnyOf', 'any_of', 'NoneOf', 'none_of'
 )
 
 
@@ -231,6 +231,7 @@ class URL(Regexp):
         regex = ur'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
+
 class AnyOf(object):
     """
     Compares the incoming data to a sequence of valid inputs.
@@ -252,6 +253,7 @@ class AnyOf(object):
     def __call__(self, form, field):
         if field.data not in self.values:
             raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
+
 
 class NoneOf(object):
     """
