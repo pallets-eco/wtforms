@@ -49,6 +49,10 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.URL
 
+.. autoclass:: wtforms.validators.AnyOf
+
+.. autoclass:: wtforms.validators.NoneOf
+
 Custom validators
 -----------------
 
