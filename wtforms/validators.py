@@ -231,7 +231,51 @@ class URL(Regexp):
         regex = ur'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
+class AnyOf(object):
+    """
+    Compares the incoming data to a sequence of valid inputs.
+    
+    :param values:
+        A sequence of valid inputs.
+    :param message:
+        Error message to raise in case of a validation error. `%(values)s`
+        contains the list of values.
+    :param message_values_formatter:
+        Function used to format the list of values in the error message.
+    """
+    def __init__(self, values, message=u'Invalid value, must be one of: %(values)s',
+                 message_values_formatter=lambda v: ', '.join(v)):
+        self.values = values
+        self.message = message
+        self.message_values_formatter = message_values_formatter
+        
+    def __call__(self, form, field):
+        if field.data not in self.values:
+            raise ValueError(self.message % dict(values=self.message_values_formatter(self.values)))
 
+class NoneOf(object):
+    """
+    Compares the incoming data to a sequence of invalid inputs.
+    
+    :param values:
+        A sequence of invalid inputs.
+    :param message:
+        Error message to raise in case of a validation error. `%(values)s`
+        contains the list of values.
+    :param message_values_formatter:
+        Function used to format the list of values in the error message.
+    """
+    def __init__(self, values, message=u'Invalid value, can\'t be any of: %(values)s',
+                 message_values_formatter=lambda v: ', '.join(v)):
+        self.values = values
+        self.message = message
+        self.message_values_formatter = message_values_formatter
+        
+    def __call__(self, form, field):
+        if field.data in self.values:
+            raise ValueError(self.message % dict(values=self.message_values_formatter(self.values)))
+
+    
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
@@ -240,3 +284,5 @@ optional = Optional
 required = Required
 regexp = Regexp
 url = URL
+any_of = AnyOf
+none_of = NoneOf

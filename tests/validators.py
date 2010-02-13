@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from unittest import TestCase
-from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange
+from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange, AnyOf, NoneOf
 
 
 class DummyForm(dict):
@@ -140,6 +140,14 @@ class ValidatorsTest(TestCase):
         self.assert_(email(message=message))
         self.assert_(ip_address(message=message))
         self.assert_(url(message=message))
+
+    def test_any_of(self):    
+        self.assertEqual(AnyOf(['a', 'b', 'c'])(self.form, DummyField('b')), None)
+        self.assertRaises(ValueError, AnyOf(['a', 'b', 'c']), self.form, DummyField(None))
+        
+    def test_none_of(self):
+        self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)
+        self.assertRaises(ValueError, NoneOf(['a', 'b', 'c']), self.form, DummyField('a'))
 
 if __name__ == '__main__':
     from unittest import main
