@@ -25,6 +25,8 @@ setup(
     packages=[
         'wtforms',
         'wtforms.ext',
+        'wtforms.ext.appengine',
+        'wtforms.ext.dateutil',
         'wtforms.ext.django',
         'wtforms.ext.django.templatetags',
         'wtforms.ext.sqlalchemy',
