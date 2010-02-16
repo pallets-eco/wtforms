@@ -149,14 +149,13 @@ class CheckboxInput(Input):
     Render a checkbox.
 
     The ``value=`` HTML attribute by default is 'y' unless otherwise specified
-    by `value=` to render. The ``checked`` HTML attribute is set if the field's
+    by `value=` at rendering. The ``checked`` HTML attribute is set if the field's
     data is a non-false value.
     """
     input_type = 'checkbox'
 
-    def __call__(self, field, **kwargs): 
-        kwargs.setdefault('value', u'y')
-        if field.data:
+    def __call__(self, field, **kwargs):
+        if getattr(field, 'checked', field.data):
             kwargs['checked'] = u'checked'
         return super(CheckboxInput, self).__call__(field, **kwargs)
 
@@ -165,7 +164,7 @@ class RadioInput(Input):
     """
     Render a single radio button.
 
-    This field is most commonly used in conjunction with ListWidget or some
+    This widget is most commonly used in conjunction with ListWidget or some
     other listing, as singular radio buttons are not very useful.
     """
     input_type = 'radio'
@@ -173,7 +172,7 @@ class RadioInput(Input):
     def __call__(self, field, **kwargs):
         if field.checked:
             kwargs['checked'] = u'checked'
-        return super(RadioInput, self).__call__(field, value=field.data, **kwargs)
+        return super(RadioInput, self).__call__(field, **kwargs)
 
 
 class FileInput(Input):

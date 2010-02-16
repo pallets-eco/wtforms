@@ -311,6 +311,7 @@ class Label(object):
 
 class SelectField(Field):
     widget = widgets.Select()
+    option_widget = None
 
     def __init__(self, label=u'', validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
@@ -386,17 +387,20 @@ class RadioField(SelectField):
     well) in order to allow custom rendering of the individual radio fields.
     """
     widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.RadioInput()
 
     def __iter__(self):
         for i, (value, label, checked) in enumerate(self.iter_choices()):
-            r = self._Radio(label=label, id=u'%s_%d' % (self.id, i), _name=self.name, _form=None)
+            r = self._Radio(label=label, id=u'%s_%d' % (self.id, i), widget=self.option_widget, _name=self.name, _form=None)
             r.process_data(value)
             r.checked = checked
             yield r
 
     class _Radio(Field):
-        widget = widgets.RadioInput()
         checked = False
+
+        def _value(self):
+            return self.data
 
 
 class TextField(Field):
@@ -536,10 +540,16 @@ class BooleanField(Field):
     def process_formdata(self, valuelist):
         if valuelist:
             self.raw_data = valuelist[0]
-            self.data = bool(valuelist[0])
+            self.data = True
         else:
             self.raw_data = None
             self.data = False
+
+    def _value(self):
+        if self.raw_data is None or isinstance(self.raw_data, bool):
+            return u'y'
+        else:
+            return unicode(self.raw_data)
 
 
 class DateTimeField(Field):
