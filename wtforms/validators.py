@@ -3,8 +3,9 @@ import re
 
 __all__ = (
     'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
-    'Length', 'length', 'Optional', 'optional', 'Required', 'required',
-    'Regexp', 'regexp', 'URL', 'url', 'AnyOf', 'any_of', 'NoneOf', 'none_of'
+    'Length', 'length', 'NumberRange', 'number_range', 'Optional', 'optional',
+    'Required', 'required', 'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
+    'any_of', 'NoneOf', 'none_of'
 )
 
 
@@ -235,7 +236,7 @@ class URL(Regexp):
 class AnyOf(object):
     """
     Compares the incoming data to a sequence of valid inputs.
-    
+
     :param values:
         A sequence of valid inputs.
     :param message:
@@ -251,7 +252,7 @@ class AnyOf(object):
         if values_formatter is None:
             values_formatter = lambda v: u', '.join(v)
         self.values_formatter = values_formatter
-        
+
     def __call__(self, form, field):
         if field.data not in self.values:
             raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
@@ -260,7 +261,7 @@ class AnyOf(object):
 class NoneOf(object):
     """
     Compares the incoming data to a sequence of invalid inputs.
-    
+
     :param values:
         A sequence of invalid inputs.
     :param message:
@@ -276,16 +277,17 @@ class NoneOf(object):
         if values_formatter is None:
             values_formatter = lambda v: u', '.join(v)
         self.values_formatter = values_formatter
-        
+
     def __call__(self, form, field):
         if field.data in self.values:
             raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
 
-    
+
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
 length = Length
+number_range = NumberRange
 optional = Optional
 required = Required
 regexp = Regexp
