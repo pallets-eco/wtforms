@@ -281,6 +281,10 @@ class Flags(object):
     def __contains__(self, name):
         return getattr(self, name)
 
+    def __repr__(self):
+        flags = (name for name in dir(self) if not name.startswith('_'))
+        return '<wtforms.fields.Flags: {%s}>' % ', '.join(flags)
+
 
 class Label(object):
     """
@@ -300,6 +304,9 @@ class Label(object):
         kwargs['for'] = self.field_id
         attributes = widgets.html_params(**kwargs)
         return u'<label %s>%s</label>' % (attributes, text or self.text)
+
+    def __repr__(self):
+        return 'Label(%r, %r)' % (self.field_id, self.text)
 
 
 class SelectField(Field):
