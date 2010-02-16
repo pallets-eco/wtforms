@@ -1,13 +1,19 @@
 """
 Useful form fields for use with SQLAlchemy ORM.
 """
-from operator import attrgetter
-from sqlalchemy.orm.util import identity_key
+import operator
+import warnings
 
 from wtforms import widgets
 from wtforms.fields import Field
 from wtforms.validators import ValidationError
 
+try:
+    from sqlalchemy.orm.util import identity_key
+    has_identity_key = True
+except ImportError:
+    has_identity_key = False
+    
 
 
 __all__ = (
@@ -54,8 +60,11 @@ class QuerySelectField(Field):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
         if pk_attr is not None:
-            self.get_pk = attrgetter(pk_attr)
+            warnings.warn('pk_attr= will be removed in WTForms 1.0, use get_pk= instead.', DeprecationWarning)
+            self.get_pk = operator.attrgetter(pk_attr)
         elif get_pk is None:
+            if not has_identity_key:
+                raise Exception('The sqlalchemy identity_key function could not be imported.')
             self.get_pk = get_pk_from_identity
         else:
             self.get_pk = get_pk
