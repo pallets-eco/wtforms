@@ -316,6 +316,7 @@ class SelectField(Field):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = choices
+        self.raw_data = None
 
     def iter_choices(self):
         for value, label in self.choices:
@@ -323,12 +324,13 @@ class SelectField(Field):
 
     def process_data(self, value):
         try:
-            self.data = self.coerce(getattr(value, 'id', value))
+            self.data = self.coerce(value)
         except (ValueError, TypeError):
             self.data = None
 
     def process_formdata(self, valuelist):
         if valuelist:
+            self.raw_data = valuelist[0]
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
@@ -357,19 +359,20 @@ class SelectMultipleField(SelectField):
 
     def process_data(self, value):
         try:
-            self.data = [self.coerce(getattr(v, 'id', v)) for v in value]
+            self.data = list(self.coerce(v) for v in value)
         except (ValueError, TypeError):
             self.data = None
 
     def process_formdata(self, valuelist):
+        self.raw_data = valuelist
         try:
-            self.data = [self.coerce(x) for x in valuelist]
+            self.data = list(self.coerce(x) for x in valuelist)
         except ValueError:
             raise ValueError(u'Invalid choice(s): one or more data inputs could not be coerced')
 
     def pre_validate(self, form):
         if self.data:
-            values = [c[0] for c in self.choices]
+            values = list(c[0] for c in self.choices)
             for d in self.data:
                 if d not in values:
                     raise ValueError(u"'%s' is not a valid choice for this field" % d)

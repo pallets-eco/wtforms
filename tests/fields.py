@@ -109,13 +109,6 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.b.data, None)
         self.assert_(not form.b.validate(form))
 
-    def test_id_attribute(self):
-        form = self.F(obj=AttrDict(b=AttrDict(id=1)))
-        self.assertEqual(form.b.data, 1)
-        self.assertEqual(form.validate(), True)
-        form.b.choices = [(3, 'false')]
-        self.assertEqual(form.validate(), False)
-
 
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
