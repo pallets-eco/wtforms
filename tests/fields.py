@@ -147,9 +147,9 @@ class RadioFieldTest(TestCase):
         self.assertEqual(form.a.data, u'a')
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.validate(), False)
-        self.assertEqual(form.a(), u"""<ul id="a"><li><input checked="checked" id="a_0" name="a" type="radio" value="a" /> <label for="a_0">hello</label></li><li><input id="a_1" name="a" type="radio" value="b" /> <label for="a_1">bye</label></li></ul>""")
-        self.assertEqual(form.b(), u"""<ul id="b"><li><input id="b_0" name="b" type="radio" value="1" /> <label for="b_0">Item 1</label></li><li><input id="b_1" name="b" type="radio" value="2" /> <label for="b_1">Item 2</label></li></ul>""")
-        self.assertEqual([unicode(x) for x in form.a], [u'<input checked="checked" id="a_0" name="a" type="radio" value="a" />', u'<input id="a_1" name="a" type="radio" value="b" />'])
+        self.assertEqual(form.a(), u"""<ul id="a"><li><input checked="checked" id="a-0" name="a" type="radio" value="a" /> <label for="a-0">hello</label></li><li><input id="a-1" name="a" type="radio" value="b" /> <label for="a-1">bye</label></li></ul>""")
+        self.assertEqual(form.b(), u"""<ul id="b"><li><input id="b-0" name="b" type="radio" value="1" /> <label for="b-0">Item 1</label></li><li><input id="b-1" name="b" type="radio" value="2" /> <label for="b-1">Item 2</label></li></ul>""")
+        self.assertEqual([unicode(x) for x in form.a], [u'<input checked="checked" id="a-0" name="a" type="radio" value="a" />', u'<input id="a-1" name="a" type="radio" value="b" />'])
 
 
 class TextFieldTest(TestCase):
