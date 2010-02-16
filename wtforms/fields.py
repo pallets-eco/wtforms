@@ -311,7 +311,7 @@ class Label(object):
 
 class SelectField(Field):
     widget = widgets.Select()
-    option_widget = None
+    option_widget = widgets.Option()
 
     def __init__(self, label=u'', validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
@@ -343,6 +343,20 @@ class SelectField(Field):
                 break
         else:
             raise ValueError('Not a valid choice')
+
+    def __iter__(self):
+        opts = dict(widget=self.option_widget, _name=self.name, _form=None)
+        for i, (value, label, checked) in enumerate(self.iter_choices()):
+            opt = self._Option(label=label, id=u'%s-%d' % (self.id, i), **opts)
+            opt.process(None, value)
+            opt.checked = checked
+            yield opt
+
+    class _Option(Field):
+        checked = False
+
+        def _value(self):
+            return self.data
 
 
 class SelectMultipleField(SelectField):
@@ -383,24 +397,22 @@ class RadioField(SelectField):
     """
     Like a SelectField, except displays a list of radio buttons.
 
-    Iterating the field will produce  subfields (each containing a label as 
+    Iterating the field will produce subfields (each containing a label as 
     well) in order to allow custom rendering of the individual radio fields.
     """
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.RadioInput()
 
-    def __iter__(self):
-        for i, (value, label, checked) in enumerate(self.iter_choices()):
-            r = self._Radio(label=label, id=u'%s_%d' % (self.id, i), widget=self.option_widget, _name=self.name, _form=None)
-            r.process_data(value)
-            r.checked = checked
-            yield r
 
-    class _Radio(Field):
-        checked = False
+class CheckboxMultiSelectField(SelectMultipleField):
+    """
+    A multiple-select, except displays a list of checkboxes.
 
-        def _value(self):
-            return self.data
+    Iterating the field will produce subfields, allowing custom rendering of
+    the enclosed checkbox fields.
+    """
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 
 class TextField(Field):

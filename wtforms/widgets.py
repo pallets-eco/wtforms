@@ -206,7 +206,6 @@ class TextArea(object):
         kwargs.setdefault('id', field.id)
         return u'<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(unicode(field._value())))
 
-
 class Select(object):
     """
     Renders a select field.
@@ -227,9 +226,25 @@ class Select(object):
             kwargs['multiple'] = 'multiple'
         html = [u'<select %s>' % html_params(name=field.name, **kwargs)]
         for val, label, selected in field.iter_choices():
-            options = {'value': val}
-            if selected:
-                options['selected'] = u'selected'
-            html.append(u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label))))
+            html.append(self.render_option(val, label, selected))
         html.append(u'</select>')
         return u''.join(html)
+
+    @classmethod
+    def render_option(cls, value, label, selected):
+        options = {'value': value}
+        if selected:
+            options['selected'] = u'selected'
+        return u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label)))
+
+
+class Option(object):
+    """
+    Renders the individual option from a select field. 
+    
+    This is just a convenience for various custom rendering situations, and an
+    option by itself does not constitute an entire field.
+    """
+    def __call__(self, field, **kwargs):
+        return Select.render_option(field.value, field.label.text, field.checked)
+
