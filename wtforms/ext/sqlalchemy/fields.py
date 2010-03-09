@@ -120,6 +120,19 @@ class QuerySelectField(Field):
             else:
                 raise ValidationError('Not a valid choice')
 
+    def __iter__(self):
+        opts = dict(widget=self.option_widget, _name=self.name, _form=None)
+        for i, (value, label, checked) in enumerate(self.iter_choices()):
+            opt = self._Option(label=label, id=u'%s-%d' % (self.id, i), **opts)
+            opt.process(None, value)
+            opt.checked = checked
+            yield opt
+
+    class _Option(Field):
+        checked = False
+
+        def _value(self):
+            return self.data
 
 class QueryMultipleSelectField(QuerySelectField):
     """
