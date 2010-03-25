@@ -339,7 +339,7 @@ complex data structures such as lists and nested objects can be represented.
             im_accounts = FieldList(FormField(IMForm))
 
 
-Custom fields
+Custom Fields
 -------------
 
 While WTForms provides customization for existing fields using widgets and
@@ -365,8 +365,12 @@ Let's design a field which represents a comma-separated list of tags::
 
 The `_value` method is called by the :class:`~wtforms.widgets.TextInput` widget
 to provide the value that is displayed in the form. Overriding the
-`process_formdata` method processes the incoming form data back into a list of
-tags.
+:meth:`~Field.process_formdata` method processes the incoming form data back
+into a list of tags.
+
+
+Fields With Custom Constructors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Custom fields can also override the default field constructor if needed to
 provide additional customization::
@@ -390,9 +394,19 @@ provide additional customization::
                     d[item.lower()] = True
                     yield item
 
+When you override a Field's constructor, to maintain consistent behavior, you
+should design your constructor so that:
 
-Custom Field Considerations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * You take `label='', validators=None` as the first two positional arguments
+ * Add any additional arguments your field takes as keyword arguments after the
+   label and validators
+ * Take `**kwargs` to catch any additional keyword arguments.
+ * Call the Field constructor first, passing the first two positional
+   arguments, and all the remaining keyword args.
+
+
+Considerations for overriding process()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For the vast majority of fields, it is not necessary to override
 :meth:`Field.process`. Most of the time, you can achieve what is needed by
