@@ -163,7 +163,8 @@ class TextFieldTest(TestCase):
         form = self.F(DummyPostData(a=['hello']))
         self.assertEqual(form.a.data, u'hello')
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="hello" />""")
-
+        form = self.F(DummyPostData(b=['hello']))
+        self.assertEqual(form.a.data, u'')
 
 class HiddenFieldTest(TestCase):
     class F(Form):
