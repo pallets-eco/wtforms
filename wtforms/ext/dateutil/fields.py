@@ -47,9 +47,9 @@ class DateTimeField(Field):
             parse_kwargs = self.parse_kwargs.copy()
             if 'default' not in parse_kwargs:
                 try:
-                    parse_kwargs['default'] = self._default()
+                    parse_kwargs['default'] = self.default()
                 except TypeError:
-                    parse_kwargs['default'] = self._default
+                    parse_kwargs['default'] = self.default
             try:
                 self.data = parser.parse(self.raw_data, **parse_kwargs)
             except ValueError:

@@ -54,7 +54,7 @@ class Field(object):
             A sequence of filters which are run on input data by `process`.
         :param default:
             The default value to assign to the field, if one is not provided by
-            the form.
+            the form. May be a callable.
         :param widget:
             If provided, overrides the widget used to render the field.
         :param _form:
@@ -81,7 +81,7 @@ class Field(object):
         self.filters = filters
         self.description = description
         self.type = type(self).__name__
-        self._default = default
+        self.default = default
         if widget:
             self.widget = widget
         self.flags = Flags()
@@ -195,9 +195,9 @@ class Field(object):
         self.process_errors = []
         if data is _unset_value:
             try:
-                data = self._default()
+                data = self.default()
             except TypeError:
-                data = self._default
+                data = self.default
         try:
             self.process_data(data)
         except ValueError, e:
@@ -643,9 +643,9 @@ class FormField(Field):
     def process(self, formdata, data=_unset_value):
         if data is _unset_value:
             try:
-                data = self._default()
+                data = self.default()
             except TypeError:
-                data = self._default
+                data = self.default
             self._obj = data
 
         prefix = self.name + self.separator
@@ -725,9 +725,9 @@ class FieldList(Field):
         self.entries = []
         if data is _unset_value or not data:
             try:
-                data = self._default()
+                data = self.default()
             except TypeError:
-                data = self._default
+                data = self.default
 
         if formdata:
             indices = sorted(set(self._extract_indices(self.name, formdata)))
