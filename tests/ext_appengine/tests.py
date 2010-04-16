@@ -108,10 +108,10 @@ class TestModelForm(TestCase):
         form_class = model_form(Author)
 
         form = form_class()
-        self.assertEqual(form.name._default, None)
-        self.assertEqual(form.city._default, None)
-        self.assertEqual(form.age._default, None)
-        self.assertEqual(form.is_admin._default, False)
+        self.assertEqual(form.name.default, None)
+        self.assertEqual(form.city.default, None)
+        self.assertEqual(form.age.default, None)
+        self.assertEqual(form.is_admin.default, False)
 
     def test_model_form_only(self):
         form_class = model_form(Author, only=['name', 'age'])
