@@ -405,6 +405,12 @@ class FieldListTest(TestCase):
         self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
         self.assert_(not form.validate())
 
+        # Test for formdata precedence
+        pdata = DummyPostData({'a-0': ['a'], 'a-1': ['b']})
+        form = F(pdata, a=data)
+        self.assertEqual(len(form.a.entries), 2)
+        self.assertEqual(form.a.data, [u'a', u'b'])
+
     def test_enclosed_subform(self):
         make_inner = lambda: AttrDict(a=None)
         F = make_form(

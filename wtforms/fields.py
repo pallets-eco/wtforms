@@ -722,24 +722,31 @@ class FieldList(Field):
         self._prefix = kwargs.get('_prefix', '')
 
     def process(self, formdata, data=_unset_value):
+        self.entries = []
         if data is _unset_value or not data:
             try:
                 data = self._default()
             except TypeError:
                 data = self._default
-        self.entries = []
 
-        indices = ()
         if formdata:
-            indices = sorted(set(self._extract_indices(self.name, formdata)), reverse=True)
+            indices = sorted(set(self._extract_indices(self.name, formdata)))
             if self.max_entries:
-                indices = indices[-self.max_entries:]
+                indices = indices[:self.max_entries]
 
-        for obj_data in data:
-            self._add_entry(formdata, obj_data, index=(indices and indices.pop() or None))
+            idata = iter(data)
+            for index in indices:
+                try:
+                    obj_data = idata.next()
+                except StopIteration:
+                    obj_data = _unset_value
+                self._add_entry(formdata, obj_data, index=index)
+        else:
+            for obj_data in data:
+                self._add_entry(formdata, obj_data)
 
-        while indices or len(self.entries) < self.min_entries:
-            self._add_entry(formdata, index=(indices and indices.pop() or None)) 
+        while len(self.entries) < self.min_entries:
+            self._add_entry(formdata) 
 
     def _extract_indices(self, prefix, formdata):
         """
