@@ -42,19 +42,18 @@ class Field(object):
         :param label:
             The label of the field. Available after construction through the
             `label` property.
-        :param description:
-            A description for the field, typically used for help text. It is
-            available through the `description` property after construction.
-        :param id:
-            An id to use for the field. A reasonable default is set by the form,
-            and you shouldn't need to set this manually.
         :param validators:
             A sequence of validators to call when `validate` is called.
         :param filters:
             A sequence of filters which are run on input data by `process`.
+        :param description:
+            A description for the field, typically used for help text.
+        :param id:
+            An id to use for the field. A reasonable default is set by the form,
+            and you shouldn't need to set this manually.
         :param default:
-            The default value to assign to the field, if one is not provided by
-            the form. May be a callable.
+            The default value to assign to the field, if no form or object
+            input is provided. May be a callable.
         :param widget:
             If provided, overrides the widget used to render the field.
         :param _form:
