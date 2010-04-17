@@ -9,9 +9,9 @@ from wtforms.validators import StopValidation
 
 __all__ = (
     'BooleanField', 'DecimalField', 'DateField', 'DateTimeField', 'FieldList',
-    'FileField', 'FormField', 'HiddenField', 'IntegerField', 'PasswordField',
-    'RadioField', 'SelectField', 'SelectMultipleField', 'SubmitField',
-    'TextField', 'TextAreaField',
+    'FileField', 'FloatField', 'FormField', 'HiddenField', 'IntegerField',
+    'PasswordField', 'RadioField', 'SelectField', 'SelectMultipleField',
+    'SubmitField', 'TextField', 'TextAreaField',
 )
 
 

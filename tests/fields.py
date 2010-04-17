@@ -255,6 +255,31 @@ class DecimalFieldTest(TestCase):
         self.assert_(isinstance(form.a.data, float))
 
 
+class FloatFieldTest(TestCase):
+    class F(Form):
+        a = FloatField()
+        b = FloatField(default=48.0)
+
+    def test(self):
+        form = self.F(DummyPostData(a=['v'], b=['-15.0']))
+        self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a.raw_data, 'v')
+        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="v" />""")
+        self.assertEqual(form.b.data, -15.0)
+        self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15.0" />""")
+        self.assert_(not form.a.validate(form))
+        self.assert_(form.b.validate(form))
+        form = self.F(DummyPostData(a=[], b=['']))
+        self.assertEqual(form.a.data, None)
+        self.assertEqual(form.b.data, 48.0)
+        self.assertEqual(form.b.raw_data, '')
+        self.assert_(not form.validate())
+        self.assertEqual(len(form.b.process_errors), 1)
+        self.assertEqual(len(form.b.errors), 1)
+        form = self.F(b=9.0)
+        self.assertEqual(form.b.data, 9.0)
+
+
 class BooleanFieldTest(TestCase):
     class BoringForm(Form):
         bool1 = BooleanField()
@@ -378,7 +403,7 @@ class FormFieldTest(TestCase):
         class C(Form):
             a = FormField(self.F1)
             def validate_a(form, field):
-                pass 
+                pass
         form = C()
         self.assertRaises(TypeError, form.validate)
 
