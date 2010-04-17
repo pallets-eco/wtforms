@@ -93,7 +93,8 @@ class:
 
 """
 from wtforms import Form, validators, widgets, fields as f
-from wtforms.ext.appengine.fields import GeoPtPropertyField, FloatField, ReferencePropertyField, StringListPropertyField
+from wtforms.ext.appengine.fields import GeoPtPropertyField, \
+    ReferencePropertyField, StringListPropertyField
 
 
 def get_TextField(kwargs):
@@ -141,7 +142,7 @@ def convert_IntegerProperty(model, prop, kwargs):
 
 def convert_FloatProperty(model, prop, kwargs):
     """Returns a form field for a ``db.FloatProperty``."""
-    return FloatField(kwargs)
+    return f.FloatField(kwargs)
 
 
 def convert_DateTimeProperty(model, prop, kwargs):

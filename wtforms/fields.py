@@ -108,7 +108,7 @@ class Field(object):
         Render this field as HTML, using keyword args as additional attributes.
 
         Any HTML attribute passed to the method will be added to the tag
-        and entity-escaped properly.   
+        and entity-escaped properly.
         """
         return self.widget(self, **kwargs)
 
@@ -178,7 +178,7 @@ class Field(object):
         """
         pass
 
-    def process(self, formdata, data=_unset_value): 
+    def process(self, formdata, data=_unset_value):
         """
         Process incoming data, calling process_data, process_formdata as needed,
         and run filters.
@@ -396,7 +396,7 @@ class RadioField(SelectField):
     """
     Like a SelectField, except displays a list of radio buttons.
 
-    Iterating the field will produce subfields (each containing a label as 
+    Iterating the field will produce subfields (each containing a label as
     well) in order to allow custom rendering of the individual radio fields.
     """
     widget = widgets.ListWidget(prefix_label=False)
@@ -417,7 +417,7 @@ class CheckboxMultiSelectField(SelectMultipleField):
 class TextField(Field):
     """
     This field is the base for most of the more complicated fields, and
-    represents an ``<input type="text">``.  
+    represents an ``<input type="text">``.
     """
     widget = widgets.TextInput()
 
@@ -456,8 +456,8 @@ class PasswordField(TextField):
 class FileField(TextField):
     """
     Can render a file-upload field.  Will take any passed filename value, if
-    any is sent by the browser in the post params.  This field will NOT 
-    actually handle the file upload portion, as wtforms does not deal with 
+    any is sent by the browser in the post params.  This field will NOT
+    actually handle the file upload portion, as wtforms does not deal with
     individual frameworks' file handling capabilities.
     """
     widget = widgets.FileInput()
@@ -532,6 +532,30 @@ class DecimalField(TextField):
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 raise ValueError(u'Not a valid decimal value')
+
+
+class FloatField(TextField):
+    """
+    A text field, except all input is coerced to an float.  Erroneous input
+    is ignored and will not be accepted as a value.
+    """
+    def __init__(self, label=u'', validators=None, **kwargs):
+        super(FloatField, self).__init__(label, validators, **kwargs)
+        self.raw_data = None
+
+    def _value(self):
+        if self.raw_data is not None:
+            return self.raw_data
+        else:
+            return self.data and unicode(self.data) or u'0.0'
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.raw_data = valuelist[0]
+            try:
+                self.data = float(valuelist[0])
+            except ValueError:
+                raise ValueError(u'Not a valid float value')
 
 
 class BooleanField(Field):
@@ -745,7 +769,7 @@ class FieldList(Field):
                 self._add_entry(formdata, obj_data)
 
         while len(self.entries) < self.min_entries:
-            self._add_entry(formdata) 
+            self._add_entry(formdata)
 
     def _extract_indices(self, prefix, formdata):
         """
