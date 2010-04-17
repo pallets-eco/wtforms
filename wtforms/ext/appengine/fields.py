@@ -81,3 +81,20 @@ class StringListPropertyField(fields.TextAreaField):
 
         setattr(obj, name, value)
 
+
+class GeoPtPropertyField(fields.TextField):
+    """For now, no processing or prevalidation is done."""
+
+
+class FloatField(fields.TextField):
+    def process_data(self, value):
+        if value is not None:
+            self.data = float(value)
+        else:
+            self.data = None
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = float(valuelist[0])
+        else:
+            self.data = None
