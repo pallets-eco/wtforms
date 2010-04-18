@@ -156,13 +156,34 @@ class TestModelForm(TestCase):
 
     def test_not_implemented_properties(self):
         # This should not raise NotImplementedError.
-        form = model_form(AllPropertiesModel)
+        form_class = model_form(AllPropertiesModel)
 
-        # These properties should not be included in the form.
-        self.assertRaises(AttributeError, getattr, model_form, 'prop_list')
-        self.assertRaises(AttributeError, getattr, model_form, 'prop_user')
-        self.assertRaises(AttributeError, getattr, model_form, 'prop_geo_pt')
-        self.assertRaises(AttributeError, getattr, model_form, 'prop_im')
+        # These should be set.
+        self.assertEqual(hasattr(form_class, 'prop_string'), True)
+        self.assertEqual(hasattr(form_class, 'prop_byte_string'), True)
+        self.assertEqual(hasattr(form_class, 'prop_boolean'), True)
+        self.assertEqual(hasattr(form_class, 'prop_integer'), True)
+        self.assertEqual(hasattr(form_class, 'prop_float'), True)
+        self.assertEqual(hasattr(form_class, 'prop_date_time'), True)
+        self.assertEqual(hasattr(form_class, 'prop_date'), True)
+        self.assertEqual(hasattr(form_class, 'prop_time'), True)
+        self.assertEqual(hasattr(form_class, 'prop_string_list'), True)
+        self.assertEqual(hasattr(form_class, 'prop_reference'), True)
+        self.assertEqual(hasattr(form_class, 'prop_self_refeference'), True)
+        self.assertEqual(hasattr(form_class, 'prop_blob'), True)
+        self.assertEqual(hasattr(form_class, 'prop_text'), True)
+        self.assertEqual(hasattr(form_class, 'prop_category'), True)
+        self.assertEqual(hasattr(form_class, 'prop_link'), True)
+        self.assertEqual(hasattr(form_class, 'prop_email'), True)
+        self.assertEqual(hasattr(form_class, 'prop_geo_pt'), True)
+        self.assertEqual(hasattr(form_class, 'prop_phone_number'), True)
+        self.assertEqual(hasattr(form_class, 'prop_postal_address'), True)
+        self.assertEqual(hasattr(form_class, 'prop_rating'), True)
+
+        # These should NOT be set.
+        self.assertEqual(hasattr(form_class, 'prop_list'), False)
+        self.assertEqual(hasattr(form_class, 'prop_user'), False)
+        self.assertEqual(hasattr(form_class, 'prop_im'), False)
 
     def test_populate_form(self):
         entity = Author(key_name='test', name='John', city='Yukon', age=25, is_admin=True)

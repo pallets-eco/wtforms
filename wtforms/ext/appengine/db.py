@@ -224,7 +224,7 @@ def convert_EmailProperty(model, prop, kwargs):
 
 def convert_GeoPtProperty(model, prop, kwargs):
     """Returns a form field for a ``db.GeoPtProperty``."""
-    return GeoPtPropertyField(kwargs)
+    return GeoPtPropertyField(**kwargs)
 
 
 def convert_IMProperty(model, prop, kwargs):
