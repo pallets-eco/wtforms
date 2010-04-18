@@ -10,8 +10,9 @@ Not yet released.
 - Minor bugfixes and cleanup in FieldList, Select(Multiple)Field,
   QuerySelectField to address behavioral consistency.
 
-- Added support for FloatProperty and GeoPtProperty in ext.appengine. Basic
-  FloatField and GeoPtPropertyField were added to ext.appengine.fields.
+- Added support for FloatProperty and GeoPtProperty in ext.appengine.
+
+- Added FloatField, based on IntegerField.
 
 
 Version 0.5
