@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Form generation utilities for App Engine's ``db.Model`` class.
 
@@ -93,8 +92,7 @@ class:
 
 """
 from wtforms import Form, validators, widgets, fields as f
-from wtforms.ext.appengine.fields import GeoPtPropertyField, \
-    ReferencePropertyField, StringListPropertyField
+from wtforms.ext.appengine.fields import GeoPtPropertyField, ReferencePropertyField, StringListPropertyField
 
 
 def get_TextField(kwargs):
