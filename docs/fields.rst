@@ -205,6 +205,12 @@ refer to a single input from the form.
                 image_data = request.FILES[form.image.name].read()
                 open(os.path.join(UPLOAD_PATH, form.image.data), 'w').write(image_data)
 
+.. autoclass:: FloatField(default field arguments)
+
+   For the majority of uses, :class:`DecimalField` is preferable to FloatField,
+   except for in cases where an IEEE float is absolutely desired over a decimal
+   value.
+
 .. autoclass:: HiddenField(default field arguments)
 
     HiddenField is useful for providing data from a model or the application to
