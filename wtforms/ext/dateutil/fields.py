@@ -33,17 +33,16 @@ class DateTimeField(Field):
             parse_kwargs = {}
         self.parse_kwargs = parse_kwargs
         self.display_format = display_format
-        self.raw_data = None
 
     def _value(self):
-        if self.raw_data is not None:
-            return self.raw_data
+        if self.raw_data:
+            return u' '.join(self.raw_data)
         else:
             return self.data and self.data.strftime(self.display_format) or u''
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.raw_data = str.join(' ', valuelist)
+            date_str = u' '.join(valuelist)
             parse_kwargs = self.parse_kwargs.copy()
             if 'default' not in parse_kwargs:
                 try:
@@ -51,7 +50,7 @@ class DateTimeField(Field):
                 except TypeError:
                     parse_kwargs['default'] = self.default
             try:
-                self.data = parser.parse(self.raw_data, **parse_kwargs)
+                self.data = parser.parse(date_str, **parse_kwargs)
             except ValueError:
                 self.data = None
                 raise ValidationError(u'Invalid date/time input')
