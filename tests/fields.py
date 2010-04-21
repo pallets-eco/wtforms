@@ -212,7 +212,7 @@ class IntegerFieldTest(TestCase):
     def test(self):
         form = self.F(DummyPostData(a=['v'], b=['-15']))
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a.raw_data, 'v')
+        self.assertEqual(form.a.raw_data, [u'v'])
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="v" />""")
         self.assertEqual(form.b.data, -15)
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15" />""")
@@ -220,8 +220,9 @@ class IntegerFieldTest(TestCase):
         self.assert_(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a.raw_data, [])
         self.assertEqual(form.b.data, 48)
-        self.assertEqual(form.b.raw_data, '')
+        self.assertEqual(form.b.raw_data, [''])
         self.assert_(not form.validate())
         self.assertEqual(len(form.b.process_errors), 1)
         self.assertEqual(len(form.b.errors), 1)
@@ -240,7 +241,7 @@ class DecimalFieldTest(TestCase):
         self.assert_(form.validate())
         form = F(DummyPostData(a='2,1'), a=Decimal(5))
         self.assertEqual(form.a.data, Decimal(5))
-        self.assertEqual(form.a.raw_data, '2,1')
+        self.assertEqual(form.a.raw_data, ['2,1'])
         self.assert_(not form.validate())
 
 
@@ -263,7 +264,7 @@ class FloatFieldTest(TestCase):
     def test(self):
         form = self.F(DummyPostData(a=['v'], b=['-15.0']))
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a.raw_data, 'v')
+        self.assertEqual(form.a.raw_data, [u'v'])
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="v" />""")
         self.assertEqual(form.b.data, -15.0)
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15.0" />""")
@@ -272,7 +273,7 @@ class FloatFieldTest(TestCase):
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.b.data, 48.0)
-        self.assertEqual(form.b.raw_data, '')
+        self.assertEqual(form.b.raw_data, [u''])
         self.assert_(not form.validate())
         self.assertEqual(len(form.b.process_errors), 1)
         self.assertEqual(len(form.b.errors), 1)
@@ -301,7 +302,7 @@ class BooleanFieldTest(TestCase):
 
     def test_with_postdata(self):
         form = self.BoringForm(DummyPostData(bool1=[u'a']))
-        self.assertEqual(form.bool1.raw_data, u'a')
+        self.assertEqual(form.bool1.raw_data, [u'a'])
         self.assertEqual(form.bool1.data, True)
 
     def test_with_model_data(self):

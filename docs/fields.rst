@@ -70,6 +70,11 @@ The Field base class
         process methods. Note that it is not HTML escaped when using in
         templates.
 
+    .. attribute:: raw_data
+
+        If form data is processed, is the valuelist given from the formdata
+        wrapper. Otherwise, `raw_data` will be `None`.
+
     **Rendering**
 
     To render a field, simply call it, providing any values the widget expects

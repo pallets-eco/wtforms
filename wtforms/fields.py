@@ -81,6 +81,7 @@ class Field(object):
         self.description = description
         self.type = type(self).__name__
         self.default = default
+        self.raw_data = None
         if widget:
             self.widget = widget
         self.flags = Flags()
@@ -205,9 +206,10 @@ class Field(object):
         if formdata:
             try:
                 if self.name in formdata:
-                    self.process_formdata(formdata.getlist(self.name))
+                    self.raw_data = formdata.getlist(self.name)
                 else:
-                    self.process_formdata([])
+                    self.raw_data = []
+                self.process_formdata(self.raw_data)
             except ValueError, e:
                 self.process_errors.append(e.args[0])
 
@@ -316,7 +318,6 @@ class SelectField(Field):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = choices
-        self.raw_data = None
 
     def iter_choices(self):
         for value, label in self.choices:
@@ -330,7 +331,6 @@ class SelectField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.raw_data = valuelist[0]
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
@@ -378,7 +378,6 @@ class SelectMultipleField(SelectField):
             self.data = None
 
     def process_formdata(self, valuelist):
-        self.raw_data = valuelist
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError:
@@ -470,17 +469,15 @@ class IntegerField(TextField):
     """
     def __init__(self, label=u'', validators=None, **kwargs):
         super(IntegerField, self).__init__(label, validators, **kwargs)
-        self.raw_data = None
 
     def _value(self):
-        if self.raw_data is not None:
-            return self.raw_data
+        if self.raw_data:
+            return self.raw_data[0]
         else:
             return self.data and unicode(self.data) or u'0'
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.raw_data = valuelist[0]
             try:
                 self.data = int(valuelist[0])
             except ValueError:
@@ -502,13 +499,12 @@ class DecimalField(TextField):
 
     def __init__(self, label=u'', validators=None, places=2, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
-        self.raw_data = None
         self.places = places
         self.rounding = rounding
 
     def _value(self):
-        if self.raw_data is not None:
-            return self.raw_data
+        if self.raw_data:
+            return self.raw_data[0]
         elif self.data is not None:
             if self.places is not None:
                 if hasattr(self.data, 'quantize'):
@@ -527,7 +523,6 @@ class DecimalField(TextField):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.raw_data = valuelist[0]
             try:
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
@@ -541,17 +536,15 @@ class FloatField(TextField):
     """
     def __init__(self, label=u'', validators=None, **kwargs):
         super(FloatField, self).__init__(label, validators, **kwargs)
-        self.raw_data = None
 
     def _value(self):
-        if self.raw_data is not None:
-            return self.raw_data
+        if self.raw_data:
+            return self.raw_data[0]
         else:
             return self.data and unicode(self.data) or u'0.0'
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.raw_data = valuelist[0]
             try:
                 self.data = float(valuelist[0])
             except ValueError:
@@ -566,25 +559,18 @@ class BooleanField(Field):
 
     def __init__(self, label=u'', validators=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
-        self.raw_data = None
 
     def process_data(self, value):
-        self.raw_data = value
         self.data = bool(value)
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            self.raw_data = valuelist[0]
-            self.data = True
-        else:
-            self.raw_data = None
-            self.data = False
+        self.data = bool(valuelist)
 
     def _value(self):
-        if self.raw_data is None or isinstance(self.raw_data, bool):
-            return u'y'
+        if self.raw_data:
+            return unicode(self.raw_data[0])
         else:
-            return unicode(self.raw_data)
+            return u'y'
 
 
 class DateTimeField(Field):
@@ -596,19 +582,18 @@ class DateTimeField(Field):
     def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
-        self.raw_data = None
 
     def _value(self):
-        if self.raw_data is not None:
-            return self.raw_data
+        if self.raw_data:
+            return u' '.join(self.raw_data)
         else:
             return self.data and self.data.strftime(self.format) or u''
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.raw_data = str.join(' ', valuelist)
+            date_str = u' '.join(valuelist)
             try:
-                timetuple = time.strptime(self.raw_data, self.format)
+                timetuple = time.strptime(date_str, self.format)
                 self.data = datetime.datetime(*timetuple[:6])
             except ValueError:
                 self.data = None
@@ -624,9 +609,9 @@ class DateField(DateTimeField):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            self.raw_data = str.join(' ', valuelist)
+            date_str = u' '.join(valuelist)
             try:
-                timetuple = time.strptime(self.raw_data, self.format)
+                timetuple = time.strptime(date_str, self.format)
                 self.data = datetime.date(*timetuple[:3])
             except ValueError:
                 self.data = None
