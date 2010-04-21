@@ -47,6 +47,8 @@ class LabelTest(TestCase):
         self.assertEqual(label(), expected)
         self.assertEqual(str(label), expected)
         self.assertEqual(unicode(label), expected)
+        self.assertEqual(label.__html__(), expected)
+        self.assertEqual(label().__html__(), expected)
         self.assertEqual(label('hello'), u"""<label for="test">hello</label>""")
         self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
 
