@@ -142,7 +142,7 @@ class Optional(object):
     field_flags = ('optional', )
 
     def __call__(self, form, field):
-        if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+        if field.raw_data is not None and (not field.raw_data or not field.raw_data[0].strip()):
             field.errors[:] = []
             raise StopValidation()
 

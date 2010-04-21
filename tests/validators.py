@@ -7,9 +7,10 @@ class DummyForm(dict):
     pass
 
 class DummyField(object):
-    def __init__(self, data, errors=()):
+    def __init__(self, data, errors=(), raw_data=None):
         self.data = data
         self.errors = list(errors)
+        self.raw_data = raw_data
 
 def grab_error_message(callable, form, field):
     try:
@@ -77,11 +78,11 @@ class ValidatorsTest(TestCase):
         self.assertEqual(len(f.errors), 0)
 
     def test_optional(self):
-        self.assertEqual(optional()(self.form, DummyField('foobar')), None)
-        self.assertRaises(StopValidation, optional(), self.form, DummyField(''))
-        self.assertRaises(StopValidation, optional(), self.form, DummyField(' '))
+        self.assertEqual(optional()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
+        self.assertRaises(StopValidation, optional(), self.form, DummyField('', raw_data=['']))
+        self.assertRaises(StopValidation, optional(), self.form, DummyField(' ', raw_data=[' ']))
         self.assertEqual(optional().field_flags, ('optional', ))
-        f = DummyField('', ['Invalid Integer Value'])
+        f = DummyField('', ['Invalid Integer Value'], raw_data=[''])
         self.assertEqual(len(f.errors), 1)
         self.assertRaises(StopValidation, optional(), self.form, f)
         self.assertEqual(len(f.errors), 0)
