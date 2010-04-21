@@ -104,6 +104,13 @@ class Field(object):
         """
         return self()
 
+    def __html__(self):
+        """
+        Returns a HTML representation of the field. For more powerful rendering,
+        see the `__call__` method.
+        """
+        return self()
+
     def __call__(self, **kwargs):
         """
         Render this field as HTML, using keyword args as additional attributes.

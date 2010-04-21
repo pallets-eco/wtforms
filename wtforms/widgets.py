@@ -27,6 +27,10 @@ def html_params(**kwargs):
         params.append(u'%s="%s"' % (unicode(k), escape(unicode(v), quote=True)))
     return u' '.join(params)
 
+class HTMLString(unicode):
+    def __html__(self):
+        return self
+
 
 class ListWidget(object):
     """
@@ -54,7 +58,7 @@ class ListWidget(object):
             else:
                 html.append(u'<li>%s %s</li>' % (subfield(), subfield.label))
         html.append(u'</%s>' % self.html_tag)
-        return u''.join(html)
+        return HTMLString(u''.join(html))
 
 
 class TableWidget(object):
@@ -87,7 +91,7 @@ class TableWidget(object):
             html.append(u'</table>')
         if hidden:
             html.append(hidden)
-        return u''.join(html)
+        return HTMLString(u''.join(html))
 
 
 class Input(object):
@@ -108,7 +112,7 @@ class Input(object):
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
-        return u'<input %s />' % html_params(name=field.name, **kwargs)
+        return HTMLString(u'<input %s />' % html_params(name=field.name, **kwargs))
 
 
 class TextInput(Input):
@@ -204,7 +208,7 @@ class TextArea(object):
     """
     def __call__(self, field, **kwargs): 
         kwargs.setdefault('id', field.id)
-        return u'<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(unicode(field._value())))
+        return HTMLString(u'<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(unicode(field._value()))))
 
 class Select(object):
     """
@@ -228,14 +232,14 @@ class Select(object):
         for val, label, selected in field.iter_choices():
             html.append(self.render_option(val, label, selected))
         html.append(u'</select>')
-        return u''.join(html)
+        return HTMLString(u''.join(html))
 
     @classmethod
     def render_option(cls, value, label, selected):
         options = {'value': value}
         if selected:
             options['selected'] = u'selected'
-        return u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label)))
+        return HTMLString(u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label))))
 
 
 class Option(object):

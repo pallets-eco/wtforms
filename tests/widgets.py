@@ -50,6 +50,11 @@ class BasicWidgetsTest(TestCase):
 
     field = DummyField('foo', name='bar', label='label', id='id') 
 
+    def test_html_marking(self):
+        html = TextInput()(self.field)
+        self.assert_(hasattr(html, '__html__'))
+        self.assert_(html.__html__() is html)
+
     def test_text_input(self):
         self.assertEqual(TextInput()(self.field), u'<input id="id" name="bar" type="text" value="foo" />')
 
