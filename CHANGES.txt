@@ -16,7 +16,9 @@ Not yet released.
     QuerySelectField to address behavioral consistency.
   * Added FloatField, based on IntegerField.
 
-- Added support for FloatProperty and GeoPtProperty in ext.appengine.
+- Extensions:
+  * ext.appengine now supports FloatProperty and GeoPtProperty.
+  * ext.sqlalchemy QueryMultipleSelectField changed to QuerySelectMultipleField.
 
 
 

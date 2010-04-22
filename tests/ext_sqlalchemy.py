@@ -7,7 +7,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from unittest import TestCase
 
-from wtforms.ext.sqlalchemy.fields import ModelSelectField, QuerySelectField, QueryMultipleSelectField
+from wtforms.ext.sqlalchemy.fields import ModelSelectField, QuerySelectField, QuerySelectMultipleField
 from wtforms.form import Form
 
 
@@ -99,7 +99,7 @@ class QuerySelectFieldTest(TestBase):
         self.assertEqual(form.b(), [(u'__None', '', False), (u'hello1', 'apple', False), (u'hello2', 'banana', True)])
         self.assert_(form.validate())
 
-        # Make sure the query iQueryMultipleSelectFields cached
+        # Make sure the query iQuerySelectMultipleFields cached
         sess.add(self.Test(id=3, name='meh'))
         sess.flush()
         sess.commit()
@@ -108,7 +108,7 @@ class QuerySelectFieldTest(TestBase):
         self.assertEqual(form.a(), [(u'1', 'apple', True), (u'2', 'banana', False), (u'3', 'meh', False)])
 
 
-class QueryMultipleSelectFieldTest(TestBase):
+class QuerySelectMultipleFieldTest(TestBase):
     def setUp(self):
         from sqlalchemy.orm import mapper
         engine = create_engine('sqlite:///:memory:', echo=False)
@@ -118,7 +118,7 @@ class QueryMultipleSelectFieldTest(TestBase):
         self._fill(self.sess)
 
     class F(Form):
-        a = QueryMultipleSelectField(label_attr='name', widget=LazySelect())
+        a = QuerySelectMultipleField(label_attr='name', widget=LazySelect())
 
     def test_unpopulated_default(self):
         form = self.F()
@@ -146,7 +146,7 @@ class QueryMultipleSelectFieldTest(TestBase):
     def test_single_default_value(self):
         first_test = self.sess.query(self.Test).get(2)
         class F(Form):
-            a = QueryMultipleSelectField(label_attr='name', default=[first_test],
+            a = QuerySelectMultipleField(label_attr='name', default=[first_test],
                 widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
         form = F()
         self.assertEqual([v.id for v in form.a.data], [2])

@@ -17,7 +17,7 @@ except ImportError:
 
 
 __all__ = (
-    'QuerySelectField', 'QueryMultipleSelectField', 'ModelSelectField',
+    'QuerySelectField', 'QuerySelectMultipleField', 'ModelSelectField',
 )
 
 
@@ -134,7 +134,7 @@ class QuerySelectField(Field):
         def _value(self):
             return self.data
 
-class QueryMultipleSelectField(QuerySelectField):
+class QuerySelectMultipleField(QuerySelectField):
     """
     Very similar to QuerySelectField with the difference that this will
     display a multiple select. The data property will hold a list with ORM
@@ -149,7 +149,7 @@ class QueryMultipleSelectField(QuerySelectField):
                  label_attr='', default=None, **kwargs):
         if default is None:
             default = []
-        super(QueryMultipleSelectField, self).__init__(label, validators, query_factory=query_factory, get_pk=get_pk, label_attr=label_attr, default=default, **kwargs)
+        super(QuerySelectMultipleField, self).__init__(label, validators, query_factory=query_factory, get_pk=get_pk, label_attr=label_attr, default=default, **kwargs)
         self._invalid_formdata = False
 
     def _get_data(self):
