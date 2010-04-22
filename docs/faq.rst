@@ -40,8 +40,7 @@ but if it's not listed, it doesn't mean it won't work.
   * Mako
   * Django Templates (To get the full power of WTForms in your templates, you
     will need to use the Django :mod:`extension <wtforms.ext.django>`.)
-  * Genshi (WTForms output will be auto-escaped by Genshi, you will need to
-    mark it as safe)
+  * Genshi
 
 * **Database Objects**
 

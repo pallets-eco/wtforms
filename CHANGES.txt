@@ -5,15 +5,19 @@ Version 0.5.1
 -------------
 Not yet released.
 
+- Widgets:
+  * HTML is now marked as safe so that compatible templating engines will not
+    auto-escape it.
+
 - Fields:
   * Field._default is now Field.default.
   * All fields now have a `raw_data` property.
   * Minor bugfixes and cleanup in FieldList, Select(Multiple)Field,
     QuerySelectField to address behavioral consistency.
+  * Added FloatField, based on IntegerField.
 
 - Added support for FloatProperty and GeoPtProperty in ext.appengine.
 
-- Added FloatField, based on IntegerField.
 
 
 Version 0.5
