@@ -147,3 +147,6 @@ your forms.
 .. autoclass:: QuerySelectMultipleField(default field args, query_factory=None, get_pk=None, label_attr='', allow_blank=False, blank_text=u'')
 
 .. autoclass:: ModelSelectField(default field args, model=None, get_pk=None, label_attr='', allow_blank=False, blank_text=u'')
+
+    **NOte**: This field is deprecated and will be removed in a future release
+    of WTForms.

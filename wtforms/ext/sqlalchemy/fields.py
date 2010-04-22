@@ -202,6 +202,11 @@ class ModelSelectField(QuerySelectField):
     """
     def __init__(self, label=u'', validators=None, model=None, get_pk=None,
                  label_attr='', allow_blank=False, blank_text=u'', **kwargs):
+        warnings.warn(
+            'Session-aware mappers are deprecated as of SQLAlchemy 0.5.5; '
+            'this field will be removed by WTForms 1.0.',
+            DeprecationWarning
+        )
         assert model is not None, "Must specify a model."
         query_factory = lambda: model.query
         super(ModelSelectField, self).__init__(label, validators, query_factory=query_factory, get_pk=get_pk, label_attr=label_attr, allow_blank=allow_blank, blank_text=blank_text, **kwargs)
