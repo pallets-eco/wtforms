@@ -7,6 +7,31 @@ Extensions
 WTForms ships with a number of extensions that make it easier to work with
 other frameworks and libraries, such as Django.
 
+Appengine
+---------
+.. module:: wtforms.ext.appengine
+
+WTForms now includes support for AppEngine fields as well as auto-form
+generation.
+
+Model Forms
+~~~~~~~~~~~
+.. module:: wtforms.ext.appengine.db
+
+See the module docstring for examples on how to use :func:`model_form`.
+
+.. autofunction:: model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None)
+
+Datastore-backed Fields
+~~~~~~~~~~~~~~~~~~~~~~~
+.. module:: wtforms.ext.appengine.fields
+
+.. autoclass:: ReferencePropertyField(default field arguments, reference_class=None, label_attr=None, allow_blank=False, blank_text=u'')
+
+.. autoclass:: StringListPropertyField(default field arguments)
+
+.. autoclass:: GeoPtPropertyField(default field arguments)
+
 Dateutil
 --------
 .. module:: wtforms.ext.dateutil.fields
