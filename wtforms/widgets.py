@@ -250,5 +250,5 @@ class Option(object):
     option by itself does not constitute an entire field.
     """
     def __call__(self, field, **kwargs):
-        return Select.render_option(field.value, field.label.text, field.checked)
+        return Select.render_option(field._value(), field.label.text, field.checked)
 
