@@ -1,14 +1,4 @@
 #!/usr/bin/env python
-"""
-    ext_django.tests
-    ~~~~~~~~~~~~~~~~
-
-    Unittests for wtforms.ext.django
-
-    :copyright: 2009 by James Crasta, Thomas Johansson.
-    :license: MIT, see LICENSE.txt for details.
-"""
-
 import sys, os
 TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, TESTS_DIR)
