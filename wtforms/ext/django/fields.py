@@ -2,7 +2,7 @@
 Useful form fields for use with the Django ORM.
 """
 from wtforms import widgets
-from wtforms.fields import Field
+from wtforms.fields import SelectFieldBase
 from wtforms.validators import ValidationError
 
 
@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class QuerySetSelectField(Field):
+class QuerySetSelectField(SelectFieldBase):
     """
     Given a QuerySet either at initialization or inside a view, will display a
     select drop-down field of choices. The `data` property actually will

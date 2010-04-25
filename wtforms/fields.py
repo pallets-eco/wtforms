@@ -320,7 +320,7 @@ class Label(object):
         return 'Label(%r, %r)' % (self.field_id, self.text)
 
 
-class _IterableOptions(Field):
+class SelectFieldBase(Field):
     """
     Base class for fields which can be iterated to produce options.
 
@@ -328,7 +328,7 @@ class _IterableOptions(Field):
     provide this functionality.
     """
     def __init__(self, label=u'', validators=None, option_widget=None, **kwargs):
-        super(_IterableOptions, self).__init__(label, validators, **kwargs)
+        super(SelectFieldBase, self).__init__(label, validators, **kwargs)
 
         if option_widget is not None:
             self.option_widget = option_widget
@@ -351,7 +351,7 @@ class _IterableOptions(Field):
             return self.data
 
 
-class SelectField(_IterableOptions):
+class SelectField(SelectFieldBase):
     widget = widgets.Select()
     option_widget = widgets.Option()
 

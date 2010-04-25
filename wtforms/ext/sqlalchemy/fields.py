@@ -5,7 +5,7 @@ import operator
 import warnings
 
 from wtforms import widgets
-from wtforms.fields import _IterableOptions
+from wtforms.fields import SelectFieldBase
 from wtforms.validators import ValidationError
 
 try:
@@ -21,7 +21,7 @@ __all__ = (
 )
 
 
-class QuerySelectField(_IterableOptions):
+class QuerySelectField(SelectFieldBase):
     """
     Will display a select drop-down field to choose between ORM results in a
     sqlalchemy `Query`.  The `data` property actually will store/keep an ORM
