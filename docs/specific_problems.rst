@@ -108,3 +108,38 @@ of rendering errors for a form field. Here's a Jinja2_ macro that may save you t
     Usage: {{ with_errors(form.field, style='font-weight: bold') }}
 
 .. _Jinja2: http://jinja.pocoo.org/2/
+
+
+Specialty Field Tricks
+----------------------
+
+By using widget and field combinations, it is possible to create new
+behaviours and entirely new ways of displaying a form input to the user.
+
+A classic example is easily supported using the `widget=` keyword arg, such as
+making a hidden field which stores and coerces integer data::
+
+    user_id = IntegerField(widget=HiddenInput())
+
+Alternatively, you can create a field which does this by subclassing::
+
+    class HiddenInteger(IntegerField):
+        widget = HiddenInput()
+
+Some fields support even more sophisticated customization.For example, what if
+a multiple-select was desired where instead of using a multi-row ``<select>``,
+a series of checkboxes was used? By using widgets, one can get that behavior
+very easily::
+
+    class CheckboxMultiSelectField(SelectMultipleField):
+        """
+        A multiple-select, except displays a list of checkboxes.
+
+        Iterating the field will produce subfields, allowing custom rendering of
+        the enclosed checkbox fields.
+        """
+        widget = widgets.ListWidget(prefix_label=False)
+        option_widget = widgets.CheckboxInput()
+
+By overriding `option_widget`, our new multiple-select when iterated will now
+produce fields that render as checkboxes.
