@@ -248,7 +248,7 @@ refer to a single input from the form.
     Simply outputting the field without iterating its subfields will result in
     a ``<ul>`` list of radio choices.
 
-.. class:: SelectField(default field arguments, choices=[], coerce=unicode)
+.. class:: SelectField(default field arguments, choices=[], coerce=unicode, option_widget=None)
 
     Select fields keep a `choices` property which is a sequence of `(value,
     label)` pairs.  The value portion can be any type in theory, but as form
@@ -280,7 +280,13 @@ refer to a single input from the form.
     use :func:`int()` to coerce form data.  The default coerce is 
     :func:`unicode()`. 
 
-.. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=unicode)
+    **Advanced functionality**
+
+    SelectField and its descendants are iterable, and iterating it will produce
+    a list of fields each representing an option. The rendering of this can be
+    further controlled by specifying `option_widget=`.
+
+.. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=unicode, option_widget=None)
 
    The data on the SelectMultipleField is stored as a list of objects, each of
    which is checked and coerced from the form input.  Any inputted choices

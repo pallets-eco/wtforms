@@ -320,7 +320,38 @@ class Label(object):
         return 'Label(%r, %r)' % (self.field_id, self.text)
 
 
-class SelectField(Field):
+class _IterableOptions(Field):
+    """
+    Base class for fields which can be iterated to produce options.
+
+    This isn't a field, but an abstract base class for fields which want to
+    provide this functionality.
+    """
+    def __init__(self, label=u'', validators=None, option_widget=None, **kwargs):
+        super(_IterableOptions, self).__init__(label, validators, **kwargs)
+
+        if option_widget is not None:
+            self.option_widget = option_widget
+
+    def iter_choices(self):
+        raise NotImplementedError()
+
+    def __iter__(self):
+        opts = dict(widget=self.option_widget, _name=self.name, _form=None)
+        for i, (value, label, checked) in enumerate(self.iter_choices()):
+            opt = self._Option(label=label, id=u'%s-%d' % (self.id, i), **opts)
+            opt.process(None, value)
+            opt.checked = checked
+            yield opt
+
+    class _Option(Field):
+        checked = False
+
+        def _value(self):
+            return self.data
+
+
+class SelectField(_IterableOptions):
     widget = widgets.Select()
     option_widget = widgets.Option()
 
@@ -352,20 +383,6 @@ class SelectField(Field):
                 break
         else:
             raise ValueError('Not a valid choice')
-
-    def __iter__(self):
-        opts = dict(widget=self.option_widget, _name=self.name, _form=None)
-        for i, (value, label, checked) in enumerate(self.iter_choices()):
-            opt = self._Option(label=label, id=u'%s-%d' % (self.id, i), **opts)
-            opt.process(None, value)
-            opt.checked = checked
-            yield opt
-
-    class _Option(Field):
-        checked = False
-
-        def _value(self):
-            return self.data
 
 
 class SelectMultipleField(SelectField):

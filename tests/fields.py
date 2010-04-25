@@ -111,6 +111,11 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.b.data, None)
         self.assert_(not form.b.validate(form))
 
+    def test_iterable_options(self):
+        form = self.F()
+        self.assert_(isinstance(list(form.a)[0], form.a._Option))
+        self.assertEqual(list(unicode(x) for x in form.a), [u'<option selected="selected" value="a">hello</option>', '<option value="btest">bye</option>'])
+
 
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
