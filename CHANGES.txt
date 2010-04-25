@@ -3,11 +3,11 @@ WTForms Changelog
 
 Version 0.6
 -----------
-Not yet released.
+Released April 25th, 2010.
 
 - Widgets:
-  * HTML is now marked as safe so that compatible templating engines will not
-    auto-escape it.
+  * HTML is now marked as safe (using __html__) so that compatible templating
+    engines will not auto-escape it.
 
 - Fields:
   * Field._default is now Field.default.
