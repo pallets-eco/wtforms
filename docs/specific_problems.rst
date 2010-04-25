@@ -131,7 +131,7 @@ a multiple-select was desired where instead of using a multi-row ``<select>``,
 a series of checkboxes was used? By using widgets, one can get that behavior
 very easily::
 
-    class CheckboxMultiSelectField(SelectMultipleField):
+    class MultiCheckboxField(SelectMultipleField):
         """
         A multiple-select, except displays a list of checkboxes.
 
