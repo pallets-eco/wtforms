@@ -344,8 +344,26 @@ complex data structures such as lists and nested objects can be represented.
 
 .. autoclass:: FieldList(unbound_field, default field arguments, min_entries=0, max_entries=None)
 
-    **Note**: Due to a limitation in how HTML sends values, FieldList cannot enclose 
+    **Note**: Due to a limitation in how HTML sends values, FieldList cannot enclose
     :class:`BooleanField` or :class:`SubmitField` instances.
+
+    .. automethod:: append_entry([data])
+    .. automethod:: pop_entry
+
+    .. attribute:: entries
+
+        Each entry in a FieldList is actually an instance of the field you
+        passed in. Iterating, checking the length of, and indexing the
+        FieldList works as expected, and proxies to the enclosed entries list.
+
+        **Do not** resize the entries list directly, this will result in
+        undefined behavior. See `append_entry` and `pop_entry` for ways you can
+        manipulate the list.
+
+    .. automethod:: __iter__
+    .. automethod:: __len__
+    .. automethod:: __getitem__
+
 
     :class:`FieldList` is not limited to enclosing simple fields; and can
     indeed represent a list of enclosed forms by combining FieldList with

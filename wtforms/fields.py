@@ -831,7 +831,12 @@ class FieldList(Field):
         return field
 
     def append_entry(self, data=_unset_value):
-        """Create a new entry with optional default data"""
+        """
+        Create a new entry with optional default data.
+
+        Entries added in this way will *not* receive formdata however, and can
+        only receive object data.
+        """
         return self._add_entry(data=data)
 
     def pop_entry(self):
