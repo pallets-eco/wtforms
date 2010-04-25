@@ -1,8 +1,8 @@
 WTForms Changelog
 =================
 
-Version 0.5.1
--------------
+Version 0.6
+-----------
 Not yet released.
 
 - Widgets:
@@ -12,6 +12,8 @@ Not yet released.
 - Fields:
   * Field._default is now Field.default.
   * All fields now have a `raw_data` property.
+  * Fields which are select fields (including those in .ext) can be
+    iterated to produce options, and have an option_widget kwarg.
   * Minor bugfixes and cleanup in FieldList, Select(Multiple)Field,
     QuerySelectField to address behavioral consistency.
   * Added FloatField, based on IntegerField.
@@ -19,7 +21,6 @@ Not yet released.
 - Extensions:
   * ext.appengine now supports FloatProperty and GeoPtProperty.
   * ext.sqlalchemy QueryMultipleSelectField changed to QuerySelectMultipleField.
-
 
 
 Version 0.5

@@ -53,7 +53,6 @@ class QuerySelectField(SelectFieldBase):
     future release.
     """
     widget = widgets.Select()
-    option_widget = widgets.Option()
 
     def __init__(self, label=u'', validators=None, query_factory=None,
                  get_pk=None, label_attr='', allow_blank=False, blank_text=u'',

@@ -321,6 +321,8 @@ class Label(object):
 
 
 class SelectFieldBase(Field):
+    option_widget = widgets.Option()
+
     """
     Base class for fields which can be iterated to produce options.
 
@@ -334,6 +336,11 @@ class SelectFieldBase(Field):
             self.option_widget = option_widget
 
     def iter_choices(self):
+        """
+        Override me to provide select field rendering.
+
+        This should return an iterable which yields (value, label, selected) tuples.
+        """
         raise NotImplementedError()
 
     def __iter__(self):
@@ -353,7 +360,6 @@ class SelectFieldBase(Field):
 
 class SelectField(SelectFieldBase):
     widget = widgets.Select()
-    option_widget = widgets.Option()
 
     def __init__(self, label=u'', validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
