@@ -337,9 +337,8 @@ class SelectFieldBase(Field):
 
     def iter_choices(self):
         """
-        Override me to provide select field rendering.
-
-        This should return an iterable which yields (value, label, selected) tuples.
+        Provides data for choice widget rendering. Must return a sequence or
+        iterable of (value, label, selected) tuples.
         """
         raise NotImplementedError()
 
