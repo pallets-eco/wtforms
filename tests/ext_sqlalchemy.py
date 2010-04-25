@@ -69,7 +69,7 @@ class QuerySelectFieldTest(TestBase):
         sess = self.Session()
         self._fill(sess)
         class F(Form):
-            a = QuerySelectField(label_attr='name', widget=LazySelect(), get_pk=lambda x: x.id)
+            a = QuerySelectField(get_label='name', widget=LazySelect(), get_pk=lambda x: x.id)
         form = F(DummyPostData(a=['1']))
         form.a.query = sess.query(self.Test)
         self.assert_(form.a.data is not None)
@@ -82,7 +82,7 @@ class QuerySelectFieldTest(TestBase):
         self._fill(sess)
 
         class F(Form):
-            a = QuerySelectField(label_attr='name', query_factory=lambda:sess.query(self.Test), widget=LazySelect())
+            a = QuerySelectField(get_label=(lambda model: model.name), query_factory=lambda:sess.query(self.Test), widget=LazySelect())
             b = QuerySelectField(allow_blank=True, query_factory=lambda:sess.query(self.PKTest), widget=LazySelect())
 
         form = F()
@@ -118,7 +118,7 @@ class QuerySelectMultipleFieldTest(TestBase):
         self._fill(self.sess)
 
     class F(Form):
-        a = QuerySelectMultipleField(label_attr='name', widget=LazySelect())
+        a = QuerySelectMultipleField(get_label='name', widget=LazySelect())
 
     def test_unpopulated_default(self):
         form = self.F()
@@ -146,7 +146,7 @@ class QuerySelectMultipleFieldTest(TestBase):
     def test_single_default_value(self):
         first_test = self.sess.query(self.Test).get(2)
         class F(Form):
-            a = QuerySelectMultipleField(label_attr='name', default=[first_test],
+            a = QuerySelectMultipleField(get_label='name', default=[first_test],
                 widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
         form = F()
         self.assertEqual([v.id for v in form.a.data], [2])
@@ -168,7 +168,7 @@ class ModelSelectFieldTest(TestBase):
         sess = self.Session
         self._fill(sess)
         class F(Form):
-            a = ModelSelectField(label_attr='name', model=self.Test, widget=LazySelect())
+            a = ModelSelectField(get_label='name', model=self.Test, widget=LazySelect())
 
         form = F()
         self.assertEqual(form.a(), [(u'1', 'apple', False), (u'2', 'banana', False)])

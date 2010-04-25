@@ -40,27 +40,29 @@ class QuerySelectField(SelectFieldBase):
     `query_factory` callable passed to the field constructor will be called to
     obtain a query.
 
-    Specifying `label_attr` in the constructor will use that property of the
-    model instance for display in the list, else the model object's `__str__`
-    or `__unicode__` will be used.
+    Specify `get_label` to customize the label associated with each option. If
+    a string, this is the name of an attribute on the model object to use as
+    the label text. If a one-argument callable, this callable will be passed
+    model instance and expected to return the label text. Otherwise, the model
+    object's `__str__` or `__unicode__` will be used.
 
     If `allow_blank` is set to `True`, then a blank choice will be added to the
     top of the list. Selecting this choice will result in the `data` property
     being `None`. The label for this blank choice can be set by specifying the
     `blank_text` parameter.
 
-    The `pk_attr` parameter is deprecated and will likely be removed in a
-    future release.
+    The `pk_attr` and `label_attr` parameters are deprecated and will be
+    removed in a future release.
     """
     widget = widgets.Select()
 
     def __init__(self, label=u'', validators=None, query_factory=None,
-                 get_pk=None, label_attr='', allow_blank=False, blank_text=u'',
-                 pk_attr=None, **kwargs):
+                 get_pk=None, get_label=None, allow_blank=False, blank_text=u'',
+                 pk_attr=None, label_attr=None, **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
         if pk_attr is not None:
-            warnings.warn('pk_attr= will be removed in WTForms 1.0, use get_pk= instead.', DeprecationWarning)
+            warnings.warn('pk_attr= will be removed in WTForms 0.7, use get_pk= instead.', DeprecationWarning)
             self.get_pk = operator.attrgetter(pk_attr)
         elif get_pk is None:
             if not has_identity_key:
@@ -69,7 +71,16 @@ class QuerySelectField(SelectFieldBase):
         else:
             self.get_pk = get_pk
 
-        self.label_attr = label_attr
+        if label_attr is not None:
+            warnings.warn('label_attr= will be removed in WTForms 0.7, use get_label= instead.', DeprecationWarning)
+            self.get_label = operator.attrgetter(label_attr)
+        elif get_label is None:
+            self.get_label = lambda x: x
+        elif isinstance(get_label, basestring):
+            self.get_label = operator.attrgetter(get_label)
+        else:
+            self.get_label = get_label
+
         self.allow_blank = allow_blank
         self.blank_text = blank_text
         self.query = None
@@ -101,8 +112,7 @@ class QuerySelectField(SelectFieldBase):
             yield (u'__None', self.blank_text, self.data is None)
 
         for pk, obj in self._get_object_list():
-            label = self.label_attr and getattr(obj, self.label_attr) or obj
-            yield (pk, label, obj == self.data)
+            yield (pk, self.get_label(obj), obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -132,11 +142,10 @@ class QuerySelectMultipleField(QuerySelectField):
     """
     widget = widgets.Select(multiple=True)
 
-    def __init__(self, label=u'', validators=None, query_factory=None, get_pk=None,
-                 label_attr='', default=None, **kwargs):
+    def __init__(self, label=u'', validators=None, default=None, **kwargs):
         if default is None:
             default = []
-        super(QuerySelectMultipleField, self).__init__(label, validators, query_factory=query_factory, get_pk=get_pk, label_attr=label_attr, default=default, **kwargs)
+        super(QuerySelectMultipleField, self).__init__(label, validators, default=default, **kwargs)
         self._invalid_formdata = False
 
     def _get_data(self):
@@ -162,8 +171,7 @@ class QuerySelectMultipleField(QuerySelectField):
 
     def iter_choices(self):
         for pk, obj in self._get_object_list():
-            label = self.label_attr and getattr(obj, self.label_attr) or obj
-            yield (pk, label, obj in self.data)
+            yield (pk, self.get_label(obj), obj in self.data)
 
     def process_formdata(self, valuelist):
         self._formdata = set(valuelist)
@@ -186,17 +194,19 @@ class ModelSelectField(QuerySelectField):
     SQLAlchemy, because otherwise model instances do not know how to make
     queries of themselves. This field is simply a convenience for using
     `Model.query` as the factory for QuerySelectField.
+
+    **Note**: This field is deprecated and will be removed in a future release
+    of WTForms.
     """
-    def __init__(self, label=u'', validators=None, model=None, get_pk=None,
-                 label_attr='', allow_blank=False, blank_text=u'', **kwargs):
+    def __init__(self, label=u'', validators=None, model=None, **kwargs):
         warnings.warn(
             'Session-aware mappers are deprecated as of SQLAlchemy 0.5.5; '
-            'this field will be removed by WTForms 1.0.',
+            'this field will be removed by WTForms 0.7',
             DeprecationWarning
         )
         assert model is not None, "Must specify a model."
         query_factory = lambda: model.query
-        super(ModelSelectField, self).__init__(label, validators, query_factory=query_factory, get_pk=get_pk, label_attr=label_attr, allow_blank=allow_blank, blank_text=blank_text, **kwargs)
+        super(ModelSelectField, self).__init__(label, validators, query_factory=query_factory, **kwargs)
 
 
 def get_pk_from_identity(obj):
