@@ -5,7 +5,7 @@ import operator
 import warnings
 
 from wtforms import widgets
-from wtforms.fields import Field
+from wtforms.fields import _IterableOptions
 from wtforms.validators import ValidationError
 
 try:
@@ -21,7 +21,7 @@ __all__ = (
 )
 
 
-class QuerySelectField(Field):
+class QuerySelectField(_IterableOptions):
     """
     Will display a select drop-down field to choose between ORM results in a
     sqlalchemy `Query`.  The `data` property actually will store/keep an ORM
@@ -53,6 +53,7 @@ class QuerySelectField(Field):
     future release.
     """
     widget = widgets.Select()
+    option_widget = widgets.Option()
 
     def __init__(self, label=u'', validators=None, query_factory=None,
                  get_pk=None, label_attr='', allow_blank=False, blank_text=u'',
@@ -120,19 +121,6 @@ class QuerySelectField(Field):
             else:
                 raise ValidationError('Not a valid choice')
 
-    def __iter__(self):
-        opts = dict(widget=self.option_widget, _name=self.name, _form=None)
-        for i, (value, label, checked) in enumerate(self.iter_choices()):
-            opt = self._Option(label=label, id=u'%s-%d' % (self.id, i), **opts)
-            opt.process(None, value)
-            opt.checked = checked
-            yield opt
-
-    class _Option(Field):
-        checked = False
-
-        def _value(self):
-            return self.data
 
 class QuerySelectMultipleField(QuerySelectField):
     """
