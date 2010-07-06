@@ -38,6 +38,10 @@ class DateutilTest(TestCase):
         self.assertEqual(f.c.data, None)
         self.assert_(f.validate())
 
+    def test_render(self):
+        f = self.F()
+        self.assertEqual(f.b(), ur'<input id="b" name="b" type="text" value="2004-09-12" />')
+
 
 if __name__ == '__main__':
     from unittest import main

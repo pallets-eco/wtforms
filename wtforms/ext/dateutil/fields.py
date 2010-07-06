@@ -24,7 +24,7 @@ class DateTimeField(Field):
     :param display_format:
         A format string to pass to strftime() to format dates for display.
     """
-    widget = TextInput
+    widget = TextInput()
 
     def __init__(self, label=u'', validators=None, parse_kwargs=None,
                  display_format='%Y-%m-%d %H:%M', **kwargs):
