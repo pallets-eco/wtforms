@@ -40,7 +40,7 @@ class EqualTo(object):
         interpolated with `%(other_label)s` and `%(other_name)s` to provide a
         more helpful error.
     """
-    def __init__(self, fieldname, message=u'Field must be equal to %(other_name)s'):
+    def __init__(self, fieldname, message=None):
         self.fieldname = fieldname
         self.message = message
 
@@ -48,12 +48,15 @@ class EqualTo(object):
         try:
             other = form[self.fieldname]
         except KeyError:
-            raise ValidationError(u"Invalid field name '%s'" % self.fieldname)
+            raise ValidationError(field.gettext(u"Invalid field name '%s'.") % self.fieldname)
         if field.data != other.data:
             d = {
                 'other_label': hasattr(other, 'label') and other.label.text or self.fieldname,
                 'other_name': self.fieldname
             }
+            if self.message is None:
+                self.message = field.gettext(u'Field must be equal to %(other_name)s.')
+
             raise ValidationError(self.message % d)
 
 
@@ -77,20 +80,21 @@ class Length(object):
         assert max == -1 or min <= max, '`min` cannot be more than `max`.'
         self.min = min
         self.max = max
-
-        if message is None:
-            if max == -1:
-                message = u'Field must be at least %(min)d characters long.'
-            elif min == -1:
-                message = u'Field cannot be longer than %(max)d characters.'
-            else:
-                message = u'Field must be between %(min)d and %(max)d characters long.'
-
         self.message = message
 
     def __call__(self, form, field):
         l = field.data and len(field.data) or 0
         if l < self.min or self.max != -1 and l > self.max:
+            if self.message is None:
+                if self.max == -1:
+                    self.message = field.ngettext(u'Field must be at least %(min)d character long.',
+                                                  u'Field must be at least %(min)d characters long.', self.min)
+                elif self.min == -1:
+                    self.message = field.ngettext(u'Field cannot be longer than %(max)d character.',
+                                                  u'Field cannot be longer than %(max)d characters.', self.max)
+                else:
+                    self.message = field.gettext(u'Field must be between %(min)d and %(max)d characters long.')
+
             raise ValidationError(self.message % dict(min=self.min, max=self.max))
 
 
@@ -114,21 +118,22 @@ class NumberRange(object):
     def __init__(self, min=None, max=None, message=None):
         self.min = min
         self.max = max
-        if message is None:
-            # we use %(min)s interpolation to support floats, None, and
-            # Decimals without throwing a formatting exception.
-            if max is None:
-                message = u'Number must be greater than %(min)s'
-            elif min is None:
-                message = u'Number must be less than %(max)s'
-            else:
-                message = u'Number must be between %(min)s and %(max)s'
         self.message = message
 
     def __call__(self, form, field):
         data = field.data
         if data is None or (self.min is not None and data < self.min) or \
             (self.max is not None and data > self.max):
+            if self.message is None:
+                # we use %(min)s interpolation to support floats, None, and
+                # Decimals without throwing a formatting exception.
+                if self.max is None:
+                    self.message = field.gettext(u'Number must be greater than %(min)s.')
+                elif self.min is None:
+                    self.message = field.gettext(u'Number must be less than %(max)s.')
+                else:
+                    self.message = field.gettext(u'Number must be between %(min)s and %(max)s.')
+
             raise ValidationError(self.message % dict(min=self.min, max=self.max))
 
 
@@ -157,11 +162,14 @@ class Required(object):
     """
     field_flags = ('required', )
 
-    def __init__(self, message=u'This field is required.'):
+    def __init__(self, message=None):
         self.message = message
 
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+            if self.message is None:
+                self.message = field.gettext(u'This field is required.')
+
             field.errors[:] = []
             raise StopValidation(self.message)
 
@@ -175,18 +183,21 @@ class Regexp(object):
         expression pattern.
     :param flags:
         The regexp flags to use, for example re.IGNORECASE. Ignored if
-        `regex` is not a string.  
+        `regex` is not a string.
     :param message:
         Error message to raise in case of a validation error.
     """
-    def __init__(self, regex, flags=0, message=u'Invalid input.'):
+    def __init__(self, regex, flags=0, message=None):
         if isinstance(regex, basestring):
             regex = re.compile(regex, flags)
-        self.regex = regex 
+        self.regex = regex
         self.message = message
 
     def __call__(self, form, field):
         if not self.regex.match(field.data or u''):
+            if self.message is None:
+                self.message = field.gettext(u'Invalid input.')
+
             raise ValidationError(self.message)
 
 
@@ -199,8 +210,14 @@ class Email(Regexp):
     :param message:
         Error message to raise in case of a validation error.
     """
-    def __init__(self, message=u'Invalid email address.'):
+    def __init__(self, message=None):
         super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,10}$', re.IGNORECASE, message)
+
+    def __call__(self, form, field):
+        if self.message is None:
+            self.message = field.gettext(u'Invalid email address.')
+
+        super(Email, self).__call__(form, field)
 
 
 class IPAddress(Regexp):
@@ -210,27 +227,39 @@ class IPAddress(Regexp):
     :param message:
         Error message to raise in case of a validation error.
     """
-    def __init__(self, message=u'Invalid IP address.'):
+    def __init__(self, message=None):
         super(IPAddress, self).__init__(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', message=message)
+
+    def __call__(self, form, field):
+        if self.message is None:
+            self.message = field.gettext(u'Invalid IP address.')
+
+        super(IPAddress, self).__call__(form, field)
 
 
 class URL(Regexp):
     """
     Simple regexp based url validation. Much like the email validator, you
-    probably want to validate the url later by other means if the url must 
+    probably want to validate the url later by other means if the url must
     resolve.
 
     :param require_tld:
         If true, then the domain-name portion of the URL must contain a .tld
-        suffix.  Set this to false if you want to allow domains like 
+        suffix.  Set this to false if you want to allow domains like
         `localhost`.
     :param message:
         Error message to raise in case of a validation error.
     """
-    def __init__(self, require_tld=True, message=u'Invalid URL.'):
+    def __init__(self, require_tld=True, message=None):
         tld_part = (require_tld and ur'\.[a-z]{2,10}' or u'')
         regex = ur'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
         super(URL, self).__init__(regex, re.IGNORECASE, message)
+
+    def __call__(self, form, field):
+        if self.message is None:
+            self.message = field.gettext(u'Invalid URL.')
+
+        super(URL, self).__call__(form, field)
 
 
 class AnyOf(object):
@@ -245,8 +274,7 @@ class AnyOf(object):
     :param values_formatter:
         Function used to format the list of values in the error message.
     """
-    def __init__(self, values, message=u'Invalid value, must be one of: %(values)s',
-                 values_formatter=None):
+    def __init__(self, values, message=None, values_formatter=None):
         self.values = values
         self.message = message
         if values_formatter is None:
@@ -255,6 +283,9 @@ class AnyOf(object):
 
     def __call__(self, form, field):
         if field.data not in self.values:
+            if self.message is None:
+                self.message = field.gettext(u'Invalid value, must be one of: %(values)s.')
+
             raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
 
 
@@ -270,8 +301,7 @@ class NoneOf(object):
     :param values_formatter:
         Function used to format the list of values in the error message.
     """
-    def __init__(self, values, message=u'Invalid value, can\'t be any of: %(values)s',
-                 values_formatter=None):
+    def __init__(self, values, message=None, values_formatter=None):
         self.values = values
         self.message = message
         if values_formatter is None:
@@ -280,6 +310,9 @@ class NoneOf(object):
 
     def __call__(self, form, field):
         if field.data in self.values:
+            if self.message is None:
+                self.message = field.gettext(u'Invalid value, can\'t be any of: %(values)s.')
+
             raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
 
 

@@ -27,8 +27,10 @@ class BaseForm(object):
         if hasattr(fields, 'iteritems'):
             fields = fields.iteritems()
 
+        translations = self._get_translations()
+
         for name, unbound_field in fields:
-            field = unbound_field.bind(form=self, name=name, prefix=prefix)
+            field = unbound_field.bind(form=self, name=name, prefix=prefix, translations=translations)
             self._fields[name] = field
 
     def __iter__(self):
@@ -50,6 +52,14 @@ class BaseForm(object):
     def __delitem__(self, name):
         """ Remove a field from this form. """
         del self._fields[name]
+
+    def _get_translations(self):
+        """
+        Override in subclasses to provide alternate translations factory.
+
+        Must return an object that provides gettext() and ngettext() methods.
+        """
+        return None
 
     def populate_obj(self, obj):
         """

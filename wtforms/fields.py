@@ -18,6 +18,17 @@ __all__ = (
 _unset_value = object()
 
 
+class DummyTranslations(object):
+    def gettext(self, string):
+        return string
+
+    def ngettext(self, singular, plural, n):
+        if n == 1:
+            return singular
+
+        return plural
+
+
 class Field(object):
     """
     Field base class
@@ -26,6 +37,7 @@ class Field(object):
     errors = tuple()
     process_errors = tuple()
     _formfield = True
+    _translations = DummyTranslations()
 
     def __new__(cls, *args, **kwargs):
         if '_form' in kwargs and '_name' in kwargs:
@@ -35,7 +47,7 @@ class Field(object):
 
     def __init__(self, label=u'', validators=None, filters=tuple(),
                  description=u'', id=None, default=None, widget=None,
-                 _form=None, _name=None, _prefix=''):
+                 _form=None, _name=None, _prefix='', _translations=None):
         """
         Construct a new field.
 
@@ -72,6 +84,8 @@ class Field(object):
         """
         self.short_name = _name
         self.name = _prefix + _name
+        if _translations is not None:
+            self._translations = _translations
         self.id = id or self.name
         self.label = Label(self.id, label or _name.replace('_', ' ').title())
         if validators is None:
@@ -119,6 +133,12 @@ class Field(object):
         and entity-escaped properly.
         """
         return self.widget(self, **kwargs)
+
+    def gettext(self, string):
+        return self._translations.gettext(string)
+
+    def ngettext(self, singular, plural, n):
+        return self._translations.ngettext(singular, plural, n)
 
     def validate(self, form, extra_validators=tuple()):
         """
@@ -270,8 +290,8 @@ class UnboundField(object):
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
 
-    def bind(self, form, name, prefix='', **kwargs):
-        return self.field_class(_form=form, _prefix=prefix, _name=name, *self.args, **dict(self.kwargs, **kwargs))
+    def bind(self, form, name, prefix='', translations=None, **kwargs):
+        return self.field_class(_form=form, _prefix=prefix, _name=name, _translations=translations, *self.args, **dict(self.kwargs, **kwargs))
 
     def __repr__(self):
         return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
@@ -380,14 +400,14 @@ class SelectField(SelectFieldBase):
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
-                raise ValueError(u'Invalid Choice: could not coerce')
+                raise ValueError(self.gettext(u'Invalid Choice: could not coerce'))
 
     def pre_validate(self, form):
         for v, _ in self.choices:
             if self.data == v:
                 break
         else:
-            raise ValueError('Not a valid choice')
+            raise ValueError(self.gettext(u'Not a valid choice'))
 
 
 class SelectMultipleField(SelectField):
@@ -413,14 +433,14 @@ class SelectMultipleField(SelectField):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError:
-            raise ValueError(u'Invalid choice(s): one or more data inputs could not be coerced')
+            raise ValueError(self.gettext(u'Invalid choice(s): one or more data inputs could not be coerced'))
 
     def pre_validate(self, form):
         if self.data:
             values = list(c[0] for c in self.choices)
             for d in self.data:
                 if d not in values:
-                    raise ValueError(u"'%s' is not a valid choice for this field" % d)
+                    raise ValueError(self.gettext(u"'%(value)s' is not a valid choice for this field") % dict(value=d))
 
 
 class RadioField(SelectField):
@@ -502,7 +522,7 @@ class IntegerField(TextField):
             try:
                 self.data = int(valuelist[0])
             except ValueError:
-                raise ValueError(u'Not a valid integer value')
+                raise ValueError(self.gettext(u'Not a valid integer value'))
 
 
 class DecimalField(TextField):
@@ -547,7 +567,7 @@ class DecimalField(TextField):
             try:
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
-                raise ValueError(u'Not a valid decimal value')
+                raise ValueError(self.gettext(u'Not a valid decimal value'))
 
 
 class FloatField(TextField):
@@ -569,7 +589,7 @@ class FloatField(TextField):
             try:
                 self.data = float(valuelist[0])
             except ValueError:
-                raise ValueError(u'Not a valid float value')
+                raise ValueError(self.gettext(u'Not a valid float value'))
 
 
 class BooleanField(Field):

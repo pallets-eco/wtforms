@@ -2,15 +2,37 @@
 from unittest import TestCase
 from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange, AnyOf, NoneOf
 
+class DummyTranslations(object):
+    def gettext(self, string):
+        return string
+
+    def ngettext(self, singular, plural, n):
+        if n == 1:
+            return singular
+
+        return plural
+
+_dummy_translations = DummyTranslations()
 
 class DummyForm(dict):
-    pass
+    def _get_translations(self):
+        """Has to return a gettext translations object that supports
+        unicode. By default a dummy is returned.
+        """
+        return _dummy_translations
 
 class DummyField(object):
+    _translations = _dummy_translations
     def __init__(self, data, errors=(), raw_data=None):
         self.data = data
         self.errors = list(errors)
         self.raw_data = raw_data
+
+    def gettext(self, string):
+        return self._translations.gettext(string)
+
+    def ngettext(self, singular, plural, n):
+        return self._translations.ngettext(singular, plural, n)
 
 def grab_error_message(callable, form, field):
     try:
