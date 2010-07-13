@@ -12,17 +12,11 @@ class DummyTranslations(object):
 
         return plural
 
-_dummy_translations = DummyTranslations()
-
 class DummyForm(dict):
-    def _get_translations(self):
-        """Has to return a gettext translations object that supports
-        unicode. By default a dummy is returned.
-        """
-        return _dummy_translations
+    pass
 
 class DummyField(object):
-    _translations = _dummy_translations
+    _translations = DummyTranslations()
     def __init__(self, data, errors=(), raw_data=None):
         self.data = data
         self.errors = list(errors)
@@ -164,10 +158,10 @@ class ValidatorsTest(TestCase):
         self.assert_(ip_address(message=message))
         self.assert_(url(message=message))
 
-    def test_any_of(self):    
+    def test_any_of(self):
         self.assertEqual(AnyOf(['a', 'b', 'c'])(self.form, DummyField('b')), None)
         self.assertRaises(ValueError, AnyOf(['a', 'b', 'c']), self.form, DummyField(None))
-        
+
     def test_none_of(self):
         self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)
         self.assertRaises(ValueError, NoneOf(['a', 'b', 'c']), self.form, DummyField('a'))
