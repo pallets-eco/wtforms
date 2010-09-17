@@ -8,6 +8,10 @@ is to delegate the rendering to its widget. This abstraction is provided so
 that widgets can easily be created to customize the rendering of existing
 fields.
 
+**Note** All built-in widgets will return upon rendering a "HTML-safe" unicode
+string subclass that many templating frameworks (Jinja2, Mako, Genshi) will
+recognize as not needing to be auto-escaped.
+
 Built-in widgets
 ----------------
 

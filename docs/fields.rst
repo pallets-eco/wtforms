@@ -97,6 +97,13 @@ The Field base class
         Note: Simply coercing the field to a string or unicode will render it as
         if it was called with no arguments.
 
+    .. automethod:: __html__
+
+        Many template engines use the __html__ method when it exists on a
+        printed object to get an 'html-safe' string that will not be
+        auto-escaped. To allow for printing a bare field without calling it,
+        all WTForms fields implement this method as well.
+
     **Properties**
 
     .. attribute:: name

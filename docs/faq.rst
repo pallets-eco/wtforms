@@ -31,7 +31,7 @@ but if it's not listed, it doesn't mean it won't work.
 
   * Django
   * Webob (Includes Pylons, Google App Engine, Turbogears)
-  * Werkzeug
+  * Werkzeug (Includes Flask, Tipfy)
   * any other cgi.FieldStorage-type multidict
 
 * **Templating Engines**
