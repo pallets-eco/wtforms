@@ -1,15 +1,21 @@
 WTForms Changelog
 =================
 
+
 Version 0.6.1
 -------------
-Not yet released.
+Released September 17th, 2010
 
-- Add support for providing a translations object that can translate built-in
-  validation and coercion errors
+- Bug Fixes:
+  * ext.appengine ReferencePropertyField (#36, #37)
+  * dateutil fields: render issue (r419), and consistency issue (#35)
+  * Optional validator failed when raw_data was absent (r418)
 
-- Fields:
-  * Bugfixes and cleanup in ReferencePropertyField, dateutil fields.
+- Documentation: docs now mention HTML escaping functionality (#38)
+
+- Add preliminary support for providing a translations object that can
+  translate built-in validation and coercion errors (#32)
+
 
 Version 0.6
 -----------
