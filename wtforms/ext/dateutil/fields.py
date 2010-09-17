@@ -43,6 +43,10 @@ class DateTimeField(Field):
     def process_formdata(self, valuelist):
         if valuelist:
             date_str = u' '.join(valuelist)
+            if not date_str:
+                self.data = None
+                raise ValidationError(u'Please input a date/time value')
+
             parse_kwargs = self.parse_kwargs.copy()
             if 'default' not in parse_kwargs:
                 try:
