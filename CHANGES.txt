@@ -1,6 +1,16 @@
 WTForms Changelog
 =================
 
+Version 0.6.1
+-------------
+Not yet released.
+
+- Add support for providing a translations object that can translate built-in
+  validation and coercion errors
+
+- Fields:
+  * Bugfixes and cleanup in ReferencePropertyField, dateutil fields.
+
 Version 0.6
 -----------
 Released April 25th, 2010.
