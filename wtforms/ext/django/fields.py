@@ -74,7 +74,7 @@ class QuerySetSelectField(SelectFieldBase):
                 if self.data == obj:
                     break
             else:
-                raise ValidationError('Not a valid choice')
+                raise ValidationError(self.gettext('Not a valid choice'))
 
 
 class ModelSelectField(QuerySetSelectField):

@@ -128,7 +128,7 @@ class QuerySelectField(SelectFieldBase):
                 if self.data == obj:
                     break
             else:
-                raise ValidationError('Not a valid choice')
+                raise ValidationError(self.gettext(u'Not a valid choice'))
 
 
 class QuerySelectMultipleField(QuerySelectField):
@@ -178,12 +178,12 @@ class QuerySelectMultipleField(QuerySelectField):
 
     def pre_validate(self, form):
         if self._invalid_formdata:
-            raise ValidationError('Not a valid choice')
+            raise ValidationError(self.gettext(u'Not a valid choice'))
         elif self.data:
             obj_list = list(x[1] for x in self._get_object_list())
             for v in self.data:
                 if v not in obj_list:
-                    raise ValidationError('Not a valid choice')
+                    raise ValidationError(self.gettext('Not a valid choice'))
 
 
 class ModelSelectField(QuerySelectField):
