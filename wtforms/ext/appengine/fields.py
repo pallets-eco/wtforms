@@ -55,7 +55,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
     def pre_validate(self, form):
         if not self.allow_blank or self.data is not None:
-            for obj in self.queryset:
+            for obj in self.query:
                 if self.data == str(obj.key()):
                     break
             else:
