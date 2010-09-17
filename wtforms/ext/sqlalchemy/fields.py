@@ -2,7 +2,6 @@
 Useful form fields for use with SQLAlchemy ORM.
 """
 import operator
-import warnings
 
 from wtforms import widgets
 from wtforms.fields import SelectFieldBase
@@ -17,7 +16,7 @@ except ImportError:
 
 
 __all__ = (
-    'QuerySelectField', 'QuerySelectMultipleField', 'ModelSelectField',
+    'QuerySelectField', 'QuerySelectMultipleField',
 )
 
 
@@ -50,31 +49,23 @@ class QuerySelectField(SelectFieldBase):
     top of the list. Selecting this choice will result in the `data` property
     being `None`. The label for this blank choice can be set by specifying the
     `blank_text` parameter.
-
-    The `pk_attr` and `label_attr` parameters are deprecated and will be
-    removed in a future release.
     """
     widget = widgets.Select()
 
     def __init__(self, label=u'', validators=None, query_factory=None,
-                 get_pk=None, get_label=None, allow_blank=False, blank_text=u'',
-                 pk_attr=None, label_attr=None, **kwargs):
+                 get_pk=None, get_label=None, allow_blank=False,
+                 blank_text=u'', **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
-        if pk_attr is not None:
-            warnings.warn('pk_attr= will be removed in WTForms 0.7, use get_pk= instead.', DeprecationWarning)
-            self.get_pk = operator.attrgetter(pk_attr)
-        elif get_pk is None:
+
+        if get_pk is None:
             if not has_identity_key:
                 raise Exception('The sqlalchemy identity_key function could not be imported.')
             self.get_pk = get_pk_from_identity
         else:
             self.get_pk = get_pk
 
-        if label_attr is not None:
-            warnings.warn('label_attr= will be removed in WTForms 0.7, use get_label= instead.', DeprecationWarning)
-            self.get_label = operator.attrgetter(label_attr)
-        elif get_label is None:
+        if get_label is None:
             self.get_label = lambda x: x
         elif isinstance(get_label, basestring):
             self.get_label = operator.attrgetter(get_label)
@@ -184,29 +175,6 @@ class QuerySelectMultipleField(QuerySelectField):
             for v in self.data:
                 if v not in obj_list:
                     raise ValidationError(self.gettext('Not a valid choice'))
-
-
-class ModelSelectField(QuerySelectField):
-    """
-    Similar to QuerySelectField, only for model classes.
-
-    Using this field is only meaningful when using scoped sessions in
-    SQLAlchemy, because otherwise model instances do not know how to make
-    queries of themselves. This field is simply a convenience for using
-    `Model.query` as the factory for QuerySelectField.
-
-    **Note**: This field is deprecated and will be removed in a future release
-    of WTForms.
-    """
-    def __init__(self, label=u'', validators=None, model=None, **kwargs):
-        warnings.warn(
-            'Session-aware mappers are deprecated as of SQLAlchemy 0.5.5; '
-            'this field will be removed by WTForms 0.7',
-            DeprecationWarning
-        )
-        assert model is not None, "Must specify a model."
-        query_factory = lambda: model.query
-        super(ModelSelectField, self).__init__(label, validators, query_factory=query_factory, **kwargs)
 
 
 def get_pk_from_identity(obj):

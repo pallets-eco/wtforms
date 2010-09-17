@@ -7,7 +7,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 from unittest import TestCase
 
-from wtforms.ext.sqlalchemy.fields import ModelSelectField, QuerySelectField, QuerySelectMultipleField
+from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.form import Form
 
 
@@ -152,26 +152,6 @@ class QuerySelectMultipleFieldTest(TestBase):
         self.assertEqual([v.id for v in form.a.data], [2])
         self.assertEqual(form.a(), [(u'1', 'apple', False), (u'2', 'banana', True)])
         self.assert_(form.validate())
-
-class ModelSelectFieldTest(TestBase):
-    def setUp(self):
-        from sqlalchemy.orm import mapper as sqla_mapper
-        engine = create_engine('sqlite:///:memory:', echo=False)
-        self.Session = session = scoped_session(sessionmaker(autoflush=False, autocommit=False, bind=engine))
-
-        def mapper(cls, *arg, **kw):
-            cls.query = session.query_property()
-            return sqla_mapper(cls, *arg, **kw)
-        self._do_tables(mapper, engine)
-
-    def test(self):
-        sess = self.Session
-        self._fill(sess)
-        class F(Form):
-            a = ModelSelectField(get_label='name', model=self.Test, widget=LazySelect())
-
-        form = F()
-        self.assertEqual(form.a(), [(u'1', 'apple', False), (u'2', 'banana', False)])
 
 
 if __name__ == '__main__':
