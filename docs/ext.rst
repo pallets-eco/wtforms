@@ -172,5 +172,3 @@ your forms.
 .. autoclass:: QuerySelectField(default field args, query_factory=None, get_pk=None, get_label=None, allow_blank=False, blank_text=u'')
 
 .. autoclass:: QuerySelectMultipleField(default field args, query_factory=None, get_pk=None, get_label=None, allow_blank=False, blank_text=u'')
-
-.. autoclass:: ModelSelectField(default field args, model=None, get_pk=None, get_label=None, allow_blank=False, blank_text=u'')
