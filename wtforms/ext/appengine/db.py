@@ -156,7 +156,7 @@ def convert_DateProperty(model, prop, kwargs):
     if prop.auto_now or prop.auto_now_add:
         return None
 
-    return f.DateTimeField(format='%Y-%m-%d', **kwargs)
+    return f.DateField(format='%Y-%m-%d', **kwargs)
 
 
 def convert_TimeProperty(model, prop, kwargs):
@@ -269,7 +269,7 @@ class ModelConverter(object):
     | DateTimeProperty   | DateTimeField     | datetime     | skipped if       |
     |                    |                   |              | auto_now[_add]   |
     +--------------------+-------------------+--------------+------------------+
-    | DateProperty       | DateTimeField     | date         | skipped if       |
+    | DateProperty       | DateField         | date         | skipped if       |
     |                    |                   |              | auto_now[_add]   |
     +--------------------+-------------------+--------------+------------------+
     | TimeProperty       | DateTimeField     | time         | skipped if       |
