@@ -1,3 +1,5 @@
+import decimal
+
 from wtforms import fields, widgets
 
 class ReferencePropertyField(fields.SelectFieldBase):
@@ -83,4 +85,11 @@ class StringListPropertyField(fields.TextAreaField):
 
 
 class GeoPtPropertyField(fields.TextField):
-    """For now, no processing or prevalidation is done."""
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                lat, lon = valuelist[0].split(',')
+                self.data = u'%s,%s' % (decimal.Decimal(lat.strip()), decimal.Decimal(lon.strip()),)
+            except (decimal.InvalidOperation, ValueError):
+                raise ValueError(u'Not a valid coordinate location')
