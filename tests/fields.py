@@ -85,6 +85,25 @@ class FiltersTest(TestCase):
         self.assertEqual(self.F(DummyPostData(a=['  foo bar  '])).a.data, 'foo bar')
 
 
+class FieldTest(TestCase):
+    class F(Form):
+        a = TextField(default='hello')
+
+    def setUp(self):
+        self.field = self.F().a 
+
+    def test_htmlstring(self):
+        self.assert_(isinstance(self.field.__html__(), widgets.HTMLString))
+
+    def test_str_coerce(self):
+        self.assert_(isinstance(str(self.field), str))
+        self.assertEqual(str(self.field), str(self.field()))
+
+    def test_unicode_coerce(self):
+        field = self.F().a
+        self.assertEqual(unicode(self.field), self.field()) 
+
+
 class SelectFieldTest(TestCase):
     class F(Form):
         a = SelectField(choices=[('a', 'hello'), ('btest','bye')], default='a')
