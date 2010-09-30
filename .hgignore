@@ -1,7 +1,9 @@
 syntax: regexp
 \.py[co]$
+\.py,cover$
 \..*\.swp$
 \.eprj$
+\.coverage$
 ^build/
 ^docs/_build
 ^docs/html
