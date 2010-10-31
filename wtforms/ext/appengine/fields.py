@@ -68,19 +68,18 @@ class StringListPropertyField(fields.TextAreaField):
     A field for ``db.StringListProperty``. The list items are rendered in a
     textarea.
     """
-    def process_data(self, value):
-        if isinstance(value, list):
-            value = '\n'.join(value)
-
-        self.data = value
-
-    def populate_obj(self, obj, name):
-        if isinstance(self.data, basestring):
-            value = self.data.splitlines()
+    def _value(self):
+        if self.raw_data:
+            return self.raw_data[0]
         else:
-            value = []
+            return self.data and unicode("\n".join(self.data)) or u''
 
-        setattr(obj, name, value)
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = valuelist[0].splitlines()
+            except ValueError:
+                raise ValueError(self.gettext(u'Not a valid list'))
 
 
 class GeoPtPropertyField(fields.TextField):
