@@ -44,7 +44,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
         for obj in self.query:
             key = str(obj.key())
-            label = self.label_attr and getattr(obj, self.label_attr) or key
+            label = self.label_attr and getattr(obj, self.label_attr) or str(obj)
             yield (key, label, key == self.data)
 
     def process_formdata(self, valuelist):
