@@ -152,9 +152,7 @@ class CheckboxInput(Input):
     """
     Render a checkbox.
 
-    The ``value=`` HTML attribute by default is 'y' unless otherwise specified
-    by `value=` at rendering. The ``checked`` HTML attribute is set if the field's
-    data is a non-false value.
+    The ``checked`` HTML attribute is set if the field's data is a non-false value.
     """
     input_type = 'checkbox'
 
@@ -209,6 +207,7 @@ class TextArea(object):
     def __call__(self, field, **kwargs): 
         kwargs.setdefault('id', field.id)
         return HTMLString(u'<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(unicode(field._value()))))
+
 
 class Select(object):
     """
