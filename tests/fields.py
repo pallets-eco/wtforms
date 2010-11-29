@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from wtforms import validators, widgets
 from wtforms.fields import *
-from wtforms.fields import Label
+from wtforms.fields import Label, Field
 from wtforms.form import Form
 
 
@@ -51,6 +51,7 @@ class LabelTest(TestCase):
         self.assertEqual(label().__html__(), expected)
         self.assertEqual(label('hello'), u"""<label for="test">hello</label>""")
         self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
+        self.assertEqual(repr(label), "Label('test', u'Caption')") 
 
 
 class FlagsTest(TestCase):
@@ -74,6 +75,9 @@ class FlagsTest(TestCase):
         self.flags.required = False
         self.assertEqual(self.flags.required, False)
         self.assert_('required' not in self.flags)
+
+    def test_repr(self):
+        self.assertEqual(repr(self.flags), '<wtforms.fields.Flags: {required}>')
 
 
 class FiltersTest(TestCase):
@@ -100,8 +104,11 @@ class FieldTest(TestCase):
         self.assertEqual(str(self.field), str(self.field()))
 
     def test_unicode_coerce(self):
-        field = self.F().a
         self.assertEqual(unicode(self.field), self.field()) 
+
+    def test_process_formdata(self):
+        Field.process_formdata(self.field, [42])
+        self.assertEqual(self.field.data, 42)
 
 
 class PrePostTestField(TextField):
@@ -147,7 +154,7 @@ class PrePostValidationTest(TestCase):
 class SelectFieldTest(TestCase):
     class F(Form):
         a = SelectField(choices=[('a', 'hello'), ('btest','bye')], default='a')
-        b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int)
+        b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int, option_widget=widgets.TextInput())
 
     def test_defaults(self):
         form = self.F()
@@ -174,6 +181,8 @@ class SelectFieldTest(TestCase):
         form = self.F()
         self.assert_(isinstance(list(form.a)[0], form.a._Option))
         self.assertEqual(list(unicode(x) for x in form.a), [u'<option selected="selected" value="a">hello</option>', '<option value="btest">bye</option>'])
+        self.assert_(isinstance(list(form.a)[0].widget, widgets.Option))
+        self.assert_(isinstance(list(form.b)[0].widget, widgets.TextInput))
 
 
 class SelectMultipleFieldTest(TestCase):
@@ -294,6 +303,8 @@ class IntegerFieldTest(TestCase):
         self.assertEqual(len(form.b.errors), 1)
         form = self.F(b=9)
         self.assertEqual(form.b.data, 9)
+        self.assertEqual(form.a._value(), "0")
+        self.assertEqual(form.b._value(), "9")
 
 
 class DecimalFieldTest(TestCase):
@@ -312,14 +323,16 @@ class DecimalFieldTest(TestCase):
 
 
     def test_quantize(self):
-        F = make_form(a=DecimalField(places=3, rounding=ROUND_UP))
+        F = make_form(a=DecimalField(places=3, rounding=ROUND_UP), b=DecimalField(places=None))
         form = F(a=Decimal('3.1415926535'))
         self.assertEqual(form.a._value(), u'3.142')
         form.a.rounding = ROUND_DOWN
         self.assertEqual(form.a._value(), u'3.141')
-        form = F(a=3.14159265)
+        self.assertEqual(form.b._value(), u'')
+        form = F(a=3.14159265, b=72)
         self.assertEqual(form.a._value(), u'3.142')
         self.assert_(isinstance(form.a.data, float))
+        self.assertEqual(form.b._value(), u'72')
 
 
 class FloatFieldTest(TestCase):
@@ -345,6 +358,7 @@ class FloatFieldTest(TestCase):
         self.assertEqual(len(form.b.errors), 1)
         form = self.F(b=9.0)
         self.assertEqual(form.b.data, 9.0)
+        self.assertEqual(form.b._value(), u"9.0")
 
 
 class BooleanFieldTest(TestCase):
@@ -362,9 +376,10 @@ class BooleanFieldTest(TestCase):
         self.assertEqual(form.bool2.data, True)
 
     def test_rendering(self):
-        form = self.BoringForm()
+        form = self.BoringForm(DummyPostData(bool2=u"x"))
         self.assertEqual(form.bool1(), u'<input id="bool1" name="bool1" type="checkbox" value="y" />')
-        self.assertEqual(form.bool2(), u'<input checked="checked" id="bool2" name="bool2" type="checkbox" value="y" />')
+        self.assertEqual(form.bool2(), u'<input checked="checked" id="bool2" name="bool2" type="checkbox" value="x" />')
+        self.assertEqual(form.bool2.raw_data, [u'x'])
 
     def test_with_postdata(self):
         form = self.BoringForm(DummyPostData(bool1=[u'a']))
@@ -409,6 +424,10 @@ class DateTimeFieldTest(TestCase):
         self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="2008-05-05 04:30:00" />""")
         self.assertEqual(form.b.data, d)
         self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="2008-05-05 04:30" />""")
+        self.assert_(form.validate())
+        form = self.F(DummyPostData(a=['2008-05-05']))
+        self.assert_(not form.validate())
+        self.assert_("does not match format" in form.a.errors[0])
 
 
 class SubmitFieldTest(TestCase):
