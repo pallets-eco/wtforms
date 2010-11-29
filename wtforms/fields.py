@@ -514,8 +514,10 @@ class IntegerField(TextField):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
+        elif self.data is not None:
+            return unicode(self.data)
         else:
-            return self.data and unicode(self.data) or u'0'
+            return u''
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -581,8 +583,10 @@ class FloatField(TextField):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
+        elif self.data is not None:
+            return unicode(self.data)
         else:
-            return self.data and unicode(self.data) or u'0.0'
+            return u''
 
     def process_formdata(self, valuelist):
         if valuelist:

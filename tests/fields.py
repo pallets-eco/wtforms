@@ -303,8 +303,8 @@ class IntegerFieldTest(TestCase):
         self.assertEqual(len(form.b.errors), 1)
         form = self.F(b=9)
         self.assertEqual(form.b.data, 9)
-        self.assertEqual(form.a._value(), "0")
-        self.assertEqual(form.b._value(), "9")
+        self.assertEqual(form.a._value(), u'')
+        self.assertEqual(form.b._value(), u'9')
 
 
 class DecimalFieldTest(TestCase):
