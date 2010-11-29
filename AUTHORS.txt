@@ -10,6 +10,7 @@ Contributors:
 - Ali Aafshar
 - Adam Lowry
 - Christopher Grebs
+- Eduardo Schettino
 - Emil Vladev
 - Rodrigo Moraes
 - Sebastian Wiesner
