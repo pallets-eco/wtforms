@@ -26,9 +26,8 @@ class ReferencePropertyField(fields.SelectFieldBase):
     def _get_data(self):
         if self._formdata is not None:
             for obj in self.query:
-                key = str(obj.key())
-                if key == self._formdata:
-                    self._set_data(key)
+                if str(obj.key()) == self._formdata:
+                    self._set_data(obj.key())
                     break
         return self._data
 
@@ -44,7 +43,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
         for obj in self.query:
             key = str(obj.key())
-            label = self.label_attr and getattr(obj, self.label_attr) or key
+            label = self.label_attr and getattr(obj, self.label_attr) or str(obj)
             yield (key, label, key == self.data)
 
     def process_formdata(self, valuelist):
@@ -58,7 +57,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
     def pre_validate(self, form):
         if not self.allow_blank or self.data is not None:
             for obj in self.query:
-                if self.data == str(obj.key()):
+                if str(self.data) == str(obj.key()):
                     break
             else:
                 raise ValueError(self.gettext(u'Not a valid choice'))
@@ -69,19 +68,18 @@ class StringListPropertyField(fields.TextAreaField):
     A field for ``db.StringListProperty``. The list items are rendered in a
     textarea.
     """
-    def process_data(self, value):
-        if isinstance(value, list):
-            value = '\n'.join(value)
-
-        self.data = value
-
-    def populate_obj(self, obj, name):
-        if isinstance(self.data, basestring):
-            value = self.data.splitlines()
+    def _value(self):
+        if self.raw_data:
+            return self.raw_data[0]
         else:
-            value = []
+            return self.data and unicode("\n".join(self.data)) or u''
 
-        setattr(obj, name, value)
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = valuelist[0].splitlines()
+            except ValueError:
+                raise ValueError(self.gettext(u'Not a valid list'))
 
 
 class GeoPtPropertyField(fields.TextField):

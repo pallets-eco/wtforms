@@ -5,7 +5,7 @@ Unittests for wtforms.ext.appengine
 To run the tests, use NoseGAE:
 
 easy_install nose
-easy_install nose-gae
+easy_install nosegae
 
 nosetests --with-gae --without-sandbox
 """
