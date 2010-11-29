@@ -78,6 +78,10 @@ class BaseFormTest(TestCase):
         self.assertEqual(form['test'].data, u'hello')
         self.assertEqual(self.get_form(prefix='foo[')['test'].name, 'foo[-test')
 
+    def test_formdata_wrapper_error(self):
+        form = self.get_form()
+        self.assertRaises(TypeError, form.process, [])
+
 
 class FormMetaTest(TestCase):
     def test_monkeypatch(self):
@@ -125,12 +129,18 @@ class FormTest(TestCase):
         form = self.F()
         self.assertEqual(form.validate(), False)
 
+    def test_field_adding_disabled(self):
+        form = self.F()
+        self.assertRaises(TypeError, form.__setitem__, 'foo', TextField())
+
     def test_field_removal(self):
         form = self.F()
         del form.test
         self.assert_('test' not in form)
         self.assertEqual(form.test, None)
         self.assertEqual(len(list(form)), 0)
+        # Try deleting a nonexistent field
+        self.assertRaises(AttributeError, form.__delattr__, 'fake')
 
     def test_ordered_fields(self):
         class MyForm(Form):

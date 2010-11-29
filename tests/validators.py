@@ -138,6 +138,14 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, v, self.form, DummyField(0))
         self.assertRaises(ValidationError, v, self.form, DummyField(12))
 
+        onlymin = NumberRange(min=5)
+        self.assertEqual(onlymin(self.form, DummyField(500)), None)
+        self.assertRaises(ValidationError, onlymin, self.form, DummyField(4))
+
+        onlymax = NumberRange(max=50)
+        self.assertEqual(onlymax(self.form, DummyField(30)), None)
+        self.assertRaises(ValidationError, onlymax, self.form, DummyField(75))
+
     def test_lazy_proxy(self):
         """Tests that the validators support lazy translation strings for messages."""
 

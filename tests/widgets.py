@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from unittest import TestCase
-from wtforms.widgets import html_params
+from wtforms.widgets import html_params, Input
 from wtforms.widgets import *
 
 
@@ -41,14 +41,26 @@ class ListWidgetTest(TestCase):
 
 class TableWidgetTest(TestCase):
     def test(self):
-        field = DummyField([DummyField(x, label='l' + x) for x in ['foo', 'bar']], id='hai')
-        self.assertEqual(TableWidget()(field), u'<table id="hai"><tr><th>lfoo</th><td>foo</td></tr><tr><th>lbar</th><td>bar</td></tr></table>')
+        inner_fields = [
+            DummyField('hidden1', type='HiddenField'),
+            DummyField('foo', label='lfoo'),
+            DummyField('bar', label='lbar'),
+            DummyField('hidden2', type='HiddenField'),
+        ]
+        field = DummyField(inner_fields, id='hai')
+        self.assertEqual(TableWidget()(field), u'<table id="hai"><tr><th>lfoo</th><td>hidden1foo</td></tr><tr><th>lbar</th><td>bar</td></tr></table>hidden2')
 
 
 class BasicWidgetsTest(TestCase):
     """Test most of the basic input widget types"""
 
     field = DummyField('foo', name='bar', label='label', id='id') 
+
+    def test_input_type(self):
+        a = Input()
+        self.assertRaises(AttributeError, getattr, a, 'input_type')
+        b = Input(input_type='test')
+        self.assertEqual(b.input_type, 'test')
 
     def test_html_marking(self):
         html = TextInput()(self.field)
