@@ -22,6 +22,25 @@ class MyFormBase(Form):
         return Lower_Translator()
 
 
+class DummyTranslationsTest(TestCase):
+    class F(Form):
+        a = TextField(validators=[v.Length(max=5)])
+
+    def setUp(self):
+        self.a = self.F().a
+
+    def test_gettext(self):
+        x = u"foo"
+        self.assert_(self.a.gettext(x) is x)
+
+    def test_ngettext(self):
+        getit = lambda n: self.a.ngettext(u"antelope", u"antelopes", n)
+        self.assertEqual(getit(0), u"antelopes")
+        self.assertEqual(getit(1), u"antelope")
+        self.assertEqual(getit(2), u"antelopes")
+
+
+
 class TranslationsTest(TestCase):
     class F(MyFormBase):
         a = TextField('', [v.Length(max=5)])

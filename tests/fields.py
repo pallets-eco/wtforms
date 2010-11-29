@@ -104,6 +104,46 @@ class FieldTest(TestCase):
         self.assertEqual(unicode(self.field), self.field()) 
 
 
+class PrePostTestField(TextField):
+    def pre_validate(self, form):
+        if self.data == "stoponly":
+            raise validators.StopValidation()
+        elif self.data.startswith("stop"):
+            raise validators.StopValidation("stop with message")
+
+    def post_validate(self, form, stopped):
+        if self.data == "p":
+            raise ValueError("Post")
+        elif stopped and self.data == "stop-post":
+            raise ValueError("Post-stopped")
+
+
+class PrePostValidationTest(TestCase):
+    class F(Form):
+        a = PrePostTestField(validators=[validators.Length(max=1, message="too long")])
+
+    def _init_field(self, value):
+        form = self.F(a=value)
+        form.validate()
+        return form.a
+
+    def test_pre_stop(self):
+        a = self._init_field("long")
+        self.assertEqual(a.errors, ["too long"])
+
+        stoponly = self._init_field("stoponly")
+        self.assertEqual(stoponly.errors, [])
+
+        stopmessage = self._init_field("stopmessage")
+        self.assertEqual(stopmessage.errors, ["stop with message"]) 
+
+    def test_post(self):
+        a = self._init_field("p")
+        self.assertEqual(a.errors, ["Post"])
+        stopped = self._init_field("stop-post")
+        self.assertEqual(stopped.errors, ["stop with message", "Post-stopped"])
+
+
 class SelectFieldTest(TestCase):
     class F(Form):
         a = SelectField(choices=[('a', 'hello'), ('btest','bye')], default='a')
