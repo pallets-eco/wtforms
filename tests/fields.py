@@ -427,7 +427,7 @@ class DateTimeFieldTest(TestCase):
         self.assert_(form.validate())
         form = self.F(DummyPostData(a=['2008-05-05']))
         self.assert_(not form.validate())
-        self.assert_("does not match format" in form.a.errors[0])
+        self.assert_("not match format" in form.a.errors[0])
 
 
 class SubmitFieldTest(TestCase):
