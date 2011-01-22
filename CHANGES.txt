@@ -1,6 +1,16 @@
 WTForms Changelog
 =================
 
+Version 0.6.2
+-------------
+Released January 22, 2011
+
+- Bug Fixes:
+ * ext.appengine: various field fixes (#34, #48), model_form changes (#41)
+ * Fix issue in Optional with non-string input.
+ * Make numeric fields more consistent.
+
+- Tests: Improve test coverage substantially.
 
 Version 0.6.1
 -------------
