@@ -20,7 +20,7 @@ from google.appengine.ext import db
 from wtforms import Form, fields as f, validators
 from wtforms.ext.appengine.db import model_form
 from wtforms.ext.appengine.fields import GeoPtPropertyField
-
+from wtforms.validators import u
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -261,6 +261,6 @@ class TestFields(TestCase):
     def test_geopt_property(self):
         form = self.GeoTestForm(DummyPostData(geo='5.0, -7.0'))
         self.assert_(form.validate())
-        self.assertEquals(form.geo.data, u'5.0,-7.0')
+        self.assertEquals(form.geo.data, u('5.0,-7.0'))
         form = self.GeoTestForm(DummyPostData(geo='5.0,-f'))
         self.assert_(not form.validate())

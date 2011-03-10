@@ -1,5 +1,23 @@
 import re
+import sys
 
+if sys.version_info[0] >= 3:
+    def u(s):
+        return s
+        
+    def unicode(s):
+        if hasattr(s, '__unicode__'):
+            s = s.__unicode__()
+        return str(s)
+    next = next
+    basestring = str
+else:
+    def u(s):
+        return s.decode('latin-1')
+    def next(i):
+        return i.next()
+    unicode = unicode
+    basestring = basestring
 
 __all__ = (
     'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
@@ -13,7 +31,7 @@ class ValidationError(ValueError):
     """
     Raised when a validator fails to validate its input.
     """
-    def __init__(self, message=u'', *args, **kwargs):
+    def __init__(self, message=u(''), *args, **kwargs):
         ValueError.__init__(self, message, *args, **kwargs)
 
 
@@ -25,7 +43,7 @@ class StopValidation(Exception):
     called. If raised with a message, the message will be added to the errors
     list.
     """
-    def __init__(self, message=u'', *args, **kwargs):
+    def __init__(self, message=u(''), *args, **kwargs):
         Exception.__init__(self, message, *args, **kwargs)
 
 
@@ -48,14 +66,14 @@ class EqualTo(object):
         try:
             other = form[self.fieldname]
         except KeyError:
-            raise ValidationError(field.gettext(u"Invalid field name '%s'.") % self.fieldname)
+            raise ValidationError(field.gettext(u("Invalid field name '%s'.")) % self.fieldname)
         if field.data != other.data:
             d = {
                 'other_label': hasattr(other, 'label') and other.label.text or self.fieldname,
                 'other_name': self.fieldname
             }
             if self.message is None:
-                self.message = field.gettext(u'Field must be equal to %(other_name)s.')
+                self.message = field.gettext(u('Field must be equal to %(other_name)s.'))
 
             raise ValidationError(self.message % d)
 
@@ -87,13 +105,13 @@ class Length(object):
         if l < self.min or self.max != -1 and l > self.max:
             if self.message is None:
                 if self.max == -1:
-                    self.message = field.ngettext(u'Field must be at least %(min)d character long.',
-                                                  u'Field must be at least %(min)d characters long.', self.min)
+                    self.message = field.ngettext(u('Field must be at least %(min)d character long.'),
+                                                  u('Field must be at least %(min)d characters long.'), self.min)
                 elif self.min == -1:
-                    self.message = field.ngettext(u'Field cannot be longer than %(max)d character.',
-                                                  u'Field cannot be longer than %(max)d characters.', self.max)
+                    self.message = field.ngettext(u('Field cannot be longer than %(max)d character.'),
+                                                  u('Field cannot be longer than %(max)d characters.'), self.max)
                 else:
-                    self.message = field.gettext(u'Field must be between %(min)d and %(max)d characters long.')
+                    self.message = field.gettext(u('Field must be between %(min)d and %(max)d characters long.'))
 
             raise ValidationError(self.message % dict(min=self.min, max=self.max))
 
@@ -128,11 +146,11 @@ class NumberRange(object):
                 # we use %(min)s interpolation to support floats, None, and
                 # Decimals without throwing a formatting exception.
                 if self.max is None:
-                    self.message = field.gettext(u'Number must be greater than %(min)s.')
+                    self.message = field.gettext(u('Number must be greater than %(min)s.'))
                 elif self.min is None:
-                    self.message = field.gettext(u'Number must be less than %(max)s.')
+                    self.message = field.gettext(u('Number must be less than %(max)s.'))
                 else:
-                    self.message = field.gettext(u'Number must be between %(min)s and %(max)s.')
+                    self.message = field.gettext(u('Number must be between %(min)s and %(max)s.'))
 
             raise ValidationError(self.message % dict(min=self.min, max=self.max))
 
@@ -168,7 +186,7 @@ class Required(object):
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
             if self.message is None:
-                self.message = field.gettext(u'This field is required.')
+                self.message = field.gettext(u('This field is required.'))
 
             field.errors[:] = []
             raise StopValidation(self.message)
@@ -194,9 +212,9 @@ class Regexp(object):
         self.message = message
 
     def __call__(self, form, field):
-        if not self.regex.match(field.data or u''):
+        if not self.regex.match(field.data or u('')):
             if self.message is None:
-                self.message = field.gettext(u'Invalid input.')
+                self.message = field.gettext(u('Invalid input.'))
 
             raise ValidationError(self.message)
 
@@ -215,7 +233,7 @@ class Email(Regexp):
 
     def __call__(self, form, field):
         if self.message is None:
-            self.message = field.gettext(u'Invalid email address.')
+            self.message = field.gettext(u('Invalid email address.'))
 
         super(Email, self).__call__(form, field)
 
@@ -232,7 +250,7 @@ class IPAddress(Regexp):
 
     def __call__(self, form, field):
         if self.message is None:
-            self.message = field.gettext(u'Invalid IP address.')
+            self.message = field.gettext(u('Invalid IP address.'))
 
         super(IPAddress, self).__call__(form, field)
 
@@ -251,13 +269,13 @@ class URL(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, require_tld=True, message=None):
-        tld_part = (require_tld and ur'\.[a-z]{2,10}' or u'')
-        regex = ur'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
+        tld_part = (require_tld and u(r'\.[a-z]{2,10}') or u(''))
+        regex = u(r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$') % tld_part
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
     def __call__(self, form, field):
         if self.message is None:
-            self.message = field.gettext(u'Invalid URL.')
+            self.message = field.gettext(u('Invalid URL.'))
 
         super(URL, self).__call__(form, field)
 
@@ -278,13 +296,13 @@ class AnyOf(object):
         self.values = values
         self.message = message
         if values_formatter is None:
-            values_formatter = lambda v: u', '.join(v)
+            values_formatter = lambda v: u(', ').join(v)
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
         if field.data not in self.values:
             if self.message is None:
-                self.message = field.gettext(u'Invalid value, must be one of: %(values)s.')
+                self.message = field.gettext(u('Invalid value, must be one of: %(values)s.'))
 
             raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
 
@@ -305,13 +323,13 @@ class NoneOf(object):
         self.values = values
         self.message = message
         if values_formatter is None:
-            values_formatter = lambda v: u', '.join(v)
+            values_formatter = lambda v: u(', ').join(v)
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
         if field.data in self.values:
             if self.message is None:
-                self.message = field.gettext(u'Invalid value, can\'t be any of: %(values)s.')
+                self.message = field.gettext(u('Invalid value, can\'t be any of: %(values)s.'))
 
             raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
 

@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from wtforms.form import Form
 from wtforms.ext.dateutil.fields import DateTimeField, DateField
-
+from wtforms.validators import u
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -38,15 +38,15 @@ class DateutilTest(TestCase):
     def test_defaults_display(self):
         f = self.F(a=datetime(2001, 11, 15))
         self.assertEqual(f.a.data, datetime(2001, 11, 15))
-        self.assertEqual(f.a._value(), u'2001-11-15 00:00')
+        self.assertEqual(f.a._value(), u('2001-11-15 00:00'))
         self.assertEqual(f.b.data, date(2004, 9, 12))
-        self.assertEqual(f.b._value(), u'2004-09-12')
+        self.assertEqual(f.b._value(), u('2004-09-12'))
         self.assertEqual(f.c.data, None)
         self.assert_(f.validate())
 
     def test_render(self):
         f = self.F()
-        self.assertEqual(f.b(), ur'<input id="b" name="b" type="text" value="2004-09-12" />')
+        self.assertEqual(f.b(), u(r'<input id="b" name="b" type="text" value="2004-09-12" />'))
 
 
 if __name__ == '__main__':

@@ -129,7 +129,7 @@ class ModelConverter(ModelConverterBase):
 
     @converts('databases.postgres.PGInet', 'dialects.postgresql.base.INET')
     def conv_PGInet(self, field_args, **extra):
-        kwargs.setdefault('label', u'IP Address')
+        kwargs.setdefault('label', u('IP Address'))
         kwargs['validators'].append(validators.IPAddress())
         return f.TextField(**kwargs)
 

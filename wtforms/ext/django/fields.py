@@ -3,7 +3,7 @@ Useful form fields for use with the Django ORM.
 """
 from wtforms import widgets
 from wtforms.fields import SelectFieldBase
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, u
 
 
 __all__ = (
@@ -29,7 +29,7 @@ class QuerySetSelectField(SelectFieldBase):
     """
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, queryset=None, label_attr='', allow_blank=False, blank_text=u'', **kwargs):
+    def __init__(self, label=u(''), validators=None, queryset=None, label_attr='', allow_blank=False, blank_text=u(''), **kwargs):
         super(QuerySetSelectField, self).__init__(label, validators, **kwargs)
         self.label_attr = label_attr
         self.allow_blank = allow_blank
@@ -54,7 +54,7 @@ class QuerySetSelectField(SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield (u'__None', self.blank_text, self.data is None)
+            yield (u('__None'), self.blank_text, self.data is None)
 
         for obj in self.queryset:
             label = self.label_attr and getattr(obj, self.label_attr) or obj
@@ -82,5 +82,5 @@ class ModelSelectField(QuerySetSelectField):
     Like a QuerySetSelectField, except takes a model class instead of a
     queryset and lists everything in it.
     """
-    def __init__(self, label=u'', validators=None, model=None, **kwargs):
+    def __init__(self, label=u(''), validators=None, model=None, **kwargs):
         super(ModelSelectField, self).__init__(label, validators, queryset=model._default_manager.all(), **kwargs)

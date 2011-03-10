@@ -1,10 +1,11 @@
 import datetime
 import decimal
 import itertools
+import sys
 import time
 
 from wtforms import widgets
-from wtforms.validators import StopValidation
+from wtforms.validators import StopValidation, u, unicode, next
 
 
 __all__ = (
@@ -45,8 +46,8 @@ class Field(object):
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, filters=tuple(),
-                 description=u'', id=None, default=None, widget=None,
+    def __init__(self, label=u(''), validators=None, filters=tuple(),
+                 description=u(''), id=None, default=None, widget=None,
                  _form=None, _name=None, _prefix='', _translations=None):
         """
         Construct a new field.
@@ -158,11 +159,13 @@ class Field(object):
         # Call pre_validate
         try:
             self.pre_validate(form)
-        except StopValidation, e:
+        except StopValidation:
+            e = sys.exc_info()[1]
             if e.args and e.args[0]:
                 self.errors.append(e.args[0])
             stop_validation = True
-        except ValueError, e:
+        except ValueError:
+            e = sys.exc_info()[1]
             self.errors.append(e.args[0])
 
         # Run validators
@@ -170,18 +173,21 @@ class Field(object):
             for validator in itertools.chain(self.validators, extra_validators):
                 try:
                     validator(form, self)
-                except StopValidation, e:
+                except StopValidation:
+                    e = sys.exc_info()[1]
                     if e.args and e.args[0]:
                         self.errors.append(e.args[0])
                     stop_validation = True
                     break
-                except ValueError, e:
+                except ValueError:
+                    e = sys.exc_info()[1]
                     self.errors.append(e.args[0])
 
         # Call post_validate
         try:
             self.post_validate(form, stop_validation)
-        except ValueError, e:
+        except ValueError:
+            e = sys.exc_info()[1]
             self.errors.append(e.args[0])
 
         return len(self.errors) == 0
@@ -227,7 +233,8 @@ class Field(object):
                 data = self.default
         try:
             self.process_data(data)
-        except ValueError, e:
+        except ValueError:
+            e = sys.exc_info()[1]
             self.process_errors.append(e.args[0])
 
         if formdata:
@@ -237,13 +244,15 @@ class Field(object):
                 else:
                     self.raw_data = []
                 self.process_formdata(self.raw_data)
-            except ValueError, e:
+            except ValueError:
+                e = sys.exc_info()[1]
                 self.process_errors.append(e.args[0])
 
         for filter in self.filters:
             try:
                 self.data = filter(self.data)
-            except ValueError, e:
+            except ValueError:
+                e = sys.exc_info()[1]
                 self.process_errors.append(e.args[0])
 
     def process_data(self, value):
@@ -334,7 +343,7 @@ class Label(object):
     def __call__(self, text=None, **kwargs):
         kwargs['for'] = self.field_id
         attributes = widgets.html_params(**kwargs)
-        return widgets.HTMLString(u'<label %s>%s</label>' % (attributes, text or self.text))
+        return widgets.HTMLString(u('<label %s>%s</label>') % (attributes, text or self.text))
 
     def __repr__(self):
         return 'Label(%r, %r)' % (self.field_id, self.text)
@@ -349,7 +358,7 @@ class SelectFieldBase(Field):
     This isn't a field, but an abstract base class for fields which want to
     provide this functionality.
     """
-    def __init__(self, label=u'', validators=None, option_widget=None, **kwargs):
+    def __init__(self, label=u(''), validators=None, option_widget=None, **kwargs):
         super(SelectFieldBase, self).__init__(label, validators, **kwargs)
 
         if option_widget is not None:
@@ -365,7 +374,7 @@ class SelectFieldBase(Field):
     def __iter__(self):
         opts = dict(widget=self.option_widget, _name=self.name, _form=None)
         for i, (value, label, checked) in enumerate(self.iter_choices()):
-            opt = self._Option(label=label, id=u'%s-%d' % (self.id, i), **opts)
+            opt = self._Option(label=label, id=u('%s-%d') % (self.id, i), **opts)
             opt.process(None, value)
             opt.checked = checked
             yield opt
@@ -380,7 +389,7 @@ class SelectFieldBase(Field):
 class SelectField(SelectFieldBase):
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, coerce=unicode, choices=None, **kwargs):
+    def __init__(self, label=u(''), validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = choices
@@ -400,14 +409,14 @@ class SelectField(SelectFieldBase):
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
-                raise ValueError(self.gettext(u'Invalid Choice: could not coerce'))
+                raise ValueError(self.gettext(u('Invalid Choice: could not coerce')))
 
     def pre_validate(self, form):
         for v, _ in self.choices:
             if self.data == v:
                 break
         else:
-            raise ValueError(self.gettext(u'Not a valid choice'))
+            raise ValueError(self.gettext(u('Not a valid choice')))
 
 
 class SelectMultipleField(SelectField):
@@ -433,14 +442,14 @@ class SelectMultipleField(SelectField):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError:
-            raise ValueError(self.gettext(u'Invalid choice(s): one or more data inputs could not be coerced'))
+            raise ValueError(self.gettext(u('Invalid choice(s): one or more data inputs could not be coerced')))
 
     def pre_validate(self, form):
         if self.data:
             values = list(c[0] for c in self.choices)
             for d in self.data:
                 if d not in values:
-                    raise ValueError(self.gettext(u"'%(value)s' is not a valid choice for this field") % dict(value=d))
+                    raise ValueError(self.gettext(u("'%(value)s' is not a valid choice for this field")) % dict(value=d))
 
 
 class RadioField(SelectField):
@@ -465,10 +474,10 @@ class TextField(Field):
         if valuelist:
             self.data = valuelist[0]
         else:
-            self.data = u''
+            self.data = u('')
 
     def _value(self):
-        return self.data is not None and unicode(self.data) or u''
+        return self.data is not None and unicode(self.data) or u('')
 
 
 class HiddenField(TextField):
@@ -508,7 +517,7 @@ class IntegerField(TextField):
     A text field, except all input is coerced to an integer.  Erroneous input
     is ignored and will not be accepted as a value.
     """
-    def __init__(self, label=u'', validators=None, **kwargs):
+    def __init__(self, label=u(''), validators=None, **kwargs):
         super(IntegerField, self).__init__(label, validators, **kwargs)
 
     def _value(self):
@@ -517,14 +526,14 @@ class IntegerField(TextField):
         elif self.data is not None:
             return unicode(self.data)
         else:
-            return u''
+            return u('')
 
     def process_formdata(self, valuelist):
         if valuelist:
             try:
                 self.data = int(valuelist[0])
             except ValueError:
-                raise ValueError(self.gettext(u'Not a valid integer value'))
+                raise ValueError(self.gettext(u('Not a valid integer value')))
 
 
 class DecimalField(TextField):
@@ -540,7 +549,7 @@ class DecimalField(TextField):
         current thread's context.
     """
 
-    def __init__(self, label=u'', validators=None, places=2, rounding=None, **kwargs):
+    def __init__(self, label=u(''), validators=None, places=2, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
         self.places = places
         self.rounding = rounding
@@ -557,19 +566,19 @@ class DecimalField(TextField):
                 else:
                     # If for some reason, data is a float or int, then format
                     # as we would for floats using string formatting.
-                    format = u'%%0.%df' % self.places
+                    format = u('%%0.%df') % self.places
                     return format % self.data
             else:
                 return unicode(self.data)
         else:
-            return u''
+            return u('')
 
     def process_formdata(self, valuelist):
         if valuelist:
             try:
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
-                raise ValueError(self.gettext(u'Not a valid decimal value'))
+                raise ValueError(self.gettext(u('Not a valid decimal value')))
 
 
 class FloatField(TextField):
@@ -577,7 +586,7 @@ class FloatField(TextField):
     A text field, except all input is coerced to an float.  Erroneous input
     is ignored and will not be accepted as a value.
     """
-    def __init__(self, label=u'', validators=None, **kwargs):
+    def __init__(self, label=u(''), validators=None, **kwargs):
         super(FloatField, self).__init__(label, validators, **kwargs)
 
     def _value(self):
@@ -586,14 +595,14 @@ class FloatField(TextField):
         elif self.data is not None:
             return unicode(self.data)
         else:
-            return u''
+            return u('')
 
     def process_formdata(self, valuelist):
         if valuelist:
             try:
                 self.data = float(valuelist[0])
             except ValueError:
-                raise ValueError(self.gettext(u'Not a valid float value'))
+                raise ValueError(self.gettext(u('Not a valid float value')))
 
 
 class BooleanField(Field):
@@ -602,7 +611,7 @@ class BooleanField(Field):
     """
     widget = widgets.CheckboxInput()
 
-    def __init__(self, label=u'', validators=None, **kwargs):
+    def __init__(self, label=u(''), validators=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
 
     def process_data(self, value):
@@ -615,7 +624,7 @@ class BooleanField(Field):
         if self.raw_data:
             return unicode(self.raw_data[0])
         else:
-            return u'y'
+            return u('y')
 
 
 class DateTimeField(Field):
@@ -624,19 +633,19 @@ class DateTimeField(Field):
     """
     widget = widgets.TextInput()
 
-    def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
+    def __init__(self, label=u(''), validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
 
     def _value(self):
         if self.raw_data:
-            return u' '.join(self.raw_data)
+            return u(' ').join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.format) or u''
+            return self.data and self.data.strftime(self.format) or u('')
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = u' '.join(valuelist)
+            date_str = u(' ').join(valuelist)
             try:
                 timetuple = time.strptime(date_str, self.format)
                 self.data = datetime.datetime(*timetuple[:6])
@@ -649,12 +658,12 @@ class DateField(DateTimeField):
     """
     Same as DateTimeField, except stores a `datetime.date`.
     """
-    def __init__(self, label=u'', validators=None, format='%Y-%m-%d', **kwargs):
+    def __init__(self, label=u(''), validators=None, format='%Y-%m-%d', **kwargs):
         super(DateField, self).__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = u' '.join(valuelist)
+            date_str = u(' ').join(valuelist)
             try:
                 timetuple = time.strptime(date_str, self.format)
                 self.data = datetime.date(*timetuple[:3])
@@ -683,7 +692,7 @@ class FormField(Field):
     """
     widget = widgets.TableWidget()
 
-    def __init__(self, form_class, label=u'', validators=None, separator='-', **kwargs):
+    def __init__(self, form_class, label=u(''), validators=None, separator='-', **kwargs):
         super(FormField, self).__init__(label, validators, **kwargs)
         self.form_class = form_class
         self.separator = separator
@@ -760,7 +769,7 @@ class FieldList(Field):
     """
     widget=widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=u'', validators=None, min_entries=0,
+    def __init__(self, unbound_field, label=u(''), validators=None, min_entries=0,
                  max_entries=None, default=tuple(), **kwargs):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:
@@ -790,7 +799,7 @@ class FieldList(Field):
             idata = iter(data)
             for index in indices:
                 try:
-                    obj_data = idata.next()
+                    obj_data = next(idata)
                 except StopIteration:
                     obj_data = _unset_value
                 self._add_entry(formdata, obj_data, index=index)
@@ -835,7 +844,7 @@ class FieldList(Field):
         candidates = itertools.chain(ivalues, itertools.repeat(None))
         _fake = type('_fake', (object, ), {})
         output = []
-        for field, data in itertools.izip(self.entries, candidates):
+        for field, data in zip(self.entries, candidates):
             fake_obj = _fake()
             fake_obj.data = data
             field.populate_obj(fake_obj, 'data')

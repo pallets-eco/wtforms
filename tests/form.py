@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from wtforms.form import BaseForm, Form
 from wtforms.fields import TextField, IntegerField
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, u
 
 
 class DummyPostData(dict):
@@ -50,15 +50,15 @@ class BaseFormTest(TestCase):
         self.assertEqual(len(list(form)), 1)
         form['foo'] = TextField()
         self.assertEqual(len(list(form)), 2)
-        form.process(DummyPostData(foo=[u'hello']))
-        self.assertEqual(form['foo'].data, u'hello')
+        form.process(DummyPostData(foo=[u('hello')]))
+        self.assertEqual(form['foo'].data, u('hello'))
         form['test'] = IntegerField()
         self.assert_(isinstance(form['test'], IntegerField))
         self.assertEqual(len(list(form)), 2)
         self.assertRaises(AttributeError, getattr, form['test'], 'data')
-        form.process(DummyPostData(test=[u'1']))
+        form.process(DummyPostData(test=[u('1')]))
         self.assertEqual(form['test'].data, 1)
-        self.assertEqual(form['foo'].data, u'')
+        self.assertEqual(form['foo'].data, u(''))
 
     def test_populate_obj(self):
         m = type('Model', (object, ), {})
@@ -74,8 +74,8 @@ class BaseFormTest(TestCase):
         self.assertEqual(form['test'].short_name, 'test')
         self.assertEqual(form['test'].id, 'foo-test')
         form = self.get_form(prefix='foo.')
-        form.process(DummyPostData({'foo.test': [u'hello'], 'test': [u'bye']}))
-        self.assertEqual(form['test'].data, u'hello')
+        form.process(DummyPostData({'foo.test': [u('hello')], 'test': [u('bye')]}))
+        self.assertEqual(form['test'].data, u('hello'))
         self.assertEqual(self.get_form(prefix='foo[')['test'].name, 'foo[-test')
 
     def test_formdata_wrapper_error(self):

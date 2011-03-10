@@ -9,7 +9,7 @@ from unittest import TestCase
 
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.form import Form
-
+from wtforms.validators import u, unicode
 
 class LazySelect(object):
     def __call__(self, field, **kwargs):
@@ -21,7 +21,7 @@ class DummyPostData(dict):
 
 class Base(object):
     def __init__(self, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
 class TestBase(TestCase):
@@ -74,7 +74,7 @@ class QuerySelectFieldTest(TestBase):
         form.a.query = sess.query(self.Test)
         self.assert_(form.a.data is not None)
         self.assertEqual(form.a.data.id, 1)
-        self.assertEqual(form.a(), [(u'1', 'apple', True), (u'2', 'banana', False)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', True), (u('2'), 'banana', False)])
         self.assert_(form.validate())
 
     def test_with_query_factory(self):
@@ -87,25 +87,25 @@ class QuerySelectFieldTest(TestBase):
 
         form = F()
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a(), [(u'1', 'apple', False), (u'2', 'banana', False)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', False), (u('2'), 'banana', False)])
         self.assertEqual(form.b.data, None)
-        self.assertEqual(form.b(), [(u'__None', '', True), (u'hello1', 'apple', False), (u'hello2', 'banana', False)])
+        self.assertEqual(form.b(), [(u('__None'), '', True), (u('hello1'), 'apple', False), (u('hello2'), 'banana', False)])
         self.assert_(not form.validate())
 
-        form = F(DummyPostData(a=[u'1'], b=[u'hello2']))
+        form = F(DummyPostData(a=[u('1')], b=[u('hello2')]))
         self.assertEqual(form.a.data.id, 1)
-        self.assertEqual(form.a(), [(u'1', 'apple', True), (u'2', 'banana', False)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', True), (u('2'), 'banana', False)])
         self.assertEqual(form.b.data.baz, 'banana')
-        self.assertEqual(form.b(), [(u'__None', '', False), (u'hello1', 'apple', False), (u'hello2', 'banana', True)])
+        self.assertEqual(form.b(), [(u('__None'), '', False), (u('hello1'), 'apple', False), (u('hello2'), 'banana', True)])
         self.assert_(form.validate())
 
         # Make sure the query iQuerySelectMultipleFields cached
         sess.add(self.Test(id=3, name='meh'))
         sess.flush()
         sess.commit()
-        self.assertEqual(form.a(), [(u'1', 'apple', True), (u'2', 'banana', False)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', True), (u('2'), 'banana', False)])
         form.a._object_list = None
-        self.assertEqual(form.a(), [(u'1', 'apple', True), (u'2', 'banana', False), (u'3', 'meh', False)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', True), (u('2'), 'banana', False), (u('3'), 'meh', False)])
 
 
 class QuerySelectMultipleFieldTest(TestBase):
@@ -128,14 +128,14 @@ class QuerySelectMultipleFieldTest(TestBase):
         form = self.F(DummyPostData(a=['1']))
         form.a.query = self.sess.query(self.Test)
         self.assertEqual([1], [v.id for v in form.a.data])
-        self.assertEqual(form.a(), [(u'1', 'apple', True), (u'2', 'banana', False)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', True), (u('2'), 'banana', False)])
         self.assert_(form.validate())
 
     def test_multiple_values_without_query_factory(self):
         form = self.F(DummyPostData(a=['1', '2']))
         form.a.query = self.sess.query(self.Test)
         self.assertEqual([1, 2], [v.id for v in form.a.data])
-        self.assertEqual(form.a(), [(u'1', 'apple', True), (u'2', 'banana', True)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', True), (u('2'), 'banana', True)])
         self.assert_(form.validate())
 
         form = self.F(DummyPostData(a=['1', '3']))
@@ -150,7 +150,7 @@ class QuerySelectMultipleFieldTest(TestBase):
                 widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
         form = F()
         self.assertEqual([v.id for v in form.a.data], [2])
-        self.assertEqual(form.a(), [(u'1', 'apple', False), (u'2', 'banana', True)])
+        self.assertEqual(form.a(), [(u('1'), 'apple', False), (u('2'), 'banana', True)])
         self.assert_(form.validate())
 
 

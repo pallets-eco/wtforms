@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from unittest import TestCase
-from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange, AnyOf, NoneOf
+from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange, AnyOf, NoneOf, unicode
 
 class DummyTranslations(object):
     def gettext(self, string):
@@ -31,7 +31,9 @@ class DummyField(object):
 def grab_error_message(callable, form, field):
     try:
         callable(form, field)
-    except ValidationError, e:
+    except ValidationError:
+        import sys
+        e = sys.exc_info()[1]
         return e.args[0]
 
 class ValidatorsTest(TestCase):
