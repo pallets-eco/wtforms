@@ -27,7 +27,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
         if self._formdata is not None:
             for obj in self.query:
                 if str(obj.key()) == self._formdata:
-                    self._set_data(obj.key())
+                    self._set_data(obj)
                     break
         return self._data
 
@@ -57,7 +57,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
     def pre_validate(self, form):
         if not self.allow_blank or self.data is not None:
             for obj in self.query:
-                if str(self.data) == str(obj.key()):
+                if str(self.data.key()) == str(obj.key()):
                     break
             else:
                 raise ValueError(self.gettext(u'Not a valid choice'))
