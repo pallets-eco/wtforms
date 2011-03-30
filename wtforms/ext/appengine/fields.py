@@ -1,5 +1,5 @@
 import decimal
-
+import logging
 from wtforms import fields, widgets
 
 class ReferencePropertyField(fields.SelectFieldBase):
@@ -44,7 +44,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
         for obj in self.query:
             key = str(obj.key())
             label = self.label_attr and getattr(obj, self.label_attr) or obj
-            yield (key, label, key == self.data)
+            yield (key, label, self.data and ( self.data.key( ) == obj.key() ) )
 
     def process_formdata(self, valuelist):
         if valuelist:
