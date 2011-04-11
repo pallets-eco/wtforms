@@ -148,7 +148,7 @@ def convert_DateTimeProperty(model, prop, kwargs):
     if prop.auto_now or prop.auto_now_add:
         return None
 
-    return f.DateTimeField(format='%Y-%m-%d %H-%M-%S', **kwargs)
+    return f.DateTimeField(format='%Y-%m-%d %H:%M:%S', **kwargs)
 
 
 def convert_DateProperty(model, prop, kwargs):
