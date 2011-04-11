@@ -164,7 +164,7 @@ def convert_TimeProperty(model, prop, kwargs):
     if prop.auto_now or prop.auto_now_add:
         return None
 
-    return f.DateTimeField(format='%H-%M-%S', **kwargs)
+    return f.DateTimeField(format='%H:%M:%S', **kwargs)
 
 
 def convert_ListProperty(model, prop, kwargs):
