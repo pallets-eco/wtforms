@@ -177,11 +177,17 @@ class RadioInput(Input):
         return super(RadioInput, self).__call__(field, **kwargs)
 
 
-class FileInput(Input):
+class FileInput(object):
     """
     Renders a file input chooser field.
     """
-    input_type = 'file'
+
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault('id', field.id)
+        value = field._value()
+        if value:
+            kwargs.setdefault('value', value)
+        return HTMLString(u'<input %s />' % html_params(name=field.name, type=u'file', **kwargs))
 
 
 class SubmitInput(Input):
