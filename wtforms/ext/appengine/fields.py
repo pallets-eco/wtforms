@@ -1,5 +1,5 @@
 import decimal
-
+import logging
 from wtforms import fields, widgets
 
 class ReferencePropertyField(fields.SelectFieldBase):
@@ -27,7 +27,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
         if self._formdata is not None:
             for obj in self.query:
                 if str(obj.key()) == self._formdata:
-                    self._set_data(obj.key())
+                    self._set_data(obj)
                     break
         return self._data
 
@@ -43,8 +43,8 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
         for obj in self.query:
             key = str(obj.key())
-            label = self.label_attr and getattr(obj, self.label_attr) or str(obj)
-            yield (key, label, key == self.data)
+            label = self.label_attr and getattr(obj, self.label_attr) or obj
+            yield (key, label, self.data and ( self.data.key( ) == obj.key() ) )
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -57,7 +57,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
     def pre_validate(self, form):
         if not self.allow_blank or self.data is not None:
             for obj in self.query:
-                if str(self.data) == str(obj.key()):
+                if str(self.data.key()) == str(obj.key()):
                     break
             else:
                 raise ValueError(self.gettext(u'Not a valid choice'))
