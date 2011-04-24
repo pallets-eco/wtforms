@@ -85,6 +85,8 @@ For more form composition tricks, refer to `this mailing list post`_
 .. _this mailing list post: http://groups.google.com/group/wtforms/browse_thread/thread/7099776aacd989e0/772807dfb4b9635b?#772807dfb4b9635b
 
 
+.. _jinja-macros-example:
+
 Rendering Errors
 ----------------
 

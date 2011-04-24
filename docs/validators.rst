@@ -53,6 +53,9 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.NoneOf
 
+
+.. _custom-validators:
+
 Custom validators
 -----------------
 

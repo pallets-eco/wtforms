@@ -1,3 +1,5 @@
+.. _doc-index:
+
 WTForms Documentation
 =====================
 
@@ -25,6 +27,7 @@ For a quick introduction, check the `WTForms website`_.
 
    faq
    specific_problems
+   crash_course
 
 **Indices and tables:**
 
