@@ -1,11 +1,25 @@
 import decimal
-import logging
+
 from wtforms import fields, widgets
 
 class ReferencePropertyField(fields.SelectFieldBase):
     """
     A field for ``db.ReferenceProperty``. The list items are rendered in a
     select.
+
+    :param reference_class:
+        A db.Model class which will be used to generate the default query
+        to make the list of items. If this is not specified, The `query`
+        property must be overridden before validation.
+    :param label_attr:
+        If specified, use this attribute on the model class as the label
+        associated with each option. Otherwise, the model object's
+        `__str__` or `__unicode__` will be used.
+    :param allow_blank:
+        If set to true, a blank choice will be added to the top of the list
+        to allow `None` to be chosen.
+    :param blank_text:
+        Use this to override the default blank option's label.
     """
     widget = widgets.Select()
 
@@ -17,11 +31,8 @@ class ReferencePropertyField(fields.SelectFieldBase):
         self.allow_blank = allow_blank
         self.blank_text = blank_text
         self._set_data(None)
-        if reference_class is None:
-            raise TypeError('Missing reference_class attribute in '
-                             'ReferencePropertyField')
-
-        self.query = reference_class.all()
+        if reference_class is not None:
+            self.query = reference_class.all()
 
     def _get_data(self):
         if self._formdata is not None:
