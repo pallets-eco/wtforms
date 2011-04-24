@@ -67,7 +67,6 @@ class.  For example, here is a widget that renders a
             if checked:
                 options['checked'] = 'checked'
             html.append(u'<li><input %s /> ' % html_params(**options))
-            html.append(u'<label %s>%s</label></li>')
+            html.append(u'<label for="%s">%s</label></li>' % (field_id, label))
         html.append(u'</ul>')
         return u''.join(html)
-
