@@ -111,17 +111,17 @@ ORM-backed fields
 
 
 While linking data to most fields is fairly easy, making drop-down select lists
-using django ORM data can be quite repetetive. To this end, we have added some
-helpful tools to use the django ORM along with wtforms
+using django ORM data can be quite repetitive. To this end, we have added some
+helpful tools to use the django ORM along with wtforms.
 
 
-.. autoclass:: QuerySetSelectField(default field args, queryset=None, label_attr='', allow_blank=False, blank_text=u'')
+.. autoclass:: QuerySetSelectField(default field args, queryset=None, get_label=None, allow_blank=False, blank_text=u'')
 
     .. code-block:: python
 
         class ArticleEdit(Form):
             title    = TextField()
-            column   = QuerySetSelectField(label_attr='title', allow_blank=True)
+            column   = QuerySetSelectField(get_label='title', allow_blank=True)
             category = QuerySetSelectField(queryset=Category.objects.all())
 
         def edit_article(request, id):
@@ -133,7 +133,7 @@ helpful tools to use the django ORM along with wtforms
     view if needed instead of at form construction time, allowing the select
     field to consist of choices only relevant to the user.
 
-.. autoclass:: ModelSelectField(default field args, model=None, label_attr='', allow_blank=False, blank_text=u'')
+.. autoclass:: ModelSelectField(default field args, model=None, get_label='', allow_blank=False, blank_text=u'')
 
 
 SQLAlchemy
