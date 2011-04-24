@@ -26,7 +26,7 @@ class DateTimeField(Field):
     """
     widget = TextInput()
 
-    def __init__(self, label=u'', validators=None, parse_kwargs=None,
+    def __init__(self, label=None, validators=None, parse_kwargs=None,
                  display_format='%Y-%m-%d %H:%M', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         if parse_kwargs is None:
@@ -64,7 +64,7 @@ class DateField(DateTimeField):
     """
     Same as the DateTimeField, but stores only the date portion.
     """
-    def __init__(self, label=u'', validators=None, parse_kwargs=None,
+    def __init__(self, label=None, validators=None, parse_kwargs=None,
                  display_format='%Y-%m-%d', **kwargs):
         super(DateField, self).__init__(label, validators, parse_kwargs=parse_kwargs, display_format=display_format, **kwargs)
 

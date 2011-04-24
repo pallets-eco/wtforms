@@ -45,15 +45,14 @@ class Field(object):
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=u'', validators=None, filters=tuple(),
+    def __init__(self, label=None, validators=None, filters=tuple(),
                  description=u'', id=None, default=None, widget=None,
                  _form=None, _name=None, _prefix='', _translations=None):
         """
         Construct a new field.
 
         :param label:
-            The label of the field. Available after construction through the
-            `label` property.
+            The label of the field. 
         :param validators:
             A sequence of validators to call when `validate` is called.
         :param filters:
@@ -87,7 +86,9 @@ class Field(object):
         if _translations is not None:
             self._translations = _translations
         self.id = id or self.name
-        self.label = Label(self.id, label or _name.replace('_', ' ').title())
+        if label is None:
+            label = _name.replace('_', ' ').title()
+        self.label = Label(self.id, label) 
         if validators is None:
             validators = []
         self.validators = validators
@@ -349,7 +350,7 @@ class SelectFieldBase(Field):
     This isn't a field, but an abstract base class for fields which want to
     provide this functionality.
     """
-    def __init__(self, label=u'', validators=None, option_widget=None, **kwargs):
+    def __init__(self, label=None, validators=None, option_widget=None, **kwargs):
         super(SelectFieldBase, self).__init__(label, validators, **kwargs)
 
         if option_widget is not None:
@@ -380,7 +381,7 @@ class SelectFieldBase(Field):
 class SelectField(SelectFieldBase):
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, coerce=unicode, choices=None, **kwargs):
+    def __init__(self, label=None, validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = choices
@@ -508,7 +509,7 @@ class IntegerField(TextField):
     A text field, except all input is coerced to an integer.  Erroneous input
     is ignored and will not be accepted as a value.
     """
-    def __init__(self, label=u'', validators=None, **kwargs):
+    def __init__(self, label=None, validators=None, **kwargs):
         super(IntegerField, self).__init__(label, validators, **kwargs)
 
     def _value(self):
@@ -540,7 +541,7 @@ class DecimalField(TextField):
         current thread's context.
     """
 
-    def __init__(self, label=u'', validators=None, places=2, rounding=None, **kwargs):
+    def __init__(self, label=None, validators=None, places=2, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
         self.places = places
         self.rounding = rounding
@@ -577,7 +578,7 @@ class FloatField(TextField):
     A text field, except all input is coerced to an float.  Erroneous input
     is ignored and will not be accepted as a value.
     """
-    def __init__(self, label=u'', validators=None, **kwargs):
+    def __init__(self, label=None, validators=None, **kwargs):
         super(FloatField, self).__init__(label, validators, **kwargs)
 
     def _value(self):
@@ -602,7 +603,7 @@ class BooleanField(Field):
     """
     widget = widgets.CheckboxInput()
 
-    def __init__(self, label=u'', validators=None, **kwargs):
+    def __init__(self, label=None, validators=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
 
     def process_data(self, value):
@@ -624,7 +625,7 @@ class DateTimeField(Field):
     """
     widget = widgets.TextInput()
 
-    def __init__(self, label=u'', validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
+    def __init__(self, label=None, validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
 
@@ -649,7 +650,7 @@ class DateField(DateTimeField):
     """
     Same as DateTimeField, except stores a `datetime.date`.
     """
-    def __init__(self, label=u'', validators=None, format='%Y-%m-%d', **kwargs):
+    def __init__(self, label=None, validators=None, format='%Y-%m-%d', **kwargs):
         super(DateField, self).__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
@@ -683,7 +684,7 @@ class FormField(Field):
     """
     widget = widgets.TableWidget()
 
-    def __init__(self, form_class, label=u'', validators=None, separator='-', **kwargs):
+    def __init__(self, form_class, label=None, validators=None, separator='-', **kwargs):
         super(FormField, self).__init__(label, validators, **kwargs)
         self.form_class = form_class
         self.separator = separator
@@ -760,7 +761,7 @@ class FieldList(Field):
     """
     widget=widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=u'', validators=None, min_entries=0,
+    def __init__(self, unbound_field, label=None, validators=None, min_entries=0,
                  max_entries=None, default=tuple(), **kwargs):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:

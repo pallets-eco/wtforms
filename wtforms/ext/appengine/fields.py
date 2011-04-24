@@ -23,7 +23,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
     """
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, reference_class=None,
+    def __init__(self, label=None, validators=None, reference_class=None,
                  label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
         super(ReferencePropertyField, self).__init__(label, validators,
                                                      **kwargs)

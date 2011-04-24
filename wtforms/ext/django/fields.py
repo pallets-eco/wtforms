@@ -34,7 +34,7 @@ class QuerySetSelectField(SelectFieldBase):
     """
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, queryset=None, get_label=None, label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
+    def __init__(self, label=None, validators=None, queryset=None, get_label=None, label_attr=None, allow_blank=False, blank_text=u'', **kwargs):
         super(QuerySetSelectField, self).__init__(label, validators, **kwargs)
         self.allow_blank = allow_blank
         self.blank_text = blank_text
@@ -95,5 +95,5 @@ class ModelSelectField(QuerySetSelectField):
     Like a QuerySetSelectField, except takes a model class instead of a
     queryset and lists everything in it.
     """
-    def __init__(self, label=u'', validators=None, model=None, **kwargs):
+    def __init__(self, label=None, validators=None, model=None, **kwargs):
         super(ModelSelectField, self).__init__(label, validators, queryset=model._default_manager.all(), **kwargs)

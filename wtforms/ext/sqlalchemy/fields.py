@@ -52,7 +52,7 @@ class QuerySelectField(SelectFieldBase):
     """
     widget = widgets.Select()
 
-    def __init__(self, label=u'', validators=None, query_factory=None,
+    def __init__(self, label=None, validators=None, query_factory=None,
                  get_pk=None, get_label=None, allow_blank=False,
                  blank_text=u'', **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
@@ -133,7 +133,7 @@ class QuerySelectMultipleField(QuerySelectField):
     """
     widget = widgets.Select(multiple=True)
 
-    def __init__(self, label=u'', validators=None, default=None, **kwargs):
+    def __init__(self, label=None, validators=None, default=None, **kwargs):
         if default is None:
             default = []
         super(QuerySelectMultipleField, self).__init__(label, validators, default=default, **kwargs)

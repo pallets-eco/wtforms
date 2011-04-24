@@ -53,6 +53,13 @@ class LabelTest(TestCase):
         self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
         self.assertEqual(repr(label), "Label('test', u'Caption')") 
 
+    def test_auto_label(self):
+        t1 = TextField().bind(Form(), 'foo_bar')
+        self.assertEqual(t1.label.text, 'Foo Bar')
+
+        t2 = TextField('').bind(Form(), 'foo_bar')
+        self.assertEqual(t2.label.text, '')
+
 
 class FlagsTest(TestCase):
     def setUp(self):
