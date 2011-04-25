@@ -4,7 +4,7 @@ from cgi import escape
 __all__ = (
     'CheckboxInput', 'FileInput', 'HiddenInput', 'ListWidget', 'PasswordInput',
     'RadioInput', 'Select', 'SubmitInput', 'TableWidget', 'TextArea',
-    'TextInput',
+    'TextInput', 'Option'
 )
 
 
