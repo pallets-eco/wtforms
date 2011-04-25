@@ -47,7 +47,7 @@ class QuerySetSelectField(SelectFieldBase):
             self.get_label = operator.attrgetter(label_attr)
         elif get_label is None:
             self.get_label = lambda x: x
-        elif isintance(get_label, basestring):
+        elif isinstance(get_label, basestring):
             self.get_label = operator.attrgetter(get_label)
         else:
             self.get_label = get_label
