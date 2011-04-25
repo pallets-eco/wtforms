@@ -46,7 +46,7 @@ copyright = '2010 by Thomas Johansson, James Crasta'
 # The short X.Y version.
 version = '0.6.3'
 # The full version, including alpha/beta/rc tags.
-release = '0.6.3dev'
+release = '0.6.3'
 
 
 # There are two options for replacing |today|: either, you set today to some

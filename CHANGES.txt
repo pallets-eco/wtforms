@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 0.6.3
 -------------
-Not yet released.
+Released April 24, 2011
 
 - Documentation: Substantial documentation improvements, including adding
   Crash Course as a sphinx document.
