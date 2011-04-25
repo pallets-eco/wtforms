@@ -24,8 +24,12 @@ def html_params(**kwargs):
     for k,v in sorted(kwargs.iteritems()):
         if k in ('class_', 'class__', 'for_'):
             k = k[:-1]
-        params.append(u'%s="%s"' % (unicode(k), escape(unicode(v), quote=True)))
+        if v is True:
+            params.append(k)
+        else:
+            params.append(u'%s="%s"' % (unicode(k), escape(unicode(v), quote=True)))
     return u' '.join(params)
+
 
 class HTMLString(unicode):
     def __html__(self):
@@ -103,6 +107,8 @@ class Input(object):
     By default, the `_value()` method will be called upon the associated field
     to provide the ``value=`` HTML attribute.
     """
+    html_params = staticmethod(html_params)
+
     def __init__(self, input_type=None):
         if input_type is not None:
             self.input_type = input_type
@@ -112,7 +118,7 @@ class Input(object):
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
-        return HTMLString(u'<input %s />' % html_params(name=field.name, **kwargs))
+        return HTMLString(u'<input %s>' % self.html_params(name=field.name, **kwargs))
 
 
 class TextInput(Input):
@@ -158,7 +164,7 @@ class CheckboxInput(Input):
 
     def __call__(self, field, **kwargs):
         if getattr(field, 'checked', field.data):
-            kwargs['checked'] = u'checked'
+            kwargs['checked'] = True
         return super(CheckboxInput, self).__call__(field, **kwargs)
 
 
@@ -173,7 +179,7 @@ class RadioInput(Input):
 
     def __call__(self, field, **kwargs):
         if field.checked:
-            kwargs['checked'] = u'checked'
+            kwargs['checked'] = True 
         return super(RadioInput, self).__call__(field, **kwargs)
 
 
@@ -187,7 +193,7 @@ class FileInput(object):
         value = field._value()
         if value:
             kwargs.setdefault('value', value)
-        return HTMLString(u'<input %s />' % html_params(name=field.name, type=u'file', **kwargs))
+        return HTMLString(u'<input %s>' % html_params(name=field.name, type=u'file', **kwargs))
 
 
 class SubmitInput(Input):
@@ -232,7 +238,7 @@ class Select(object):
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         if self.multiple:
-            kwargs['multiple'] = 'multiple'
+            kwargs['multiple'] = True 
         html = [u'<select %s>' % html_params(name=field.name, **kwargs)]
         for val, label, selected in field.iter_choices():
             html.append(self.render_option(val, label, selected))
@@ -243,7 +249,7 @@ class Select(object):
     def render_option(cls, value, label, selected):
         options = {'value': value}
         if selected:
-            options['selected'] = u'selected'
+            options['selected'] = True 
         return HTMLString(u'<option %s>%s</option>' % (html_params(**options), escape(unicode(label))))
 
 
