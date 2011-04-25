@@ -1,6 +1,21 @@
 WTForms Changelog
 =================
 
+Version 0.6.3
+-------------
+Not yet released.
+
+- Documentation: Substantial documentation improvements, including adding
+  Crash Course as a sphinx document.
+
+- ext.django: QuerySetSelectField (and ModelSelectField) now accept get_label
+  similar to sqlalchemy equivalents.
+
+- ext.appengine:
+ * model_form fixes: FloatField(#50), TimeField, DateTimeField(#55)
+ * ReferencePropertyField: now properly stores model object, not key. (#48)
+
+
 Version 0.6.2
 -------------
 Released January 22, 2011
