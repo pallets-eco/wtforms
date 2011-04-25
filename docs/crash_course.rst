@@ -20,6 +20,8 @@ Because we strive for loose coupling, you should be able to do that in any
 templating engine you like, as well.
 
 
+.. _download-installation:
+
 Download / Installation
 -----------------------
 
@@ -381,17 +383,3 @@ Or by providing an in-form field-specific validator::
 
 For more complex validators that take parameters, check the :ref:`custom-validators` section. 
 
-Next Steps
-----------
-
-The crash course has just skimmed the surface on how you can begin using
-WTForms to handle form input and validation in your application. For more
-information, you'll want to check the following:
-
- - The :ref:`WTForms documentation <doc-index>` has API documentation for the entire library.
- - :ref:`specific_problems` can help you tackle specific
-   integration issues with WTForms and other frameworks.
- - The `mailing list`_ is where you can get help, discuss bugs in WTForms, and
-   propose new features.
-
-.. _mailing list: http://groups.google.com/group/wtforms/
