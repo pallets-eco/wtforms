@@ -46,7 +46,7 @@ class DateutilTest(TestCase):
 
     def test_render(self):
         f = self.F()
-        self.assertEqual(f.b(), ur'<input id="b" name="b" type="text" value="2004-09-12" />')
+        self.assertEqual(f.b(), ur'<input id="b" name="b" type="text" value="2004-09-12">')
 
 
 if __name__ == '__main__':

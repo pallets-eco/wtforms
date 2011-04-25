@@ -56,13 +56,13 @@ class TemplateTagsTest(TestCase):
         return t.render(Context({'form': self.F(), 'a': self.F().a,  'someclass': "CLASSVAL>!"}))
 
     def test_simple_print(self):
-        self.assertEqual(self._render(u'{% autoescape off %}{{ form.a }}{% endautoescape %}'), u'<input id="a" name="a" type="text" value="" />')
+        self.assertEqual(self._render(u'{% autoescape off %}{{ form.a }}{% endautoescape %}'), u'<input id="a" name="a" type="text" value="">')
         #self.assertEqual(self._render(u'{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), u'<label for="a">I r label</label>')
 
     def test_form_field(self):
-        self.assertEqual(self._render(u'{% form_field form.a %}'), u'<input id="a" name="a" type="text" value="" />')
+        self.assertEqual(self._render(u'{% form_field form.a %}'), u'<input id="a" name="a" type="text" value="">')
         self.assertEqual(self._render(u'{% form_field a class=someclass onclick="alert()" %}'), 
-                         u'<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="" />')
+                         u'<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="">')
 
 class ModelFormTest(TestCase):
     F = model_form(test_models.User, exclude=['id'], field_args = {
@@ -121,7 +121,7 @@ class QuerySetSelectFieldTest(DjangoTestCase):
         from django.core.management import call_command
         self.queryset = test_models.Group.objects.all()
         class F(Form):
-            a = QuerySetSelectField(allow_blank=True, label_attr='name', widget=lazy_select)
+            a = QuerySetSelectField(allow_blank=True, get_label='name', widget=lazy_select)
             b = QuerySetSelectField(queryset=self.queryset, widget=lazy_select)
 
         self.F = F
