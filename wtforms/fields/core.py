@@ -305,6 +305,8 @@ class Flags(object):
     Accessing a non-existing attribute returns False for its value.
     """
     def __getattr__(self, name):
+        if name.startswith('_'):
+            return super(Flags, self).__getattr__(name)
         return False
 
     def __contains__(self, name):
