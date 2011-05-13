@@ -24,6 +24,8 @@ setup(
     ],
     packages=[
         'wtforms',
+        'wtforms.fields',
+        'wtforms.widgets',
         'wtforms.ext',
         'wtforms.ext.appengine',
         'wtforms.ext.dateutil',
