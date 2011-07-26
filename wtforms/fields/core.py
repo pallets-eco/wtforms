@@ -612,6 +612,9 @@ class BooleanField(Field):
         self.data = bool(value)
 
     def process_formdata(self, valuelist):
+        # Checkboxes and submit buttons simply do not send a value when
+        # unchecked/not pressed. So the actual value="" doesn't matter for
+        # purpose of determining .data, only whether one exists or not.
         self.data = bool(valuelist)
 
     def _value(self):
