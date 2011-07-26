@@ -137,6 +137,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, v, self.form, DummyField(None))
         self.assertRaises(ValidationError, v, self.form, DummyField(0))
         self.assertRaises(ValidationError, v, self.form, DummyField(12))
+        self.assertRaises(ValidationError, v, self.form, DummyField(-5))
 
         onlymin = NumberRange(min=5)
         self.assertEqual(onlymin(self.form, DummyField(500)), None)
