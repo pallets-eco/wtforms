@@ -42,11 +42,26 @@ class ModelConverterBase(object):
 
         column = prop.columns[0]
 
+        # Support sqlalchemy.schema.ColumnDefault, so users can benefit from
+        # setting defaults for fields, e.g.:
+        #   field = Column(DateTimeField, default=datetime.utcnow)
+
+        default = getattr(column, 'default', None)
+
+        if default is not None:
+            # Only actually change default if it has an attribute named
+            # 'arg' that's callable.
+            callable_default = getattr(default, 'arg', None)
+
+            if callable_default and callable(callable_default):
+                default = callable_default(None)
+
         kwargs = {
             'validators': [],
             'filters': [],
-            'default': column.default,
+            'default': default,
         }
+
         if field_args:
             kwargs.update(field_args)
 
