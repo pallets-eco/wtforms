@@ -100,7 +100,7 @@ of rendering errors for a form field. Here's a Jinja2_ macro that may save you t
         {% if field.errors %}
             {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
             {{ field(class=css_class, **kwargs) }}
-            <ul class="errors">{% for error in errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+            <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
         {% else %}
             {{ field(**kwargs) }}
         {% endif %}
