@@ -644,8 +644,7 @@ class DateTimeField(Field):
         if valuelist:
             date_str = u' '.join(valuelist)
             try:
-                timetuple = time.strptime(date_str, self.format)
-                self.data = datetime.datetime(*timetuple[:6])
+                self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
                 raise
@@ -662,8 +661,7 @@ class DateField(DateTimeField):
         if valuelist:
             date_str = u' '.join(valuelist)
             try:
-                timetuple = time.strptime(date_str, self.format)
-                self.data = datetime.date(*timetuple[:3])
+                self.data = datetime.datetime.strptime(date_str, self.format).date()
             except ValueError:
                 self.data = None
                 raise
