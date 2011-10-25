@@ -52,7 +52,7 @@ class ModelConverterBase(object):
 
         if column.nullable:
             kwargs['validators'].append(validators.Optional())
-        
+
         if self.use_mro:
             types = inspect.getmro(type(column.type))
         else:
@@ -129,9 +129,9 @@ class ModelConverter(ModelConverterBase):
 
     @converts('databases.postgres.PGInet', 'dialects.postgresql.base.INET')
     def conv_PGInet(self, field_args, **extra):
-        kwargs.setdefault('label', u'IP Address')
-        kwargs['validators'].append(validators.IPAddress())
-        return f.TextField(**kwargs)
+        field_args.setdefault('label', u'IP Address')
+        field_args['validators'].append(validators.IPAddress())
+        return f.TextField(**field_args)
 
 
 def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
