@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import platform
+
 from datetime import date, datetime
 from decimal import Decimal, ROUND_UP, ROUND_DOWN
 from unittest import TestCase
@@ -8,6 +10,8 @@ from wtforms.fields import *
 from wtforms.fields import Label, Field
 from wtforms.form import Form
 
+
+PYTHON_VERSION = platform.python_version_tuple()
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -424,7 +428,7 @@ class DateTimeFieldTest(TestCase):
         a = DateTimeField()
         b = DateTimeField(format='%Y-%m-%d %H:%M')
 
-    def test(self):
+    def test_basic(self):
         d = datetime(2008, 5, 5, 4, 30, 0, 0)
         form = self.F(DummyPostData(a=['2008-05-05', '04:30:00'], b=['2008-05-05 04:30']))
         self.assertEqual(form.a.data, d)
@@ -435,6 +439,15 @@ class DateTimeFieldTest(TestCase):
         form = self.F(DummyPostData(a=['2008-05-05']))
         self.assert_(not form.validate())
         self.assert_("not match format" in form.a.errors[0])
+
+    def test_microseconds(self):
+        if PYTHON_VERSION < (2, 6, 0):
+            return # Microsecond formatting support was only added in 2.6
+        
+        d = datetime(2011, 5, 7, 3, 23, 14, 424200)
+        F = make_form(a=DateTimeField(format='%Y-%m-%d %H:%M:%S.%f'))
+        form = F(DummyPostData(a=['2011-05-07 03:23:14.4242']))
+        self.assertEqual(d, form.a.data)
 
 
 class SubmitFieldTest(TestCase):
