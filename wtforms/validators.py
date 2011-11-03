@@ -237,6 +237,25 @@ class IPAddress(Regexp):
         super(IPAddress, self).__call__(form, field)
 
 
+class MacAddress(Regexp):
+    """
+    Validates a Mac address.
+
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, message=None):
+
+        super(MacAddress, self).__init__(
+            r'^((?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2})\s+(.*)$', message=message)
+
+    def __call__(self, form, field):
+        if self.message is None:
+            self.message = field.gettext(u'Invalid Mac address.')
+
+        super(MacAddress, self).__call__(form, field)
+
+
 class URL(Regexp):
     """
     Simple regexp based url validation. Much like the email validator, you

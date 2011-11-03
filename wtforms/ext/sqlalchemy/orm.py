@@ -148,6 +148,12 @@ class ModelConverter(ModelConverterBase):
         field_args['validators'].append(validators.IPAddress())
         return f.TextField(**field_args)
 
+    @converts('dialects.postgresql.base.MACADDR')
+    def conv_PGMacaddr(self, field_args, **extra):
+        field_args.setdefault('label', u'MAC Address')
+        field_args['validators'].append(validators.MacAddress())
+        return f.TextField(**field_args)
+
 
 def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
     """
