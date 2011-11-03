@@ -247,7 +247,7 @@ class MacAddress(Regexp):
     def __init__(self, message=None):
 
         super(MacAddress, self).__init__(
-            r'^((?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2})\s+(.*)$', message=message)
+            r'^(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$', message=message)
 
     def __call__(self, form, field):
         if self.message is None:
