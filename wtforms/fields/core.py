@@ -33,9 +33,11 @@ class Field(object):
     """
     Field base class
     """
-    widget = None
     errors = tuple()
     process_errors = tuple()
+    raw_data = None
+    validators = tuple()
+    widget = None
     _formfield = True
     _translations = DummyTranslations()
 
@@ -52,7 +54,7 @@ class Field(object):
         Construct a new field.
 
         :param label:
-            The label of the field. 
+            The label of the field.
         :param validators:
             A sequence of validators to call when `validate` is called.
         :param filters:
@@ -81,26 +83,25 @@ class Field(object):
         returned instead. Call its :func:`bind` method with a form instance and
         a name to construct the field.
         """
-        self.short_name = _name
-        self.name = _prefix + _name
         if _translations is not None:
             self._translations = _translations
-        self.id = id or self.name
-        if label is None:
-            label = _name.replace('_', ' ').title()
-        self.label = Label(self.id, label) 
-        if validators is None:
-            validators = []
-        self.validators = validators
-        self.filters = filters
-        self.description = description
-        self.type = type(self).__name__
+
         self.default = default
-        self.raw_data = None
-        if widget:
-            self.widget = widget
+        self.description = description
+        self.filters = filters
         self.flags = Flags()
-        for v in validators:
+        self.name = _prefix + _name
+        self.short_name = _name
+        self.type = type(self).__name__
+        self.validators = validators or list(self.validators)
+
+        self.id = id or self.name
+        self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
+
+        if widget is not None:
+            self.widget = widget
+
+        for v in self.validators:
             flags = getattr(v, 'field_flags', ())
             for f in flags:
                 setattr(self.flags, f, True)
