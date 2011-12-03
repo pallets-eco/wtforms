@@ -3,10 +3,14 @@ Tools for generating forms based on SQLAlchemy models.
 """
 import inspect
 
+import sqlalchemy
+
 from wtforms import fields as f
 from wtforms import validators
 from wtforms.form import Form
-
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
+from wtforms.ext.sqlalchemy.validators import Unique
 
 __all__ = (
     'model_fields', 'model_form',
@@ -33,63 +37,108 @@ class ModelConverterBase(object):
 
         self.converters = converters
 
-    def convert(self, model, mapper, prop, field_args):
-        if not hasattr(prop, 'columns'):
-            # XXX We don't support anything but ColumnProperty at the moment.
+class ModelConverterBase(object):
+    def __init__(self, converters, use_mro=True):
+        self.use_mro = use_mro
+
+        if not converters:
+            converters = {}
+
+        for name in dir(self):
+            obj = getattr(self, name)
+            if hasattr(obj, '_converter_for'):
+                for classname in obj._converter_for:
+                    converters[classname] = obj
+
+        self.converters = converters
+
+    def convert(self, model, db_session, mapper, prop, field_args):
+        if not isinstance(prop, sqlalchemy.orm.properties.ColumnProperty) and \
+                not isinstance(prop,
+                sqlalchemy.orm.properties.RelationshipProperty):
             return
-        elif len(prop.columns) != 1:
-            raise TypeError('Do not know how to convert multiple-column properties currently')
-
-        column = prop.columns[0]
-
-        # Support sqlalchemy.schema.ColumnDefault, so users can benefit from
-        # setting defaults for fields, e.g.:
-        #   field = Column(DateTimeField, default=datetime.utcnow)
-
-        default = getattr(column, 'default', None)
-
-        if default is not None:
-            # Only actually change default if it has an attribute named
-            # 'arg' that's callable.
-            callable_default = getattr(default, 'arg', None)
-
-            if callable_default and callable(callable_default):
-                default = callable_default(None)
+        elif isinstance(prop, sqlalchemy.orm.properties.ColumnProperty) and\
+            len(prop.columns) != 1:
+            raise TypeError('Do not know how to convert multiple-column '
+                + 'properties currently')
 
         kwargs = {
             'validators': [],
             'filters': [],
-            'default': default,
+            'default': None,
         }
+
+        converter = None
+        column = None
+
+        if isinstance(prop, sqlalchemy.orm.properties.ColumnProperty):
+            column = prop.columns[0]
+            # Support sqlalchemy.schema.ColumnDefault, so users can benefit
+            # from  setting defaults for fields, e.g.:
+            #   field = Column(DateTimeField, default=datetime.utcnow)
+
+            default = getattr(column, 'default', None)
+
+            if default is not None:
+                # Only actually change default if it has an attribute named
+                # 'arg' that's callable.
+                callable_default = getattr(default, 'arg', None)
+
+                if callable_default and callable(callable_default):
+                    default = callable_default(None)
+            kwargs['default'] = default
+
+            if column.nullable:
+                kwargs['validators'].append(validators.Optional())
+            else:
+                kwargs['validators'].append(validators.Required())
+
+            if column.unique:
+                kwargs['validators'].append(Unique(lambda: db_session, model,
+                    column))
+
+            if self.use_mro:
+                types = inspect.getmro(type(column.type))
+            else:
+                types = [type(column.type)]
+
+            for col_type in types:
+                type_string = '%s.%s' % (col_type.__module__,
+                    col_type.__name__)
+                if type_string.startswith('sqlalchemy'):
+                    type_string = type_string[11:]
+
+                if type_string in self.converters:
+                    converter = self.converters[type_string]
+                    break
+            else:
+                for col_type in types:
+                    if col_type.__name__ in self.converters:
+                        converter = self.converters[col_type.__name__]
+                        break
+                else:
+                    return
+
+        if isinstance(prop, sqlalchemy.orm.properties.RelationshipProperty):
+            foreign_model = prop.mapper.class_
+
+            nullable = True
+            for pair in prop.local_remote_pairs:
+                if not pair[0].nullable:
+                    nullable = False
+
+            kwargs.update({
+                'allow_blank': nullable,
+                'query_factory': lambda: db_session.query(foreign_model).all()
+            })
+
+            converter = self.converters[prop.direction.name]
 
         if field_args:
             kwargs.update(field_args)
 
-        if column.nullable:
-            kwargs['validators'].append(validators.Optional())
-
-        if self.use_mro:
-            types = inspect.getmro(type(column.type))
-        else:
-            types = [type(column.type)]
-
-        converter = None
-        for col_type in types:
-            type_string = '%s.%s' % (col_type.__module__, col_type.__name__)
-            if type_string.startswith('sqlalchemy'):
-                type_string = type_string[11:]
-
-            if type_string in self.converters:
-                converter = self.converters[type_string]
-                break
-        else:
-            for col_type in types:
-                if col_type.__name__ in self.converters:
-                    converter = self.converters[col_type.__name__]
-                    break
-            else:
-                return
-        return converter(model=model, mapper=mapper, prop=prop, column=column, field_args=kwargs)
+        return converter(model=model, mapper=mapper, prop=prop, column=column,
+            field_args=kwargs)
 
 
 class ModelConverter(ModelConverterBase):
@@ -148,8 +197,17 @@ class ModelConverter(ModelConverterBase):
         field_args['validators'].append(validators.IPAddress())
         return f.TextField(**field_args)
 
+    @converts('MANYTOMANY', 'ONETOMANY')
+    def conv_ManyToMany(self, field_args, **extra):
+        return QuerySelectMultipleField(**field_args)
 
-def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
+    @converts('MANYTOONE')
+    def conv_ManyToOne(self, field_args, **extra):
+        return QuerySelectField(**field_args)
+
+
+def model_fields(model, db_session, only=None, exclude=None, field_args=None,
+    converter=None):
     """
     Generate a dictionary of fields for a given SQLAlchemy model.
 
@@ -170,23 +228,28 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
 
     field_dict = {}
     for name, prop in properties:
-        field = converter.convert(model, mapper, prop, field_args.get(name))
+        field = converter.convert(model, db_session, mapper, prop,
+            field_args.get(name))
         if field is not None:
             field_dict[name] = field
 
     return field_dict
 
 
-def model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None):
+def model_form(model, db_session, base_class=Form, only=None, exclude=None,
+    field_args=None, converter=None, exclude_pk=True, exclude_fk=True,
+    type_name=None):
     """
     Create a wtforms Form for a given SQLAlchemy model class::
 
-        from wtforms.ext.sqlalchemy.orm import model_form
+        from wtalchemy.orm import model_form
         from myapp.models import User
         UserForm = model_form(User)
 
     :param model:
         A SQLAlchemy mapped model class.
+    :param db_session:
+        A SQLAlchemy Session.
     :param base_class:
         Base form class to extend from. Must be a ``wtforms.Form`` subclass.
     :param only:
@@ -201,6 +264,33 @@ def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
     :param converter:
         A converter to generate the fields based on the model properties. If
         not set, ``ModelConverter`` is used.
+    :param exclude_pk:
+        An optional boolean to force primary key exclusion.
+    :param exclude_fk:
+        An optional boolean to force foreign keys exclusion.
+    :param type_name:
+        An optional string to set returned type name.
     """
-    field_dict = model_fields(model, only, exclude, field_args, converter)
-    return type(model.__name__ + 'Form', (base_class, ), field_dict)
+    class ModelForm(base_class):
+        """Sets object as form attribute."""
+        def __init__(self, *args, **kwargs):
+            if 'obj' in kwargs:
+                self._obj = kwargs['obj']
+            super(ModelForm, self).__init__(*args, **kwargs)
+
+    if not exclude:
+        exclude = []
+    model_mapper = model.__mapper__
+    for prop in model_mapper.iterate_properties:
+        if isinstance(prop, sqlalchemy.orm.properties.ColumnProperty) and \
+               prop.columns[0].primary_key:
+            if exclude_pk:
+                exclude.append(prop.key)
+        if isinstance(prop, sqlalchemy.orm.properties.RelationshipProperty) \
+            and  exclude_fk and prop.direction.name != 'MANYTOMANY':
+                for pair in prop.local_remote_pairs:
+                    exclude.append(pair[0].key)
+    type_name = type_name or model.__name__ + 'Form'
+    field_dict = model_fields(model, db_session, only, exclude, field_args,
+        converter)
+    return type(type_name, (ModelForm, ), field_dict)

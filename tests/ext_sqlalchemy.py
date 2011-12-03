@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.schema import MetaData, Table, Column
-from sqlalchemy.types import String, Integer
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.types import String, Integer, Date
+from sqlalchemy.orm import sessionmaker, relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
 
 from unittest import TestCase
 
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.form import Form
+from wtforms.fields import TextField
+from wtforms.ext.sqlalchemy.orm import model_form
+from wtforms.validators import Optional, Required, Length
+from wtforms.ext.sqlalchemy.validators import Unique
 
 
 class LazySelect(object):
@@ -28,12 +33,12 @@ class TestBase(TestCase):
     def _do_tables(self, mapper, engine):
         metadata = MetaData()
 
-        test_table = Table('test', metadata, 
+        test_table = Table('test', metadata,
             Column('id', Integer, primary_key=True, nullable=False),
             Column('name', String, nullable=False),
         )
 
-        pk_test_table = Table('pk_test', metadata, 
+        pk_test_table = Table('pk_test', metadata,
             Column('foobar', String, primary_key=True, nullable=False),
             Column('baz', String, nullable=False),
         )
@@ -152,6 +157,135 @@ class QuerySelectMultipleFieldTest(TestBase):
         self.assertEqual([v.id for v in form.a.data], [2])
         self.assertEqual(form.a(), [(u'1', 'apple', False), (u'2', 'banana', True)])
         self.assert_(form.validate())
+
+
+class ModelFormTest(TestCase):
+    def setUp(self):
+        Model = declarative_base()
+
+        student_course = Table(
+            'student_course', Model.metadata,
+            Column('student_id', Integer, ForeignKey('student.id')),
+            Column('course_id', Integer, ForeignKey('course.id'))
+        )
+
+        class Course(Model):
+            __tablename__ = "course"
+            id = Column(Integer, primary_key=True)
+            name = Column(String(255), nullable=False)
+
+        class School(Model):
+            __tablename__ = "school"
+            id = Column(Integer, primary_key=True)
+            name = Column(String(255), nullable=False)
+
+        class Student(Model):
+            __tablename__ = "student"
+            id = Column(Integer, primary_key=True)
+            full_name = Column(String(255), nullable=False, unique=True)
+            dob = Column(Date(), nullable=True)
+            current_school_id = Column(Integer, ForeignKey(School.id),
+                nullable=False)
+
+            current_school = relationship(School, backref=backref('students'))
+            courses = relationship("Course", secondary=student_course,
+                backref=backref("students", lazy='dynamic'))
+
+        self.School = School
+        self.Student = Student
+
+        engine = create_engine('sqlite:///:memory:', echo=False)
+        Session = sessionmaker(bind=engine)
+        self.metadata = Model.metadata
+        self.metadata.create_all(bind=engine)
+        self.sess = Session()
+
+    def test_nullable_field(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertTrue(issubclass(Optional,
+            student_form._fields['dob'].validators[0].__class__))
+
+    def test_required_field(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertTrue(issubclass(Required,
+            student_form._fields['full_name'].validators[0].__class__))
+
+    def test_unique_field(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertTrue(issubclass(Unique,
+            student_form._fields['full_name'].validators[1].__class__))
+
+    def test_include_pk(self):
+        form_class = model_form(self.Student, self.sess, exclude_pk=False)
+        student_form = form_class()
+        self.assertIn('id', student_form._fields)
+
+    def test_exclude_pk(self):
+        form_class = model_form(self.Student, self.sess, exclude_pk=True)
+        student_form = form_class()
+        self.assertNotIn('id', student_form._fields)
+
+    def test_exclude_fk(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertNotIn('current_school_id', student_form._fields)
+
+    def test_include_fk(self):
+        student_form = model_form(self.Student, self.sess, exclude_fk=False)()
+        self.assertIn('current_school_id', student_form._fields)
+
+    def test_convert_many_to_one(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertTrue(issubclass(QuerySelectField,
+            student_form._fields['current_school'].__class__))
+
+    def test_convert_one_to_many(self):
+        school_form = model_form(self.School, self.sess)()
+        self.assertTrue(issubclass(QuerySelectMultipleField,
+            school_form._fields['students'].__class__))
+
+    def test_convert_many_to_many(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertTrue(issubclass(QuerySelectMultipleField,
+            student_form._fields['courses'].__class__))
+
+
+class UniqueValidatorTest(TestCase):
+    def setUp(self):
+        Model = declarative_base()
+
+        class User(Model):
+            __tablename__ = "user"
+            id = Column(Integer, primary_key=True)
+            username = Column(String(255), nullable=False, unique=True)
+
+        engine = create_engine('sqlite:///:memory:', echo=False)
+        Session = sessionmaker(bind=engine)
+        self.metadata = Model.metadata
+        self.metadata.create_all(bind=engine)
+        self.sess = Session()
+
+        self.sess.add(User(username='batman'))
+        self.sess.commit()
+
+        class UserForm(Form):
+            username = TextField('Username', [
+                Length(min=4, max=25),
+                Unique(lambda: self.sess, User, User.username)
+            ])
+
+        self.UserForm = UserForm
+
+    def test_validate(self):
+        from werkzeug.datastructures import MultiDict
+        user_form = self.UserForm(formdata=MultiDict([('username',
+            'spiderman')]))
+        self.assertTrue(user_form.validate())
+
+    def test_wrong(self):
+        from werkzeug.datastructures import MultiDict
+        user_form = self.UserForm(formdata=MultiDict([('username',
+            'batman')]))
+        self.assertFalse(user_form.validate())
 
 
 if __name__ == '__main__':

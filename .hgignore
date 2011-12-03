@@ -10,3 +10,4 @@ syntax: regexp
 ^docs/html
 ^dist/
 ^MANIFEST$
+^env/
