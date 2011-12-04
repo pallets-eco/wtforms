@@ -196,6 +196,13 @@ template to be passed from the browser back to your view. There are many
 different methods of generating this token, but they are usually the result of
 a cryptographic hash function against some data which would be hard to forge.
 
+.. module:: wtforms.ext.csrf.form
+
+.. autoclass:: SecureForm
+
+    .. automethod:: generate_csrf_token
+
+    .. automethod:: validate_csrf_token
 
 Creating your own CSRF implementation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -298,22 +305,57 @@ Some tips on criteria people often examine when evaluating CSRF implementations:
    consideration to provide a balance between security and limiting user
    inconvenience.
 
+ * **Requirements** Some CSRF-prevention methods require the use of browser
+   cookies, and some even require client-side scripting support. The webmaster
+   implementing the CSRF needs to consider that such requirements (though
+   effective) may lock certain legitimate users out, and make this
+   determination whether it is a good idea to use. For example, for a site
+   already using cookies for login, adding another for CSRF isn't as big of a
+   deal, but for other sites it may not be feasible.
+
 
 Session-based CSRF implementation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: wtforms.ext.csrf.session
 
+**Usage**
+
+First, create a SessionSecureForm subclass that you can use as your base class
+for any forms you want CSRF support for::
+
+    from wtforms.ext.csrf.session import SessionSecureForm
+
+    class MyBaseForm(SessionSecureForm):
+        SECRET_KEY = 'EPj00jpfj8Gx1SjnyLxwBBSQfnQ9DJYe0Ym'
+        TIME_LIMIT = timedelta(minutes=20)
+
+Now incorporate it into any form/view by further subclassing::
+
+    class Registration(MyBaseForm):
+        name = TextField()
+
+    def view(request):
+        form = Registration(request.POST, csrf_context=request.session)
+        # rest of view here
+
+Note that request.session is passed as the ``csrf_context=`` parameter, this is
+so that the CSRF token can be stored in your session for comparison on a later
+request.
+
 .. autoclass:: SessionSecureForm
 
+    A provided CSRF implementation which puts CSRF data in a session. Must be
+    subclassed to be used.
+    
+    **Class Attributes**
+    .. attribute:: SECRET_KEY
+        
+        Must be set by subclasses to a random byte string that will be used to generate HMAC digests. 
 
-Class Reference
-~~~~~~~~~~~~~~~
+    .. attribute:: TIME_LIMIT
 
-.. module:: wtforms.ext.csrf.form
+        If None, CSRF tokens never expire. If set to a ``datetime.timedelta``,
+        this is how long til a generated token expires. Defaults to
+        ``timedelta(minutes=30)``
 
-.. autoclass:: SecureForm
-
-    .. automethod:: generate_csrf_token
-
-    .. automethod:: validate_csrf_token

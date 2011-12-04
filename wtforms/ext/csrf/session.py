@@ -1,5 +1,5 @@
 """
-An provided CSRF implementation which puts CSRF data in a session.
+A provided CSRF implementation which puts CSRF data in a session.
 
 This can be used fairly comfortably with many `request.session` type
 objects, including the Werkzeug/Flask session store, Django sessions, and
@@ -25,13 +25,15 @@ from .form import SecureForm
 __all__ = ('SessionSecureForm', )
 
 class SessionSecureForm(SecureForm):
-    DT_FORMAT = '%Y%m%d%H%M%S'
+    TIME_FORMAT = '%Y%m%d%H%M%S'
     TIME_LIMIT = timedelta(minutes=30)
-    SECRET_KEY = 'You probably want to override this.'
+    SECRET_KEY = None
 
     def generate_csrf_token(self, csrf_context):
+        if self.SECRET_KEY is None:
+            raise Exception('must set SECRET_KEY in a subclass of this form for it to work')
         if csrf_context is None:
-            raise TypeError("Must provide a session-like object as csrf context")
+            raise TypeError('Must provide a session-like object as csrf context')
 
         session = getattr(csrf_context, 'session', csrf_context)
 
@@ -40,7 +42,7 @@ class SessionSecureForm(SecureForm):
 
         self.csrf_token.csrf_key = session['csrf']
         if self.TIME_LIMIT:
-            expires = (datetime.now() + self.TIME_LIMIT).strftime(self.DT_FORMAT)
+            expires = (datetime.now() + self.TIME_LIMIT).strftime(self.TIME_FORMAT)
             csrf_build = '%s%s' % (session['csrf'], expires)
         else:
             expires = ''
@@ -60,6 +62,6 @@ class SessionSecureForm(SecureForm):
             raise ValidationError(field.gettext(u'CSRF failed'))
 
         if self.TIME_LIMIT:
-            now_formatted = datetime.now().strftime(self.DT_FORMAT)
+            now_formatted = datetime.now().strftime(self.TIME_FORMAT)
             if now_formatted > expires:
                 raise ValidationError(field.gettext(u'CSRF token expired'))
