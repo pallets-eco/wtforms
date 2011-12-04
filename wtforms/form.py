@@ -24,8 +24,8 @@ class BaseForm(object):
         self._errors = None
         self._fields = {}
 
-        if hasattr(fields, 'iteritems'):
-            fields = fields.iteritems()
+        if hasattr(fields, 'items'):
+            fields = fields.items()
 
         translations = self._get_translations()
 
