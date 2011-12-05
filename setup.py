@@ -28,6 +28,7 @@ setup(
         'wtforms.widgets',
         'wtforms.ext',
         'wtforms.ext.appengine',
+        'wtforms.ext.csrf',
         'wtforms.ext.dateutil',
         'wtforms.ext.django',
         'wtforms.ext.django.templatetags',
