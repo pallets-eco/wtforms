@@ -48,7 +48,7 @@ class SessionSecureForm(SecureForm):
             expires = ''
             csrf_build = session['csrf']
 
-        hmac_csrf = hmac.new(self.SECRET_KEY, csrf_build, digestmod=sha1) 
+        hmac_csrf = hmac.new(self.SECRET_KEY, csrf_build.encode('utf8'), digestmod=sha1) 
         return '%s##%s' % (expires, hmac_csrf.hexdigest())
 
     def validate_csrf_token(self, field):
@@ -57,7 +57,9 @@ class SessionSecureForm(SecureForm):
 
         expires, hmac_csrf = field.data.split('##')
 
-        hmac_compare = hmac.new(self.SECRET_KEY, field.csrf_key + expires, digestmod=sha1)
+        check_val = (field.csrf_key + expires).encode('utf8')
+
+        hmac_compare = hmac.new(self.SECRET_KEY, check_val, digestmod=sha1)
         if hmac_compare.hexdigest() != hmac_csrf:
             raise ValidationError(field.gettext(u'CSRF failed'))
 

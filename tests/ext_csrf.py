@@ -63,10 +63,10 @@ class SecureFormTest(TestCase):
 
 class SessionSecureFormTest(TestCase):
     class SSF(SessionSecureForm):
-        SECRET_KEY = 'abcdefghijklmnop'
+        SECRET_KEY = 'abcdefghijklmnop'.encode('ascii')
 
     class NoTimeSSF(SessionSecureForm):
-        SECRET_KEY = 'abcdefghijklmnop'
+        SECRET_KEY = 'abcdefghijklmnop'.encode('ascii')
         TIME_LIMIT = None
 
     def test_basic(self):
@@ -80,7 +80,7 @@ class SessionSecureFormTest(TestCase):
         session = {}
         postdata = DummyPostData(csrf_token=u'fake##fake')
         form = self.SSF(postdata, csrf_context=session)
-        assert 'csrf' in session 
+        assert 'csrf' in session
         assert form.csrf_token._value()
         assert form.csrf_token._value() != session['csrf']
         assert not form.validate()
@@ -90,7 +90,7 @@ class SessionSecureFormTest(TestCase):
     def test_notime(self):
         session = {}
         form = self.NoTimeSSF(csrf_context=session)
-        hmacced = hmac.new(form.SECRET_KEY, session['csrf'], digestmod=hashlib.sha1)
+        hmacced = hmac.new(form.SECRET_KEY, session['csrf'].encode('utf8'), digestmod=hashlib.sha1)
         self.assertEqual(form.csrf_token._value(), '##%s' % hmacced.hexdigest())
         assert not form.validate()
         self.assertEqual(form.csrf_token.errors[0], u'CSRF token missing') 
