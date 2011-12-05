@@ -1,5 +1,4 @@
-from wtforms import widgets
-
+from .. import widgets
 from .core import StringField, BooleanField
 
 
