@@ -24,8 +24,8 @@ class BaseForm(object):
         self._errors = None
         self._fields = {}
 
-        if hasattr(fields, 'iteritems'):
-            fields = fields.iteritems()
+        if hasattr(fields, 'items'):
+            fields = fields.items()
 
         translations = self._get_translations()
 
@@ -37,9 +37,9 @@ class BaseForm(object):
         """ Iterate form fields in arbitrary order """
         return self._fields.itervalues()
 
-    def __contains__(self, item):
+    def __contains__(self, name):
         """ Returns `True` if the named field is a member of this form. """
-        return (item in self._fields)
+        return (name in self._fields)
 
     def __getitem__(self, name):
         """ Dict-style access to this form's fields."""

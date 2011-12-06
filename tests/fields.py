@@ -11,7 +11,7 @@ from wtforms.fields import Label, Field
 from wtforms.form import Form
 
 
-PYTHON_VERSION = platform.python_version_tuple()
+PYTHON_VERSION = tuple(int(x) for x in platform.python_version_tuple())
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -53,16 +53,19 @@ class LabelTest(TestCase):
         self.assertEqual(unicode(label), expected)
         self.assertEqual(label.__html__(), expected)
         self.assertEqual(label().__html__(), expected)
-        self.assertEqual(label('hello'), u"""<label for="test">hello</label>""")
+        self.assertEqual(label(u'hello'), u"""<label for="test">hello</label>""")
         self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
-        self.assertEqual(repr(label), "Label('test', u'Caption')") 
+        if PYTHON_VERSION < (3, 0, 0):
+            self.assertEqual(repr(label), "Label('test', u'Caption')") 
+        else:
+            self.assertEqual(repr(label), "Label('test', 'Caption')") 
 
     def test_auto_label(self):
-        t1 = TextField().bind(Form(), 'foo_bar')
-        self.assertEqual(t1.label.text, 'Foo Bar')
+        t1 = TextField().bind(Form(), u'foo_bar')
+        self.assertEqual(t1.label.text, u'Foo Bar')
 
-        t2 = TextField('').bind(Form(), 'foo_bar')
-        self.assertEqual(t2.label.text, '')
+        t2 = TextField(u'').bind(Form(), u'foo_bar')
+        self.assertEqual(t2.label.text, u'')
 
 
 class FlagsTest(TestCase):
@@ -443,7 +446,7 @@ class DateTimeFieldTest(TestCase):
     def test_microseconds(self):
         if PYTHON_VERSION < (2, 6, 0):
             return # Microsecond formatting support was only added in 2.6
-        
+
         d = datetime(2011, 5, 7, 3, 23, 14, 424200)
         F = make_form(a=DateTimeField(format='%Y-%m-%d %H:%M:%S.%f'))
         form = F(DummyPostData(a=['2011-05-07 03:23:14.4242']))

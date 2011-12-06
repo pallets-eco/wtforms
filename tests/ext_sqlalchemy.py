@@ -39,7 +39,10 @@ class TestBase(TestCase):
         )
 
         Test = type('Test', (Base, ), {})
-        PKTest = type('PKTest', (Base, ), {'__unicode__': lambda x: x.baz })
+        PKTest = type('PKTest', (Base, ), {
+            '__unicode__': lambda x: x.baz,
+            '__str__': lambda x: x.baz,
+        })
 
         mapper(Test, test_table, order_by=[test_table.c.name])
         mapper(PKTest, pk_test_table, order_by=[pk_test_table.c.baz])
