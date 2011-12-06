@@ -281,6 +281,25 @@ class URL(Regexp):
         super(URL, self).__call__(form, field)
 
 
+class UUID(Regexp):
+    """
+    Validates a Mac address.
+
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, message=None):
+
+        super(UUID, self).__init__(
+            r'^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$', message=message)
+
+    def __call__(self, form, field):
+        if self.message is None:
+            self.message = field.gettext(u'Invalid UUID.')
+
+        super(UUID, self).__call__(form, field)
+
+
 class AnyOf(object):
     """
     Compares the incoming data to a sequence of valid inputs.

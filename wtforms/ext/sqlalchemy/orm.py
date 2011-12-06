@@ -154,6 +154,11 @@ class ModelConverter(ModelConverterBase):
         field_args['validators'].append(validators.MacAddress())
         return f.TextField(**field_args)
 
+    @converts('dialects.postgresql.base.UUID')
+    def conv_PGUuid(self, field_args, **extra):
+        field_args.setdefault('label', u'UUID')
+        field_args['validators'].append(validators.UUID())
+        return f.TextField(**field_args)
 
 def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
     """
