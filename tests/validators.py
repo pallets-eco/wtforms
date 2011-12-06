@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from unittest import TestCase
-from wtforms.validators import StopValidation, ValidationError, email, equal_to, ip_address, length, required, optional, regexp, url, NumberRange, AnyOf, NoneOf
+from wtforms.validators import StopValidation, ValidationError, email, equal_to
+from wtforms.validators import ip_address, length, required, optional, regexp
+from wtforms.validators import url, NumberRange, AnyOf, NoneOf, mac_address, UUID
 
 class DummyTranslations(object):
     def gettext(self, string):
@@ -64,6 +66,30 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('abc.0.0.1'))
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('1278.0.0.1'))
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('127.0.0.abc'))
+
+    def test_mac_address(self):
+        self.assertEqual(mac_address()(self.form, 
+                                       DummyField('01:23:45:67:ab:CD')), None)
+        self.assertRaises(ValidationError, mac_address(), self.form, 
+                          DummyField('00:00:00:00:00'))
+        self.assertRaises(ValidationError, mac_address(), self.form, 
+                          DummyField('01:23:45:67:89:'))
+        self.assertRaises(ValidationError, mac_address(), self.form, 
+                          DummyField('01:23:45:67:89:gh'))
+        self.assertRaises(ValidationError, mac_address(), self.form, 
+                          DummyField('123:23:45:67:89:00'))
+
+    def test_uuid(self):
+        self.assertEqual(UUID()(self.form, DummyField(
+                    '2bc1c94f-0deb-43e9-92a1-4775189ec9f8')), None)
+        self.assertRaises(ValidationError, UUID(), self.form, 
+                          DummyField('2bc1c94f-deb-43e9-92a1-4775189ec9f8'))
+        self.assertRaises(ValidationError, UUID(), self.form, 
+                          DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f'))
+        self.assertRaises(ValidationError, UUID(), self.form, 
+                          DummyField('gbc1c94f-0deb-43e9-92a1-4775189ec9f8'))
+        self.assertRaises(ValidationError, UUID(), self.form, 
+                          DummyField('2bc1c94f 0deb-43e9-92a1-4775189ec9f8'))
 
     def test_length(self):
         field = DummyField('foobar')
