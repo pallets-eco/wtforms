@@ -5,7 +5,7 @@ __all__ = (
     'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
     'Length', 'length', 'NumberRange', 'number_range', 'Optional', 'optional',
     'Required', 'required', 'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
-    'any_of', 'NoneOf', 'none_of', 'MacAddress', 'UUID'
+    'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID'
 )
 
 
@@ -239,7 +239,7 @@ class IPAddress(Regexp):
 
 class MacAddress(Regexp):
     """
-    Validates a Mac address.
+    Validates a MAC address.
 
     :param message:
         Error message to raise in case of a validation error.

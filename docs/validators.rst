@@ -33,6 +33,8 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.Length
 
+.. autoclass:: wtforms.validators.MacAddress
+
 .. autoclass:: wtforms.validators.NumberRange
 
 .. autoclass:: wtforms.validators.Optional
@@ -48,6 +50,8 @@ Built-in validators
 .. autoclass:: wtforms.validators.Regexp
 
 .. autoclass:: wtforms.validators.URL
+
+.. autoclass:: wtforms.validators.UUID
 
 .. autoclass:: wtforms.validators.AnyOf
 
