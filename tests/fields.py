@@ -96,19 +96,37 @@ class FlagsTest(TestCase):
 
 class FiltersTest(TestCase):
     class F(Form):
-        a = TextField(default=' hello', filters=[lambda x: x.strip()])
+        a = TextField(default=u' hello', filters=[lambda x: x.strip()])
+        b = TextField(default=u'42', filters=[lambda x: int(x)])
 
-    def test(self):
-        self.assertEqual(self.F().a.data, 'hello')
-        self.assertEqual(self.F(DummyPostData(a=['  foo bar  '])).a.data, 'foo bar')
+    def test_working(self):
+        form = self.F()
+        self.assertEqual(form.a.data, u'hello')
+        self.assertEqual(form.b.data, 42)
+        assert form.validate()
+
+    def test_failure(self):
+        form = self.F(DummyPostData(a=[u'  foo bar  '], b=[u'hi']))
+        self.assertEqual(form.a.data, u'foo bar')
+        self.assertEqual(form.b.data, u'hi')
+        self.assertEqual(len(form.b.process_errors), 1)
+        assert not form.validate()
 
 
 class FieldTest(TestCase):
     class F(Form):
-        a = TextField(default='hello')
+        a = TextField(default=u'hello')
 
     def setUp(self):
         self.field = self.F().a 
+
+    def test_unbound_field(self):
+        unbound = self.F.a
+        assert unbound.creation_counter != 0
+        assert unbound.field_class is TextField
+        self.assertEqual(unbound.args, ())
+        self.assertEqual(unbound.kwargs, {'default': u'hello'})
+        assert repr(unbound).startswith(u'<UnboundField(TextField')
 
     def test_htmlstring(self):
         self.assert_(isinstance(self.field.__html__(), widgets.HTMLString))
@@ -417,13 +435,21 @@ class DateFieldTest(TestCase):
         a = DateField()
         b = DateField(format='%m/%d %Y')
 
-    def test(self):
+    def test_basic(self):
         d = date(2008, 5, 7)
         form = self.F(DummyPostData(a=['2008-05-07'], b=['05/07', '2008']))
         self.assertEqual(form.a.data, d)
         self.assertEqual(form.a._value(), '2008-05-07')
         self.assertEqual(form.b.data, d)
         self.assertEqual(form.b._value(), '05/07 2008')
+
+    def test_failure(self):
+        form = self.F(DummyPostData(a=['2008-bb-cc'], b=['hi']))
+        assert not form.validate()
+        self.assertEqual(len(form.a.process_errors), 1)
+        self.assertEqual(len(form.a.errors), 1)
+        self.assertEqual(len(form.b.errors), 1)
+        assert u'not match format' in form.a.process_errors[0]
 
 
 class DateTimeFieldTest(TestCase):
@@ -441,7 +467,7 @@ class DateTimeFieldTest(TestCase):
         self.assert_(form.validate())
         form = self.F(DummyPostData(a=['2008-05-05']))
         self.assert_(not form.validate())
-        self.assert_("not match format" in form.a.errors[0])
+        self.assert_(u'not match format' in form.a.errors[0])
 
     def test_microseconds(self):
         if PYTHON_VERSION < (2, 6, 0):
