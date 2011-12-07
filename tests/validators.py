@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 from unittest import TestCase
-from wtforms.validators import StopValidation, ValidationError, email, equal_to
-from wtforms.validators import ip_address, length, required, optional, regexp
-from wtforms.validators import url, NumberRange, AnyOf, NoneOf, mac_address, UUID
+from wtforms.validators import (
+    StopValidation, ValidationError, email, equal_to,
+    ip_address, length, required, optional, regexp,
+    url, NumberRange, AnyOf, NoneOf, mac_address, UUID
+)
+from functools import partial
 
 class DummyTranslations(object):
     def gettext(self, string):
@@ -70,14 +73,17 @@ class ValidatorsTest(TestCase):
     def test_mac_address(self):
         self.assertEqual(mac_address()(self.form, 
                                        DummyField('01:23:45:67:ab:CD')), None)
-        self.assertRaises(ValidationError, mac_address(), self.form, 
-                          DummyField('00:00:00:00:00'))
-        self.assertRaises(ValidationError, mac_address(), self.form, 
-                          DummyField('01:23:45:67:89:'))
-        self.assertRaises(ValidationError, mac_address(), self.form, 
-                          DummyField('01:23:45:67:89:gh'))
-        self.assertRaises(ValidationError, mac_address(), self.form, 
-                          DummyField('123:23:45:67:89:00'))
+
+        check_fail = partial(
+            self.assertRaises, ValidationError, 
+            mac_address(), self.form
+        )
+
+        check_fail(DummyField('00:00:00:00:00'))
+        check_fail(DummyField('01:23:45:67:89:'))
+        check_fail(DummyField('01:23:45:67:89:gh'))
+        check_fail(DummyField('123:23:45:67:89:00'))
+
 
     def test_uuid(self):
         self.assertEqual(UUID()(self.form, DummyField(

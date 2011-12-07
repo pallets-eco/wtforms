@@ -245,9 +245,8 @@ class MacAddress(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-
-        super(MacAddress, self).__init__(
-            r'^(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$', message=message)
+        pattern = r'^(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$'
+        super(MacAddress, self).__init__(pattern, message=message)
 
     def __call__(self, form, field):
         if self.message is None:
@@ -289,9 +288,8 @@ class UUID(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-
-        super(UUID, self).__init__(
-            r'^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$', message=message)
+        pattern = r'^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$'
+        super(UUID, self).__init__(pattern, message=message)
 
     def __call__(self, form, field):
         if self.message is None:
