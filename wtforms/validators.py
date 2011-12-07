@@ -5,7 +5,7 @@ __all__ = (
     'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
     'Length', 'length', 'NumberRange', 'number_range', 'Optional', 'optional',
     'Required', 'required', 'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
-    'any_of', 'NoneOf', 'none_of'
+    'any_of', 'NoneOf', 'none_of', 'MacAddress', 'UUID'
 )
 
 
@@ -237,6 +237,25 @@ class IPAddress(Regexp):
         super(IPAddress, self).__call__(form, field)
 
 
+class MacAddress(Regexp):
+    """
+    Validates a Mac address.
+
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, message=None):
+
+        super(MacAddress, self).__init__(
+            r'^(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$', message=message)
+
+    def __call__(self, form, field):
+        if self.message is None:
+            self.message = field.gettext(u'Invalid Mac address.')
+
+        super(MacAddress, self).__call__(form, field)
+
+
 class URL(Regexp):
     """
     Simple regexp based url validation. Much like the email validator, you
@@ -260,6 +279,25 @@ class URL(Regexp):
             self.message = field.gettext(u'Invalid URL.')
 
         super(URL, self).__call__(form, field)
+
+
+class UUID(Regexp):
+    """
+    Validates a UUID.
+
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, message=None):
+
+        super(UUID, self).__init__(
+            r'^[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$', message=message)
+
+    def __call__(self, form, field):
+        if self.message is None:
+            self.message = field.gettext(u'Invalid UUID.')
+
+        super(UUID, self).__call__(form, field)
 
 
 class AnyOf(object):
@@ -319,6 +357,7 @@ class NoneOf(object):
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
+mac_address = MacAddress
 length = Length
 number_range = NumberRange
 optional = Optional
