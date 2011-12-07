@@ -208,11 +208,16 @@ keyword arguments. For example::
 While you almost never use all three methods together in practice, it
 illustrates how WTForms looks up the `username` field:
 
-1. Check if `request.POST` has a `username` key.
-2. Check if `user` has an attribute named `username`.
-3. Check if a keyword argument named `username` was provided.
-4. Finally, if everything else fails, use the default value provided by the
-   field, if any.
+1. If a form was submitted (request.POST is not empty), process the form
+   input. Even if there was no form input for this field in particular, if
+   there exists form input of any sort, then we will process the form input.
+
+2. If there was no form input, then try the following in order:
+
+   1. Check if `user` has an attribute named `username`.
+   2. Check if a keyword argument named `username` was provided.
+   3. Finally, if everything else fails, use the default value provided by the
+      field, if any.
 
 
 Validators
