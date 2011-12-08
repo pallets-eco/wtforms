@@ -197,13 +197,25 @@ class ModelConverter(ModelConverterBase):
         field_args['validators'].append(validators.IPAddress())
         return f.TextField(**field_args)
 
-    @converts('MANYTOMANY', 'ONETOMANY')
-    def conv_ManyToMany(self, field_args, **extra):
-        return QuerySelectMultipleField(**field_args)
+    @converts('dialects.postgresql.base.MACADDR')
+    def conv_PGMacaddr(self, field_args, **extra):
+        field_args.setdefault('label', u'MAC Address')
+        field_args['validators'].append(validators.MacAddress())
+        return f.TextField(**field_args)
+
+    @converts('dialects.postgresql.base.UUID')
+    def conv_PGUuid(self, field_args, **extra):
+        field_args.setdefault('label', u'UUID')
+        field_args['validators'].append(validators.UUID())
+        return f.TextField(**field_args)
 
     @converts('MANYTOONE')
     def conv_ManyToOne(self, field_args, **extra):
         return QuerySelectField(**field_args)
+
+    @converts('MANYTOMANY', 'ONETOMANY')
+    def conv_ManyToMany(self, field_args, **extra):
+        return QuerySelectMultipleField(**field_args)
 
 
 def model_fields(model, db_session, only=None, exclude=None, field_args=None,

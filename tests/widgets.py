@@ -14,6 +14,7 @@ class DummyField(object):
 
     _value       = lambda x: x.data
     __unicode__  = lambda x: x.data
+    __str__      = lambda x: x.data
     __call__     = lambda x, **k: x.data
     __iter__     = lambda x: iter(x.data)
     iter_choices = lambda x: iter(x.data)

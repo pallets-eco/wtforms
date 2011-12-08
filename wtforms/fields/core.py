@@ -9,9 +9,8 @@ from wtforms.validators import StopValidation
 
 __all__ = (
     'BooleanField', 'DecimalField', 'DateField', 'DateTimeField', 'FieldList',
-    'FileField', 'FloatField', 'FormField', 'HiddenField', 'IntegerField',
-    'PasswordField', 'RadioField', 'SelectField', 'SelectMultipleField',
-    'SubmitField', 'TextField', 'TextAreaField',
+    'FloatField', 'FormField', 'IntegerField', 'RadioField', 'SelectField',
+    'SelectMultipleField', 'StringField',
 )
 
 
@@ -458,7 +457,7 @@ class RadioField(SelectField):
     option_widget = widgets.RadioInput()
 
 
-class TextField(Field):
+class StringField(Field):
     """
     This field is the base for most of the more complicated fields, and
     represents an ``<input type="text">``.
@@ -475,43 +474,13 @@ class TextField(Field):
         return self.data is not None and unicode(self.data) or u''
 
 
-class HiddenField(TextField):
-    """
-    Represents an ``<input type="hidden">``.
-    """
-    widget = widgets.HiddenInput()
-
-
-class TextAreaField(TextField):
-    """
-    This field represents an HTML ``<textarea>`` and can be used to take
-    multi-line input.
-    """
-    widget = widgets.TextArea()
-
-
-class PasswordField(TextField):
-    """
-    Represents an ``<input type="password">``.
-    """
-    widget = widgets.PasswordInput()
-
-
-class FileField(TextField):
-    """
-    Can render a file-upload field.  Will take any passed filename value, if
-    any is sent by the browser in the post params.  This field will NOT
-    actually handle the file upload portion, as wtforms does not deal with
-    individual frameworks' file handling capabilities.
-    """
-    widget = widgets.FileInput()
-
-
-class IntegerField(TextField):
+class IntegerField(Field):
     """
     A text field, except all input is coerced to an integer.  Erroneous input
     is ignored and will not be accepted as a value.
     """
+    widget = widgets.TextInput()
+
     def __init__(self, label=None, validators=None, **kwargs):
         super(IntegerField, self).__init__(label, validators, **kwargs)
 
@@ -531,7 +500,7 @@ class IntegerField(TextField):
                 raise ValueError(self.gettext(u'Not a valid integer value'))
 
 
-class DecimalField(TextField):
+class DecimalField(Field):
     """
     A text field which displays and coerces data of the `decimal.Decimal` type.
 
@@ -543,6 +512,7 @@ class DecimalField(TextField):
         `decimal.ROUND_UP`. If unset, uses the rounding value from the
         current thread's context.
     """
+    widget = widgets.TextInput()
 
     def __init__(self, label=None, validators=None, places=2, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
@@ -576,11 +546,13 @@ class DecimalField(TextField):
                 raise ValueError(self.gettext(u'Not a valid decimal value'))
 
 
-class FloatField(TextField):
+class FloatField(Field):
     """
     A text field, except all input is coerced to an float.  Erroneous input
     is ignored and will not be accepted as a value.
     """
+    widget = widgets.TextInput()
+
     def __init__(self, label=None, validators=None, **kwargs):
         super(FloatField, self).__init__(label, validators, **kwargs)
 
@@ -666,14 +638,6 @@ class DateField(DateTimeField):
             except ValueError:
                 self.data = None
                 raise
-
-
-class SubmitField(BooleanField):
-    """
-    Represents an ``<input type="submit">``.  This allows checking if a given
-    submit button has been pressed.
-    """
-    widget = widgets.SubmitInput()
 
 
 class FormField(Field):

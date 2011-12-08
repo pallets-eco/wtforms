@@ -66,10 +66,10 @@ you should have no unicode issues.
 What versions of Python are supported?
 --------------------------------------
 
-WTForms supports Python versions 2.4 and up. Presently, Python 3.x is not
-supported, as we are waiting for library support by the major frameworks. As
-soon as we have something we can test/deploy on we will consider making the
-provisions to support WTForms for Python 3.x.
+WTForms supports Python versions 2.5 and up. Presently (as of December 2011),
+Python 3.x is not officially supported, but the development version has made
+headway on this. We expect the upcoming 1.0 release to fully support Python 3
+using the '2to3' tool.
 
 
 How can I contribute to WTForms?

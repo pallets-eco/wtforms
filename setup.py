@@ -1,12 +1,25 @@
 import os, sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from distutils.core import setup
-import wtforms
+extra = {}
+
+try:
+    from setuptools import setup
+    has_setuptools = True
+    extra['test_suite'] = 'tests.runtests'
+except ImportError:
+    from distutils.core import setup
+    has_setuptools = False
+
+if sys.version_info >= (3, ):
+    if not has_setuptools:
+        raise Exception('Python3 support in WTForms requires distribute.')
+    extra['use_2to3'] = True
+    extra['use_2to3_exclude_fixers'] = ['lib2to3.fixes.filter']
 
 setup(
     name='WTForms',
-    version=wtforms.__version__,
+    version='0.6.4dev',
     url='http://wtforms.simplecodes.com/',
     license='BSD',
     author='Thomas Johansson, James Crasta',
@@ -28,9 +41,11 @@ setup(
         'wtforms.widgets',
         'wtforms.ext',
         'wtforms.ext.appengine',
+        'wtforms.ext.csrf',
         'wtforms.ext.dateutil',
         'wtforms.ext.django',
         'wtforms.ext.django.templatetags',
         'wtforms.ext.sqlalchemy',
-    ]
+    ],
+    **extra
 )
