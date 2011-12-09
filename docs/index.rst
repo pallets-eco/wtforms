@@ -5,7 +5,7 @@ WTForms Documentation
 
 This is the documentation for WTForms |release|, generated |today|.
 
-For a quick introduction, as well as download/installation instructions, check out the :ref:`crash-course`.
+For a quick introduction, as well as download/installation instructions, check out the :doc:`crash_course`.
 
 **API**
 
