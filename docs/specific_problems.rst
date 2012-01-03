@@ -85,6 +85,8 @@ For more form composition tricks, refer to `this mailing list post`_
 .. _this mailing list post: http://groups.google.com/group/wtforms/browse_thread/thread/7099776aacd989e0/772807dfb4b9635b?#772807dfb4b9635b
 
 
+.. _jinja-macros-example:
+
 Rendering Errors
 ----------------
 
@@ -98,7 +100,7 @@ of rendering errors for a form field. Here's a Jinja2_ macro that may save you t
         {% if field.errors %}
             {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
             {{ field(class=css_class, **kwargs) }}
-            <ul class="errors">{% for error in errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+            <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
         {% else %}
             {{ field(**kwargs) }}
         {% endif %}

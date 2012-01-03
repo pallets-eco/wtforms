@@ -260,7 +260,7 @@ class TestFields(TestCase):
 
     def test_geopt_property(self):
         form = self.GeoTestForm(DummyPostData(geo='5.0, -7.0'))
-        self.assert_(form.validate())
+        self.assertTrue(form.validate())
         self.assertEquals(form.geo.data, u('5.0,-7.0'))
         form = self.GeoTestForm(DummyPostData(geo='5.0,-f'))
-        self.assert_(not form.validate())
+        self.assertTrue(not form.validate())

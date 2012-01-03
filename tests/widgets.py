@@ -4,6 +4,7 @@ from wtforms.widgets import html_params, Input
 from wtforms.widgets import *
 from wtforms.validators import u
 
+
 class DummyField(object):
     def __init__(self, data, name='f', label='', id='', type='TextField'):
         self.data = data
@@ -14,6 +15,7 @@ class DummyField(object):
 
     _value       = lambda x: x.data
     __unicode__  = lambda x: x.data
+    __str__      = lambda x: x.data
     __call__     = lambda x, **k: x.data
     __iter__     = lambda x: iter(x.data)
     iter_choices = lambda x: iter(x.data)
@@ -64,24 +66,24 @@ class BasicWidgetsTest(TestCase):
 
     def test_html_marking(self):
         html = TextInput()(self.field)
-        self.assert_(hasattr(html, '__html__'))
-        self.assert_(html.__html__() is html)
+        self.assertTrue(hasattr(html, '__html__'))
+        self.assertTrue(html.__html__() is html)
 
     def test_text_input(self):
-        self.assertEqual(TextInput()(self.field), u('<input id="id" name="bar" type="text" value="foo" />'))
+        self.assertEqual(TextInput()(self.field), u('<input id="id" name="bar" type="text" value="foo">'))
 
     def test_password_input(self):
-        self.assert_(u('type="password"') in PasswordInput()(self.field))
-        self.assert_(u('value=""') in PasswordInput()(self.field))
-        self.assert_(u('value="foo"') in PasswordInput(hide_value=False)(self.field))
+        self.assertTrue(u('type="password"') in PasswordInput()(self.field))
+        self.assertTrue(u('value=""') in PasswordInput()(self.field))
+        self.assertTrue(u('value="foo"') in PasswordInput(hide_value=False)(self.field))
 
     def test_hidden_input(self):
-        self.assert_(u('type="hidden"') in HiddenInput()(self.field))
+        self.assertTrue(u('type="hidden"') in HiddenInput()(self.field))
 
     def test_checkbox_input(self):
-        self.assertEqual(CheckboxInput()(self.field, value='v'), '<input checked="checked" id="id" name="bar" type="checkbox" value="v" />')
+        self.assertEqual(CheckboxInput()(self.field, value='v'), '<input checked id="id" name="bar" type="checkbox" value="v">')
         field2 = DummyField(False)
-        self.assert_(u('checked') not in CheckboxInput()(field2))
+        self.assertTrue(u('checked') not in CheckboxInput()(field2))
 
     def test_radio_input(self):
         pass # TODO
@@ -97,9 +99,9 @@ class SelectTest(TestCase):
 
     def test(self):
         self.assertEqual(Select()(self.field), 
-            u('<select id="" name="f"><option selected="selected" value="foo">lfoo</option><option value="bar">lbar</option></select>'))
+            u('<select id="" name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>'))
         self.assertEqual(Select(multiple=True)(self.field), 
-            '<select id="" multiple="multiple" name="f"><option selected="selected" value="foo">lfoo</option><option value="bar">lbar</option></select>')
+            '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>')
 
 if __name__ == '__main__':
     from unittest import main

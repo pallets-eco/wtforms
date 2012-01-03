@@ -10,9 +10,8 @@ from wtforms.validators import StopValidation, u, unicode, next
 
 __all__ = (
     'BooleanField', 'DecimalField', 'DateField', 'DateTimeField', 'FieldList',
-    'FileField', 'FloatField', 'FormField', 'HiddenField', 'IntegerField',
-    'PasswordField', 'RadioField', 'SelectField', 'SelectMultipleField',
-    'SubmitField', 'TextField', 'TextAreaField',
+    'FloatField', 'FormField', 'IntegerField', 'RadioField', 'SelectField',
+    'SelectMultipleField', 'StringField',
 )
 
 
@@ -34,9 +33,11 @@ class Field(object):
     """
     Field base class
     """
-    widget = None
     errors = tuple()
     process_errors = tuple()
+    raw_data = None
+    validators = tuple()
+    widget = None
     _formfield = True
     _translations = DummyTranslations()
 
@@ -46,15 +47,14 @@ class Field(object):
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=u(''), validators=None, filters=tuple(),
+    def __init__(self, label=None, validators=None, filters=tuple(),
                  description=u(''), id=None, default=None, widget=None,
                  _form=None, _name=None, _prefix='', _translations=None):
         """
         Construct a new field.
 
         :param label:
-            The label of the field. Available after construction through the
-            `label` property.
+            The label of the field.
         :param validators:
             A sequence of validators to call when `validate` is called.
         :param filters:
@@ -83,24 +83,25 @@ class Field(object):
         returned instead. Call its :func:`bind` method with a form instance and
         a name to construct the field.
         """
-        self.short_name = _name
-        self.name = _prefix + _name
         if _translations is not None:
             self._translations = _translations
-        self.id = id or self.name
-        self.label = Label(self.id, label or _name.replace('_', ' ').title())
-        if validators is None:
-            validators = []
-        self.validators = validators
-        self.filters = filters
-        self.description = description
-        self.type = type(self).__name__
+
         self.default = default
-        self.raw_data = None
-        if widget:
-            self.widget = widget
+        self.description = description
+        self.filters = filters
         self.flags = Flags()
-        for v in validators:
+        self.name = _prefix + _name
+        self.short_name = _name
+        self.type = type(self).__name__
+        self.validators = validators or list(self.validators)
+
+        self.id = id or self.name
+        self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
+
+        if widget is not None:
+            self.widget = widget
+
+        for v in self.validators:
             flags = getattr(v, 'field_flags', ())
             for f in flags:
                 setattr(self.flags, f, True)
@@ -313,6 +314,8 @@ class Flags(object):
     Accessing a non-existing attribute returns False for its value.
     """
     def __getattr__(self, name):
+        if name.startswith('_'):
+            return super(Flags, self).__getattr__(name)
         return False
 
     def __contains__(self, name):
@@ -358,7 +361,7 @@ class SelectFieldBase(Field):
     This isn't a field, but an abstract base class for fields which want to
     provide this functionality.
     """
-    def __init__(self, label=u(''), validators=None, option_widget=None, **kwargs):
+    def __init__(self, label=None, validators=None, option_widget=None, **kwargs):
         super(SelectFieldBase, self).__init__(label, validators, **kwargs)
 
         if option_widget is not None:
@@ -389,7 +392,7 @@ class SelectFieldBase(Field):
 class SelectField(SelectFieldBase):
     widget = widgets.Select()
 
-    def __init__(self, label=u(''), validators=None, coerce=unicode, choices=None, **kwargs):
+    def __init__(self, label=None, validators=None, coerce=unicode, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = choices
@@ -463,7 +466,7 @@ class RadioField(SelectField):
     option_widget = widgets.RadioInput()
 
 
-class TextField(Field):
+class StringField(Field):
     """
     This field is the base for most of the more complicated fields, and
     represents an ``<input type="text">``.
@@ -480,44 +483,14 @@ class TextField(Field):
         return self.data is not None and unicode(self.data) or u('')
 
 
-class HiddenField(TextField):
-    """
-    Represents an ``<input type="hidden">``.
-    """
-    widget = widgets.HiddenInput()
-
-
-class TextAreaField(TextField):
-    """
-    This field represents an HTML ``<textarea>`` and can be used to take
-    multi-line input.
-    """
-    widget = widgets.TextArea()
-
-
-class PasswordField(TextField):
-    """
-    Represents an ``<input type="password">``.
-    """
-    widget = widgets.PasswordInput()
-
-
-class FileField(TextField):
-    """
-    Can render a file-upload field.  Will take any passed filename value, if
-    any is sent by the browser in the post params.  This field will NOT
-    actually handle the file upload portion, as wtforms does not deal with
-    individual frameworks' file handling capabilities.
-    """
-    widget = widgets.FileInput()
-
-
-class IntegerField(TextField):
+class IntegerField(Field):
     """
     A text field, except all input is coerced to an integer.  Erroneous input
     is ignored and will not be accepted as a value.
     """
-    def __init__(self, label=u(''), validators=None, **kwargs):
+    widget = widgets.TextInput()
+
+    def __init__(self, label=None, validators=None, **kwargs):
         super(IntegerField, self).__init__(label, validators, **kwargs)
 
     def _value(self):
@@ -536,7 +509,7 @@ class IntegerField(TextField):
                 raise ValueError(self.gettext(u('Not a valid integer value')))
 
 
-class DecimalField(TextField):
+class DecimalField(Field):
     """
     A text field which displays and coerces data of the `decimal.Decimal` type.
 
@@ -548,8 +521,9 @@ class DecimalField(TextField):
         `decimal.ROUND_UP`. If unset, uses the rounding value from the
         current thread's context.
     """
+    widget = widgets.TextInput()
 
-    def __init__(self, label=u(''), validators=None, places=2, rounding=None, **kwargs):
+    def __init__(self, label=None, validators=None, places=2, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
         self.places = places
         self.rounding = rounding
@@ -581,12 +555,14 @@ class DecimalField(TextField):
                 raise ValueError(self.gettext(u('Not a valid decimal value')))
 
 
-class FloatField(TextField):
+class FloatField(Field):
     """
     A text field, except all input is coerced to an float.  Erroneous input
     is ignored and will not be accepted as a value.
     """
-    def __init__(self, label=u(''), validators=None, **kwargs):
+    widget = widgets.TextInput()
+
+    def __init__(self, label=None, validators=None, **kwargs):
         super(FloatField, self).__init__(label, validators, **kwargs)
 
     def _value(self):
@@ -611,13 +587,16 @@ class BooleanField(Field):
     """
     widget = widgets.CheckboxInput()
 
-    def __init__(self, label=u(''), validators=None, **kwargs):
+    def __init__(self, label=None, validators=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
 
     def process_data(self, value):
         self.data = bool(value)
 
     def process_formdata(self, valuelist):
+        # Checkboxes and submit buttons simply do not send a value when
+        # unchecked/not pressed. So the actual value="" doesn't matter for
+        # purpose of determining .data, only whether one exists or not.
         self.data = bool(valuelist)
 
     def _value(self):
@@ -633,7 +612,7 @@ class DateTimeField(Field):
     """
     widget = widgets.TextInput()
 
-    def __init__(self, label=u(''), validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
+    def __init__(self, label=None, validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
 
@@ -647,8 +626,7 @@ class DateTimeField(Field):
         if valuelist:
             date_str = u(' ').join(valuelist)
             try:
-                timetuple = time.strptime(date_str, self.format)
-                self.data = datetime.datetime(*timetuple[:6])
+                self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
                 raise
@@ -658,26 +636,17 @@ class DateField(DateTimeField):
     """
     Same as DateTimeField, except stores a `datetime.date`.
     """
-    def __init__(self, label=u(''), validators=None, format='%Y-%m-%d', **kwargs):
+    def __init__(self, label=None, validators=None, format='%Y-%m-%d', **kwargs):
         super(DateField, self).__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
         if valuelist:
             date_str = u(' ').join(valuelist)
             try:
-                timetuple = time.strptime(date_str, self.format)
-                self.data = datetime.date(*timetuple[:3])
+                self.data = datetime.datetime.strptime(date_str, self.format).date()
             except ValueError:
                 self.data = None
                 raise
-
-
-class SubmitField(BooleanField):
-    """
-    Represents an ``<input type="submit">``.  This allows checking if a given
-    submit button has been pressed.
-    """
-    widget = widgets.SubmitInput()
 
 
 class FormField(Field):
@@ -692,7 +661,7 @@ class FormField(Field):
     """
     widget = widgets.TableWidget()
 
-    def __init__(self, form_class, label=u(''), validators=None, separator='-', **kwargs):
+    def __init__(self, form_class, label=None, validators=None, separator='-', **kwargs):
         super(FormField, self).__init__(label, validators, **kwargs)
         self.form_class = form_class
         self.separator = separator
@@ -769,7 +738,7 @@ class FieldList(Field):
     """
     widget=widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=u(''), validators=None, min_entries=0,
+    def __init__(self, unbound_field, label=None, validators=None, min_entries=0,
                  max_entries=None, default=tuple(), **kwargs):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:

@@ -36,14 +36,14 @@ class BaseFormTest(TestCase):
 
     def test_contains(self):
         form = self.get_form()
-        self.assert_('test' in form)
-        self.assert_('abcd' not in form)
+        self.assertTrue('test' in form)
+        self.assertTrue('abcd' not in form)
 
     def test_field_removal(self):
         form = self.get_form()
         del form['test']
         self.assertRaises(AttributeError, getattr, form, 'test')
-        self.assert_('test' not in form)
+        self.assertTrue('test' not in form)
 
     def test_field_adding(self):
         form = self.get_form()
@@ -53,7 +53,7 @@ class BaseFormTest(TestCase):
         form.process(DummyPostData(foo=[u('hello')]))
         self.assertEqual(form['foo'].data, u('hello'))
         form['test'] = IntegerField()
-        self.assert_(isinstance(form['test'], IntegerField))
+        self.assertTrue(isinstance(form['test'], IntegerField))
         self.assertEqual(len(list(form)), 2)
         self.assertRaises(AttributeError, getattr, form['test'], 'data')
         form.process(DummyPostData(test=[u('1')]))
@@ -110,8 +110,8 @@ class FormMetaTest(TestCase):
             b = TextField()
             c = TextField()
         A(); B()
-        self.assert_(A.a is B.a)
-        self.assert_(A.c is not B.c)
+        self.assertTrue(A.a is B.a)
+        self.assertTrue(A.c is not B.c)
         self.assertEqual(A._unbound_fields, [('a', A.a), ('c', A.c)])
         self.assertEqual(B._unbound_fields, [('a', B.a), ('b', B.b), ('c', B.c)])
 
@@ -136,7 +136,7 @@ class FormTest(TestCase):
     def test_field_removal(self):
         form = self.F()
         del form.test
-        self.assert_('test' not in form)
+        self.assertTrue('test' not in form)
         self.assertEqual(form.test, None)
         self.assertEqual(len(list(form)), 0)
         # Try deleting a nonexistent field

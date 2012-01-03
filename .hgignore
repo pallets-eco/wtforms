@@ -4,6 +4,7 @@ syntax: regexp
 \..*\.swp$
 \.eprj$
 \.coverage$
+\.DS_Store$
 ^build/
 ^docs/_build
 ^docs/html

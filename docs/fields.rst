@@ -476,3 +476,37 @@ Most importantly, you should not use dictionary-style access to work with your
 formdata wrapper, because the behavior of this is highly variant on the
 wrapper: some return the first item, others return the last, and some may
 return a list.
+
+
+Additional Helper Classes
+-------------------------
+
+.. autoclass:: Flags
+
+    Usage::
+
+        >>> flags = Flags()
+        >>> flags.required = True
+        >>> 'required' in flags
+        True
+        >>> 'nonexistent' in flags
+        False
+        >>> flags.fake
+        False
+
+
+.. class:: Label
+
+    On all fields, the `label` property is an instance of this class.
+    Labels can be printed to yield a
+    ``<label for="field_id">Label Text</label>``
+    HTML tag enclosure. Similar to fields, you can also call the label with
+    additional html params.
+
+    .. attribute:: field_id
+
+        The ID of the field which this label will reference.
+
+    .. attribute:: text
+
+        The original label text passed to the field's constructor.

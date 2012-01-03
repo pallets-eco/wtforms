@@ -1,11 +1,11 @@
+.. _doc-index:
+
 WTForms Documentation
 =====================
 
-This is the documentation for WTForms |version|, generated |today|.
+This is the documentation for WTForms |release|, generated |today|.
 
-For a quick introduction, check the `WTForms website`_.
-
-.. _WTForms website: http://wtforms.simplecodes.com/
+For a quick introduction, as well as download/installation instructions, check out the :doc:`crash_course`.
 
 **API**
 
@@ -25,6 +25,7 @@ For a quick introduction, check the `WTForms website`_.
 
    faq
    specific_problems
+   crash_course
 
 **Indices and tables:**
 

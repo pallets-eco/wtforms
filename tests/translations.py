@@ -31,7 +31,7 @@ class DummyTranslationsTest(TestCase):
 
     def test_gettext(self):
         x = u("foo")
-        self.assert_(self.a.gettext(x) is x)
+        self.assertTrue(self.a.gettext(x) is x)
 
     def test_ngettext(self):
         getit = lambda n: self.a.ngettext(u("antelope"), u("antelopes"), n)
@@ -47,5 +47,5 @@ class TranslationsTest(TestCase):
 
     def test_validator_translation(self):
         form = self.F(a='hellobye')
-        self.assert_(not form.validate())
+        self.assertTrue(not form.validate())
         self.assertEquals(form.a.errors[0], u('field cannot be longer than 5 characters.'))

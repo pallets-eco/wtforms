@@ -54,25 +54,25 @@ class WebobWrapperTest(TestCase):
 
     def test_automatic_wrapping(self):
         def _check(formdata):
-            self.assert_(isinstance(formdata, WebobInputWrapper))
+            self.assertTrue(isinstance(formdata, WebobInputWrapper))
 
         form = BaseForm({'a': SneakyField(_check)})
         form.process(self.filled_mdict)
 
     def test_empty(self):
         formdata = WebobInputWrapper(self.empty_mdict)
-        self.assert_(not formdata)
+        self.assertTrue(not formdata)
         self.assertEqual(len(formdata), 0)
         self.assertEqual(list(formdata), [])
         self.assertEqual(formdata.getlist('fake'), [])
 
     def test_filled(self):
         formdata = WebobInputWrapper(self.filled_mdict)
-        self.assert_(formdata)
+        self.assertTrue(formdata)
         self.assertEqual(len(formdata), 3)
         self.assertEqual(list(formdata), ['a','b','a'])
-        self.assert_('b' in formdata)
-        self.assert_('fake' not in formdata)
+        self.assertTrue('b' in formdata)
+        self.assertTrue('fake' not in formdata)
         self.assertEqual(formdata.getlist('a'), ['Apple', 'Cherry'])
         self.assertEqual(formdata.getlist('b'), ['Banana'])
         self.assertEqual(formdata.getlist('fake'), [])

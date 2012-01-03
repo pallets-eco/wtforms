@@ -71,6 +71,8 @@ The Form class
 
     .. automethod:: __contains__
 
+    .. automethod:: _get_translations
+
 Defining Forms
 --------------
 
