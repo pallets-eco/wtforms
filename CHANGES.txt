@@ -10,11 +10,14 @@ Not yet released
 
 - Substantial code reorg, cleanup, and test improvements
 
-- Added ext.csrf for a way to implement CSRF protection 
+- Added ext.csrf for a way to implement CSRF protection
 
 - ext.sqlalchemy:
   * Support PGInet, MACADDR, and UUID field conversion
   * Support callable defaults
+
+- Add localization support for WTForms built-in messages
+
 
 Version 0.6.3
 -------------
