@@ -52,7 +52,7 @@ class ModelConverterBase(object):
 
         self.converters = converters
 
-    def convert(self, model, db_session, mapper, prop, field_args):
+    def convert(self, model, mapper, prop, field_args, db_session=None):
         if not isinstance(prop, sqlalchemy.orm.properties.ColumnProperty) and \
                 not isinstance(prop,
                 sqlalchemy.orm.properties.RelationshipProperty):
@@ -93,7 +93,7 @@ class ModelConverterBase(object):
             else:
                 kwargs['validators'].append(validators.Required())
 
-            if column.unique:
+            if db_session and column.unique:
                 kwargs['validators'].append(Unique(lambda: db_session, model,
                     column))
 
@@ -119,7 +119,7 @@ class ModelConverterBase(object):
                 else:
                     return
 
-        if isinstance(prop, sqlalchemy.orm.properties.RelationshipProperty):
+        if db_session and isinstance(prop, sqlalchemy.orm.properties.RelationshipProperty):
             foreign_model = prop.mapper.class_
 
             nullable = True
@@ -218,8 +218,8 @@ class ModelConverter(ModelConverterBase):
         return QuerySelectMultipleField(**field_args)
 
 
-def model_fields(model, db_session, only=None, exclude=None, field_args=None,
-    converter=None):
+def model_fields(model, db_session=None, only=None, exclude=None,
+    field_args=None, converter=None):
     """
     Generate a dictionary of fields for a given SQLAlchemy model.
 
@@ -248,9 +248,9 @@ def model_fields(model, db_session, only=None, exclude=None, field_args=None,
     return field_dict
 
 
-def model_form(model, db_session, base_class=Form, only=None, exclude=None,
-    field_args=None, converter=None, exclude_pk=True, exclude_fk=True,
-    type_name=None):
+def model_form(model, db_session=None, base_class=Form, only=None,
+    exclude=None, field_args=None, converter=None, exclude_pk=True,
+    exclude_fk=True, type_name=None):
     """
     Create a wtforms Form for a given SQLAlchemy model class::
 
@@ -261,7 +261,7 @@ def model_form(model, db_session, base_class=Form, only=None, exclude=None,
     :param model:
         A SQLAlchemy mapped model class.
     :param db_session:
-        A SQLAlchemy Session.
+        An optional SQLAlchemy Session.
     :param base_class:
         Base form class to extend from. Must be a ``wtforms.Form`` subclass.
     :param only:
