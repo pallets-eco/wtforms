@@ -1,7 +1,6 @@
 # Translations template for WTForms.
 # Copyright (C) 2012 WTForms Team
 # This file is distributed under the same license as the WTForms project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
 #
 #, fuzzy
 msgid ""
