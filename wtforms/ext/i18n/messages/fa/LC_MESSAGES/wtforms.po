@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: WTForms 0.6.4dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-01-31 12:58-0700\n"
-"PO-Revision-Date: 2012-02-01 08:57+0330\n"
+"PO-Revision-Date: 2012-02-01 09:01+0330\n"
 "Last-Translator: Efazati <mohammad@efazati.org>\n"
 "Language-Team: en_US <james+i18n@simplecodes.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -24,7 +24,7 @@ msgstr "فیلد '%s' اشتباه است."
 #: wtforms/validators.py:58
 #, python-format
 msgid "Field must be equal to %(other_name)s."
-msgstr "مقدار فیلد باید برابر %(other_name)s. باشد."
+msgstr "مقدار فیلد باید برابر %(other_name)s باشد."
 
 #: wtforms/validators.py:90
 #, python-format
@@ -113,19 +113,19 @@ msgstr "لیست درستی نیست."
 
 #: wtforms/ext/csrf/form.py:45
 msgid "Invalid CSRF Token"
-msgstr "مقدار کلید CSRF اشتباه است."
+msgstr "مقدار کلید امنیتی اشتباه است."
 
 #: wtforms/ext/csrf/session.py:56
 msgid "CSRF token missing"
-msgstr "مقدار CSRF در درخواست شما نیست."
+msgstr "مقدار کلید امنیتی در درخواست شما نیست."
 
 #: wtforms/ext/csrf/session.py:64
 msgid "CSRF failed"
-msgstr "CSRF با خطا مواجه شد."
+msgstr "کلید امنیتی با خطا مواجه شد."
 
 #: wtforms/ext/csrf/session.py:69
 msgid "CSRF token expired"
-msgstr "زمان استفاده از CSRF به اتمام رسیده است."
+msgstr "زمان استفاده از کلید امنیتی به اتمام رسیده است."
 
 #: wtforms/ext/dateutil/fields.py:48
 msgid "Please input a date/time value"
