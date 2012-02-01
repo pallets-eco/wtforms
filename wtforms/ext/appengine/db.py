@@ -335,7 +335,7 @@ class ModelConverter(object):
     }
 
     # Don't automatically add a required validator for these properties
-    NO_AUTO_REQUIRED = frozenset(['ListProperty', 'StringListProperty'])
+    NO_AUTO_REQUIRED = frozenset(['ListProperty', 'StringListProperty', 'BooleanProperty'])
 
     def __init__(self, converters=None):
         """

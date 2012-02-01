@@ -1,3 +1,5 @@
+.. _crash-course:
+
 Crash Course
 ============
 
@@ -350,7 +352,7 @@ If you prefer one big list of errors at the top, this is also easy:
 
     {% if form.errors %}
         <ul class="errors">
-            {% for field_name, field_errors in form.errors if field_errors %}
+            {% for field_name, field_errors in form.errors|dictsort if field_errors %}
                 {% for error in field_errors %}
                     <li>{{ form[field_name].label }}: {{ error }}</li>
                 {% endfor %}
@@ -387,4 +389,19 @@ Or by providing an in-form field-specific validator::
                 raise ValidationError(u'Must be 42')
 
 For more complex validators that take parameters, check the :ref:`custom-validators` section. 
+
+Next Steps
+----------
+
+The crash course has just skimmed the surface on how you can begin using
+WTForms to handle form input and validation in your application. For more
+information, you'll want to check the following:
+
+ - The :ref:`WTForms documentation <doc-index>` has API documentation for the entire library.
+ - :ref:`specific_problems` can help you tackle specific
+   integration issues with WTForms and other frameworks.
+ - The `mailing list`_ is where you can get help, discuss bugs in WTForms, and
+   propose new features.
+
+.. _mailing list: http://groups.google.com/group/wtforms/
 

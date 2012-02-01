@@ -10,5 +10,5 @@ syntax: regexp
 ^docs/html
 ^dist/
 ^MANIFEST$
-^env/
 wtforms/ext/i18n/.*\.mo$
+^env/

@@ -45,6 +45,7 @@ setup(
         'wtforms.ext.dateutil',
         'wtforms.ext.django',
         'wtforms.ext.django.templatetags',
+        'wtforms.ext.i18n',
         'wtforms.ext.sqlalchemy',
     ],
     **extra

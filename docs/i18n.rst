@@ -1,0 +1,80 @@
+Internationalization (i18n)
+===========================
+
+Localizing strings in WTForms is a topic that frequently comes up in the
+mailing list. While WTForms does not provide its own localization library, you
+can integrate WTForms with almost any gettext-like framework easily.
+
+In WTForms, the majority of messages that are transmitted are provided by you,
+the user. However, there is support for translating some of the *built-in*
+messages in WTForms (such as errors which occur during data coercion) so that
+the user can make sure the user experience is consistent.
+
+Translating user-provided messages
+----------------------------------
+
+This is not actually any specific feature in WTForms, but because the question
+is asked so frequently, we need to address it here: **WTForms does -not-
+translate any user-provided strings.**
+
+This is not to say they can't be translated, but that it's up to you to deal
+with providing a translation for any passed-in messages. WTForms waits until
+the last moment (usually validation time) before doing anything with the passed
+in message (such as interpolating strings) thus giving you the opportunity to
+e.g. change your locale before validation occurs, if you are using a suitable
+"lazy proxy".
+
+Here's a simple example of how one would provide translated strings to WTForms::
+
+    from somelibrary import ugettext_lazy as _
+    from wtforms import Form, TextField, IntegerField, validators as v
+
+    class RegistrationForm(Form):
+        name = TextField(_(u'Name'), [v.Required(_(u'Please provide your name'))])
+        age = IntegerField(
+            _(u'Age'),
+            [v.NumberRange(min=12, message=_(u'Must be at least %(min)d years old.'))]
+        )
+
+The field label is left un-perturbed until rendering time in a template, so you
+can easily provide translations for field labels if so desired. In addition,
+validator messages with format strings are not interpolated until the
+validation is run, so you can provide localization there as well.
+
+
+Translating built-in messages
+-----------------------------
+
+There are some messages in WTForms which are provided by the framework, namely
+default validator messages and errors occuring during the processing (data
+coercion) stage. For example, in the case of the IntegerField above, if someone
+entered a value which was not valid as an integer, then a message like "Not a
+valid integer value" would be displayed.
+
+For this case, we provide the ability to give a translations object on a
+subclass of Form, which will then be called to translate built-in strings.
+
+An example of writing a simple translations object::
+
+    from mylibrary import ugettext, ungettext
+    from wtforms import Form
+
+    class MyTranslations(object):
+        def gettext(self, string):
+            return ugettext(string)
+
+        def ngettext(self, singular, plural, n):
+            return ungettext(singular, plural, n)
+
+    class MyBaseForm(Form):
+        def _get_translations(self):
+            return MyTranslations()
+
+You would then use this new base Form class as the base class for any forms you
+create, and any built-in messages from WTForms will be passed to your
+gettext/ngettext implementations.
+
+You control the object's constructor, its lifecycle, and everything else about
+it, so you could, for example, pass the locale per-form instantiation to the
+translation object's constructor, and anything else you need to do for
+translations to work for you.

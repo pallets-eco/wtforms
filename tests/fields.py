@@ -211,10 +211,12 @@ class SelectFieldTest(TestCase):
 
     def test_iterable_options(self):
         form = self.F()
-        self.assert_(isinstance(list(form.a)[0], form.a._Option))
-        self.assertEqual(list(unicode(x) for x in form.a), [u'<option selected value="a">hello</option>', '<option value="btest">bye</option>'])
-        self.assert_(isinstance(list(form.a)[0].widget, widgets.Option))
+        first_option = list(form.a)[0]
+        self.assert_(isinstance(first_option, form.a._Option))
+        self.assertEqual(list(unicode(x) for x in form.a), [u'<option selected value="a">hello</option>', u'<option value="btest">bye</option>'])
+        self.assert_(isinstance(first_option.widget, widgets.Option))
         self.assert_(isinstance(list(form.b)[0].widget, widgets.TextInput))
+        self.assertEqual(first_option(disabled=True), u'<option disabled selected value="a">hello</option>')
 
 
 class SelectMultipleFieldTest(TestCase):
