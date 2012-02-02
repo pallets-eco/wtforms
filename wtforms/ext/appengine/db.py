@@ -180,6 +180,7 @@ def convert_StringListProperty(model, prop, kwargs):
 def convert_ReferenceProperty(model, prop, kwargs):
     """Returns a form field for a ``db.ReferenceProperty``."""
     kwargs['reference_class'] = prop.reference_class
+    kwargs.setdefault('allow_blank', not prop.required)
     return ReferencePropertyField(**kwargs)
 
 
