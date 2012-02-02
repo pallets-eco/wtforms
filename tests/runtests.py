@@ -3,7 +3,7 @@ import os
 import sys
 from unittest import defaultTestLoader, TextTestRunner, TestSuite
 
-TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'translations', 'ext_csrf')
+TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'translations', 'ext_csrf', 'ext_i18n')
 
 def make_suite(prefix='', extra=()):
     tests = TESTS + extra

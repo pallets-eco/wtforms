@@ -51,6 +51,10 @@ coercion) stage. For example, in the case of the IntegerField above, if someone
 entered a value which was not valid as an integer, then a message like "Not a
 valid integer value" would be displayed.
 
+
+Writing your own translations provider
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 For this case, we provide the ability to give a translations object on a
 subclass of Form, which will then be called to translate built-in strings.
 
@@ -78,3 +82,19 @@ You control the object's constructor, its lifecycle, and everything else about
 it, so you could, for example, pass the locale per-form instantiation to the
 translation object's constructor, and anything else you need to do for
 translations to work for you.
+
+
+Using the built-in translations provider
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. module:: wtforms.ext.i18n.form
+
+WTForms now includes a basic translations provider which uses the stdlib
+`gettext` module to localize strings based on locale information distributed
+with the package. As of this writing, we are waiting for more translations to
+be submitted, but we hope that soon we will provide given localizations
+
+To use the builtin translations provider, simply import
+:class:`wtforms.ext.i18n.form.Form` and use that as your base Form class.
+
+.. autoclass:: wtforms.ext.i18n.form.Form
