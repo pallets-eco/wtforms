@@ -20,7 +20,7 @@ def additional_tests():
 
 def main():
     extra_tests = tuple(x for x in sys.argv[1:] if '-' not in x)
-    suite = make_suite('', )
+    suite = make_suite('', extra_tests)
 
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
