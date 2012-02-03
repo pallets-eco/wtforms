@@ -16,7 +16,18 @@ Not yet released
   * Support PGInet, MACADDR, and UUID field conversion
   * Support callable defaults
 
+- ext.appengine:
+  * model_form now supports generating forms with the same ordering as model.
+  * ReferencePropertyField now gets get_label like the other ORM fields
+
 - Add localization support for WTForms built-in messages
+
+- Minor changes/fixes:
+  * An empty label string can be specified on fields if desired
+  * Option widget can now take kwargs customization
+  * Field subclasses can provide default validators as a class property
+  * DateTimeField can take time in microseconds
+  * Numeric fields all set .data to None on coercion error for consistency.
 
 
 Version 0.6.3

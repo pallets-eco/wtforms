@@ -497,6 +497,7 @@ class IntegerField(Field):
             try:
                 self.data = int(valuelist[0])
             except ValueError:
+                self.data = None
                 raise ValueError(self.gettext(u'Not a valid integer value'))
 
 
@@ -543,6 +544,7 @@ class DecimalField(Field):
             try:
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
+                self.data = None
                 raise ValueError(self.gettext(u'Not a valid decimal value'))
 
 
@@ -569,6 +571,7 @@ class FloatField(Field):
             try:
                 self.data = float(valuelist[0])
             except ValueError:
+                self.data = None
                 raise ValueError(self.gettext(u'Not a valid float value'))
 
 
