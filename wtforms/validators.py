@@ -157,6 +157,9 @@ class Required(object):
     Validates that the field contains data. This validator will stop the
     validation chain on error.
 
+    If the data is empty, also removes prior errors (such as processing errors)
+    from the field.
+
     :param message:
         Error message to raise in case of a validation error.
     """
