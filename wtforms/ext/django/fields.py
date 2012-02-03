@@ -2,7 +2,6 @@
 Useful form fields for use with the Django ORM.
 """
 import operator
-import warnings
 
 from wtforms import widgets
 from wtforms.fields import SelectFieldBase
