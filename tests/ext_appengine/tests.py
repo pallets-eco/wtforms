@@ -238,7 +238,7 @@ class TestModelForm(TestCase):
         self.assertEqual(form.is_admin.label.text, 'Administrative rights')
 
     def test_reference_property(self):
-        keys = []
+        keys = ['__None']
         for name in ['foo', 'bar', 'baz']:
             author = Author(name=name, age=26)
             author.put()
