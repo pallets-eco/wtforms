@@ -218,6 +218,14 @@ class SelectFieldTest(TestCase):
         self.assert_(isinstance(list(form.b)[0].widget, widgets.TextInput))
         self.assertEqual(first_option(disabled=True), u'<option disabled selected value="a">hello</option>')
 
+    def test_default_coerce(self):
+        F = make_form(a=SelectField(choices=[('a', 'Foo')]))
+        form = F(DummyPostData(a=[]))
+        assert not form.validate()
+        self.assertEqual(form.a.data, u'None')
+        self.assertEqual(len(form.a.errors), 1)
+        self.assertEqual(form.a.errors[0], 'Not a valid choice')
+
 
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
