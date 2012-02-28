@@ -48,5 +48,8 @@ setup(
         'wtforms.ext.i18n',
         'wtforms.ext.sqlalchemy',
     ],
+    package_data={
+        'wtforms.ext.i18n': ['messages/wtforms.pot', 'messages/*/*/*'],
+    },
     **extra
 )

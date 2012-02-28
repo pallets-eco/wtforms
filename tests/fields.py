@@ -218,6 +218,14 @@ class SelectFieldTest(TestCase):
         self.assert_(isinstance(list(form.b)[0].widget, widgets.TextInput))
         self.assertEqual(first_option(disabled=True), u'<option disabled selected value="a">hello</option>')
 
+    def test_default_coerce(self):
+        F = make_form(a=SelectField(choices=[('a', 'Foo')]))
+        form = F(DummyPostData(a=[]))
+        assert not form.validate()
+        self.assertEqual(form.a.data, u'None')
+        self.assertEqual(len(form.a.errors), 1)
+        self.assertEqual(form.a.errors[0], 'Not a valid choice')
+
 
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
@@ -330,7 +338,7 @@ class IntegerFieldTest(TestCase):
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.raw_data, [])
-        self.assertEqual(form.b.data, 48)
+        self.assertEqual(form.b.data, None)
         self.assertEqual(form.b.raw_data, [''])
         self.assert_(not form.validate())
         self.assertEqual(len(form.b.process_errors), 1)
@@ -351,7 +359,7 @@ class DecimalFieldTest(TestCase):
         self.assertEqual(form.a._value(), u'2.10')
         self.assert_(form.validate())
         form = F(DummyPostData(a='2,1'), a=Decimal(5))
-        self.assertEqual(form.a.data, Decimal(5))
+        self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.raw_data, ['2,1'])
         self.assert_(not form.validate())
 
@@ -385,7 +393,7 @@ class FloatFieldTest(TestCase):
         self.assert_(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.b.data, 48.0)
+        self.assertEqual(form.b.data, None)
         self.assertEqual(form.b.raw_data, [u''])
         self.assert_(not form.validate())
         self.assertEqual(len(form.b.process_errors), 1)

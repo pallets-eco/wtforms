@@ -25,7 +25,13 @@ def get_translations(languages=None):
     """
     Get a WTForms translation object which wraps the builtin GNUTranslations object.
     """
-    return DefaultTranslations(get_builtin_gnu_translations(languages))
+    translations = get_builtin_gnu_translations(languages)
+
+    if hasattr(translations, 'ugettext'):
+        return DefaultTranslations(translations)
+    else:
+        # Python 3 has no ugettext/ungettext, so just return the translations object.
+        return translations
 
 
 class DefaultTranslations(object):

@@ -12,7 +12,7 @@ class Form(form.Form):
     information from the environment.
 
     If the LANGUAGES class variable is overridden and set to a sequence of
-    strings, this will be a list of languages by priority to use instead, e.g:
+    strings, this will be a list of languages by priority to use instead, e.g::
         LANGUAGES = ['en_GB', 'en']
 
     Translations objects are cached to prevent having to get a new one for the

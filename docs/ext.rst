@@ -26,7 +26,7 @@ Datastore-backed Fields
 ~~~~~~~~~~~~~~~~~~~~~~~
 .. module:: wtforms.ext.appengine.fields
 
-.. autoclass:: ReferencePropertyField(default field arguments, reference_class=None, label_attr=None, allow_blank=False, blank_text=u'')
+.. autoclass:: ReferencePropertyField(default field arguments, reference_class=None, get_label=None, allow_blank=False, blank_text=u'')
 
 .. autoclass:: StringListPropertyField(default field arguments)
 
