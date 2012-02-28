@@ -10,5 +10,6 @@ syntax: regexp
 ^docs/html
 ^dist/
 ^MANIFEST$
+^WTForms\.egg-info
 ^env/
 wtforms/ext/i18n/.*\.mo$
