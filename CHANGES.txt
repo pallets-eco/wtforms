@@ -2,9 +2,9 @@ WTForms Changelog
 =================
 
 
-Version 0.6.4dev
+Version 1.0
 ----------------
-Not yet released
+Released February 28, 2012
 
 - Output HTML5 compact syntax by default.
 
@@ -21,6 +21,8 @@ Not yet released
   * ReferencePropertyField now gets get_label like the other ORM fields
 
 - Add localization support for WTForms built-in messages
+
+- Python 3 support (via 2to3)
 
 - Minor changes/fixes:
   * An empty label string can be specified on fields if desired

@@ -19,7 +19,7 @@ if sys.version_info >= (3, ):
 
 setup(
     name='WTForms',
-    version='0.6.4dev',
+    version='1.0',
     url='http://wtforms.simplecodes.com/',
     license='BSD',
     author='Thomas Johansson, James Crasta',
