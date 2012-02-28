@@ -120,6 +120,31 @@ Using ``form.image.name`` is an easy way to know what input name was generated
 for your file input, even if the form is prefixed.
 
 
+Why does blank input not go back to the default value?
+------------------------------------------------------
+
+A key design decision of WTForms was that form data -always- takes precedence
+when there's a form submission. That is, if a field exists on a form, and a
+form was posted, but that field's value was missing, it will not revert to a
+default, but instead store an empty value (and in some cases cause a validation
+error.)
+
+This is for a number of reasons:
+
+1. Security. If a form reverted to defaults on missing data, then an evil user
+   could potentially cause problems by submitting a hand-coded form with key
+   missing fields.
+
+2. Bug-finding. If you omitted a field in your template, it might fall through
+   to the default and you'd possibly miss it.
+
+3. Consistency.
+
+See the following mailing list posts for more discussion on the topic:
+ - http://groups.google.com/group/wtforms/browse_frm/thread/6755a45a13878e9 
+ - http://groups.google.com/group/wtforms/msg/fa409c8c89b6f62d 
+
+
 How do I... [convoluted combination of libraries]
 -------------------------------------------------
 
