@@ -226,6 +226,9 @@ class Field(object):
                 data = self.default()
             except TypeError:
                 data = self.default
+
+        self.object_data = data
+
         try:
             self.process_data(data)
         except ValueError, e:
@@ -471,7 +474,7 @@ class StringField(Field):
             self.data = u''
 
     def _value(self):
-        return self.data is not None and unicode(self.data) or u''
+        return unicode(self.data) if self.data is not None else u''
 
 
 class IntegerField(Field):
@@ -673,6 +676,8 @@ class FormField(Field):
                 data = self.default
             self._obj = data
 
+        self.object_data = data
+
         prefix = self.name + self.separator
         if isinstance(data, dict):
             self.form = self.form_class(formdata=formdata, prefix=prefix, **data)
@@ -753,6 +758,8 @@ class FieldList(Field):
                 data = self.default()
             except TypeError:
                 data = self.default
+
+        self.object_data = data
 
         if formdata:
             indices = sorted(set(self._extract_indices(self.name, formdata)))
