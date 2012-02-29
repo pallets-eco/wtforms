@@ -1,9 +1,16 @@
 WTForms Changelog
 =================
 
+Version 1.0.1
+-------------
+Released February 29, 2012
+
+- Fixed issues related to building for python 3 and python pre-releases.
+
+- Add object_data to fields to get at the originally passed data.
 
 Version 1.0
-----------------
+-----------
 Released February 28, 2012
 
 - Output HTML5 compact syntax by default.
