@@ -11,14 +11,24 @@
 # All configuration values have a default value; values that are commented out
 # serve to show the default value.
 
-import sys, os
+def _fix_import_path():
+    """
+    Don't want to pollute the config globals, so do path munging 
+    here in this function
+    """
+    import sys, os
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+    try:
+        import wtforms
+    except ImportError:
+        parent_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+        build_lib = os.path.join(parent_dir, 'build', 'lib')
+        if os.path.isdir(build_lib):
+            sys.path.insert(0, build_lib)
+        else:
+            sys.path.insert(0, parent_dir)
 
-# If your extensions are in another directory, add it here. If the directory
-# is relative to the documentation root, use os.path.abspath to make it
-# absolute, like shown here.
-#sys.path.append(os.path.abspath('some/directory'))
+_fix_import_path()
 
 # General configuration
 # ---------------------
