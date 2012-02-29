@@ -75,6 +75,12 @@ The Field base class
         If form data is processed, is the valuelist given from the formdata
         wrapper. Otherwise, `raw_data` will be `None`.
 
+    .. attribute:: object_data
+
+        This is the data passed from an object or from kwargs to the field,
+        stored unmodified. This can be used by templates, widgets, validators
+        as needed (for comparison, for example)
+
     **Rendering**
 
     To render a field, simply call it, providing any values the widget expects
