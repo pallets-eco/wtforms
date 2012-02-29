@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import platform
+import sys
 
 from datetime import date, datetime
 from decimal import Decimal, ROUND_UP, ROUND_DOWN
@@ -11,7 +11,7 @@ from wtforms.fields import Label, Field
 from wtforms.form import Form
 
 
-PYTHON_VERSION = tuple(int(x) for x in platform.python_version_tuple())
+PYTHON_VERSION = sys.version_info 
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -55,7 +55,7 @@ class LabelTest(TestCase):
         self.assertEqual(label().__html__(), expected)
         self.assertEqual(label(u'hello'), u"""<label for="test">hello</label>""")
         self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
-        if PYTHON_VERSION < (3, 0, 0):
+        if PYTHON_VERSION < (3, ):
             self.assertEqual(repr(label), "Label('test', u'Caption')") 
         else:
             self.assertEqual(repr(label), "Label('test', 'Caption')") 
@@ -480,7 +480,7 @@ class DateTimeFieldTest(TestCase):
         self.assert_(u'not match format' in form.a.errors[0])
 
     def test_microseconds(self):
-        if PYTHON_VERSION < (2, 6, 0):
+        if PYTHON_VERSION < (2, 6):
             return # Microsecond formatting support was only added in 2.6
 
         d = datetime(2011, 5, 7, 3, 23, 14, 424200)
