@@ -3,8 +3,6 @@ Tools for generating forms based on SQLAlchemy models.
 """
 import inspect
 
-import sqlalchemy
-
 from wtforms import fields as f
 from wtforms import validators
 from wtforms.form import Form
@@ -53,12 +51,9 @@ class ModelConverterBase(object):
         self.converters = converters
 
     def convert(self, model, mapper, prop, field_args, db_session=None):
-        if not isinstance(prop, sqlalchemy.orm.properties.ColumnProperty) and \
-                not isinstance(prop,
-                sqlalchemy.orm.properties.RelationshipProperty):
+        if not hasattr(prop, 'columns') and not hasattr(prop, 'direction'):
             return
-        elif isinstance(prop, sqlalchemy.orm.properties.ColumnProperty) and\
-            len(prop.columns) != 1:
+        elif not hasattr(prop, 'direction') and len(prop.columns) != 1:
             raise TypeError('Do not know how to convert multiple-column '
                 + 'properties currently')
 
@@ -71,7 +66,7 @@ class ModelConverterBase(object):
         converter = None
         column = None
 
-        if isinstance(prop, sqlalchemy.orm.properties.ColumnProperty):
+        if not hasattr(prop, 'direction'):
             column = prop.columns[0]
             # Support sqlalchemy.schema.ColumnDefault, so users can benefit
             # from  setting defaults for fields, e.g.:
@@ -119,7 +114,7 @@ class ModelConverterBase(object):
                 else:
                     return
 
-        if db_session and isinstance(prop, sqlalchemy.orm.properties.RelationshipProperty):
+        if db_session and hasattr(prop, 'direction'):
             foreign_model = prop.mapper.class_
 
             nullable = True
@@ -240,8 +235,8 @@ def model_fields(model, db_session=None, only=None, exclude=None,
 
     field_dict = {}
     for name, prop in properties:
-        field = converter.convert(model, db_session, mapper, prop,
-            field_args.get(name))
+        field = converter.convert(model, mapper, prop,
+            field_args.get(name), db_session)
         if field is not None:
             field_dict[name] = field
 
@@ -294,14 +289,13 @@ def model_form(model, db_session=None, base_class=Form, only=None,
         exclude = []
     model_mapper = model.__mapper__
     for prop in model_mapper.iterate_properties:
-        if isinstance(prop, sqlalchemy.orm.properties.ColumnProperty) and \
-               prop.columns[0].primary_key:
+        if not hasattr(prop, 'direction') and prop.columns[0].primary_key:
             if exclude_pk:
                 exclude.append(prop.key)
-        if isinstance(prop, sqlalchemy.orm.properties.RelationshipProperty) \
-            and  exclude_fk and prop.direction.name != 'MANYTOMANY':
-                for pair in prop.local_remote_pairs:
-                    exclude.append(pair[0].key)
+        if hasattr(prop, 'direction') and  exclude_fk and \
+                prop.direction.name != 'MANYTOMANY':
+            for pair in prop.local_remote_pairs:
+                exclude.append(pair[0].key)
     type_name = type_name or model.__name__ + 'Form'
     field_dict = model_fields(model, db_session, only, exclude, field_args,
         converter)
