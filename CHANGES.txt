@@ -1,6 +1,12 @@
 WTForms Changelog
 =================
 
+Version 1.0.2
+-------------
+Not yet released
+
+- Add in ability to convert relationships to ext.sqlalchemy model_form
+
 Version 1.0.1
 -------------
 Released February 29, 2012

@@ -13,6 +13,7 @@ Contributors:
 - Christopher Grebs
 - Eduardo Schettino
 - Emil Vladev
+- Jean-Philippe Serafin
 - Rodrigo Moraes
 - Sebastian Wiesner
 - Vinay Sajip
