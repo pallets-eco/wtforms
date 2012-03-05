@@ -279,15 +279,11 @@ class UniqueValidatorTest(TestCase):
         self.UserForm = UserForm
 
     def test_validate(self):
-        from werkzeug.datastructures import MultiDict
-        user_form = self.UserForm(formdata=MultiDict([('username',
-            'spiderman')]))
+        user_form = self.UserForm(DummyPostData(username=[u'spiderman']))
         self.assertTrue(user_form.validate())
 
     def test_wrong(self):
-        from werkzeug.datastructures import MultiDict
-        user_form = self.UserForm(formdata=MultiDict([('username',
-            'batman')]))
+        user_form = self.UserForm(DummyPostData(username=[u'batman']))
         self.assertFalse(user_form.validate())
 
 
