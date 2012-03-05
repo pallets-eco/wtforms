@@ -13,6 +13,11 @@ flexible, and allows you to chain any number of validators on fields.
 Built-in validators
 -------------------
 
+.. autoclass:: wtforms.validators.DataRequired
+
+   This also sets the ``required`` :attr:`flag <wtforms.fields.Field.flags>` on
+   fields it is used on.
+
 .. autoclass:: wtforms.validators.Email
 
 .. autoclass:: wtforms.validators.EqualTo
@@ -29,6 +34,11 @@ Built-in validators
     passwords specified at all. Because Required stops the validation chain,
     EqualTo is not run in the case the password field is left empty.
 
+.. autoclass:: wtforms.validators.InputRequired
+
+   This also sets the ``required`` :attr:`flag <wtforms.fields.Field.flags>` on
+   fields it is used on.
+
 .. autoclass:: wtforms.validators.IPAddress
 
 .. autoclass:: wtforms.validators.Length
@@ -42,10 +52,6 @@ Built-in validators
    This also sets the ``optional`` :attr:`flag <wtforms.fields.Field.flags>` on
    fields it is used on.
 
-.. autoclass:: wtforms.validators.Required
-
-   This also sets the ``required`` :attr:`flag <wtforms.fields.Field.flags>` on
-   fields it is used on.
 
 .. autoclass:: wtforms.validators.Regexp
 

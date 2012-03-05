@@ -152,7 +152,7 @@ class Optional(object):
             raise StopValidation()
 
 
-class Required(object):
+class DataRequired(object):
     """
     Validates that the field contains data. This validator will stop the
     validation chain on error.
@@ -170,6 +170,39 @@ class Required(object):
 
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+            if self.message is None:
+                self.message = field.gettext(u'This field is required.')
+
+            field.errors[:] = []
+            raise StopValidation(self.message)
+
+
+class Required(DataRequired):
+    """
+    Legacy alias for DataRequired.
+
+    This is needed over simple aliasing for those who require that the
+    class-name of required be 'Required.'
+
+    This class will start throwing deprecation warnings in WTForms 1.1 and be removed by 1.2.
+    """
+
+
+class InputRequired(object):
+    """
+    Validates that input was provided for this field. 
+
+    Note there is a distinction between this and DataRequired in that
+    InputRequired looks that form-input data was provided, and DataRequired
+    looks at the post-coercion data.
+    """
+    field_flags = ('required', )
+
+    def __init__(self, message=None):
+        self.message = message
+
+    def __call__(self, form, field):
+        if not field.raw_data or not field.raw_data[0]:
             if self.message is None:
                 self.message = field.gettext(u'This field is required.')
 
@@ -363,6 +396,8 @@ length = Length
 number_range = NumberRange
 optional = Optional
 required = Required
+input_required = InputRequired
+data_required = DataRequired
 regexp = Regexp
 url = URL
 any_of = AnyOf
