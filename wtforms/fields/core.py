@@ -626,7 +626,7 @@ class DateTimeField(Field):
                 self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
-                raise
+                raise ValueError(self.gettext(u'Not a valid datetime value'))
 
 
 class DateField(DateTimeField):
@@ -643,7 +643,7 @@ class DateField(DateTimeField):
                 self.data = datetime.datetime.strptime(date_str, self.format).date()
             except ValueError:
                 self.data = None
-                raise
+                raise ValueError(self.gettext(u'Not a valid date value'))
 
 
 class FormField(Field):
