@@ -1,8 +1,8 @@
 """
-Form generation utilities for App Engine's ``db.Model`` class.
+Form generation utilities for App Engine's new ``ndb.Model`` class.
 
 The goal of ``model_form()`` is to provide a clean, explicit and predictable
-way to create forms based on ``db.Model`` classes. No malabarism or black
+way to create forms based on ``ndb.Model`` classes. No malabarism or black
 magic should be necessary to generate a form for models, and to add custom
 non-model related fields: ``model_form()`` simply generates a form class
 that can be used as it is, or that can be extended directly or even be used
@@ -12,15 +12,15 @@ Example usage:
 
 .. code-block:: python
 
-   from google.appengine.ext import db
-   from tipfy.ext.model.form import model_form
+   from google.appengine.ext import ndb
+   from wtforms.ext.appengine.ndb import model_form
 
    # Define an example model and add a record.
-   class Contact(db.Model):
-       name = db.StringProperty(required=True)
-       city = db.StringProperty()
-       age = db.IntegerProperty(required=True)
-       is_admin = db.BooleanProperty(default=False)
+   class Contact(ndb.Model):
+       name = ndb.StringProperty(required=True)
+       city = ndb.StringProperty()
+       age = ndb.IntegerProperty(required=True)
+       is_admin = ndb.BooleanProperty(default=False)
 
    new_entity = Contact(key_name='test', name='Test Name', age=17)
    new_entity.put()
@@ -97,7 +97,7 @@ from wtforms.ext.appengine.fields import GeoPtPropertyField, KeyPropertyField, S
 
 def get_TextField(kwargs):
     """
-    Returns a ``TextField``, applying the ``db.StringProperty`` length limit
+    Returns a ``TextField``, applying the ``ndb.StringProperty`` length limit
     of 500 bytes.
     """
     kwargs['validators'].append(validators.length(max=500))
@@ -106,7 +106,7 @@ def get_TextField(kwargs):
 
 def get_IntegerField(kwargs):
     """
-    Returns an ``IntegerField``, applying the ``db.IntegerProperty`` range
+    Returns an ``IntegerField``, applying the ``ndb.IntegerProperty`` range
     limits.
     """
     v = validators.NumberRange(min=-0x8000000000000000, max=0x7fffffffffffffff)
@@ -115,7 +115,7 @@ def get_IntegerField(kwargs):
 
 
 def convert_StringProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.StringProperty``."""
+    """Returns a form field for a ``ndb.StringProperty``."""
     if prop._repeated:
         return StringListPropertyField(**kwargs)
     kwargs['validators'].append(validators.length(max=500))
@@ -123,24 +123,24 @@ def convert_StringProperty(model, prop, kwargs):
 
 
 def convert_BooleanProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.BooleanProperty``."""
+    """Returns a form field for a ``ndb.BooleanProperty``."""
     return f.BooleanField(**kwargs)
 
 
 def convert_IntegerProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.IntegerProperty``."""
+    """Returns a form field for a ``ndb.IntegerProperty``."""
     if prop._repeated:
         return IntegerListPropertyField(**kwargs)
     return get_IntegerField(kwargs)
 
 
 def convert_FloatProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.FloatProperty``."""
+    """Returns a form field for a ``ndb.FloatProperty``."""
     return f.FloatField(**kwargs)
 
 
 def convert_DateTimeProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.DateTimeProperty``."""
+    """Returns a form field for a ``ndb.DateTimeProperty``."""
     if prop.auto_now or prop.auto_now_add:
         return None
 
@@ -148,92 +148,87 @@ def convert_DateTimeProperty(model, prop, kwargs):
 
 
 def convert_DateProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.DateProperty``."""
-    if prop.auto_now or prop.auto_now_add:
+    """Returns a form field for a ``ndb.DateProperty``."""
+    if prop._auto_now or prop._auto_now_add:
         return None
 
     return f.DateField(format='%Y-%m-%d', **kwargs)
 
 
 def convert_TimeProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.TimeProperty``."""
-    if prop.auto_now or prop.auto_now_add:
+    """Returns a form field for a ``ndb.TimeProperty``."""
+    if prop._auto_now or prop._auto_now_add:
         return None
 
     return f.DateTimeField(format='%H:%M:%S', **kwargs)
 
 
 def convert_RepeatedProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ListProperty``."""
+    """Returns a form field for a ``ndb.ListProperty``."""
     return None
 
 
 def convert_UserProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.UserProperty``."""
+    """Returns a form field for a ``ndb.UserProperty``."""
     return None
 
 
 def convert_StructuredProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ListProperty``."""
+    """Returns a form field for a ``ndb.ListProperty``."""
     return None
 
 
 def convert_LocalStructuredProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ListProperty``."""
+    """Returns a form field for a ``ndb.ListProperty``."""
     return None
 
 
 def convert_JsonProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ListProperty``."""
+    """Returns a form field for a ``ndb.ListProperty``."""
     return None
 
 
 def convert_PickleProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ListProperty``."""
+    """Returns a form field for a ``ndb.ListProperty``."""
     return None
 
 
 def convert_GenericProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ListProperty``."""
+    """Returns a form field for a ``ndb.ListProperty``."""
     kwargs['validators'].append(validators.length(max=500))
     return get_TextField(kwargs)
 
 
-def convert_BlobProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.BlobProperty``."""
+def convert_BlobKeyProperty(model, prop, kwargs):
+    """Returns a form field for a ``ndb.BlobKeyProperty``."""
     return f.FileField(**kwargs)
 
 
 def convert_TextProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.TextProperty``."""
+    """Returns a form field for a ``ndb.TextProperty``."""
     return f.TextAreaField(**kwargs)
 
 
 def convert_ComputedProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.CategoryProperty``."""
+    """Returns a form field for a ``ndb.ComputedProperty``."""
     return None
 
 
 def convert_GeoPtProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.GeoPtProperty``."""
+    """Returns a form field for a ``ndb.GeoPtProperty``."""
     return GeoPtPropertyField(**kwargs)
 
 
-def convert_ReferenceProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ReferenceProperty``."""
-    kwargs['reference_class'] = prop.reference_class
-    kwargs.setdefault('allow_blank', not prop.required)
+def convert_KeyProperty(model, prop, kwargs):
+    """Returns a form field for a ``ndb.KeyProperty``."""
+    kwargs['reference_class'] = prop._reference_class
+    kwargs.setdefault('allow_blank', not prop._required)
     return KeyPropertyField(**kwargs)
-
-
-def convert_BlobKeyProperty(model, prop, kwargs):
-    """Returns a form field for a ``db.ListProperty``."""
-    return None
 
 
 class ModelConverter(object):
     """
-    Converts properties from a ``db.Model`` class to form fields.
+    Converts properties from a ``ndb.Model`` class to form fields.
 
     Default conversions between properties and fields:
 
@@ -258,12 +253,6 @@ class ModelConverter(object):
     | TimeProperty       | DateTimeField     | time         | skipped if       |
     |                    |                   |              | auto_now[_add]   |
     +--------------------+-------------------+--------------+------------------+
-    | StringRepeatedPrope| TextAreaField     | list of str  |                  |
-    +--------------------+-------------------+--------------+------------------+
-    | IntegerRepeatedProp| TextAreaField     | list of int  |                  |
-    +--------------------+-------------------+--------------+------------------+
-    | BlobProperty       | FileField         | str          |                  |
-    +--------------------+-------------------+--------------+------------------+
     | TextProperty       | TextAreaField     | unicode      |                  |
     +--------------------+-------------------+--------------+------------------+
     | GeoPtProperty      | TextField         | db.GeoPt     |                  |
@@ -287,7 +276,6 @@ class ModelConverter(object):
     | ComputedProperty   | none              |              | always skipped   |
     +====================+===================+==============+==================+
 
-KeyProperty
     """
     default_converters = {
         'StringProperty':        convert_StringProperty,
@@ -298,7 +286,6 @@ KeyProperty
         'DateProperty':          convert_DateProperty,
         'TimeProperty':          convert_TimeProperty,
         'UserProperty':          convert_UserProperty,
-        'BlobProperty':          convert_BlobProperty,
         'TextProperty':          convert_TextProperty,
         'GeoPtProperty':         convert_GeoPtProperty,
         'BlobKeyProperty':          convert_BlobKeyProperty,
