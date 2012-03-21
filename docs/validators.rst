@@ -26,7 +26,7 @@ Built-in validators
     scenarios, the password change form::
 
         class ChangePassword(Form):
-            password = PasswordField('New Password', [Required(), EqualTo('confirm', mesage='Passwords must match')])
+            password = PasswordField('New Password', [Required(), EqualTo('confirm', message='Passwords must match')])
             confirm  = PasswordField('Repeat Password')
 
     In the example, we use the Required validator to prevent the EqualTo
