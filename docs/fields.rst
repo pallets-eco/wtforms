@@ -275,7 +275,8 @@ refer to a single input from the form.
 
     Note that the `choices` keyword is only evaluated once, so if you want to make
     a dynamic drop-down list, you'll want to assign the choices list to the field
-    after instantiation.
+    after instantiation. Any inputted choices which are not in the given choices
+    list will cause validation on the field to fail.
 
     **Select fields with dynamic choice values**::
 
