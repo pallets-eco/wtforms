@@ -459,7 +459,7 @@ class DateFieldTest(TestCase):
         self.assertEqual(len(form.a.process_errors), 1)
         self.assertEqual(len(form.a.errors), 1)
         self.assertEqual(len(form.b.errors), 1)
-        assert u'not match format' in form.a.process_errors[0]
+        self.assertEqual(form.a.process_errors[0], u'Not a valid date value')
 
 
 class DateTimeFieldTest(TestCase):
@@ -477,7 +477,7 @@ class DateTimeFieldTest(TestCase):
         self.assert_(form.validate())
         form = self.F(DummyPostData(a=['2008-05-05']))
         self.assert_(not form.validate())
-        self.assert_(u'not match format' in form.a.errors[0])
+        self.assertEqual(form.a.errors[0], u'Not a valid datetime value')
 
     def test_microseconds(self):
         if PYTHON_VERSION < (2, 6):
