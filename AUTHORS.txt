@@ -2,7 +2,7 @@ WTForms is written and maintained by the WTForms Team and various contributors.
 
 Lead Developers:
 
-- Thomas Johansson <prencher@gmail.com>
+- Thomas Johansson <prencher@prencher.dk>
 - James Crasta <james@crasta.com>
 
 Contributors:
