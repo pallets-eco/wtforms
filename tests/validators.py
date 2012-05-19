@@ -69,6 +69,11 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('abc.0.0.1'))
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('1278.0.0.1'))
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('127.0.0.abc'))
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('900.200.100.75'))
+        self.assertRaises(ValidationError, ip_address(ipv6=True), self.form, DummyField('abc.0.0.1'))
+        self.assertRaises(ValidationError, ip_address(ipv6=True), self.form, DummyField('abcd:1234::123::1'))
+        for good_address in ('::1', 'dead:beef:0:0:0:0:42:1', 'abcd:ef::42:1'):
+            self.assertEqual(ip_address(ipv6=True)(self.form, DummyField(good_address)), None)
 
     def test_mac_address(self):
         self.assertEqual(mac_address()(self.form, 

@@ -6,6 +6,9 @@ Version 1.0.2
 Not yet released
 
 - Add in ability to convert relationships to ext.sqlalchemy model_form
+- Built-in localizations for more languages
+- Distinguish Required validator into InputRequired and DataRequired
+- Better IP address validation, including IPv6 support.
 
 Version 1.0.1
 -------------

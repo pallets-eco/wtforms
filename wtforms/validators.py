@@ -2,8 +2,9 @@ import re
 
 
 __all__ = (
-    'Email', 'email', 'EqualTo', 'equal_to', 'IPAddress', 'ip_address',
-    'Length', 'length', 'NumberRange', 'number_range', 'Optional', 'optional',
+    'DataRequired', 'data_required', 'Email', 'email', 'EqualTo', 'equal_to',
+    'IPAddress', 'ip_address', 'InputRequired', 'input_required' 'Length',
+    'length', 'NumberRange', 'number_range', 'Optional', 'optional',
     'Required', 'required', 'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
     'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID'
 )
@@ -190,7 +191,7 @@ class Required(DataRequired):
 
 class InputRequired(object):
     """
-    Validates that input was provided for this field. 
+    Validates that input was provided for this field.
 
     Note there is a distinction between this and DataRequired in that
     InputRequired looks that form-input data was provided, and DataRequired
@@ -256,21 +257,63 @@ class Email(Regexp):
         super(Email, self).__call__(form, field)
 
 
-class IPAddress(Regexp):
+class IPAddress(object):
     """
-    Validates an IP(v4) address.
+    Validates an IPv4 (IPv6 too with ipv6=True) address.
 
+    :param ipv6:
+        If True, accept IPv6 as valid also.
     :param message:
         Error message to raise in case of a validation error.
     """
-    def __init__(self, message=None):
-        super(IPAddress, self).__init__(r'^([0-9]{1,3}\.){3}[0-9]{1,3}$', message=message)
+    def __init__(self, ipv6=False, message=None):
+        self.ipv6 = ipv6
+        self.message = message
 
     def __call__(self, form, field):
-        if self.message is None:
-            self.message = field.gettext(u'Invalid IP address.')
+        value = field.data
+        valid = False
+        if value:
+            valid = self.check_ipv4(value)
 
-        super(IPAddress, self).__call__(form, field)
+            if not valid and self.ipv6:
+                valid = self.check_ipv6(value)
+
+        if not valid:
+            if self.message is None:
+                self.message = field.gettext(u'Invalid IP address.')
+            raise ValidationError(self.message)
+
+    def check_ipv4(self, value):
+        parts = value.split('.')
+        if len(parts) == 4 and all(x.isdigit() for x in parts):
+            numbers = list(int(x) for x in parts)
+            return all(num >= 0 and num < 256 for num in numbers)
+        return False
+
+    def check_ipv6(self, value):
+        parts = value.split(':')
+        if len(parts) > 8:
+            return False
+
+        num_blank = 0
+        for part in parts:
+            if not part:
+                num_blank += 1
+            else:
+                try:
+                    value = int(part, 16)
+                except ValueError:
+                    return False
+                else:
+                    if value < 0 or value >= 65536:
+                        return False
+
+        if num_blank < 2:
+            return True
+        elif num_blank == 2 and not parts[0] and not parts[1]:
+            return True
+        return False
 
 
 class MacAddress(Regexp):
