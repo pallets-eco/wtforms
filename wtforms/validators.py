@@ -3,7 +3,7 @@ import re
 
 __all__ = (
     'DataRequired', 'data_required', 'Email', 'email', 'EqualTo', 'equal_to',
-    'IPAddress', 'ip_address', 'InputRequired', 'input_required' 'Length',
+    'IPAddress', 'ip_address', 'InputRequired', 'input_required', 'Length',
     'length', 'NumberRange', 'number_range', 'Optional', 'optional',
     'Required', 'required', 'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
     'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID'
