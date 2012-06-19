@@ -4,7 +4,7 @@ A DateTimeField and DateField that use the `dateutil` package for parsing.
 from dateutil import parser
 
 from wtforms.fields import Field
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, u
 from wtforms.widgets import TextInput
 
 
@@ -36,16 +36,16 @@ class DateTimeField(Field):
 
     def _value(self):
         if self.raw_data:
-            return u' '.join(self.raw_data)
+            return u(' ').join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.display_format) or u''
+            return self.data and self.data.strftime(self.display_format) or u('')
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = u' '.join(valuelist)
+            date_str = u(' ').join(valuelist)
             if not date_str:
                 self.data = None
-                raise ValidationError(self.gettext(u'Please input a date/time value'))
+                raise ValidationError(self.gettext(u('Please input a date/time value')))
 
             parse_kwargs = self.parse_kwargs.copy()
             if 'default' not in parse_kwargs:
@@ -57,7 +57,7 @@ class DateTimeField(Field):
                 self.data = parser.parse(date_str, **parse_kwargs)
             except ValueError:
                 self.data = None
-                raise ValidationError(self.gettext(u'Invalid date/time input'))
+                raise ValidationError(self.gettext(u('Invalid date/time input')))
 
 
 class DateField(DateTimeField):

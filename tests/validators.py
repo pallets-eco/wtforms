@@ -3,7 +3,8 @@ from unittest import TestCase
 from wtforms.validators import (
     StopValidation, ValidationError, email, equal_to,
     ip_address, length, required, optional, regexp,
-    url, NumberRange, AnyOf, NoneOf, mac_address, UUID
+    url, NumberRange, AnyOf, NoneOf, mac_address, UUID,
+    unicode
 )
 from functools import partial
 
@@ -36,7 +37,9 @@ class DummyField(object):
 def grab_error_message(callable, form, field):
     try:
         callable(form, field)
-    except ValidationError, e:
+    except ValidationError:
+        import sys
+        e = sys.exc_info()[1]
         return e.args[0]
 
 class ValidatorsTest(TestCase):
@@ -116,9 +119,9 @@ class ValidatorsTest(TestCase):
         # Test new formatting features
         grab = lambda **k : grab_error_message(length(**k), self.form, field)
         self.assertEqual(grab(min=2, max=5, message='%(min)d and %(max)d'), '2 and 5')
-        self.assert_('at least 8' in grab(min=8))
-        self.assert_('longer than 5' in grab(max=5))
-        self.assert_('between 2 and 5' in grab(min=2, max=5))
+        self.assertTrue('at least 8' in grab(min=8))
+        self.assertTrue('longer than 5' in grab(max=5))
+        self.assertTrue('between 2 and 5' in grab(min=2, max=5))
 
     def test_required(self):
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
@@ -195,14 +198,14 @@ class ValidatorsTest(TestCase):
         message = ReallyLazyProxy()
         self.assertRaises(Exception, str, message)
         self.assertRaises(Exception, unicode, message)
-        self.assert_(equal_to('fieldname', message=message))
-        self.assert_(length(min=1, message=message))
-        self.assert_(NumberRange(1,5, message=message))
-        self.assert_(required(message=message))
-        self.assert_(regexp('.+', message=message))
-        self.assert_(email(message=message))
-        self.assert_(ip_address(message=message))
-        self.assert_(url(message=message))
+        self.assertTrue(equal_to('fieldname', message=message))
+        self.assertTrue(length(min=1, message=message))
+        self.assertTrue(NumberRange(1,5, message=message))
+        self.assertTrue(required(message=message))
+        self.assertTrue(regexp('.+', message=message))
+        self.assertTrue(email(message=message))
+        self.assertTrue(ip_address(message=message))
+        self.assertTrue(url(message=message))
 
     def test_any_of(self):
         self.assertEqual(AnyOf(['a', 'b', 'c'])(self.form, DummyField('b')), None)

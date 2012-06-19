@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import unicode_literals
+
 import sys
 
 from datetime import date, datetime
@@ -9,6 +11,7 @@ from wtforms import validators, widgets
 from wtforms.fields import *
 from wtforms.fields import Label, Field
 from wtforms.form import Form
+from wtforms.validators import unicode
 
 
 PYTHON_VERSION = sys.version_info 
@@ -25,7 +28,7 @@ class AttrDict(object):
         self.__dict__.update(*args, **kw)
 
 def make_form(_name='F', **fields):
-    return type(_name, (Form, ), fields)
+    return type(str(_name), (Form, ), fields)
 
 
 class DefaultsTest(TestCase):
@@ -46,26 +49,26 @@ class DefaultsTest(TestCase):
 
 class LabelTest(TestCase):
     def test(self):
-        expected = u"""<label for="test">Caption</label>"""
-        label = Label('test', u'Caption')
+        expected = """<label for="test">Caption</label>"""
+        label = Label('test', 'Caption')
         self.assertEqual(label(), expected)
         self.assertEqual(str(label), expected)
         self.assertEqual(unicode(label), expected)
         self.assertEqual(label.__html__(), expected)
         self.assertEqual(label().__html__(), expected)
-        self.assertEqual(label(u'hello'), u"""<label for="test">hello</label>""")
-        self.assertEqual(TextField(u'hi').bind(Form(), 'a').label.text, u'hi')
-        if PYTHON_VERSION < (3, ):
-            self.assertEqual(repr(label), "Label('test', u'Caption')") 
+        self.assertEqual(label('hello'), """<label for="test">hello</label>""")
+        self.assertEqual(TextField('hi').bind(Form(), 'a').label.text, 'hi')
+        if PYTHON_VERSION < (3,):
+            self.assertEqual(repr(label), "Label(u'test', u'Caption')") 
         else:
             self.assertEqual(repr(label), "Label('test', 'Caption')") 
 
     def test_auto_label(self):
-        t1 = TextField().bind(Form(), u'foo_bar')
-        self.assertEqual(t1.label.text, u'Foo Bar')
+        t1 = TextField().bind(Form(), 'foo_bar')
+        self.assertEqual(t1.label.text, 'Foo Bar')
 
-        t2 = TextField(u'').bind(Form(), u'foo_bar')
-        self.assertEqual(t2.label.text, u'')
+        t2 = TextField('').bind(Form(), 'foo_bar')
+        self.assertEqual(t2.label.text, '')
 
 
 class FlagsTest(TestCase):
@@ -75,20 +78,20 @@ class FlagsTest(TestCase):
 
     def test_existing_values(self):
         self.assertEqual(self.flags.required, True)
-        self.assert_('required' in self.flags)
+        self.assertTrue('required' in self.flags)
         self.assertEqual(self.flags.optional, False)
-        self.assert_('optional' not in self.flags)
+        self.assertTrue('optional' not in self.flags)
 
     def test_assignment(self):
-        self.assert_('optional' not in self.flags)
+        self.assertTrue('optional' not in self.flags)
         self.flags.optional = True
         self.assertEqual(self.flags.optional, True)
-        self.assert_('optional' in self.flags)
+        self.assertTrue('optional' in self.flags)
 
     def test_unset(self):
         self.flags.required = False
         self.assertEqual(self.flags.required, False)
-        self.assert_('required' not in self.flags)
+        self.assertTrue('required' not in self.flags)
 
     def test_repr(self):
         self.assertEqual(repr(self.flags), '<wtforms.fields.Flags: {required}>')
@@ -96,26 +99,26 @@ class FlagsTest(TestCase):
 
 class FiltersTest(TestCase):
     class F(Form):
-        a = TextField(default=u' hello', filters=[lambda x: x.strip()])
-        b = TextField(default=u'42', filters=[lambda x: int(x)])
+        a = TextField(default=' hello', filters=[lambda x: x.strip()])
+        b = TextField(default='42', filters=[lambda x: int(x)])
 
     def test_working(self):
         form = self.F()
-        self.assertEqual(form.a.data, u'hello')
+        self.assertEqual(form.a.data, 'hello')
         self.assertEqual(form.b.data, 42)
         assert form.validate()
 
     def test_failure(self):
-        form = self.F(DummyPostData(a=[u'  foo bar  '], b=[u'hi']))
-        self.assertEqual(form.a.data, u'foo bar')
-        self.assertEqual(form.b.data, u'hi')
+        form = self.F(DummyPostData(a=['  foo bar  '], b=['hi']))
+        self.assertEqual(form.a.data, 'foo bar')
+        self.assertEqual(form.b.data, 'hi')
         self.assertEqual(len(form.b.process_errors), 1)
         assert not form.validate()
 
 
 class FieldTest(TestCase):
     class F(Form):
-        a = TextField(default=u'hello')
+        a = TextField(default='hello')
 
     def setUp(self):
         self.field = self.F().a 
@@ -125,14 +128,14 @@ class FieldTest(TestCase):
         assert unbound.creation_counter != 0
         assert unbound.field_class is TextField
         self.assertEqual(unbound.args, ())
-        self.assertEqual(unbound.kwargs, {'default': u'hello'})
-        assert repr(unbound).startswith(u'<UnboundField(TextField')
+        self.assertEqual(unbound.kwargs, {'default': 'hello'})
+        assert repr(unbound).startswith('<UnboundField(TextField')
 
     def test_htmlstring(self):
-        self.assert_(isinstance(self.field.__html__(), widgets.HTMLString))
+        self.assertTrue(isinstance(self.field.__html__(), widgets.HTMLString))
 
     def test_str_coerce(self):
-        self.assert_(isinstance(str(self.field), str))
+        self.assertTrue(isinstance(str(self.field), str))
         self.assertEqual(str(self.field), str(self.field()))
 
     def test_unicode_coerce(self):
@@ -170,6 +173,7 @@ class PrePostValidationTest(TestCase):
         a = self._init_field("long")
         self.assertEqual(a.errors, ["too long"])
 
+        import pdb; pdb.set_trace()
         stoponly = self._init_field("stoponly")
         self.assertEqual(stoponly.errors, [])
 
@@ -190,39 +194,40 @@ class SelectFieldTest(TestCase):
 
     def test_defaults(self):
         form = self.F()
-        self.assertEqual(form.a.data, u'a')
+        self.assertEqual(form.a.data, 'a')
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.validate(), False)
-        self.assertEqual(form.a(), u"""<select id="a" name="a"><option selected value="a">hello</option><option value="btest">bye</option></select>""")
-        self.assertEqual(form.b(), u"""<select id="b" name="b"><option value="1">Item 1</option><option value="2">Item 2</option></select>""")
+        self.assertEqual(form.a(), """<select id="a" name="a"><option selected value="a">hello</option><option value="btest">bye</option></select>""")
+        self.assertEqual(form.b(), """<select id="b" name="b"><option value="1">Item 1</option><option value="2">Item 2</option></select>""")
 
     def test_with_data(self):
-        form = self.F(DummyPostData(a=[u'btest']))
-        self.assertEqual(form.a.data, u'btest')
-        self.assertEqual(form.a(), u"""<select id="a" name="a"><option value="a">hello</option><option selected value="btest">bye</option></select>""")
+        form = self.F(DummyPostData(a=['btest']))
+        self.assertEqual(form.a.data, 'btest')
+        self.assertEqual(form.a(), """<select id="a" name="a"><option value="a">hello</option><option selected value="btest">bye</option></select>""")
 
     def test_value_coercion(self):
-        form = self.F(DummyPostData(b=[u'2']))
+        form = self.F(DummyPostData(b=['2']))
         self.assertEqual(form.b.data, 2)
-        self.assert_(form.b.validate(form))
-        form = self.F(DummyPostData(b=[u'b']))
+        self.assertTrue(form.b.validate(form))
+        form = self.F(DummyPostData(b=['b']))
         self.assertEqual(form.b.data, None)
-        self.assert_(not form.b.validate(form))
+        self.assertTrue(not form.b.validate(form))
 
     def test_iterable_options(self):
         form = self.F()
         first_option = list(form.a)[0]
-        self.assert_(isinstance(first_option, form.a._Option))
-        self.assertEqual(list(unicode(x) for x in form.a), [u'<option selected value="a">hello</option>', u'<option value="btest">bye</option>'])
-        self.assert_(isinstance(first_option.widget, widgets.Option))
-        self.assert_(isinstance(list(form.b)[0].widget, widgets.TextInput))
-        self.assertEqual(first_option(disabled=True), u'<option disabled selected value="a">hello</option>')
+        self.assertTrue(isinstance(first_option, form.a._Option))
+        self.assertEqual(list(unicode(x) for x in form.a), ['<option selected value="a">hello</option>',
+                                                            '<option value="btest">bye</option>'])
+        self.assertTrue(isinstance(first_option.widget, widgets.Option))
+        self.assertTrue(isinstance(list(form.b)[0].widget, widgets.TextInput))
+        self.assertEqual(first_option(disabled=True), '<option disabled selected value="a">hello</option>')
 
     def test_default_coerce(self):
         F = make_form(a=SelectField(choices=[('a', 'Foo')]))
         form = F(DummyPostData(a=[]))
         assert not form.validate()
-        self.assertEqual(form.a.data, u'None')
+        self.assertEqual(form.a.data, 'None')
         self.assertEqual(len(form.a.errors), 1)
         self.assertEqual(form.a.errors[0], 'Not a valid choice')
 
@@ -238,7 +243,7 @@ class SelectMultipleFieldTest(TestCase):
         self.assertEqual(form.b.data, [1, 3])
         # Test for possible regression with null data
         form.a.data = None
-        self.assert_(form.validate())
+        self.assertTrue(form.validate())
         self.assertEqual(list(form.a.iter_choices()), [(v, l, False) for v, l in form.a.choices])
 
     def test_with_data(self):
@@ -248,10 +253,10 @@ class SelectMultipleFieldTest(TestCase):
         self.assertEqual(form.b.data, [])
         form = self.F(DummyPostData(b=['1', '2']))
         self.assertEqual(form.b.data, [1, 2])
-        self.assert_(form.validate())
+        self.assertTrue(form.validate())
         form = self.F(DummyPostData(b=['1', '2', '4']))
         self.assertEqual(form.b.data, [1, 2, 4])
-        self.assert_(not form.validate())
+        self.assertTrue(not form.validate())
 
 
 class RadioFieldTest(TestCase):
@@ -261,12 +266,12 @@ class RadioFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a.data, u'a')
+        self.assertEqual(form.a.data, 'a')
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.validate(), False)
-        self.assertEqual(form.a(), u"""<ul id="a"><li><input checked id="a-0" name="a" type="radio" value="a"> <label for="a-0">hello</label></li><li><input id="a-1" name="a" type="radio" value="b"> <label for="a-1">bye</label></li></ul>""")
-        self.assertEqual(form.b(), u"""<ul id="b"><li><input id="b-0" name="b" type="radio" value="1"> <label for="b-0">Item 1</label></li><li><input id="b-1" name="b" type="radio" value="2"> <label for="b-1">Item 2</label></li></ul>""")
-        self.assertEqual([unicode(x) for x in form.a], [u'<input checked id="a-0" name="a" type="radio" value="a">', u'<input id="a-1" name="a" type="radio" value="b">'])
+        self.assertEqual(form.a(), """<ul id="a"><li><input checked id="a-0" name="a" type="radio" value="a"> <label for="a-0">hello</label></li><li><input id="a-1" name="a" type="radio" value="b"> <label for="a-1">bye</label></li></ul>""")
+        self.assertEqual(form.b(), """<ul id="b"><li><input id="b-0" name="b" type="radio" value="1"> <label for="b-0">Item 1</label></li><li><input id="b-1" name="b" type="radio" value="2"> <label for="b-1">Item 2</label></li></ul>""")
+        self.assertEqual([unicode(x) for x in form.a], ['<input checked id="a-0" name="a" type="radio" value="a">', '<input id="a-1" name="a" type="radio" value="b">'])
 
 
 class TextFieldTest(TestCase):
@@ -276,12 +281,12 @@ class TextFieldTest(TestCase):
     def test(self):
         form = self.F()
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="">""")
         form = self.F(DummyPostData(a=['hello']))
-        self.assertEqual(form.a.data, u'hello')
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="hello">""")
+        self.assertEqual(form.a.data, 'hello')
+        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="hello">""")
         form = self.F(DummyPostData(b=['hello']))
-        self.assertEqual(form.a.data, u'')
+        self.assertEqual(form.a.data, '')
 
 class HiddenFieldTest(TestCase):
     class F(Form):
@@ -289,7 +294,7 @@ class HiddenFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="hidden" value="LE DEFAULT">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="hidden" value="LE DEFAULT">""")
 
 
 class TextAreaFieldTest(TestCase):
@@ -298,7 +303,7 @@ class TextAreaFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), u"""<textarea id="a" name="a">LE DEFAULT</textarea>""")
+        self.assertEqual(form.a(), """<textarea id="a" name="a">LE DEFAULT</textarea>""")
 
 
 class PasswordFieldTest(TestCase):
@@ -308,8 +313,8 @@ class PasswordFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="password" value="LE DEFAULT">""")
-        self.assertEqual(form.b(), u"""<input id="b" name="b" type="password" value="">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="password" value="LE DEFAULT">""")
+        self.assertEqual(form.b(), """<input id="b" name="b" type="password" value="">""")
 
 
 class FileFieldTest(TestCase):
@@ -318,7 +323,7 @@ class FileFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="file" value="LE DEFAULT">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="file" value="LE DEFAULT">""")
 
 
 class IntegerFieldTest(TestCase):
@@ -329,24 +334,24 @@ class IntegerFieldTest(TestCase):
     def test(self):
         form = self.F(DummyPostData(a=['v'], b=['-15']))
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a.raw_data, [u'v'])
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="v">""")
+        self.assertEqual(form.a.raw_data, ['v'])
+        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="v">""")
         self.assertEqual(form.b.data, -15)
-        self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15">""")
-        self.assert_(not form.a.validate(form))
-        self.assert_(form.b.validate(form))
+        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="-15">""")
+        self.assertTrue(not form.a.validate(form))
+        self.assertTrue(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.raw_data, [])
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.b.raw_data, [''])
-        self.assert_(not form.validate())
+        self.assertTrue(not form.validate())
         self.assertEqual(len(form.b.process_errors), 1)
         self.assertEqual(len(form.b.errors), 1)
         form = self.F(b=9)
         self.assertEqual(form.b.data, 9)
-        self.assertEqual(form.a._value(), u'')
-        self.assertEqual(form.b._value(), u'9')
+        self.assertEqual(form.a._value(), '')
+        self.assertEqual(form.b._value(), '9')
 
 
 class DecimalFieldTest(TestCase):
@@ -354,27 +359,27 @@ class DecimalFieldTest(TestCase):
         F = make_form(a=DecimalField())
         form = F(DummyPostData(a='2.1'))
         self.assertEqual(form.a.data, Decimal('2.1'))
-        self.assertEqual(form.a._value(), u'2.1')
+        self.assertEqual(form.a._value(), '2.1')
         form.a.raw_data = None
-        self.assertEqual(form.a._value(), u'2.10')
-        self.assert_(form.validate())
+        self.assertEqual(form.a._value(), '2.10')
+        self.assertTrue(form.validate())
         form = F(DummyPostData(a='2,1'), a=Decimal(5))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.raw_data, ['2,1'])
-        self.assert_(not form.validate())
+        self.assertTrue(not form.validate())
 
 
     def test_quantize(self):
         F = make_form(a=DecimalField(places=3, rounding=ROUND_UP), b=DecimalField(places=None))
         form = F(a=Decimal('3.1415926535'))
-        self.assertEqual(form.a._value(), u'3.142')
+        self.assertEqual(form.a._value(), '3.142')
         form.a.rounding = ROUND_DOWN
-        self.assertEqual(form.a._value(), u'3.141')
-        self.assertEqual(form.b._value(), u'')
+        self.assertEqual(form.a._value(), '3.141')
+        self.assertEqual(form.b._value(), '')
         form = F(a=3.14159265, b=72)
-        self.assertEqual(form.a._value(), u'3.142')
-        self.assert_(isinstance(form.a.data, float))
-        self.assertEqual(form.b._value(), u'72')
+        self.assertEqual(form.a._value(), '3.142')
+        self.assertTrue(isinstance(form.a.data, float))
+        self.assertEqual(form.b._value(), '72')
 
 
 class FloatFieldTest(TestCase):
@@ -385,22 +390,22 @@ class FloatFieldTest(TestCase):
     def test(self):
         form = self.F(DummyPostData(a=['v'], b=['-15.0']))
         self.assertEqual(form.a.data, None)
-        self.assertEqual(form.a.raw_data, [u'v'])
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="v">""")
+        self.assertEqual(form.a.raw_data, ['v'])
+        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="v">""")
         self.assertEqual(form.b.data, -15.0)
-        self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="-15.0">""")
-        self.assert_(not form.a.validate(form))
-        self.assert_(form.b.validate(form))
+        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="-15.0">""")
+        self.assertTrue(not form.a.validate(form))
+        self.assertTrue(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.b.data, None)
-        self.assertEqual(form.b.raw_data, [u''])
-        self.assert_(not form.validate())
+        self.assertEqual(form.b.raw_data, [''])
+        self.assertTrue(not form.validate())
         self.assertEqual(len(form.b.process_errors), 1)
         self.assertEqual(len(form.b.errors), 1)
         form = self.F(b=9.0)
         self.assertEqual(form.b.data, 9.0)
-        self.assertEqual(form.b._value(), u"9.0")
+        self.assertEqual(form.b._value(), "9.0")
 
 
 class BooleanFieldTest(TestCase):
@@ -418,14 +423,14 @@ class BooleanFieldTest(TestCase):
         self.assertEqual(form.bool2.data, True)
 
     def test_rendering(self):
-        form = self.BoringForm(DummyPostData(bool2=u"x"))
-        self.assertEqual(form.bool1(), u'<input id="bool1" name="bool1" type="checkbox" value="y">')
-        self.assertEqual(form.bool2(), u'<input checked id="bool2" name="bool2" type="checkbox" value="x">')
-        self.assertEqual(form.bool2.raw_data, [u'x'])
+        form = self.BoringForm(DummyPostData(bool2="x"))
+        self.assertEqual(form.bool1(), '<input id="bool1" name="bool1" type="checkbox" value="y">')
+        self.assertEqual(form.bool2(), '<input checked id="bool2" name="bool2" type="checkbox" value="x">')
+        self.assertEqual(form.bool2.raw_data, ['x'])
 
     def test_with_postdata(self):
-        form = self.BoringForm(DummyPostData(bool1=[u'a']))
-        self.assertEqual(form.bool1.raw_data, [u'a'])
+        form = self.BoringForm(DummyPostData(bool1=['a']))
+        self.assertEqual(form.bool1.raw_data, ['a'])
         self.assertEqual(form.bool1.data, True)
 
     def test_with_model_data(self):
@@ -435,7 +440,7 @@ class BooleanFieldTest(TestCase):
         self.assertEqual(form.bool2.data, True)
 
     def test_with_postdata_and_model(self):
-        form = self.BoringForm(DummyPostData(bool1=[u'y']), obj=self.obj)
+        form = self.BoringForm(DummyPostData(bool1=['y']), obj=self.obj)
         self.assertEqual(form.bool1.data, True)
         self.assertEqual(form.bool2.data, False)
 
@@ -459,7 +464,7 @@ class DateFieldTest(TestCase):
         self.assertEqual(len(form.a.process_errors), 1)
         self.assertEqual(len(form.a.errors), 1)
         self.assertEqual(len(form.b.errors), 1)
-        self.assertEqual(form.a.process_errors[0], u'Not a valid date value')
+        self.assertEqual(form.a.process_errors[0], 'Not a valid date value')
 
 
 class DateTimeFieldTest(TestCase):
@@ -471,13 +476,13 @@ class DateTimeFieldTest(TestCase):
         d = datetime(2008, 5, 5, 4, 30, 0, 0)
         form = self.F(DummyPostData(a=['2008-05-05', '04:30:00'], b=['2008-05-05 04:30']))
         self.assertEqual(form.a.data, d)
-        self.assertEqual(form.a(), u"""<input id="a" name="a" type="text" value="2008-05-05 04:30:00">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="2008-05-05 04:30:00">""")
         self.assertEqual(form.b.data, d)
-        self.assertEqual(form.b(), u"""<input id="b" name="b" type="text" value="2008-05-05 04:30">""")
-        self.assert_(form.validate())
+        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="2008-05-05 04:30">""")
+        self.assertTrue(form.validate())
         form = self.F(DummyPostData(a=['2008-05-05']))
-        self.assert_(not form.validate())
-        self.assertEqual(form.a.errors[0], u'Not a valid datetime value')
+        self.assertTrue(not form.validate())
+        self.assertEqual(form.a.errors[0], 'Not a valid datetime value')
 
     def test_microseconds(self):
         if PYTHON_VERSION < (2, 6):
@@ -491,7 +496,7 @@ class DateTimeFieldTest(TestCase):
 
 class SubmitFieldTest(TestCase):
     class F(Form):
-        a = SubmitField(u'Label')
+        a = SubmitField('Label')
 
     def test(self):
         self.assertEqual(self.F().a(), """<input id="a" name="a" type="submit" value="Label">""")
@@ -507,35 +512,35 @@ class FormFieldTest(TestCase):
         self.F2 = make_form('F2', a = FormField(F, separator='::'))
 
     def test_formdata(self):
-        form = self.F1(DummyPostData({'a-a':[u'moo']}))
+        form = self.F1(DummyPostData({'a-a':['moo']}))
         self.assertEqual(form.a.form.a.name, 'a-a')
-        self.assertEqual(form.a.form.a.data, u'moo')
-        self.assertEqual(form.a.form.b.data, u'')
-        self.assert_(form.validate())
+        self.assertEqual(form.a.form.a.data, 'moo')
+        self.assertEqual(form.a.form.b.data, '')
+        self.assertTrue(form.validate())
 
     def test_iteration(self):
         self.assertEqual([x.name for x in self.F1().a], ['a-a', 'a-b'])
 
     def test_with_obj(self):
-        obj = AttrDict(a=AttrDict(a=u'mmm'))
+        obj = AttrDict(a=AttrDict(a='mmm'))
         form = self.F1(obj=obj)
-        self.assertEqual(form.a.form.a.data, u'mmm')
+        self.assertEqual(form.a.form.a.data, 'mmm')
         self.assertEqual(form.a.form.b.data, None)
         obj_inner = AttrDict(a=None, b='rawr')
         obj2 = AttrDict(a=obj_inner)
         form.populate_obj(obj2)
-        self.assert_(obj2.a is obj_inner)
-        self.assertEqual(obj_inner.a, u'mmm')
+        self.assertTrue(obj2.a is obj_inner)
+        self.assertEqual(obj_inner.a, 'mmm')
         self.assertEqual(obj_inner.b, None)
 
     def test_widget(self):
-        self.assertEqual(self.F1().a(), u'''<table id="a"><tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" type="text" value=""></td></tr><tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value=""></td></tr></table>''')
+        self.assertEqual(self.F1().a(), '''<table id="a"><tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" type="text" value=""></td></tr><tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value=""></td></tr></table>''')
 
     def test_separator(self):
         form = self.F2(DummyPostData({'a-a': 'fake', 'a::a': 'real'}))
         self.assertEqual(form.a.a.name, 'a::a')
         self.assertEqual(form.a.a.data, 'real')
-        self.assert_(form.validate())
+        self.assertTrue(form.validate())
 
     def test_no_validators_or_filters(self):
         class A(Form):
@@ -568,18 +573,18 @@ class FieldListTest(TestCase):
         pdata = DummyPostData({'a-0': ['bleh'], 'a-3': ['yarg'], 'a-4': [''], 'a-7': ['mmm']})
         form = F(pdata)
         self.assertEqual(len(form.a.entries), 4)
-        self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
-        self.assert_(not form.validate())
+        self.assertEqual(form.a.data, ['bleh', 'yarg', '', 'mmm'])
+        self.assertTrue(not form.validate())
 
         form = F(pdata, a=data)
-        self.assertEqual(form.a.data, [u'bleh', u'yarg', u'', u'mmm'])
-        self.assert_(not form.validate())
+        self.assertEqual(form.a.data, ['bleh', 'yarg', '', 'mmm'])
+        self.assertTrue(not form.validate())
 
         # Test for formdata precedence
         pdata = DummyPostData({'a-0': ['a'], 'a-1': ['b']})
         form = F(pdata, a=data)
         self.assertEqual(len(form.a.entries), 2)
-        self.assertEqual(form.a.data, [u'a', u'b'])
+        self.assertEqual(form.a.data, ['a', 'b'])
 
     def test_enclosed_subform(self):
         make_inner = lambda: AttrDict(a=None)
@@ -589,10 +594,10 @@ class FieldListTest(TestCase):
         data = [{'a': 'hello'}]
         form = F(a=data)
         self.assertEqual(form.a.data, data)
-        self.assert_(form.validate())
+        self.assertTrue(form.validate())
         form.a.append_entry()
         self.assertEqual(form.a.data, data + [{'a': None}])
-        self.assert_(not form.validate())
+        self.assertTrue(not form.validate())
 
         pdata = DummyPostData({'a-0': ['fake'], 'a-0-a': ['foo'], 'a-1-a': ['bar']})
         form = F(pdata, a=data)
@@ -602,9 +607,9 @@ class FieldListTest(TestCase):
         inner_list = [inner_obj]
         obj = AttrDict(a=inner_list)
         form.populate_obj(obj)
-        self.assert_(obj.a is not inner_list)
+        self.assertTrue(obj.a is not inner_list)
         self.assertEqual(len(obj.a), 2)
-        self.assert_(obj.a[0] is inner_obj)
+        self.assertTrue(obj.a[0] is inner_obj)
         self.assertEqual(obj.a[0].a, 'foo')
         self.assertEqual(obj.a[1].a, 'bar')
 

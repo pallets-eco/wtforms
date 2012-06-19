@@ -60,7 +60,7 @@ class ModelConverter(ModelConverterBase):
         converters = {}
         if simple_conversions is None:
             simple_conversions = self.DEFAULT_SIMPLE_CONVERSIONS
-        for field_type, django_fields in simple_conversions.iteritems():
+        for field_type, django_fields in simple_conversions.items():
             converter = self.make_simple_converter(field_type)
             for name in django_fields:
                 converters[name] = converter

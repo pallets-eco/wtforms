@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+from __future__ import unicode_literals
+
 import sys, os
 TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, TESTS_DIR)
@@ -36,8 +38,8 @@ def contains_validator(field, v_type):
 def lazy_select(field, **kwargs):
     output = []
     for val, label, selected in field.iter_choices():
-        s = selected and u'Y' or u'N'
-        output.append(u'%s:%s:%s' % (s, unicode(val), unicode(label)))
+        s = selected and 'Y' or 'N'
+        output.append('%s:%s:%s' % (s, unicode(val), unicode(label)))
     return tuple(output)
 
 class DummyPostData(dict):
@@ -45,10 +47,10 @@ class DummyPostData(dict):
         return self[key]
 
 class TemplateTagsTest(TestCase):
-    load_tag = u'{% load wtforms %}'
+    load_tag = '{% load wtforms %}'
 
     class F(Form):
-        a = fields.TextField(u'I r label')
+        a = fields.TextField('I r label')
         b = fields.SelectField(choices=[('a', 'hi'), ('b', 'bai')])
 
     def _render(self, source):
@@ -56,13 +58,13 @@ class TemplateTagsTest(TestCase):
         return t.render(Context({'form': self.F(), 'a': self.F().a,  'someclass': "CLASSVAL>!"}))
 
     def test_simple_print(self):
-        self.assertEqual(self._render(u'{% autoescape off %}{{ form.a }}{% endautoescape %}'), u'<input id="a" name="a" type="text" value="">')
-        #self.assertEqual(self._render(u'{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), u'<label for="a">I r label</label>')
+        self.assertEqual(self._render('{% autoescape off %}{{ form.a }}{% endautoescape %}'), '<input id="a" name="a" type="text" value="">')
+        #self.assertEqual(self._render('{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), '<label for="a">I r label</label>')
 
     def test_form_field(self):
-        self.assertEqual(self._render(u'{% form_field form.a %}'), u'<input id="a" name="a" type="text" value="">')
-        self.assertEqual(self._render(u'{% form_field a class=someclass onclick="alert()" %}'), 
-                         u'<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="">')
+        self.assertEqual(self._render('{% form_field form.a %}'), '<input id="a" name="a" type="text" value="">')
+        self.assertEqual(self._render('{% form_field a class=someclass onclick="alert()" %}'), 
+                         '<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="">')
 
 class ModelFormTest(TestCase):
     F = model_form(test_models.User, exclude=['id'], field_args = {
@@ -87,11 +89,11 @@ class ModelFormTest(TestCase):
         self.assertEqual(self.form.birthday.description, 'Teh Birthday')
 
     def test_max_length(self):
-        self.assert_(contains_validator(self.form.username, validators.Length))
-        self.assert_(not contains_validator(self.form.posts, validators.Length))
+        self.assertTrue(contains_validator(self.form.username, validators.Length))
+        self.assertTrue(not contains_validator(self.form.posts, validators.Length))
 
     def test_optional(self):
-        self.assert_(contains_validator(self.form.email, validators.Optional))
+        self.assertTrue(contains_validator(self.form.email, validators.Optional))
 
     def test_simple_fields(self):
         self.assertEqual(type(self.form.file), fields.FileField)
@@ -102,16 +104,16 @@ class ModelFormTest(TestCase):
 
     def test_custom_converters(self):
         self.assertEqual(type(self.form.email), fields.TextField)
-        self.assert_(contains_validator(self.form.email, validators.Email))
+        self.assertTrue(contains_validator(self.form.email, validators.Email))
         self.assertEqual(type(self.form.reg_ip), fields.TextField)
-        self.assert_(contains_validator(self.form.reg_ip, validators.IPAddress))
+        self.assertTrue(contains_validator(self.form.reg_ip, validators.IPAddress))
         self.assertEqual(type(self.form.group_id), ModelSelectField)
 
     def test_us_states(self):
-        self.assert_(len(self.form.state.choices) >= 50)
+        self.assertTrue(len(self.form.state.choices) >= 50)
 
     def test_field_args(self):
-        self.assert_(contains_validator(self.form.posts, validators.NumberRange))
+        self.assertTrue(contains_validator(self.form.posts, validators.NumberRange))
         self.assertEqual(self.form.posts.description, 'Test')
 
 class QuerySetSelectFieldTest(DjangoTestCase):
@@ -128,18 +130,18 @@ class QuerySetSelectFieldTest(DjangoTestCase):
 
     def test_queryset_freshness(self):
         form = self.F()
-        self.assert_(form.b.queryset is not self.queryset)
+        self.assertTrue(form.b.queryset is not self.queryset)
 
     def test_with_data(self):
         form = self.F()
         form.a.queryset = self.queryset[1:]
-        self.assertEqual(form.a(), (u'Y:__None:', 'N:2:Admins'))
+        self.assertEqual(form.a(), ('Y:__None:', 'N:2:Admins'))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.validate(form), True)
         self.assertEqual(form.b.validate(form), False)
         form.b.data = test_models.Group.objects.get(pk=1)
         self.assertEqual(form.b.validate(form), True)
-        self.assertEqual(form.b(), (u'Y:1:Users(1)', 'N:2:Admins(2)'))
+        self.assertEqual(form.b(), ('Y:1:Users(1)', 'N:2:Admins(2)'))
 
     def test_formdata(self):
         form = self.F(DummyPostData(a=['1'], b=['3']))
@@ -161,7 +163,7 @@ class ModelSelectFieldTest(DjangoTestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), (u'N:1:Users(1)', 'N:2:Admins(2)'))
+        self.assertEqual(form.a(), ('N:1:Users(1)', 'N:2:Admins(2)'))
 
 
 if __name__ == '__main__':

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import decimal
 import operator
 import warnings
@@ -28,7 +30,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
     def __init__(self, label=None, validators=None, reference_class=None,
                  label_attr=None, get_label=None, allow_blank=False,
-                 blank_text=u'', **kwargs):
+                 blank_text='', **kwargs):
         super(ReferencePropertyField, self).__init__(label, validators,
                                                      **kwargs)
         if label_attr is not None:
@@ -63,7 +65,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield (u'__None', self.blank_text, self.data is None)
+            yield ('__None', self.blank_text, self.data is None)
 
         for obj in self.query:
             key = str(obj.key())
@@ -84,7 +86,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
                 if str(self.data.key()) == str(obj.key()):
                     break
             else:
-                raise ValueError(self.gettext(u'Not a valid choice'))
+                raise ValueError(self.gettext('Not a valid choice'))
 
 
 class StringListPropertyField(fields.TextAreaField):
@@ -96,14 +98,14 @@ class StringListPropertyField(fields.TextAreaField):
         if self.raw_data:
             return self.raw_data[0]
         else:
-            return self.data and unicode("\n".join(self.data)) or u''
+            return self.data and unicode("\n".join(self.data)) or ''
 
     def process_formdata(self, valuelist):
         if valuelist:
             try:
                 self.data = valuelist[0].splitlines()
             except ValueError:
-                raise ValueError(self.gettext(u'Not a valid list'))
+                raise ValueError(self.gettext('Not a valid list'))
 
 
 class GeoPtPropertyField(fields.TextField):
@@ -112,6 +114,6 @@ class GeoPtPropertyField(fields.TextField):
         if valuelist:
             try:
                 lat, lon = valuelist[0].split(',')
-                self.data = u'%s,%s' % (decimal.Decimal(lat.strip()), decimal.Decimal(lon.strip()),)
+                self.data = '%s,%s' % (decimal.Decimal(lat.strip()), decimal.Decimal(lon.strip()),)
             except (decimal.InvalidOperation, ValueError):
-                raise ValueError(u'Not a valid coordinate location')
+                raise ValueError('Not a valid coordinate location')

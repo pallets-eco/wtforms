@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from wtforms.form import Form
 from wtforms.validators import ValidationError
 
@@ -42,7 +44,7 @@ class SecureForm(Form):
         generated token equals the one we received as formdata.
         """
         if field.current_token != field.data:
-            raise ValidationError(field.gettext(u'Invalid CSRF Token'))
+            raise ValidationError(field.gettext('Invalid CSRF Token'))
 
     @property
     def data(self):

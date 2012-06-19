@@ -5,7 +5,7 @@ import operator
 
 from wtforms import widgets
 from wtforms.fields import SelectFieldBase
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, u, basestring
 
 try:
     from sqlalchemy.orm.util import identity_key
@@ -54,7 +54,7 @@ class QuerySelectField(SelectFieldBase):
 
     def __init__(self, label=None, validators=None, query_factory=None,
                  get_pk=None, get_label=None, allow_blank=False,
-                 blank_text=u'', **kwargs):
+                 blank_text=u(''), **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
 
@@ -100,14 +100,14 @@ class QuerySelectField(SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield (u'__None', self.blank_text, self.data is None)
+            yield (u('__None'), self.blank_text, self.data is None)
 
         for pk, obj in self._get_object_list():
             yield (pk, self.get_label(obj), obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
-            if self.allow_blank and valuelist[0] == u'__None':
+            if self.allow_blank and valuelist[0] == u('__None'):
                 self.data = None
             else:
                 self._data = None
@@ -119,7 +119,7 @@ class QuerySelectField(SelectFieldBase):
                 if self.data == obj:
                     break
             else:
-                raise ValidationError(self.gettext(u'Not a valid choice'))
+                raise ValidationError(self.gettext(u('Not a valid choice')))
 
 
 class QuerySelectMultipleField(QuerySelectField):
@@ -169,7 +169,7 @@ class QuerySelectMultipleField(QuerySelectField):
 
     def pre_validate(self, form):
         if self._invalid_formdata:
-            raise ValidationError(self.gettext(u'Not a valid choice'))
+            raise ValidationError(self.gettext(u('Not a valid choice')))
         elif self.data:
             obj_list = list(x[1] for x in self._get_object_list())
             for v in self.data:
@@ -179,4 +179,4 @@ class QuerySelectMultipleField(QuerySelectField):
 
 def get_pk_from_identity(obj):
     cls, key = identity_key(instance=obj)
-    return u':'.join(unicode(x) for x in key)
+    return u(':').join(unicode(x) for x in key)

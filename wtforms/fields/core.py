@@ -1,10 +1,12 @@
+from __future__ import unicode_literals
+
 import datetime
 import decimal
 import itertools
 import time
 
 from wtforms import widgets
-from wtforms.validators import StopValidation
+from wtforms.validators import StopValidation, unicode
 
 
 __all__ = (
@@ -47,7 +49,7 @@ class Field(object):
             return UnboundField(cls, *args, **kwargs)
 
     def __init__(self, label=None, validators=None, filters=tuple(),
-                 description=u'', id=None, default=None, widget=None,
+                 description='', id=None, default=None, widget=None,
                  _form=None, _name=None, _prefix='', _translations=None):
         """
         Construct a new field.
@@ -159,11 +161,11 @@ class Field(object):
         # Call pre_validate
         try:
             self.pre_validate(form)
-        except StopValidation, e:
+        except StopValidation as e:
             if e.args and e.args[0]:
                 self.errors.append(e.args[0])
             stop_validation = True
-        except ValueError, e:
+        except ValueError as e:
             self.errors.append(e.args[0])
 
         # Run validators
@@ -171,18 +173,18 @@ class Field(object):
             for validator in itertools.chain(self.validators, extra_validators):
                 try:
                     validator(form, self)
-                except StopValidation, e:
+                except StopValidation as e:
                     if e.args and e.args[0]:
                         self.errors.append(e.args[0])
                     stop_validation = True
                     break
-                except ValueError, e:
+                except ValueError as e:
                     self.errors.append(e.args[0])
 
         # Call post_validate
         try:
             self.post_validate(form, stop_validation)
-        except ValueError, e:
+        except ValueError as e:
             self.errors.append(e.args[0])
 
         return len(self.errors) == 0
@@ -231,7 +233,7 @@ class Field(object):
 
         try:
             self.process_data(data)
-        except ValueError, e:
+        except ValueError as e:
             self.process_errors.append(e.args[0])
 
         if formdata:
@@ -241,13 +243,13 @@ class Field(object):
                 else:
                     self.raw_data = []
                 self.process_formdata(self.raw_data)
-            except ValueError, e:
+            except ValueError as e:
                 self.process_errors.append(e.args[0])
 
         for filter in self.filters:
             try:
                 self.data = filter(self.data)
-            except ValueError, e:
+            except ValueError as e:
                 self.process_errors.append(e.args[0])
 
     def process_data(self, value):
@@ -340,7 +342,7 @@ class Label(object):
     def __call__(self, text=None, **kwargs):
         kwargs['for'] = self.field_id
         attributes = widgets.html_params(**kwargs)
-        return widgets.HTMLString(u'<label %s>%s</label>' % (attributes, text or self.text))
+        return widgets.HTMLString('<label %s>%s</label>' % (attributes, text or self.text))
 
     def __repr__(self):
         return 'Label(%r, %r)' % (self.field_id, self.text)
@@ -371,7 +373,7 @@ class SelectFieldBase(Field):
     def __iter__(self):
         opts = dict(widget=self.option_widget, _name=self.name, _form=None)
         for i, (value, label, checked) in enumerate(self.iter_choices()):
-            opt = self._Option(label=label, id=u'%s-%d' % (self.id, i), **opts)
+            opt = self._Option(label=label, id='%s-%d' % (self.id, i), **opts)
             opt.process(None, value)
             opt.checked = checked
             yield opt
@@ -406,14 +408,14 @@ class SelectField(SelectFieldBase):
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
-                raise ValueError(self.gettext(u'Invalid Choice: could not coerce'))
+                raise ValueError(self.gettext('Invalid Choice: could not coerce'))
 
     def pre_validate(self, form):
         for v, _ in self.choices:
             if self.data == v:
                 break
         else:
-            raise ValueError(self.gettext(u'Not a valid choice'))
+            raise ValueError(self.gettext('Not a valid choice'))
 
 
 class SelectMultipleField(SelectField):
@@ -439,14 +441,14 @@ class SelectMultipleField(SelectField):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError:
-            raise ValueError(self.gettext(u'Invalid choice(s): one or more data inputs could not be coerced'))
+            raise ValueError(self.gettext('Invalid choice(s): one or more data inputs could not be coerced'))
 
     def pre_validate(self, form):
         if self.data:
             values = list(c[0] for c in self.choices)
             for d in self.data:
                 if d not in values:
-                    raise ValueError(self.gettext(u"'%(value)s' is not a valid choice for this field") % dict(value=d))
+                    raise ValueError(self.gettext("'%(value)s' is not a valid choice for this field") % dict(value=d))
 
 
 class RadioField(SelectField):
@@ -471,10 +473,10 @@ class StringField(Field):
         if valuelist:
             self.data = valuelist[0]
         else:
-            self.data = u''
+            self.data = ''
 
     def _value(self):
-        return unicode(self.data) if self.data is not None else u''
+        return unicode(self.data) if self.data is not None else ''
 
 
 class IntegerField(Field):
@@ -493,7 +495,7 @@ class IntegerField(Field):
         elif self.data is not None:
             return unicode(self.data)
         else:
-            return u''
+            return ''
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -501,7 +503,7 @@ class IntegerField(Field):
                 self.data = int(valuelist[0])
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext(u'Not a valid integer value'))
+                raise ValueError(self.gettext('Not a valid integer value'))
 
 
 class DecimalField(Field):
@@ -535,12 +537,12 @@ class DecimalField(Field):
                 else:
                     # If for some reason, data is a float or int, then format
                     # as we would for floats using string formatting.
-                    format = u'%%0.%df' % self.places
+                    format = '%%0.%df' % self.places
                     return format % self.data
             else:
                 return unicode(self.data)
         else:
-            return u''
+            return ''
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -548,7 +550,7 @@ class DecimalField(Field):
                 self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 self.data = None
-                raise ValueError(self.gettext(u'Not a valid decimal value'))
+                raise ValueError(self.gettext('Not a valid decimal value'))
 
 
 class FloatField(Field):
@@ -567,7 +569,7 @@ class FloatField(Field):
         elif self.data is not None:
             return unicode(self.data)
         else:
-            return u''
+            return ''
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -575,7 +577,7 @@ class FloatField(Field):
                 self.data = float(valuelist[0])
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext(u'Not a valid float value'))
+                raise ValueError(self.gettext('Not a valid float value'))
 
 
 class BooleanField(Field):
@@ -600,7 +602,7 @@ class BooleanField(Field):
         if self.raw_data:
             return unicode(self.raw_data[0])
         else:
-            return u'y'
+            return 'y'
 
 
 class DateTimeField(Field):
@@ -615,18 +617,18 @@ class DateTimeField(Field):
 
     def _value(self):
         if self.raw_data:
-            return u' '.join(self.raw_data)
+            return ' '.join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.format) or u''
+            return self.data and self.data.strftime(self.format) or ''
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = u' '.join(valuelist)
+            date_str = ' '.join(valuelist)
             try:
                 self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext(u'Not a valid datetime value'))
+                raise ValueError(self.gettext('Not a valid datetime value'))
 
 
 class DateField(DateTimeField):
@@ -638,12 +640,12 @@ class DateField(DateTimeField):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = u' '.join(valuelist)
+            date_str = ' '.join(valuelist)
             try:
                 self.data = datetime.datetime.strptime(date_str, self.format).date()
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext(u'Not a valid date value'))
+                raise ValueError(self.gettext('Not a valid date value'))
 
 
 class FormField(Field):
@@ -769,7 +771,7 @@ class FieldList(Field):
             idata = iter(data)
             for index in indices:
                 try:
-                    obj_data = idata.next()
+                    obj_data = next(idata)
                 except StopIteration:
                     obj_data = _unset_value
                 self._add_entry(formdata, obj_data, index=index)
@@ -812,9 +814,9 @@ class FieldList(Field):
             ivalues = iter([])
 
         candidates = itertools.chain(ivalues, itertools.repeat(None))
-        _fake = type('_fake', (object, ), {})
+        _fake = type(str('_fake'), (object, ), {})
         output = []
-        for field, data in itertools.izip(self.entries, candidates):
+        for field, data in zip(self.entries, candidates):
             fake_obj = _fake()
             fake_obj.data = data
             field.populate_obj(fake_obj, 'data')

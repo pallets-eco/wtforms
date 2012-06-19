@@ -27,7 +27,7 @@ class FormFieldNode(template.Node):
             return settings.TEMPLATE_STRING_IF_INVALID
 
         h_attrs = {}
-        for k, v in self.html_attrs.iteritems():
+        for k, v in self.html_attrs.items():
             try:
                 h_attrs[k] = v.resolve(context)
             except template.VariableDoesNotExist:
@@ -61,7 +61,7 @@ def do_form_field(parser, token):
     return FormFieldNode(parts[1], html_attrs)
 
 
-args_split_re = re.compile(ur'''("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s=]+)''')
+args_split_re = re.compile(u(r'''("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s=]+)'''))
 
 def args_split(text):
     """ Split space-separated key=value arguments.  Keeps quoted strings intact. """ 

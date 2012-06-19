@@ -12,6 +12,7 @@ for extra security) is used as the value of the csrf_token. If this token
 validates with the hmac of the random value + expiration time, and the
 expiration time is not passed, the CSRF validation will pass.
 """
+from __future__ import unicode_literals
 
 import hmac
 import os
@@ -53,7 +54,7 @@ class SessionSecureForm(SecureForm):
 
     def validate_csrf_token(self, field):
         if not field.data or '##' not in field.data:
-            raise ValidationError(field.gettext(u'CSRF token missing'))
+            raise ValidationError(field.gettext('CSRF token missing'))
 
         expires, hmac_csrf = field.data.split('##')
 
@@ -61,9 +62,9 @@ class SessionSecureForm(SecureForm):
 
         hmac_compare = hmac.new(self.SECRET_KEY, check_val, digestmod=sha1)
         if hmac_compare.hexdigest() != hmac_csrf:
-            raise ValidationError(field.gettext(u'CSRF failed'))
+            raise ValidationError(field.gettext('CSRF failed'))
 
         if self.TIME_LIMIT:
             now_formatted = datetime.now().strftime(self.TIME_FORMAT)
             if now_formatted > expires:
-                raise ValidationError(field.gettext(u'CSRF token expired'))
+                raise ValidationError(field.gettext('CSRF token expired'))
