@@ -173,7 +173,6 @@ class PrePostValidationTest(TestCase):
         a = self._init_field("long")
         self.assertEqual(a.errors, ["too long"])
 
-        import pdb; pdb.set_trace()
         stoponly = self._init_field("stoponly")
         self.assertEqual(stoponly.errors, [])
 
