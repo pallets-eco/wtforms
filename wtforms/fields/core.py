@@ -6,7 +6,7 @@ import itertools
 import time
 
 from wtforms import widgets
-from wtforms.compat import text_type
+from wtforms.compat import text_type, izip
 from wtforms.validators import StopValidation
 
 
@@ -817,7 +817,7 @@ class FieldList(Field):
         candidates = itertools.chain(ivalues, itertools.repeat(None))
         _fake = type(str('_fake'), (object, ), {})
         output = []
-        for field, data in zip(self.entries, candidates):
+        for field, data in izip(self.entries, candidates):
             fake_obj = _fake()
             fake_obj.data = data
             field.populate_obj(fake_obj, 'data')
