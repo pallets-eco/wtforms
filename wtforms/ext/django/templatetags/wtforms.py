@@ -61,7 +61,7 @@ def do_form_field(parser, token):
     return FormFieldNode(parts[1], html_attrs)
 
 
-args_split_re = re.compile(u(r'''("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s=]+)'''))
+args_split_re = re.compile(r'''("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s=]+)''')
 
 def args_split(text):
     """ Split space-separated key=value arguments.  Keeps quoted strings intact. """ 

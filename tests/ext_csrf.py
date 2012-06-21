@@ -39,7 +39,7 @@ class SecureFormTest(TestCase):
     def test_basic_impl(self):
         form = InsecureForm(csrf_context=42)
         self.assertEqual(form.csrf_token.current_token, 42)
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
         self.assertEqual(len(form.csrf_token.errors), 1)
         self.assertEqual(form.csrf_token._value(), 42)
         # Make sure csrf_token is taken out from .data
@@ -52,7 +52,7 @@ class SecureFormTest(TestCase):
         self.assertEqual(form.data, {'a': 'hi'})
 
         form = InsecureForm(post_data, csrf_context='something')
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
         # Make sure that value is still the current token despite
         # the posting of a different value
@@ -67,7 +67,7 @@ class SecureFormTest(TestCase):
     def test_with_missing_token(self):
         post_data = DummyPostData(a='hi')
         form = InsecureForm(post_data, csrf_context='test')
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
         self.assertEqual(form.csrf_token.data, '')
         self.assertEqual(form.csrf_token._value(), 'test')

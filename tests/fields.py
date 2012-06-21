@@ -210,7 +210,7 @@ class SelectFieldTest(TestCase):
         self.assertTrue(form.b.validate(form))
         form = self.F(DummyPostData(b=['b']))
         self.assertEqual(form.b.data, None)
-        self.assertTrue(not form.b.validate(form))
+        self.assertFalse(form.b.validate(form))
 
     def test_iterable_options(self):
         form = self.F()
@@ -255,7 +255,7 @@ class SelectMultipleFieldTest(TestCase):
         self.assertTrue(form.validate())
         form = self.F(DummyPostData(b=['1', '2', '4']))
         self.assertEqual(form.b.data, [1, 2, 4])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
 
 class RadioFieldTest(TestCase):
@@ -365,7 +365,7 @@ class DecimalFieldTest(TestCase):
         form = F(DummyPostData(a='2,1'), a=Decimal(5))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.raw_data, ['2,1'])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
 
     def test_quantize(self):
@@ -393,13 +393,13 @@ class FloatFieldTest(TestCase):
         self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="v">""")
         self.assertEqual(form.b.data, -15.0)
         self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="-15.0">""")
-        self.assertTrue(not form.a.validate(form))
+        self.assertFalse(form.a.validate(form))
         self.assertTrue(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.b.raw_data, [''])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
         self.assertEqual(len(form.b.process_errors), 1)
         self.assertEqual(len(form.b.errors), 1)
         form = self.F(b=9.0)
@@ -480,7 +480,7 @@ class DateTimeFieldTest(TestCase):
         self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="2008-05-05 04:30">""")
         self.assertTrue(form.validate())
         form = self.F(DummyPostData(a=['2008-05-05']))
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
         self.assertEqual(form.a.errors[0], 'Not a valid datetime value')
 
     def test_microseconds(self):
@@ -573,11 +573,11 @@ class FieldListTest(TestCase):
         form = F(pdata)
         self.assertEqual(len(form.a.entries), 4)
         self.assertEqual(form.a.data, ['bleh', 'yarg', '', 'mmm'])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
         form = F(pdata, a=data)
         self.assertEqual(form.a.data, ['bleh', 'yarg', '', 'mmm'])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
         # Test for formdata precedence
         pdata = DummyPostData({'a-0': ['a'], 'a-1': ['b']})
@@ -596,7 +596,7 @@ class FieldListTest(TestCase):
         self.assertTrue(form.validate())
         form.a.append_entry()
         self.assertEqual(form.a.data, data + [{'a': None}])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
         pdata = DummyPostData({'a-0': ['fake'], 'a-0-a': ['foo'], 'a-1-a': ['bar']})
         form = F(pdata, a=data)

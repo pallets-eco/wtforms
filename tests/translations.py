@@ -5,6 +5,7 @@ from unittest import TestCase
 from wtforms import Form, TextField
 from wtforms import validators as v
 
+
 class Lower_Translator(object):
     """A fake translator that just converts everything to lowercase."""
 
@@ -48,5 +49,5 @@ class TranslationsTest(TestCase):
 
     def test_validator_translation(self):
         form = self.F(a='hellobye')
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
         self.assertEqual(form.a.errors[0], 'field cannot be longer than 5 characters.')

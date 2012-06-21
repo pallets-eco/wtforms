@@ -61,7 +61,7 @@ class WebobWrapperTest(TestCase):
 
     def test_empty(self):
         formdata = WebobInputWrapper(self.empty_mdict)
-        self.assertTrue(not formdata)
+        self.assertFalse(formdata)
         self.assertEqual(len(formdata), 0)
         self.assertEqual(list(formdata), [])
         self.assertEqual(formdata.getlist('fake'), [])

@@ -29,13 +29,13 @@ class DateutilTest(TestCase):
         self.assertEqual(f.c.data, date(2004, 5, 6))
         self.assertTrue(f.validate())
         f = self.F(DummyPostData(a='Grok Grarg Rawr'))
-        self.assertTrue(not f.validate())
+        self.assertFalse(f.validate())
 
     def test_blank_input(self):
         f = self.F(DummyPostData(a='', b=''))
         self.assertEqual(f.a.data, None)
         self.assertEqual(f.b.data, None)
-        self.assertTrue(not f.validate())
+        self.assertFalse(f.validate())
 
     def test_defaults_display(self):
         f = self.F(a=datetime(2001, 11, 15))

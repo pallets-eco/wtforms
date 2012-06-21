@@ -99,7 +99,7 @@ class QuerySelectFieldTest(TestBase):
         self.assertEqual(form.a(), [('1', 'apple', False), ('2', 'banana', False)])
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.b(), [('__None', '', True), ('hello1', 'apple', False), ('hello2', 'banana', False)])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
         form = F(DummyPostData(a=['1'], b=['hello2']))
         self.assertEqual(form.a.data.id, 1)
@@ -150,7 +150,7 @@ class QuerySelectMultipleFieldTest(TestBase):
         form = self.F(DummyPostData(a=['1', '3']))
         form.a.query = self.sess.query(self.Test)
         self.assertEqual([x.id for x in form.a.data], [1])
-        self.assertTrue(not form.validate())
+        self.assertFalse(form.validate())
 
     def test_single_default_value(self):
         first_test = self.sess.query(self.Test).get(2)

@@ -37,9 +37,7 @@ class DummyField(object):
 def grab_error_message(callable, form, field):
     try:
         callable(form, field)
-    except ValidationError:
-        import sys
-        e = sys.exc_info()[1]
+    except ValidationError as e:
         return e.args[0]
 
 class ValidatorsTest(TestCase):

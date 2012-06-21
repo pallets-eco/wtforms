@@ -90,7 +90,7 @@ class ModelFormTest(TestCase):
 
     def test_max_length(self):
         self.assertTrue(contains_validator(self.form.username, validators.Length))
-        self.assertTrue(not contains_validator(self.form.posts, validators.Length))
+        self.assertFalse(contains_validator(self.form.posts, validators.Length))
 
     def test_optional(self):
         self.assertTrue(contains_validator(self.form.email, validators.Optional))
