@@ -17,5 +17,4 @@ Contributors:
 - Rodrigo Moraes
 - Sebastian Wiesner
 - Vinay Sajip
-- Benjamin Peterson
 
