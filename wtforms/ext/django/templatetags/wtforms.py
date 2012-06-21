@@ -1,12 +1,15 @@
 """
 Template tags for easy WTForms access in Django templates.
 """
+from __future__ import unicode_literals
+
 import re
 
 from django import template
 from django.conf import settings
 from django.template import Variable
 
+from wtforms.compat import iteritems
 
 register = template.Library()
 
@@ -27,7 +30,7 @@ class FormFieldNode(template.Node):
             return settings.TEMPLATE_STRING_IF_INVALID
 
         h_attrs = {}
-        for k, v in self.html_attrs.items():
+        for k, v in iteritems(self.html_attrs):
             try:
                 h_attrs[k] = v.resolve(context)
             except template.VariableDoesNotExist:

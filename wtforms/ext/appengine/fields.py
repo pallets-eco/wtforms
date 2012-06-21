@@ -5,6 +5,7 @@ import operator
 import warnings
 
 from wtforms import fields, widgets
+from wtforms.compat import text_type, string_types
 
 class ReferencePropertyField(fields.SelectFieldBase):
     """
@@ -38,7 +39,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
             self.get_label = operator.attrgetter(label_attr)
         elif get_label is None:
             self.get_label = lambda x: x
-        elif isinstance(get_label, basestring):
+        elif isinstance(get_label, string_types):
             self.get_label = operator.attrgetter(get_label)
         else:
             self.get_label = get_label
@@ -98,7 +99,7 @@ class StringListPropertyField(fields.TextAreaField):
         if self.raw_data:
             return self.raw_data[0]
         else:
-            return self.data and unicode("\n".join(self.data)) or ''
+            return self.data and text_type("\n".join(self.data)) or ''
 
     def process_formdata(self, valuelist):
         if valuelist:

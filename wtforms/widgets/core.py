@@ -1,19 +1,8 @@
 from __future__ import unicode_literals
 
 from cgi import escape
-import sys
 
-if sys.version_info[0] >= 3:
-    def unicode(s):
-        if hasattr(s, '__unicode__'):
-            s = s.__unicode__()
-        return str(s)
-    basestring = str
-    string_type = str
-else:
-    unicode = unicode
-    basestring = basestring
-    string_type = unicode
+from wtforms.compat import text_type, string_types, iteritems
 
 __all__ = (
     'CheckboxInput', 'FileInput', 'HiddenInput', 'ListWidget', 'PasswordInput',
@@ -35,17 +24,17 @@ def html_params(**kwargs):
     True
     """
     params = []
-    for k,v in sorted(kwargs.items()):
+    for k,v in sorted(iteritems(kwargs)):
         if k in ('class_', 'class__', 'for_'):
             k = k[:-1]
         if v is True:
             params.append(k)
         else:
-            params.append('%s="%s"' % (unicode(k), escape(unicode(v), quote=True)))
+            params.append('%s="%s"' % (text_type(k), escape(text_type(v), quote=True)))
     return ' '.join(params)
 
 
-class HTMLString(string_type):
+class HTMLString(text_type):
     def __html__(self):
         return self
 
@@ -101,9 +90,9 @@ class TableWidget(object):
         hidden = ''
         for subfield in field:
             if subfield.type == 'HiddenField':
-                hidden += unicode(subfield)
+                hidden += text_type(subfield)
             else:
-                html.append('<tr><th>%s</th><td>%s%s</td></tr>' % (unicode(subfield.label), hidden, unicode(subfield)))
+                html.append('<tr><th>%s</th><td>%s%s</td></tr>' % (text_type(subfield.label), hidden, text_type(subfield)))
                 hidden = ''
         if self.with_table_tag:
             html.append('</table>')
@@ -132,7 +121,7 @@ class Input(object):
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
-        return HTMLString('<input %s>' % html_params(name=field.name, **kwargs))
+        return HTMLString('<input %s>' % self.html_params(name=field.name, **kwargs))
 
 
 class TextInput(Input):
@@ -232,7 +221,7 @@ class TextArea(object):
     """
     def __call__(self, field, **kwargs): 
         kwargs.setdefault('id', field.id)
-        return HTMLString('<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(unicode(field._value()))))
+        return HTMLString('<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(text_type(field._value()))))
 
 
 class Select(object):
@@ -264,7 +253,7 @@ class Select(object):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape(unicode(label))))
+        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape(text_type(label))))
 
 
 class Option(object):

@@ -1,6 +1,8 @@
 """
 Tools for generating forms based on SQLAlchemy models.
 """
+from __future__ import unicode_literals
+
 import inspect
 
 from wtforms import fields as f

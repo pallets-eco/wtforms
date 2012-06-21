@@ -6,7 +6,8 @@ import itertools
 import time
 
 from wtforms import widgets
-from wtforms.validators import StopValidation, unicode
+from wtforms.compat import text_type
+from wtforms.validators import StopValidation
 
 
 __all__ = (
@@ -388,7 +389,7 @@ class SelectFieldBase(Field):
 class SelectField(SelectFieldBase):
     widget = widgets.Select()
 
-    def __init__(self, label=None, validators=None, coerce=unicode, choices=None, **kwargs):
+    def __init__(self, label=None, validators=None, coerce=text_type, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = choices
@@ -476,7 +477,7 @@ class StringField(Field):
             self.data = ''
 
     def _value(self):
-        return unicode(self.data) if self.data is not None else ''
+        return text_type(self.data) if self.data is not None else ''
 
 
 class IntegerField(Field):
@@ -493,7 +494,7 @@ class IntegerField(Field):
         if self.raw_data:
             return self.raw_data[0]
         elif self.data is not None:
-            return unicode(self.data)
+            return text_type(self.data)
         else:
             return ''
 
@@ -533,14 +534,14 @@ class DecimalField(Field):
                 if hasattr(self.data, 'quantize'):
                     exp = decimal.Decimal('.1') ** self.places
                     quantized = self.data.quantize(exp, rounding=self.rounding)
-                    return unicode(quantized)
+                    return text_type(quantized)
                 else:
                     # If for some reason, data is a float or int, then format
                     # as we would for floats using string formatting.
                     format = '%%0.%df' % self.places
                     return format % self.data
             else:
-                return unicode(self.data)
+                return text_type(self.data)
         else:
             return ''
 
@@ -567,7 +568,7 @@ class FloatField(Field):
         if self.raw_data:
             return self.raw_data[0]
         elif self.data is not None:
-            return unicode(self.data)
+            return text_type(self.data)
         else:
             return ''
 
@@ -600,7 +601,7 @@ class BooleanField(Field):
 
     def _value(self):
         if self.raw_data:
-            return unicode(self.raw_data[0])
+            return text_type(self.raw_data[0])
         else:
             return 'y'
 

@@ -1,18 +1,8 @@
 from __future__ import unicode_literals
 
 import re
-import sys
 
-if sys.version_info[0] >= 3:
-        
-    def unicode(s):
-        if hasattr(s, '__unicode__'):
-            s = s.__unicode__()
-        return str(s)
-    basestring = str
-else:
-    unicode = unicode
-    basestring = basestring
+from wtforms.compat import string_types
 
 __all__ = (
     'DataRequired', 'data_required', 'Email', 'email', 'EqualTo', 'equal_to',
@@ -27,7 +17,7 @@ class ValidationError(ValueError):
     """
     Raised when a validator fails to validate its input.
     """
-    def __init__(self, message=str(''), *args, **kwargs):
+    def __init__(self, message='', *args, **kwargs):
         ValueError.__init__(self, message, *args, **kwargs)
 
 
@@ -39,7 +29,7 @@ class StopValidation(Exception):
     called. If raised with a message, the message will be added to the errors
     list.
     """
-    def __init__(self, message=str(''), *args, **kwargs):
+    def __init__(self, message='', *args, **kwargs):
         Exception.__init__(self, message, *args, **kwargs)
 
 
@@ -161,7 +151,7 @@ class Optional(object):
     field_flags = ('optional', )
 
     def __call__(self, form, field):
-        if not field.raw_data or isinstance(field.raw_data[0], basestring) and not field.raw_data[0].strip():
+        if not field.raw_data or isinstance(field.raw_data[0], string_types) and not field.raw_data[0].strip():
             field.errors[:] = []
             raise StopValidation()
 
@@ -183,7 +173,7 @@ class DataRequired(object):
         self.message = message
 
     def __call__(self, form, field):
-        if not field.data or isinstance(field.data, basestring) and not field.data.strip():
+        if not field.data or isinstance(field.data, string_types) and not field.data.strip():
             if self.message is None:
                 self.message = field.gettext('This field is required.')
 
@@ -238,7 +228,7 @@ class Regexp(object):
         Error message to raise in case of a validation error.
     """
     def __init__(self, regex, flags=0, message=None):
-        if isinstance(regex, basestring):
+        if isinstance(regex, string_types):
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message

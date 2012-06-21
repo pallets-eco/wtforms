@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 from unittest import TestCase
+from wtforms.compat import text_type
 from wtforms.validators import (
     StopValidation, ValidationError, email, equal_to,
     ip_address, length, required, optional, regexp,
-    url, NumberRange, AnyOf, NoneOf, mac_address, UUID,
-    unicode
+    url, NumberRange, AnyOf, NoneOf, mac_address, UUID
 )
 from functools import partial
 
@@ -195,7 +195,7 @@ class ValidatorsTest(TestCase):
 
         message = ReallyLazyProxy()
         self.assertRaises(Exception, str, message)
-        self.assertRaises(Exception, unicode, message)
+        self.assertRaises(Exception, text_type, message)
         self.assertTrue(equal_to('fieldname', message=message))
         self.assertTrue(length(min=1, message=message))
         self.assertTrue(NumberRange(1,5, message=message))

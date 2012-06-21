@@ -4,6 +4,7 @@ Tools for generating forms based on Django models.
 from wtforms import fields as f
 from wtforms import Form
 from wtforms import validators
+from wtforms.compat import iteritems
 from wtforms.ext.django.fields import ModelSelectField
 
 
@@ -60,7 +61,7 @@ class ModelConverter(ModelConverterBase):
         converters = {}
         if simple_conversions is None:
             simple_conversions = self.DEFAULT_SIMPLE_CONVERSIONS
-        for field_type, django_fields in simple_conversions.items():
+        for field_type, django_fields in iteritems(simple_conversions):
             converter = self.make_simple_converter(field_type)
             for name in django_fields:
                 converters[name] = converter

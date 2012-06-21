@@ -9,6 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from unittest import TestCase
 
+from wtforms.compat import text_type, iteritems
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.form import Form
 from wtforms.fields import TextField
@@ -19,7 +20,7 @@ from wtforms.ext.sqlalchemy.validators import Unique
 
 class LazySelect(object):
     def __call__(self, field, **kwargs):
-        return list((val, unicode(label), selected) for val, label, selected in field.iter_choices())
+        return list((val, text_type(label), selected) for val, label, selected in field.iter_choices())
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -27,7 +28,7 @@ class DummyPostData(dict):
 
 class Base(object):
     def __init__(self, **kwargs):
-        for k, v in kwargs.iteritems():
+        for k, v in iteritems(kwargs):
             setattr(self, k, v)
 
 class TestBase(TestCase):

@@ -26,6 +26,7 @@ from django.test import TestCase as DjangoTestCase
 from ext_django import models as test_models 
 from unittest import TestCase
 from wtforms import Form, fields, validators
+from wtforms.compat import text_type
 from wtforms.ext.django.orm import model_form
 from wtforms.ext.django.fields import QuerySetSelectField, ModelSelectField
 
@@ -39,7 +40,7 @@ def lazy_select(field, **kwargs):
     output = []
     for val, label, selected in field.iter_choices():
         s = selected and 'Y' or 'N'
-        output.append('%s:%s:%s' % (s, unicode(val), unicode(label)))
+        output.append('%s:%s:%s' % (s, text_type(val), text_type(label)))
     return tuple(output)
 
 class DummyPostData(dict):

@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import operator
 
 from wtforms import widgets
+from wtforms.compat import string_types
 from wtforms.fields import SelectFieldBase
 from wtforms.validators import ValidationError
 
@@ -45,7 +46,7 @@ class QuerySetSelectField(SelectFieldBase):
 
         if get_label is None:
             self.get_label = lambda x: x
-        elif isinstance(get_label, basestring):
+        elif isinstance(get_label, string_types):
             self.get_label = operator.attrgetter(get_label)
         else:
             self.get_label = get_label

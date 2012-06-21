@@ -11,7 +11,7 @@ from wtforms import validators, widgets
 from wtforms.fields import *
 from wtforms.fields import Label, Field
 from wtforms.form import Form
-from wtforms.validators import unicode
+from wtforms.compat import text_type
 
 
 PYTHON_VERSION = sys.version_info 
@@ -53,7 +53,7 @@ class LabelTest(TestCase):
         label = Label('test', 'Caption')
         self.assertEqual(label(), expected)
         self.assertEqual(str(label), expected)
-        self.assertEqual(unicode(label), expected)
+        self.assertEqual(text_type(label), expected)
         self.assertEqual(label.__html__(), expected)
         self.assertEqual(label().__html__(), expected)
         self.assertEqual(label('hello'), """<label for="test">hello</label>""")
@@ -139,7 +139,7 @@ class FieldTest(TestCase):
         self.assertEqual(str(self.field), str(self.field()))
 
     def test_unicode_coerce(self):
-        self.assertEqual(unicode(self.field), self.field()) 
+        self.assertEqual(text_type(self.field), self.field()) 
 
     def test_process_formdata(self):
         Field.process_formdata(self.field, [42])
@@ -216,7 +216,7 @@ class SelectFieldTest(TestCase):
         form = self.F()
         first_option = list(form.a)[0]
         self.assertTrue(isinstance(first_option, form.a._Option))
-        self.assertEqual(list(unicode(x) for x in form.a), ['<option selected value="a">hello</option>',
+        self.assertEqual(list(text_type(x) for x in form.a), ['<option selected value="a">hello</option>',
                                                             '<option value="btest">bye</option>'])
         self.assertTrue(isinstance(first_option.widget, widgets.Option))
         self.assertTrue(isinstance(list(form.b)[0].widget, widgets.TextInput))
@@ -270,7 +270,7 @@ class RadioFieldTest(TestCase):
         self.assertEqual(form.validate(), False)
         self.assertEqual(form.a(), """<ul id="a"><li><input checked id="a-0" name="a" type="radio" value="a"> <label for="a-0">hello</label></li><li><input id="a-1" name="a" type="radio" value="b"> <label for="a-1">bye</label></li></ul>""")
         self.assertEqual(form.b(), """<ul id="b"><li><input id="b-0" name="b" type="radio" value="1"> <label for="b-0">Item 1</label></li><li><input id="b-1" name="b" type="radio" value="2"> <label for="b-1">Item 2</label></li></ul>""")
-        self.assertEqual([unicode(x) for x in form.a], ['<input checked id="a-0" name="a" type="radio" value="a">', '<input id="a-1" name="a" type="radio" value="b">'])
+        self.assertEqual([text_type(x) for x in form.a], ['<input checked id="a-0" name="a" type="radio" value="a">', '<input id="a-1" name="a" type="radio" value="b">'])
 
 
 class TextFieldTest(TestCase):
