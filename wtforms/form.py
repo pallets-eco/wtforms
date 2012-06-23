@@ -5,7 +5,7 @@ __all__ = (
     'Form',
 )
 
-from wtforms.compat import with_metaclass, iteritems
+from wtforms.compat import with_metaclass, iteritems, itervalues
 
 class BaseForm(object):
     """
@@ -41,7 +41,7 @@ class BaseForm(object):
 
     def __iter__(self):
         """ Iterate form fields in arbitrary order """
-        return iter(self._fields.values())
+        return iter(itervalues(self._fields))
 
     def __contains__(self, name):
         """ Returns `True` if the named field is a member of this form. """
