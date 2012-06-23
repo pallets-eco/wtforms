@@ -5,11 +5,19 @@ from unittest import defaultTestLoader, TextTestRunner, TestSuite
 
 TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'translations', 'ext_csrf', 'ext_i18n')
 
+OPTIONAL_TESTS = ('ext_django.tests', 'ext_sqlalchemy', 'ext_dateutil')
+
 def make_suite(prefix='', extra=()):
     tests = TESTS + extra
     test_names = list(prefix + x for x in tests)
     suite = TestSuite()
     suite.addTest(defaultTestLoader.loadTestsFromNames(test_names))
+    for name in OPTIONAL_TESTS:
+        test_name = prefix + name
+        try:
+            suite.addTest(defaultTestLoader.loadTestsFromName(test_name))
+        except (ImportError, AttributeError):
+            print >> sys.stderr, "### Disabled test '%s', dependency not found" % name
     return suite
 
 def additional_tests():
