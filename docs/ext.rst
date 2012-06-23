@@ -347,10 +347,11 @@ request.
 
     A provided CSRF implementation which puts CSRF data in a session. Must be
     subclassed to be used.
-    
+
     **Class Attributes**
+
     .. attribute:: SECRET_KEY
-        
+
         Must be set by subclasses to a random byte string that will be used to generate HMAC digests. 
 
     .. attribute:: TIME_LIMIT
