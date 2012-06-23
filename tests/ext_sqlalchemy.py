@@ -45,8 +45,8 @@ class TestBase(TestCase):
             Column('baz', String, nullable=False),
         )
 
-        Test = type('Test', (Base, ), {})
-        PKTest = type('PKTest', (Base, ), {
+        Test = type(str('Test'), (Base, ), {})
+        PKTest = type(str('PKTest'), (Base, ), {
             '__unicode__': lambda x: x.baz,
             '__str__': lambda x: x.baz,
         })

@@ -298,7 +298,7 @@ def model_form(model, db_session=None, base_class=Form, only=None,
                 prop.direction.name != 'MANYTOMANY':
             for pair in prop.local_remote_pairs:
                 exclude.append(pair[0].key)
-    type_name = type_name or model.__name__ + 'Form'
+    type_name = type_name or str(model.__name__ + 'Form')
     field_dict = model_fields(model, db_session, only, exclude, field_args,
         converter)
     return type(type_name, (ModelForm, ), field_dict)
