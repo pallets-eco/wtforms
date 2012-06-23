@@ -5,10 +5,17 @@ Version 1.0.2
 -------------
 Not yet released
 
+- We now support Python 2.x and 3.x on the same codebase, thanks to a lot of
+  hard work by Vinay Sajip.
+
 - Add in ability to convert relationships to ext.sqlalchemy model_form
+
 - Built-in localizations for more languages
+
 - Distinguish Required validator into InputRequired and DataRequired
+
 - Better IP address validation, including IPv6 support.
+
 
 Version 1.0.1
 -------------
@@ -17,6 +24,7 @@ Released February 29, 2012
 - Fixed issues related to building for python 3 and python pre-releases.
 
 - Add object_data to fields to get at the originally passed data.
+
 
 Version 1.0
 -----------
