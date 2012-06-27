@@ -169,6 +169,11 @@ class ModelConverter(ModelConverterBase):
     def conv_DateTime(self, field_args, **extra):
         return f.DateTimeField(**field_args)
 
+    @converts('Enum')
+    def conv_Enum(self, column, field_args, **extra):
+        field_args['choices'] = [(e, e) for e in column.type.enums]
+        return f.SelectField(**field_args)
+
     @converts('Integer', 'SmallInteger')
     def handle_integer_types(self, column, field_args, **extra):
         unsigned = getattr(column.type, 'unsigned', False)

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.schema import MetaData, Table, Column
-from sqlalchemy.types import String, Integer, Date
+from sqlalchemy.types import String, Integer, Date, Enum
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -12,7 +12,7 @@ from unittest import TestCase
 from wtforms.compat import text_type, iteritems
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.form import Form
-from wtforms.fields import TextField
+from wtforms.fields import TextField, SelectField
 from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.validators import Optional, Required, Length
 from wtforms.ext.sqlalchemy.validators import Unique
@@ -188,6 +188,7 @@ class ModelFormTest(TestCase):
             __tablename__ = "student"
             id = Column(Integer, primary_key=True)
             full_name = Column(String(255), nullable=False, unique=True)
+            gender = Column(Enum('male', 'female'), nullable=False)
             dob = Column(Date(), nullable=True)
             current_school_id = Column(Integer, ForeignKey(School.id),
                 nullable=False)
@@ -252,6 +253,16 @@ class ModelFormTest(TestCase):
         student_form = model_form(self.Student, self.sess)()
         self.assertTrue(issubclass(QuerySelectMultipleField,
             student_form._fields['courses'].__class__))
+
+    def test_dropdown_for_enum(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertTrue(issubclass(SelectField,
+            student_form._fields['gender'].__class__))
+
+    def test_options_for_enum(self):
+        student_form = model_form(self.Student, self.sess)()
+        self.assertEqual([('male', 'male'), ('female', 'female')],
+            student_form._fields['gender'].choices)
 
 
 class UniqueValidatorTest(TestCase):
