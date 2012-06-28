@@ -141,7 +141,7 @@ def convert_FloatProperty(model, prop, kwargs):
 
 def convert_DateTimeProperty(model, prop, kwargs):
     """Returns a form field for a ``ndb.DateTimeProperty``."""
-    if prop.auto_now or prop.auto_now_add:
+    if prop._auto_now or prop._auto_now_add:
         return None
 
     return f.DateTimeField(format='%Y-%m-%d %H:%M:%S', **kwargs)
