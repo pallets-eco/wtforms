@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-01-31 12:58-0700\n"
 "PO-Revision-Date: 2012-08-01 10:23+0400\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Yuriy Khomyakov <_yurka_@inbox.ru>\n"
 "Language-Team: ru <LL@li.org>\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
@@ -31,22 +31,22 @@ msgstr "Поле должно совпадать с %(other_name)s."
 #, python-format
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Значение должно содержать не менее %(min)d символа."
+msgstr[1] "Значение должно содержать не менее %(min)d символов."
+msgstr[2] "Значение должно содержать не менее %(min)d символов."
 
 #: wtforms/validators.py:93
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Значение не должно содержать более %(max)d символа."
+msgstr[1] "Значение не должно содержать более %(max)d символов."
+msgstr[2] "Значение не должно содержать более %(max)d символов."
 
 #: wtforms/validators.py:96
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr ""
+msgstr "Значение должно содержать от %(min)d до %(max)d символов."
 
 #: wtforms/validators.py:131
 #, python-format
@@ -56,12 +56,12 @@ msgstr "Число должно быть больше %(min)s."
 #: wtforms/validators.py:133
 #, python-format
 msgid "Number must be less than %(max)s."
-msgstr ""
+msgstr "Число должно быть меньше %(min)s."
 
 #: wtforms/validators.py:135
 #, python-format
 msgid "Number must be between %(min)s and %(max)s."
-msgstr ""
+msgstr "Значение должно быть между %(min)d и %(max)d."
 
 #: wtforms/validators.py:171
 msgid "This field is required."
@@ -69,47 +69,47 @@ msgstr "Обязательное поле"
 
 #: wtforms/validators.py:199
 msgid "Invalid input."
-msgstr ""
+msgstr "Неверный ввод"
 
 #: wtforms/validators.py:218
 msgid "Invalid email address."
-msgstr ""
+msgstr "Неверный адрес электронной почты"
 
 #: wtforms/validators.py:235
 msgid "Invalid IP address."
-msgstr ""
+msgstr "Неверный IP адрес"
 
 #: wtforms/validators.py:253
 msgid "Invalid Mac address."
-msgstr ""
+msgstr "Неверный MAC адрес"
 
 #: wtforms/validators.py:278
 msgid "Invalid URL."
-msgstr ""
+msgstr "Неверный URL"
 
 #: wtforms/validators.py:296
 msgid "Invalid UUID."
-msgstr ""
+msgstr "Неверный UUID."
 
 #: wtforms/validators.py:323
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr ""
+msgstr "Неверное значение, должно быть одним из %(values)s."
 
 #: wtforms/validators.py:350
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr ""
+msgstr "Неверное значение, не должно быть одним из %(values)s."
 
 #: wtforms/ext/appengine/fields.py:74 wtforms/ext/django/fields.py:90
 #: wtforms/ext/sqlalchemy/fields.py:122 wtforms/ext/sqlalchemy/fields.py:172
 #: wtforms/ext/sqlalchemy/fields.py:177 wtforms/fields/core.py:413
 msgid "Not a valid choice"
-msgstr ""
+msgstr "Неверный вариант"
 
 #: wtforms/ext/appengine/fields.py:93
 msgid "Not a valid list"
-msgstr ""
+msgstr "Неверный список"
 
 #: wtforms/ext/csrf/form.py:45
 msgid "Invalid CSRF Token"
@@ -150,13 +150,13 @@ msgstr ""
 
 #: wtforms/fields/core.py:500
 msgid "Not a valid integer value"
-msgstr ""
+msgstr "Неверное целое число"
 
 #: wtforms/fields/core.py:546
 msgid "Not a valid decimal value"
-msgstr ""
+msgstr "Неверное десятичное число"
 
 #: wtforms/fields/core.py:572
 msgid "Not a valid float value"
-msgstr ""
+msgstr "Неверное десятичное число"
 
