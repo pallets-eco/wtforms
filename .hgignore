@@ -12,3 +12,4 @@ syntax: regexp
 ^MANIFEST$
 ^WTForms\.egg-info
 ^env/
+^ve/
