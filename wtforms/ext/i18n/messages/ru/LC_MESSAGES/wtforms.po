@@ -65,27 +65,27 @@ msgstr "Значение должно быть между %(min)d и %(max)d."
 
 #: wtforms/validators.py:171
 msgid "This field is required."
-msgstr "Обязательное поле"
+msgstr "Обязательное поле."
 
 #: wtforms/validators.py:199
 msgid "Invalid input."
-msgstr "Неверный ввод"
+msgstr "Некорректный ввод."
 
 #: wtforms/validators.py:218
 msgid "Invalid email address."
-msgstr "Неверный адрес электронной почты"
+msgstr "Неверный адрес электронной почты."
 
 #: wtforms/validators.py:235
 msgid "Invalid IP address."
-msgstr "Неверный IP адрес"
+msgstr "Неверный IP адрес."
 
 #: wtforms/validators.py:253
 msgid "Invalid Mac address."
-msgstr "Неверный MAC адрес"
+msgstr "Неверный MAC адрес."
 
 #: wtforms/validators.py:278
 msgid "Invalid URL."
-msgstr "Неверный URL"
+msgstr "Неверный URL."
 
 #: wtforms/validators.py:296
 msgid "Invalid UUID."
@@ -113,40 +113,40 @@ msgstr "Неверный список"
 
 #: wtforms/ext/csrf/form.py:45
 msgid "Invalid CSRF Token"
-msgstr ""
+msgstr "Неверный CSRF токен"
 
 #: wtforms/ext/csrf/session.py:56
 msgid "CSRF token missing"
-msgstr ""
+msgstr "CSRF токен отсутствует"
 
 #: wtforms/ext/csrf/session.py:64
 msgid "CSRF failed"
-msgstr ""
+msgstr "Ошибка CSRF"
 
 #: wtforms/ext/csrf/session.py:69
 msgid "CSRF token expired"
-msgstr ""
+msgstr "CSRF токен просрочен"
 
 #: wtforms/ext/dateutil/fields.py:48
 msgid "Please input a date/time value"
-msgstr ""
+msgstr "Пожалуйста, введите значение даты/времени"
 
 #: wtforms/ext/dateutil/fields.py:60
 msgid "Invalid date/time input"
-msgstr ""
+msgstr "Неверное значение даты/времени"
 
 #: wtforms/fields/core.py:406
 msgid "Invalid Choice: could not coerce"
-msgstr ""
+msgstr "Неверный вариант: невозможно преобразовать"
 
 #: wtforms/fields/core.py:439
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr ""
+msgstr "Неверный вариант(варианты): одно или несколько значений невозможно преобразовать"
 
 #: wtforms/fields/core.py:446
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
-msgstr ""
+msgstr "'%(value)s' - неверный вариант для этого поля"
 
 #: wtforms/fields/core.py:500
 msgid "Not a valid integer value"
