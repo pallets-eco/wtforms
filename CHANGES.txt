@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 1.0.2
 -------------
-Not yet released
+Released August 24, 2012
 
 - We now support Python 2.x and 3.x on the same codebase, thanks to a lot of
   hard work by Vinay Sajip.
@@ -12,9 +12,11 @@ Not yet released
 
 - Built-in localizations for more languages
 
-- Distinguish Required validator into InputRequired and DataRequired
-
-- Better IP address validation, including IPv6 support.
+- Validator cleanup:
+  * Distinguish Required validator into InputRequired and DataRequired
+  * Better IP address validation, including IPv6 support.
+  * AnyOf / NoneOf now work properly formatting other datatypes than strings.
+  * Optional validator can optionally pass through whitespace.
 
 
 Version 1.0.1
