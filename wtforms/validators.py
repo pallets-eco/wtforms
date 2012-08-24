@@ -147,11 +147,21 @@ class Optional(object):
 
     If input is empty, also removes prior errors (such as processing errors)
     from the field.
+
+    :param strip_whitespace:
+        If True (the default) also stop the validation chain on input which
+        consists of only whitespace.
     """
     field_flags = ('optional', )
 
+    def __init__(self, strip_whitespace=True):
+        if strip_whitespace:
+            self.string_check = lambda s: s.strip()
+        else:
+            self.string_check = lambda s: s
+
     def __call__(self, form, field):
-        if not field.raw_data or isinstance(field.raw_data[0], string_types) and not field.raw_data[0].strip():
+        if not field.raw_data or isinstance(field.raw_data[0], string_types) and not self.string_check(field.raw_data[0]):
             field.errors[:] = []
             raise StopValidation()
 

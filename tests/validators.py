@@ -135,12 +135,16 @@ class ValidatorsTest(TestCase):
     def test_optional(self):
         self.assertEqual(optional()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
         self.assertRaises(StopValidation, optional(), self.form, DummyField('', raw_data=['']))
-        self.assertRaises(StopValidation, optional(), self.form, DummyField(' ', raw_data=[' ']))
         self.assertEqual(optional().field_flags, ('optional', ))
         f = DummyField('', ['Invalid Integer Value'], raw_data=[''])
         self.assertEqual(len(f.errors), 1)
         self.assertRaises(StopValidation, optional(), self.form, f)
         self.assertEqual(len(f.errors), 0)
+
+        # Test for whitespace behavior.
+        whitespace_field = DummyField(' ', raw_data=[' '])
+        self.assertRaises(StopValidation, optional(), self.form, whitespace_field)
+        self.assertEqual(optional(strip_whitespace=False)(self.form, whitespace_field), None)
 
     def test_regexp(self):
         import re
