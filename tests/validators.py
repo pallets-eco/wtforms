@@ -51,6 +51,7 @@ class ValidatorsTest(TestCase):
         self.assertEqual(email()(self.form, DummyField('foo@bar456.info')), None)
         self.assertRaises(ValidationError, email(), self.form, DummyField(None))
         self.assertRaises(ValidationError, email(), self.form, DummyField(''))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('  '))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('bar.dk'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@'))
@@ -134,12 +135,16 @@ class ValidatorsTest(TestCase):
     def test_optional(self):
         self.assertEqual(optional()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
         self.assertRaises(StopValidation, optional(), self.form, DummyField('', raw_data=['']))
-        self.assertRaises(StopValidation, optional(), self.form, DummyField(' ', raw_data=[' ']))
         self.assertEqual(optional().field_flags, ('optional', ))
         f = DummyField('', ['Invalid Integer Value'], raw_data=[''])
         self.assertEqual(len(f.errors), 1)
         self.assertRaises(StopValidation, optional(), self.form, f)
         self.assertEqual(len(f.errors), 0)
+
+        # Test for whitespace behavior.
+        whitespace_field = DummyField(' ', raw_data=[' '])
+        self.assertRaises(StopValidation, optional(), self.form, whitespace_field)
+        self.assertEqual(optional(strip_whitespace=False)(self.form, whitespace_field), None)
 
     def test_regexp(self):
         import re
@@ -208,6 +213,16 @@ class ValidatorsTest(TestCase):
     def test_any_of(self):
         self.assertEqual(AnyOf(['a', 'b', 'c'])(self.form, DummyField('b')), None)
         self.assertRaises(ValueError, AnyOf(['a', 'b', 'c']), self.form, DummyField(None))
+
+        # Anyof in 1.0.1 failed on numbers for formatting the error with a TypeError
+        check_num = AnyOf([1,2,3])
+        self.assertEqual(check_num(self.form, DummyField(2)), None)
+        self.assertRaises(ValueError, check_num, self.form, DummyField(4))
+
+        # Test values_formatter
+        formatter = lambda values: '::'.join(unicode(x) for x in reversed(values))
+        checker = AnyOf([7,8,9], message='test %(values)s', values_formatter=formatter)
+        self.assertEqual(grab_error_message(checker, self.form, DummyField(4)), u'test 9::8::7')
 
     def test_none_of(self):
         self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)
