@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import re
 
-from wtforms.compat import string_types
+from wtforms.compat import string_types, text_type
 
 __all__ = (
     'DataRequired', 'data_required', 'Email', 'email', 'EqualTo', 'equal_to',
@@ -147,11 +147,21 @@ class Optional(object):
 
     If input is empty, also removes prior errors (such as processing errors)
     from the field.
+
+    :param strip_whitespace:
+        If True (the default) also stop the validation chain on input which
+        consists of only whitespace.
     """
     field_flags = ('optional', )
 
+    def __init__(self, strip_whitespace=True):
+        if strip_whitespace:
+            self.string_check = lambda s: s.strip()
+        else:
+            self.string_check = lambda s: s
+
     def __call__(self, form, field):
-        if not field.raw_data or isinstance(field.raw_data[0], string_types) and not field.raw_data[0].strip():
+        if not field.raw_data or isinstance(field.raw_data[0], string_types) and not self.string_check(field.raw_data[0]):
             field.errors[:] = []
             raise StopValidation()
 
@@ -396,7 +406,7 @@ class AnyOf(object):
         self.values = values
         self.message = message
         if values_formatter is None:
-            values_formatter = lambda v: ', '.join(v)
+            values_formatter = lambda v: ', '.join(text_type(x) for x in v)
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
@@ -404,7 +414,7 @@ class AnyOf(object):
             if self.message is None:
                 self.message = field.gettext('Invalid value, must be one of: %(values)s.')
 
-            raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
+            raise ValidationError(self.message % dict(values=self.values_formatter(self.values)))
 
 
 class NoneOf(object):
@@ -423,7 +433,7 @@ class NoneOf(object):
         self.values = values
         self.message = message
         if values_formatter is None:
-            values_formatter = lambda v: ', '.join(v)
+            values_formatter = lambda v: ', '.join(text_type(x) for x in v)
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
@@ -431,7 +441,7 @@ class NoneOf(object):
             if self.message is None:
                 self.message = field.gettext('Invalid value, can\'t be any of: %(values)s.')
 
-            raise ValueError(self.message % dict(values=self.values_formatter(self.values)))
+            raise ValidationError(self.message % dict(values=self.values_formatter(self.values)))
 
 
 email = Email
