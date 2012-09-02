@@ -27,10 +27,11 @@ def additional_tests():
     return make_suite('tests.')
 
 def main():
+    my_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, os.path.abspath(os.path.join(my_dir, '..')))
+
     extra_tests = tuple(x for x in sys.argv[1:] if '-' not in x)
     suite = make_suite('', extra_tests)
-
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
     runner = TextTestRunner(verbosity=(sys.argv.count('-v') - sys.argv.count('-q') + 1))
     result = runner.run(suite)
