@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: WTForms 0.6.4dev\n"
+"Project-Id-Version: WTForms 1.0.3\n"
 "Report-Msgid-Bugs-To: wtforms@simplecodes.com\n"
 "POT-Creation-Date: 2012-09-02 14:13-0600\n"
 "PO-Revision-Date: 2012-01-31 13:03-0700\n"
