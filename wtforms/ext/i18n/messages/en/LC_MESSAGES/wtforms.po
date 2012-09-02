@@ -47,13 +47,13 @@ msgstr "Field must be between %(min)d and %(max)d characters long."
 
 #: wtforms/validators.py:131
 #, python-format
-msgid "Number must be greater than %(min)s."
-msgstr "Number must be greater than %(min)s."
+msgid "Number must be at least %(min)s."
+msgstr "Number must be at least %(min)s."
 
 #: wtforms/validators.py:133
 #, python-format
-msgid "Number must be less than %(max)s."
-msgstr "Number must be less than %(max)s."
+msgid "Number must be at most %(max)s."
+msgstr "Number must be at most %(max)s."
 
 #: wtforms/validators.py:135
 #, python-format

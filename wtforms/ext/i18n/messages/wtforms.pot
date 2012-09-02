@@ -46,12 +46,12 @@ msgstr ""
 
 #: wtforms/validators.py:131
 #, python-format
-msgid "Number must be greater than %(min)s."
+msgid "Number must be at least %(min)s."
 msgstr ""
 
 #: wtforms/validators.py:133
 #, python-format
-msgid "Number must be less than %(max)s."
+msgid "Number must be at most %(max)s."
 msgstr ""
 
 #: wtforms/validators.py:135

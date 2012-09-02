@@ -47,12 +47,12 @@ msgstr "La lunghezza del campo deve essere compresa tra %(min)d e %(max)d."
 
 #: wtforms/validators.py:131
 #, python-format
-msgid "Number must be greater than %(min)s."
+msgid "Number must be at least %(min)s."
 msgstr "Il numero deve essere maggiore di %(min)s."
 
 #: wtforms/validators.py:133
 #, python-format
-msgid "Number must be less than %(max)s."
+msgid "Number must be at most %(max)s."
 msgstr "Il numero deve essere minore di %(max)s."
 
 #: wtforms/validators.py:135

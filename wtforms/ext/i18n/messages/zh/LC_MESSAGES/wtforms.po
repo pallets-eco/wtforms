@@ -47,12 +47,12 @@ msgstr "字段长度必须介于 %(min)d 到 %(max)d 个字符之间。"
 
 #: wtforms/validators.py:131
 #, python-format
-msgid "Number must be greater than %(min)s."
+msgid "Number must be at least %(min)s."
 msgstr "数值必须大于 %(min)s。"
 
 #: wtforms/validators.py:133
 #, python-format
-msgid "Number must be less than %(max)s."
+msgid "Number must be at most %(max)s."
 msgstr "数值必须小于 %(max)s。"
 
 #: wtforms/validators.py:135
