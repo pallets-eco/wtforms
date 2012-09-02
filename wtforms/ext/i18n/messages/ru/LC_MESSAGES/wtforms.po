@@ -141,7 +141,9 @@ msgstr "Неверный вариант: невозможно преобразо
 
 #: wtforms/fields/core.py:439
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "Неверный вариант(варианты): одно или несколько значений невозможно преобразовать"
+msgstr ""
+"Неверный вариант(варианты): одно или несколько значений невозможно "
+"преобразовать"
 
 #: wtforms/fields/core.py:446
 #, python-format

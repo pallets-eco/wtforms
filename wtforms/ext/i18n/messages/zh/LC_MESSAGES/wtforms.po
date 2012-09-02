@@ -29,14 +29,14 @@ msgstr "字段必须和 %(other_name)s 相等。"
 #: wtforms/validators.py:90
 #, python-format
 msgid "Field must be at least %(min)d character long."
-msgid_plural "字段长度必须至少 %(min)d 个字符。"
+msgid_plural "Field must be at least %(min)d characters long."
 msgstr[0] "字段长度必须至少 %(min)d 个字符。"
 msgstr[1] "字段长度必须至少 %(min)d 个字符。"
 
 #: wtforms/validators.py:93
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
-msgid_plural "字段长度不能超过 %(max)d 个字符。"
+msgid_plural "Field cannot be longer than %(max)d characters."
 msgstr[0] "字段长度不能超过 %(max)d 个字符。"
 msgstr[1] "字段长度不能超过 %(max)d 个字符。"
 
@@ -62,7 +62,7 @@ msgstr "数值大小必须介于 %(min)s 到 %(max)s 之间。"
 
 #: wtforms/validators.py:171
 msgid "This field is required."
-msgstr "该字段是必填字段。" 
+msgstr "该字段是必填字段。"
 
 #: wtforms/validators.py:199
 msgid "Invalid input."

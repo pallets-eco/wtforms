@@ -62,7 +62,7 @@ msgstr "Number must be between %(min)s and %(max)s."
 
 #: wtforms/validators.py:171
 msgid "This field is required."
-msgstr "This field is required." 
+msgstr "This field is required."
 
 #: wtforms/validators.py:199
 msgid "Invalid input."

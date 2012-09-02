@@ -98,12 +98,9 @@ msgstr "ورودی اشتباه است. باید یکی از %(values)s باشد
 msgid "Invalid value, can't be any of: %(values)s."
 msgstr "ورودی اشتباه است. نباید یکی از %(values)s باشد."
 
-#: wtforms/ext/appengine/fields.py:74
-#: wtforms/ext/django/fields.py:90
-#: wtforms/ext/sqlalchemy/fields.py:122
-#: wtforms/ext/sqlalchemy/fields.py:172
-#: wtforms/ext/sqlalchemy/fields.py:177
-#: wtforms/fields/core.py:413
+#: wtforms/ext/appengine/fields.py:74 wtforms/ext/django/fields.py:90
+#: wtforms/ext/sqlalchemy/fields.py:122 wtforms/ext/sqlalchemy/fields.py:172
+#: wtforms/ext/sqlalchemy/fields.py:177 wtforms/fields/core.py:413
 msgid "Not a valid choice"
 msgstr "انتخاب درستی نیست."
 

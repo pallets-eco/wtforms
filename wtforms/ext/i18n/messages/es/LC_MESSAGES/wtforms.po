@@ -1,4 +1,4 @@
-# Translations template for WTForms.
+# Spanish translations for WTForms.
 # Copyright (C) 2012 WTForms Team
 # This file is distributed under the same license as the WTForms project.
 #
@@ -138,7 +138,9 @@ msgstr "Elección inválida: no se puede ajustar"
 
 #: wtforms/fields/core.py:439
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "Opción(es) inválida(s): una o más entradas de datos no pueden ser ajustadas"
+msgstr ""
+"Opción(es) inválida(s): una o más entradas de datos no pueden ser "
+"ajustadas"
 
 #: wtforms/fields/core.py:446
 #, python-format
