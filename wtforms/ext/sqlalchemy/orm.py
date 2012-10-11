@@ -81,8 +81,10 @@ class ModelConverterBase(object):
                 # 'arg' that's callable.
                 callable_default = getattr(default, 'arg', None)
 
-                if callable_default and callable(callable_default):
-                    default = callable_default(None)
+                if callable_default is not None:
+                    # ColumnDefault(val).arg can be also a plain value
+                    default = callable_default(None) if callable(callable_default) else callable_default
+
             kwargs['default'] = default
 
             if column.nullable:
