@@ -22,20 +22,6 @@ def converts(*args):
         return func
     return _inner
 
-class ModelConverterBase(object):
-    def __init__(self, converters, use_mro=True):
-        self.use_mro = use_mro
-
-        if not converters:
-            converters = {}
-
-        for name in dir(self):
-            obj = getattr(self, name)
-            if hasattr(obj, '_converter_for'):
-                for classname in obj._converter_for:
-                    converters[classname] = obj
-
-        self.converters = converters
 
 class ModelConverterBase(object):
     def __init__(self, converters, use_mro=True):
