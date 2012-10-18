@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy.schema import MetaData, Table, Column
+from sqlalchemy.schema import MetaData, Table, Column, ColumnDefault
 from sqlalchemy.types import String, Integer, Date
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
@@ -252,6 +252,46 @@ class ModelFormTest(TestCase):
         student_form = model_form(self.Student, self.sess)()
         self.assertTrue(issubclass(QuerySelectMultipleField,
             student_form._fields['courses'].__class__))
+
+
+class ModelFormColumnDefaultTest(TestCase):
+
+    def setUp(self):
+        Model = declarative_base()
+
+        def default_score():
+            return 5
+
+        class StudentDefaultScoreCallable(Model):
+            __tablename__ = "course"
+            id = Column(Integer, primary_key=True)
+            name = Column(String(255), nullable=False)
+            score = Column(Integer, default=default_score, nullable=False)
+
+        class StudentDefaultScoreScalar(Model):
+            __tablename__ = "school"
+            id = Column(Integer, primary_key=True)
+            name = Column(String(255), nullable=False)
+            # Default scalar value
+            score = Column(Integer, default=10, nullable=False)
+
+        self.StudentDefaultScoreCallable = StudentDefaultScoreCallable
+        self.StudentDefaultScoreScalar = StudentDefaultScoreScalar
+
+        engine = create_engine('sqlite:///:memory:', echo=False)
+        Session = sessionmaker(bind=engine)
+        self.metadata = Model.metadata
+        self.metadata.create_all(bind=engine)
+        self.sess = Session()
+
+    def test_column_default_callable(self):
+        student_form = model_form(self.StudentDefaultScoreCallable, self.sess)()
+        self.assertEqual(student_form._fields['score'].default, 5)
+
+    def test_column_default_scalar(self):
+        student_form = model_form(self.StudentDefaultScoreScalar, self.sess)()
+        self.assertNotIsInstance(student_form._fields['score'].default, ColumnDefault)
+        self.assertEqual(student_form._fields['score'].default, 10)
 
 
 class UniqueValidatorTest(TestCase):
