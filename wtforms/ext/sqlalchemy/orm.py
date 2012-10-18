@@ -22,20 +22,6 @@ def converts(*args):
         return func
     return _inner
 
-class ModelConverterBase(object):
-    def __init__(self, converters, use_mro=True):
-        self.use_mro = use_mro
-
-        if not converters:
-            converters = {}
-
-        for name in dir(self):
-            obj = getattr(self, name)
-            if hasattr(obj, '_converter_for'):
-                for classname in obj._converter_for:
-                    converters[classname] = obj
-
-        self.converters = converters
 
 class ModelConverterBase(object):
     def __init__(self, converters, use_mro=True):
@@ -170,6 +156,11 @@ class ModelConverter(ModelConverterBase):
     @converts('DateTime')
     def conv_DateTime(self, field_args, **extra):
         return f.DateTimeField(**field_args)
+
+    @converts('Enum')
+    def conv_Enum(self, column, field_args, **extra):
+        field_args['choices'] = [(e, e) for e in column.type.enums]
+        return f.SelectField(**field_args)
 
     @converts('Integer', 'SmallInteger')
     def handle_integer_types(self, column, field_args, **extra):
