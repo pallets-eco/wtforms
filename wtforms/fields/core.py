@@ -533,7 +533,10 @@ class DecimalField(Field):
             if self.places is not None:
                 if hasattr(self.data, 'quantize'):
                     exp = decimal.Decimal('.1') ** self.places
-                    quantized = self.data.quantize(exp, rounding=self.rounding)
+                    if self.rounding is None:
+                        quantized = self.data.quantize(exp)
+                    else:
+                        quantized = self.data.quantize(exp, rounding=self.rounding)
                     return text_type(quantized)
                 else:
                     # If for some reason, data is a float or int, then format

@@ -11,8 +11,10 @@ Contributors:
 - Ali Aafshar
 - Andreas Madsack
 - Christopher Grebs
+- Dima Moroz
 - Eduardo Schettino
 - Emil Vladev
+- Harro van der Klauw
 - Jean-Philippe Serafin
 - Rodrigo Moraes
 - Sebastian Wiesner

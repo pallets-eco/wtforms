@@ -1,6 +1,15 @@
 WTForms Changelog
 =================
 
+Version 1.0.3
+-------------
+Not yet released.
+
+- Tests complete in python 3.3.
+- Localization for ru.
+- Minor fixes in documentation for clarity.
+- ext.sqlalchemy model_form: Fix issue in ColumnDefault conversion
+
 Version 1.0.2
 -------------
 Released August 24, 2012
