@@ -154,7 +154,7 @@ class Field(object):
         `pre_validate`, `post_validate` or both, depending on needs.
 
         :param form: The form the field belongs to.
-        :param extra_validators: A list of extra validators to run.
+        :param extra_validators: A sequence of extra validators to run.
         """
         self.errors = list(self.process_errors)
         stop_validation = False
@@ -805,6 +805,7 @@ class FieldList(Field):
             if not subfield.validate(form):
                 success = False
                 self.errors.append(subfield.errors)
+
         return success
 
     def populate_obj(self, obj, name):
