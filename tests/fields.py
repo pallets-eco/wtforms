@@ -14,7 +14,7 @@ from wtforms.form import Form
 from wtforms.compat import text_type
 
 
-PYTHON_VERSION = sys.version_info 
+PYTHON_VERSION = sys.version_info
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -59,9 +59,9 @@ class LabelTest(TestCase):
         self.assertEqual(label('hello'), """<label for="test">hello</label>""")
         self.assertEqual(TextField('hi').bind(Form(), 'a').label.text, 'hi')
         if PYTHON_VERSION < (3,):
-            self.assertEqual(repr(label), "Label(u'test', u'Caption')") 
+            self.assertEqual(repr(label), "Label(u'test', u'Caption')")
         else:
-            self.assertEqual(repr(label), "Label('test', 'Caption')") 
+            self.assertEqual(repr(label), "Label('test', 'Caption')")
 
     def test_auto_label(self):
         t1 = TextField().bind(Form(), 'foo_bar')
@@ -121,7 +121,7 @@ class FieldTest(TestCase):
         a = TextField(default='hello')
 
     def setUp(self):
-        self.field = self.F().a 
+        self.field = self.F().a
 
     def test_unbound_field(self):
         unbound = self.F.a
@@ -139,7 +139,7 @@ class FieldTest(TestCase):
         self.assertEqual(str(self.field), str(self.field()))
 
     def test_unicode_coerce(self):
-        self.assertEqual(text_type(self.field), self.field()) 
+        self.assertEqual(text_type(self.field), self.field())
 
     def test_process_formdata(self):
         Field.process_formdata(self.field, [42])
@@ -177,7 +177,7 @@ class PrePostValidationTest(TestCase):
         self.assertEqual(stoponly.errors, [])
 
         stopmessage = self._init_field("stopmessage")
-        self.assertEqual(stopmessage.errors, ["stop with message"]) 
+        self.assertEqual(stopmessage.errors, ["stop with message"])
 
     def test_post(self):
         a = self._init_field("p")
@@ -636,6 +636,31 @@ class FieldListTest(TestCase):
         self.assertEqual(a.data, ['foo', 'flaf', 'bar'])
         self.assertRaises(AssertionError, a.append_entry)
 
+    def test_validators(self):
+        def validator(form, field):
+            if field.data and field.data[0] == 'fail':
+                raise ValueError('fail')
+            elif len(field.data) > 2:
+                raise ValueError('too many')
+
+        F = make_form(a = FieldList(self.t, validators=[validator]))
+
+        # Case 1: length checking validators work as expected.
+        fdata = DummyPostData({'a-0': ['hello'], 'a-1': ['bye'], 'a-2': ['test3']})
+        form = F(fdata)
+        assert not form.validate()
+        self.assertEqual(form.a.errors, ['too many'])
+
+        # Case 2: checking a value within.
+        fdata['a-0'] = ['fail']
+        form = F(fdata)
+        assert not form.validate()
+        self.assertEqual(form.a.errors, ['fail'])
+
+        # Case 3: normal field validator still works
+        form = F(DummyPostData({'a-0': ['']}))
+        assert not form.validate()
+        self.assertEqual(form.a.errors, [[u'This field is required.']])
 
 
 if __name__ == '__main__':
