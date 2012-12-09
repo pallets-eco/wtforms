@@ -11,6 +11,7 @@ Not yet released.
 - ext.sqlalchemy model_form:
   * Fix issue in ColumnDefault conversion
   * Support Enum type
+- Field class now allows traversal in Django 1.4 templates.
 
 Version 1.0.2
 -------------
