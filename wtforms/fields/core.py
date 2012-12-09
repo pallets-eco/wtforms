@@ -42,6 +42,7 @@ class Field(object):
     widget = None
     _formfield = True
     _translations = DummyTranslations()
+    do_not_call_in_templates = True # Allow Django 1.4 traversal
 
     def __new__(cls, *args, **kwargs):
         if '_form' in kwargs and '_name' in kwargs:

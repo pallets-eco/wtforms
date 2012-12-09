@@ -74,7 +74,8 @@ class TemplateTagsTest(TestCase):
 
     def test_simple_print(self):
         self.assertEqual(self._render('{% autoescape off %}{{ form.a }}{% endautoescape %}'), '<input id="a" name="a" type="text" value="">')
-        #self.assertEqual(self._render('{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), '<label for="a">I r label</label>')
+        self.assertEqual(self._render('{% autoescape off %}{{ form.a.label }}{% endautoescape %}'), '<label for="a">I r label</label>')
+        self.assertEqual(self._render('{% autoescape off %}{{ form.a.name }}{% endautoescape %}'), 'a')
 
     def test_form_field(self):
         self.assertEqual(self._render('{% form_field form.a %}'), '<input id="a" name="a" type="text" value="">')

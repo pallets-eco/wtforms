@@ -6,9 +6,11 @@ Version 1.0.3
 Not yet released.
 
 - Tests complete in python 3.3.
-- Localization for ru.
+- Localization for ru, fr.
 - Minor fixes in documentation for clarity.
-- ext.sqlalchemy model_form: Fix issue in ColumnDefault conversion
+- ext.sqlalchemy model_form:
+  * Fix issue in ColumnDefault conversion
+  * Support Enum type
 
 Version 1.0.2
 -------------
