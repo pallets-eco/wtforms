@@ -14,12 +14,10 @@ except ImportError:
 if sys.version_info >= (3, ):
     if not has_setuptools:
         raise Exception('Python3 support in WTForms requires distribute.')
-    #extra['use_2to3'] = True
-    #extra['use_2to3_exclude_fixers'] = ['lib2to3.fixes.fix_filter', 'lib2to3.fixes.filter']
 
 setup(
     name='WTForms',
-    version='1.0.3dev',
+    version='1.0.3',
     url='http://wtforms.simplecodes.com/',
     license='BSD',
     author='Thomas Johansson, James Crasta',

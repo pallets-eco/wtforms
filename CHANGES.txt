@@ -3,9 +3,9 @@ WTForms Changelog
 
 Version 1.0.3
 -------------
-Not yet released.
+Released January 24, 2013
 
-- Tests complete in python 3.3.
+- Tests complete in python 3.2/3.3.
 - Localization for ru, fr.
 - Minor fixes in documentation for clarity.
 - FieldList now can take validators on the entire FieldList.
