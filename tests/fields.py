@@ -272,6 +272,12 @@ class RadioFieldTest(TestCase):
         self.assertEqual(form.b(), """<ul id="b"><li><input id="b-0" name="b" type="radio" value="1"> <label for="b-0">Item 1</label></li><li><input id="b-1" name="b" type="radio" value="2"> <label for="b-1">Item 2</label></li></ul>""")
         self.assertEqual([text_type(x) for x in form.a], ['<input checked id="a-0" name="a" type="radio" value="a">', '<input id="a-1" name="a" type="radio" value="b">'])
 
+    def test_text_coercion(self):
+        # Regression test for text coercsion scenarios where the value is a boolean.
+        coerce_func = lambda x: False if x == 'False' else bool(x)
+        F = make_form(a=RadioField(choices=[(True, 'yes'), (False, 'no')], coerce=coerce_func))
+        form = F()
+        self.assertEqual(form.a(), '<ul id="a"><li><input id="a-0" name="a" type="radio" value="True"> <label for="a-0">yes</label></li><li><input checked id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>')
 
 class TextFieldTest(TestCase):
     class F(Form):
