@@ -660,7 +660,7 @@ class FieldListTest(TestCase):
         # Case 3: normal field validator still works
         form = F(DummyPostData({'a-0': ['']}))
         assert not form.validate()
-        self.assertEqual(form.a.errors, [[u'This field is required.']])
+        self.assertEqual(form.a.errors, [['This field is required.']])
 
 
 if __name__ == '__main__':

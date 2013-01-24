@@ -17,7 +17,7 @@ def make_suite(prefix='', extra=()):
         try:
             suite.addTest(defaultTestLoader.loadTestsFromName(test_name))
         except (ImportError, AttributeError):
-            print >> sys.stderr, "### Disabled test '%s', dependency not found" % name
+            sys.stderr.write("### Disabled test '%s', dependency not found\n" % name)
     return suite
 
 def additional_tests():

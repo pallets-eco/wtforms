@@ -220,9 +220,9 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValueError, check_num, self.form, DummyField(4))
 
         # Test values_formatter
-        formatter = lambda values: '::'.join(unicode(x) for x in reversed(values))
+        formatter = lambda values: '::'.join(text_type(x) for x in reversed(values))
         checker = AnyOf([7,8,9], message='test %(values)s', values_formatter=formatter)
-        self.assertEqual(grab_error_message(checker, self.form, DummyField(4)), u'test 9::8::7')
+        self.assertEqual(grab_error_message(checker, self.form, DummyField(4)), 'test 9::8::7')
 
     def test_none_of(self):
         self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)

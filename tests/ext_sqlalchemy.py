@@ -165,7 +165,7 @@ class QuerySelectMultipleFieldTest(TestBase):
                 widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
         form = F()
         self.assertEqual([v.id for v in form.a.data], [2])
-        self.assertEqual(form.a(), [(u'1', 'apple', False), (u'2', 'banana', True)])
+        self.assertEqual(form.a(), [('1', 'apple', False), ('2', 'banana', True)])
         self.assertTrue(form.validate())
 
 
@@ -326,11 +326,11 @@ class UniqueValidatorTest(TestCase):
         self.UserForm = UserForm
 
     def test_validate(self):
-        user_form = self.UserForm(DummyPostData(username=[u'spiderman']))
+        user_form = self.UserForm(DummyPostData(username=['spiderman']))
         self.assertTrue(user_form.validate())
 
     def test_wrong(self):
-        user_form = self.UserForm(DummyPostData(username=[u'batman']))
+        user_form = self.UserForm(DummyPostData(username=['batman']))
         self.assertFalse(user_form.validate())
 
 

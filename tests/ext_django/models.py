@@ -9,6 +9,8 @@ class Group(models.Model):
     def __unicode__(self):
         return '%s(%d)' % (self.name, self.pk)
 
+    __str__ = __unicode__
+
 class User(models.Model):
     username = models.CharField(max_length=40)
     group    = models.ForeignKey(Group)

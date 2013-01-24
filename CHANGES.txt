@@ -10,6 +10,7 @@ Not yet released.
 - Minor fixes in documentation for clarity.
 - FieldList now can take validators on the entire FieldList.
 - ext.sqlalchemy model_form:
+  * Fix issue with QuerySelectField
   * Fix issue in ColumnDefault conversion
   * Support Enum type
 - Field class now allows traversal in Django 1.4 templates.
