@@ -1,6 +1,14 @@
-import wtforms.widgets.html5 as widgets
+"""
+Fields to support various HTML5 input types.
+"""
+from ..widgets import html5 as widgets
+from . import core
 
-import core
+__all__ = (
+    'DateField', 'DateTimeField', 'DateTimeLocalField', 'DecimalField',
+    'DecimalRangeField', 'EmailField', 'IntegerField', 'IntegerRangeField',
+    'SearchField', 'TelField', 'URLField',
+)
 
 
 class SearchField(core.StringField):

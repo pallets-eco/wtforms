@@ -1,6 +1,12 @@
 WTForms Changelog
 =================
 
+Version 1.0.4
+-------------
+Not yet released.
+
+- Add widgets and field implementations for HTML5 specialty input types.
+
 Version 1.0.3
 -------------
 Released January 24, 2013
