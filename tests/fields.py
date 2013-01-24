@@ -70,6 +70,12 @@ class LabelTest(TestCase):
         t2 = TextField('').bind(Form(), 'foo_bar')
         self.assertEqual(t2.label.text, '')
 
+    def test_override_for(self):
+        label = Label('test', 'Caption')
+        self.assertEqual(label(for_='foo'), """<label for="foo">Caption</label>""")
+        self.assertEqual(label(**{'for':'bar'}), """<label for="bar">Caption</label>""")
+
+
 
 class FlagsTest(TestCase):
     def setUp(self):
