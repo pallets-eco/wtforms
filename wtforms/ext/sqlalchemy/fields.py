@@ -117,12 +117,15 @@ class QuerySelectField(SelectFieldBase):
                 self._formdata = valuelist[0]
 
     def pre_validate(self, form):
-        if not self.allow_blank or self.data is not None:
+        data = self.data
+        if data is not None:
             for pk, obj in self._get_object_list():
-                if self.data == obj:
+                if data == obj:
                     break
             else:
                 raise ValidationError(self.gettext('Not a valid choice'))
+        elif self._formdata or not self.allow_blank:
+            raise ValidationError(self.gettext('Not a valid choice'))
 
 
 class QuerySelectMultipleField(QuerySelectField):

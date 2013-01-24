@@ -109,13 +109,18 @@ class QuerySelectFieldTest(TestBase):
         self.assertEqual(form.b(), [('__None', '', False), ('hello1', 'apple', False), ('hello2', 'banana', True)])
         self.assertTrue(form.validate())
 
-        # Make sure the query iQuerySelectMultipleFields cached
+        # Make sure the query is cached
         sess.add(self.Test(id=3, name='meh'))
         sess.flush()
         sess.commit()
         self.assertEqual(form.a(), [('1', 'apple', True), ('2', 'banana', False)])
         form.a._object_list = None
         self.assertEqual(form.a(), [('1', 'apple', True), ('2', 'banana', False), ('3', 'meh', False)])
+
+        # Test bad data
+        form = F(DummyPostData(b=['bogus'], a=['fail']))
+        assert not form.validate()
+        self.assertEqual(form.b.errors, ['Not a valid choice'])
 
 
 class QuerySelectMultipleFieldTest(TestBase):
