@@ -228,20 +228,20 @@ class ModelFormTest(TestCase):
     def test_include_pk(self):
         form_class = model_form(self.Student, self.sess, exclude_pk=False)
         student_form = form_class()
-        self.assertIn('id', student_form._fields)
+        assert ('id' in student_form._fields)
 
     def test_exclude_pk(self):
         form_class = model_form(self.Student, self.sess, exclude_pk=True)
         student_form = form_class()
-        self.assertNotIn('id', student_form._fields)
+        assert ('id' not in student_form._fields)
 
     def test_exclude_fk(self):
         student_form = model_form(self.Student, self.sess)()
-        self.assertNotIn('current_school_id', student_form._fields)
+        assert ('current_school_id' not in student_form._fields)
 
     def test_include_fk(self):
         student_form = model_form(self.Student, self.sess, exclude_fk=False)()
-        self.assertIn('current_school_id', student_form._fields)
+        assert ('current_school_id' in student_form._fields)
 
     def test_convert_many_to_one(self):
         student_form = model_form(self.Student, self.sess)()
@@ -295,7 +295,7 @@ class ModelFormColumnDefaultTest(TestCase):
 
     def test_column_default_scalar(self):
         student_form = model_form(self.StudentDefaultScoreScalar, self.sess)()
-        self.assertNotIsInstance(student_form._fields['score'].default, ColumnDefault)
+        assert not isinstance(student_form._fields['score'].default, ColumnDefault)
         self.assertEqual(student_form._fields['score'].default, 10)
 
 
