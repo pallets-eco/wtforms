@@ -9,12 +9,12 @@ from unittest import TestCase
 
 from wtforms import validators, widgets
 from wtforms.fields import *
-from wtforms.fields import Label, Field
+from wtforms.fields import Label, Field, SelectFieldBase
 from wtforms.form import Form
 from wtforms.compat import text_type
 
-
 PYTHON_VERSION = sys.version_info
+
 
 class DummyPostData(dict):
     def getlist(self, key):
@@ -23,9 +23,11 @@ class DummyPostData(dict):
             v = [v]
         return v
 
+
 class AttrDict(object):
     def __init__(self, *args, **kw):
         self.__dict__.update(*args, **kw)
+
 
 def make_form(_name='F', **fields):
     return type(str(_name), (Form, ), fields)
@@ -73,7 +75,7 @@ class LabelTest(TestCase):
     def test_override_for(self):
         label = Label('test', 'Caption')
         self.assertEqual(label(for_='foo'), """<label for="foo">Caption</label>""")
-        self.assertEqual(label(**{'for':'bar'}), """<label for="bar">Caption</label>""")
+        self.assertEqual(label(**{'for': 'bar'}), """<label for="bar">Caption</label>""")
 
 
 
@@ -263,6 +265,14 @@ class SelectMultipleFieldTest(TestCase):
         self.assertEqual(form.b.data, [1, 2, 4])
         self.assertFalse(form.validate())
 
+    def test_coerce_fail(self):
+        form = self.F(b=['a'])
+        assert form.validate()
+        self.assertEqual(form.b.data, None)
+        form = self.F(DummyPostData(b=['fake']))
+        assert not form.validate()
+        self.assertEqual(form.b.data, [1,3])
+
 
 class RadioFieldTest(TestCase):
     class F(Form):
@@ -409,6 +419,7 @@ class FloatFieldTest(TestCase):
         self.assertTrue(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
         self.assertEqual(form.a.data, None)
+        self.assertEqual(form.a._value(), '')
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.b.raw_data, [''])
         self.assertFalse(form.validate())
@@ -485,15 +496,22 @@ class DateTimeFieldTest(TestCase):
 
     def test_basic(self):
         d = datetime(2008, 5, 5, 4, 30, 0, 0)
+        # Basic test with both inputs
         form = self.F(DummyPostData(a=['2008-05-05', '04:30:00'], b=['2008-05-05 04:30']))
         self.assertEqual(form.a.data, d)
         self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="2008-05-05 04:30:00">""")
         self.assertEqual(form.b.data, d)
         self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="2008-05-05 04:30">""")
         self.assertTrue(form.validate())
+
+        # Test with a missing input
         form = self.F(DummyPostData(a=['2008-05-05']))
         self.assertFalse(form.validate())
         self.assertEqual(form.a.errors[0], 'Not a valid datetime value')
+
+        form = self.F(a=d,b=d)
+        self.assertTrue(form.validate())
+        self.assertEqual(form.a._value(), '2008-05-05 04:30:00')
 
     def test_microseconds(self):
         if PYTHON_VERSION < (2, 6):
@@ -674,6 +692,29 @@ class FieldListTest(TestCase):
         assert not form.validate()
         self.assertEqual(form.a.errors, [['This field is required.']])
 
+
+class MyCustomField(TextField):
+    def process_data(self, data):
+        if data == 'fail':
+            raise ValueError('Contrived Failure')
+
+        return super(MyCustomField, self).process_data(data)
+
+
+class CustomFieldQuirksTest(TestCase):
+    class F(Form):
+        a = MyCustomField()
+        b = SelectFieldBase()
+
+    def test_processing_failure(self):
+        form = self.F(a='42')
+        assert form.validate()
+        form = self.F(a='fail')
+        assert not form.validate()
+
+    def test_default_impls(self):
+        f = self.F()
+        self.assertRaises(NotImplementedError, f.b.iter_choices)
 
 if __name__ == '__main__':
     from unittest import main
