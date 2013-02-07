@@ -15,7 +15,9 @@ Contributors:
 - Eduardo Schettino
 - Emil Vladev
 - Harro van der Klauw
+- Jakob Holmelund
 - Jean-Philippe Serafin
+- Ricardo Bánffy
 - Rodrigo Moraes
 - Sebastian Wiesner
 - Vinay Sajip

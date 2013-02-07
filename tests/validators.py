@@ -4,7 +4,8 @@ from wtforms.compat import text_type
 from wtforms.validators import (
     StopValidation, ValidationError, email, equal_to,
     ip_address, length, required, optional, regexp,
-    url, NumberRange, AnyOf, NoneOf, mac_address, UUID
+    url, NumberRange, AnyOf, NoneOf, mac_address, UUID,
+    input_required,
 )
 from functools import partial
 
@@ -72,17 +73,18 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('1278.0.0.1'))
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('127.0.0.abc'))
         self.assertRaises(ValidationError, ip_address(), self.form, DummyField('900.200.100.75'))
-        self.assertRaises(ValidationError, ip_address(ipv6=True), self.form, DummyField('abc.0.0.1'))
-        self.assertRaises(ValidationError, ip_address(ipv6=True), self.form, DummyField('abcd:1234::123::1'))
+        for bad_address in ('abc.0.0.1', 'abcd:1234::123::1', '1:2:3:4:5:6:7:8:9', 'abcd::1ffff'):
+            self.assertRaises(ValidationError, ip_address(ipv6=True), self.form, DummyField(bad_address))
+
         for good_address in ('::1', 'dead:beef:0:0:0:0:42:1', 'abcd:ef::42:1'):
             self.assertEqual(ip_address(ipv6=True)(self.form, DummyField(good_address)), None)
 
     def test_mac_address(self):
-        self.assertEqual(mac_address()(self.form, 
+        self.assertEqual(mac_address()(self.form,
                                        DummyField('01:23:45:67:ab:CD')), None)
 
         check_fail = partial(
-            self.assertRaises, ValidationError, 
+            self.assertRaises, ValidationError,
             mac_address(), self.form
         )
 
@@ -95,13 +97,13 @@ class ValidatorsTest(TestCase):
     def test_uuid(self):
         self.assertEqual(UUID()(self.form, DummyField(
                     '2bc1c94f-0deb-43e9-92a1-4775189ec9f8')), None)
-        self.assertRaises(ValidationError, UUID(), self.form, 
+        self.assertRaises(ValidationError, UUID(), self.form,
                           DummyField('2bc1c94f-deb-43e9-92a1-4775189ec9f8'))
-        self.assertRaises(ValidationError, UUID(), self.form, 
+        self.assertRaises(ValidationError, UUID(), self.form,
                           DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f'))
-        self.assertRaises(ValidationError, UUID(), self.form, 
+        self.assertRaises(ValidationError, UUID(), self.form,
                           DummyField('gbc1c94f-0deb-43e9-92a1-4775189ec9f8'))
-        self.assertRaises(ValidationError, UUID(), self.form, 
+        self.assertRaises(ValidationError, UUID(), self.form,
                           DummyField('2bc1c94f 0deb-43e9-92a1-4775189ec9f8'))
 
     def test_length(self):
@@ -131,6 +133,11 @@ class ValidatorsTest(TestCase):
         self.assertEqual(len(f.errors), 1)
         self.assertRaises(StopValidation, required(), self.form, f)
         self.assertEqual(len(f.errors), 0)
+
+    def test_input_required(self):
+        self.assertEqual(input_required()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
+        self.assertRaises(StopValidation, input_required(), self.form, DummyField('', raw_data=['']))
+        self.assertEqual(input_required().field_flags, ('required', ))
 
     def test_optional(self):
         self.assertEqual(optional()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
