@@ -4,32 +4,21 @@ Unittests for wtforms.ext.appengine
 
 To run the tests, use NoseGAE:
 
-easy_install nose
-easy_install nosegae
+pip install nose nosegae
 
 nosetests --with-gae --without-sandbox
 """
 from __future__ import unicode_literals
 
-import sys, os
-WTFORMS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0, WTFORMS_DIR)
+# This needs to stay as the first import, it sets up paths.
+from gaetest_common import DummyPostData
 
 from unittest import TestCase
-
 from google.appengine.ext import db
 
 from wtforms import Form, fields as f, validators
 from wtforms.ext.appengine.db import model_form
 from wtforms.ext.appengine.fields import GeoPtPropertyField
-
-
-class DummyPostData(dict):
-    def getlist(self, key):
-        v = self[key]
-        if not isinstance(v, (list, tuple)):
-            v = [v]
-        return v
 
 
 class Author(db.Model):
@@ -249,7 +238,6 @@ class TestModelForm(TestCase):
         form_class = model_form(Book)
         form = form_class()
 
-        choices = []
         i = 0
         for key, name, value in form.author.iter_choices():
             self.assertEqual(key, keys[i])

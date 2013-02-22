@@ -6,6 +6,7 @@ Version 1.0.4
 Not yet released.
 
 - Add widgets and field implementations for HTML5 specialty input types.
+- ext.appengine: Add NDB support.
 
 Version 1.0.3
 -------------

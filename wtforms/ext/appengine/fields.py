@@ -7,6 +7,7 @@ import warnings
 from wtforms import fields, widgets
 from wtforms.compat import text_type, string_types
 
+
 class ReferencePropertyField(fields.SelectFieldBase):
     """
     A field for ``db.ReferenceProperty``. The list items are rendered in a
@@ -71,7 +72,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
         for obj in self.query:
             key = str(obj.key())
             label = self.get_label(obj)
-            yield (key, label, self.data and ( self.data.key( ) == obj.key() ) )
+            yield (key, label, (self.data.key() == obj.key()) if self.data else False)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -92,8 +93,7 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
 class KeyPropertyField(fields.SelectFieldBase):
     """
-    A field for ``db.ReferenceProperty``. The list items are rendered in a
-    select.
+    A field for ``ndb.KeyProperty``. The list items are rendered in a select.
 
     :param reference_class:
         A db.Model class which will be used to generate the default query
@@ -154,7 +154,7 @@ class KeyPropertyField(fields.SelectFieldBase):
         for obj in self.query:
             key = str(obj.key.id())
             label = self.get_label(obj)
-            yield (key, label, self.data and ( self.data.key == obj.key ) )
+            yield (key, label, (self.data.key == obj.key) if self.data else False)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -165,12 +165,14 @@ class KeyPropertyField(fields.SelectFieldBase):
                 self._formdata = valuelist[0]
 
     def pre_validate(self, form):
-        if not self.allow_blank or self.data is not None:
+        if self.data is not None:
             for obj in self.query:
                 if self.data.key == obj.key:
                     break
             else:
                 raise ValueError(self.gettext(u'Not a valid choice'))
+        elif not self.allow_blank:
+            raise ValueError(self.gettext(u'Not a valid choice'))
 
 
 class StringListPropertyField(fields.TextAreaField):
