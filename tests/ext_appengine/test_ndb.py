@@ -5,9 +5,10 @@ from gaetest_common import DummyPostData, fill_authors
 
 from google.appengine.ext import ndb
 from unittest import TestCase
-from wtforms import Form, TextField
+from wtforms import Form, TextField, IntegerField, BooleanField
 from wtforms.compat import text_type
 from wtforms.ext.appengine.fields import KeyPropertyField
+from wtforms.ext.appengine.ndb import model_form
 
 
 class Author(ndb.Model):
@@ -54,3 +55,13 @@ class TestKeyPropertyField(TestCase):
         assert not form.validate()
         print list(form.author.iter_choices())
         assert all(x[2] == False for x in form.author.iter_choices())
+
+
+class TestModelForm(TestCase):
+    EXPECTED_AUTHOR = [('name', TextField), ('city', TextField), ('age', IntegerField), ('is_admin', BooleanField)]
+
+    def test(self):
+        form = model_form(Author)
+        for (expected_name, expected_type), field in zip(self.EXPECTED_AUTHOR, form()):
+            self.assertEqual(field.name, expected_name)
+            self.assertEqual(type(field), expected_type)

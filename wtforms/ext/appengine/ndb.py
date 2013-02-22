@@ -357,8 +357,7 @@ def model_fields(model, only=None, exclude=None, field_args=None,
     # Get the field names we want to include or exclude, starting with the
     # full list of model properties.
     props = model._properties
-    field_names = model._properties.keys()
-
+    field_names = list(x[0] for x in sorted(props.items(), key=lambda x: x[1]._creation_counter))
 
     if only:
         field_names = list(f for f in only if f in field_names)
