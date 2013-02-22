@@ -91,7 +91,7 @@ class:
    ContactForm = model_form(Contact, base_class=BaseContactForm)
 
 """
-from wtforms import Form, validators, widgets, fields as f
+from wtforms import Form, validators, fields as f
 from wtforms.ext.appengine.fields import GeoPtPropertyField, KeyPropertyField, StringListPropertyField, IntegerListPropertyField
 
 
@@ -114,119 +114,74 @@ def get_IntegerField(kwargs):
     return f.IntegerField(**kwargs)
 
 
-def convert_StringProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.StringProperty``."""
-    if prop._repeated:
-        return StringListPropertyField(**kwargs)
-    kwargs['validators'].append(validators.length(max=500))
-    return get_TextField(kwargs)
+class ModelConverterBase(object):
+    def __init__(self, converters=None):
+        """
+        Constructs the converter, setting the converter callables.
+
+        :param converters:
+            A dictionary of converter callables for each property type. The
+            callable must accept the arguments (model, prop, kwargs).
+        """
+        self.converters = {}
+
+        for name in dir(self):
+            if not name.startswith('convert_'):
+                continue
+            self.converters[name[8:]] = getattr(self, name)
+
+    def convert(self, model, prop, field_args):
+        """
+        Returns a form field for a single model property.
+
+        :param model:
+            The ``db.Model`` class that contains the property.
+        :param prop:
+            The model property: a ``db.Property`` instance.
+        :param field_args:
+            Optional keyword arguments to construct the field.
+        """
+
+        prop_type_name = type(prop).__name__
+
+        #check for generic property
+        if(prop_type_name == "GenericProperty"):
+            #try to get type from field args
+            generic_type = field_args.get("type")
+            if generic_type:
+                prop_type_name = field_args.get("type")
+            #if no type is found, the generic property uses string set in convert_GenericProperty
+
+        kwargs = {
+            'label': prop._code_name.replace('_', ' ').title(),
+            'default': prop._default,
+            'validators': [],
+        }
+        if field_args:
+            kwargs.update(field_args)
+
+        if prop._required and prop_type_name not in self.NO_AUTO_REQUIRED:
+            kwargs['validators'].append(validators.required())
+
+        if kwargs.get('choices', None):
+            # Use choices in a select field.
+            kwargs['choices'] = [(v, v) for v in kwargs.get('choices')]
+            return f.SelectField(**kwargs)
+
+        if prop._choices:
+            # Use choices in a select field.
+            kwargs['choices'] = [(v, v) for v in prop._choices]
+            return f.SelectField(**kwargs)
+
+        else:
+            converter = self.converters.get(prop_type_name, None)
+            if converter is not None:
+                return converter(model, prop, kwargs)
+            else:
+                return self.fallback_converter(model, prop, kwargs)
 
 
-def convert_BooleanProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.BooleanProperty``."""
-    return f.BooleanField(**kwargs)
-
-
-def convert_IntegerProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.IntegerProperty``."""
-    if prop._repeated:
-        return IntegerListPropertyField(**kwargs)
-    return get_IntegerField(kwargs)
-
-
-def convert_FloatProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.FloatProperty``."""
-    return f.FloatField(**kwargs)
-
-
-def convert_DateTimeProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.DateTimeProperty``."""
-    if prop._auto_now or prop._auto_now_add:
-        return None
-
-    return f.DateTimeField(format='%Y-%m-%d %H:%M:%S', **kwargs)
-
-
-def convert_DateProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.DateProperty``."""
-    if prop._auto_now or prop._auto_now_add:
-        return None
-
-    return f.DateField(format='%Y-%m-%d', **kwargs)
-
-
-def convert_TimeProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.TimeProperty``."""
-    if prop._auto_now or prop._auto_now_add:
-        return None
-
-    return f.DateTimeField(format='%H:%M:%S', **kwargs)
-
-
-def convert_RepeatedProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.ListProperty``."""
-    return None
-
-
-def convert_UserProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.UserProperty``."""
-    return None
-
-
-def convert_StructuredProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.ListProperty``."""
-    return None
-
-
-def convert_LocalStructuredProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.ListProperty``."""
-    return None
-
-
-def convert_JsonProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.ListProperty``."""
-    return None
-
-
-def convert_PickleProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.ListProperty``."""
-    return None
-
-
-def convert_GenericProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.ListProperty``."""
-    kwargs['validators'].append(validators.length(max=500))
-    return get_TextField(kwargs)
-
-
-def convert_BlobKeyProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.BlobKeyProperty``."""
-    return f.FileField(**kwargs)
-
-
-def convert_TextProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.TextProperty``."""
-    return f.TextAreaField(**kwargs)
-
-
-def convert_ComputedProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.ComputedProperty``."""
-    return None
-
-
-def convert_GeoPtProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.GeoPtProperty``."""
-    return GeoPtPropertyField(**kwargs)
-
-
-def convert_KeyProperty(model, prop, kwargs):
-    """Returns a form field for a ``ndb.KeyProperty``."""
-    kwargs['reference_class'] = prop._reference_class
-    kwargs.setdefault('allow_blank', not prop._required)
-    return KeyPropertyField(**kwargs)
-
-
-class ModelConverter(object):
+class ModelConverter(ModelConverterBase):
     """
     Converts properties from a ``ndb.Model`` class to form fields.
 
@@ -277,86 +232,102 @@ class ModelConverter(object):
     +====================+===================+==============+==================+
 
     """
-    default_converters = {
-        'StringProperty':        convert_StringProperty,
-        'BooleanProperty':       convert_BooleanProperty,
-        'IntegerProperty':       convert_IntegerProperty,
-        'FloatProperty':         convert_FloatProperty,
-        'DateTimeProperty':      convert_DateTimeProperty,
-        'DateProperty':          convert_DateProperty,
-        'TimeProperty':          convert_TimeProperty,
-        'UserProperty':          convert_UserProperty,
-        'TextProperty':          convert_TextProperty,
-        'GeoPtProperty':         convert_GeoPtProperty,
-        'BlobKeyProperty':          convert_BlobKeyProperty,
-        'StructuredProperty':          convert_StructuredProperty,
-        'LocalStructuredProperty':          convert_LocalStructuredProperty,
-        'JsonProperty':         convert_JsonProperty,
-        'PickleProperty':          convert_PickleProperty,
-        'GenericProperty':         convert_GenericProperty,
-        'ComputedProperty':         convert_ComputedProperty,
-    }
-
     # Don't automatically add a required validator for these properties
     NO_AUTO_REQUIRED = frozenset(['ListProperty', 'StringListProperty', 'BooleanProperty'])
 
-    def __init__(self, converters=None):
-        """
-        Constructs the converter, setting the converter callables.
+    def convert_StringProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.StringProperty``."""
+        if prop._repeated:
+            return StringListPropertyField(**kwargs)
+        kwargs['validators'].append(validators.length(max=500))
+        return get_TextField(kwargs)
 
-        :param converters:
-            A dictionary of converter callables for each property type. The
-            callable must accept the arguments (model, prop, kwargs).
-        """
-        self.converters = converters or self.default_converters
+    def convert_BooleanProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.BooleanProperty``."""
+        return f.BooleanField(**kwargs)
 
-    def convert(self, model, prop, field_args):
-        """
-        Returns a form field for a single model property.
+    def convert_IntegerProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.IntegerProperty``."""
+        if prop._repeated:
+            return IntegerListPropertyField(**kwargs)
+        return get_IntegerField(kwargs)
 
-        :param model:
-            The ``db.Model`` class that contains the property.
-        :param prop:
-            The model property: a ``db.Property`` instance.
-        :param field_args:
-            Optional keyword arguments to construct the field.
-        """
+    def convert_FloatProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.FloatProperty``."""
+        return f.FloatField(**kwargs)
 
-        prop_type_name = type(prop).__name__
+    def convert_DateTimeProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.DateTimeProperty``."""
+        if prop._auto_now or prop._auto_now_add:
+            return None
 
-        #check for generic property
-        if(prop_type_name == "GenericProperty"):
-            #try to get type from field args
-            generic_type = field_args.get("type")
-            if generic_type:
-                prop_type_name = field_args.get("type")
-            #if no type is found, the generic property uses string set in convert_GenericProperty
+        return f.DateTimeField(format='%Y-%m-%d %H:%M:%S', **kwargs)
 
-        kwargs = {
-            'label': prop._code_name.replace('_', ' ').title(),
-            'default': prop._default,
-            'validators': [],
-        }
-        if field_args:
-            kwargs.update(field_args)
+    def convert_DateProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.DateProperty``."""
+        if prop._auto_now or prop._auto_now_add:
+            return None
 
-        if prop._required and prop_type_name not in self.NO_AUTO_REQUIRED:
-            kwargs['validators'].append(validators.required())
+        return f.DateField(format='%Y-%m-%d', **kwargs)
 
-        if kwargs.get('choices', None):
-            # Use choices in a select field.
-            kwargs['choices'] = [(v, v) for v in kwargs.get('choices')]
-            return f.SelectField(**kwargs)
+    def convert_TimeProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.TimeProperty``."""
+        if prop._auto_now or prop._auto_now_add:
+            return None
 
-        if prop._choices:
-            # Use choices in a select field.
-            kwargs['choices'] = [(v, v) for v in prop._choices]
-            return f.SelectField(**kwargs)
+        return f.DateTimeField(format='%H:%M:%S', **kwargs)
 
-        else:
-            converter = self.converters.get(prop_type_name, None)
-            if converter is not None:
-                return converter(model, prop, kwargs)
+    def convert_RepeatedProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.ListProperty``."""
+        return None
+
+    def convert_UserProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.UserProperty``."""
+        return None
+
+    def convert_StructuredProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.ListProperty``."""
+        return None
+
+    def convert_LocalStructuredProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.ListProperty``."""
+        return None
+
+    def convert_JsonProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.ListProperty``."""
+        return None
+
+    def convert_PickleProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.ListProperty``."""
+        return None
+
+    def convert_GenericProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.ListProperty``."""
+        kwargs['validators'].append(validators.length(max=500))
+        return get_TextField(kwargs)
+
+    def convert_BlobKeyProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.BlobKeyProperty``."""
+        return f.FileField(**kwargs)
+
+    def convert_TextProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.TextProperty``."""
+        return f.TextAreaField(**kwargs)
+
+    def convert_ComputedProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.ComputedProperty``."""
+        return None
+
+    def convert_GeoPtProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.GeoPtProperty``."""
+        return GeoPtPropertyField(**kwargs)
+
+    def convert_KeyProperty(self, model, prop, kwargs):
+        """Returns a form field for a ``ndb.KeyProperty``."""
+        kwargs['reference_class'] = prop._reference_class
+        kwargs.setdefault('allow_blank', not prop._required)
+        return KeyPropertyField(**kwargs)
+
 
 
 def model_fields(model, only=None, exclude=None, field_args=None,
@@ -387,6 +358,7 @@ def model_fields(model, only=None, exclude=None, field_args=None,
     # full list of model properties.
     props = model._properties
     field_names = model._properties.keys()
+
 
     if only:
         field_names = list(f for f in only if f in field_names)
