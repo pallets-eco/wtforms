@@ -36,6 +36,8 @@ class TestKeyPropertyField(TestCase):
 
     def test_no_data(self):
         form = self.F()
+        form.author.query = Author.query().order(Author.name)
+
         assert not form.validate()
         ichoices = list(form.author.iter_choices())
         self.assertEqual(len(ichoices), len(self.authors))
@@ -45,6 +47,7 @@ class TestKeyPropertyField(TestCase):
     def test_form_data(self):
         # Valid data
         form = self.F(DummyPostData(author=text_type(self.first_author_id)))
+        form.author.query = Author.query().order(Author.name)
         assert form.validate()
         ichoices = list(form.author.iter_choices())
         self.assertEqual(len(ichoices), len(self.authors))
@@ -54,7 +57,7 @@ class TestKeyPropertyField(TestCase):
         form = self.F(DummyPostData(author='fooflaf'))
         assert not form.validate()
         print list(form.author.iter_choices())
-        assert all(x[2] == False for x in form.author.iter_choices())
+        assert all(x[2] is False for x in form.author.iter_choices())
 
 
 class TestModelForm(TestCase):
