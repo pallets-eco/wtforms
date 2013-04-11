@@ -378,12 +378,12 @@ def model_form(model, base_class=Form, only=None, exclude=None, field_args=None,
                converter=None):
     """
     Creates and returns a dynamic ``wtforms.Form`` class for a given
-    ``db.Model`` class. The form class can be used as it is or serve as a base
+    ``ndb.Model`` class. The form class can be used as it is or serve as a base
     for extended form classes, which can then mix non-model related fields,
     subforms with other model forms, among other possibilities.
 
     :param model:
-        The ``db.Model`` class to generate a form for.
+        The ``ndb.Model`` class to generate a form for.
     :param base_class:
         Base form class to extend from. Must be a ``wtforms.Form`` subclass.
     :param only:
