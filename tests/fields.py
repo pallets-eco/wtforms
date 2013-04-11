@@ -388,7 +388,9 @@ class DecimalFieldTest(TestCase):
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.raw_data, ['2,1'])
         self.assertFalse(form.validate())
-
+        form = F(DummyPostData(a='asdf'), a=Decimal('.21'))
+        self.assertEqual(form.a._value(), 'asdf')
+        assert not form.validate()
 
     def test_quantize(self):
         F = make_form(a=DecimalField(places=3, rounding=ROUND_UP), b=DecimalField(places=None))
