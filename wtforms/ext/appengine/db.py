@@ -374,7 +374,7 @@ class ModelConverter(object):
 
         if prop.choices:
             # Use choices in a select field if it was not provided in field_args
-            if not 'choices' in kwargs:
+            if 'choices' not in kwargs:
                 kwargs['choices'] = [(v, v) for v in prop.choices]
             return f.SelectField(**kwargs)
         else:
