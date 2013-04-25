@@ -278,19 +278,24 @@ class IPAddress(object):
         If True, accept IPv6 as valid also.
     :param message:
         Error message to raise in case of a validation error.
+    :param ipv6only:
+        If True, only accept if IPv6 is valid (not IPv4)
     """
-    def __init__(self, ipv6=False, message=None):
+    def __init__(self, ipv6=False, message=None, ipv6only=False):
         self.ipv6 = ipv6
+        self.ipv6only = ipv6only
         self.message = message
 
     def __call__(self, form, field):
         value = field.data
         valid = False
         if value:
-            valid = self.check_ipv4(value)
-
-            if not valid and self.ipv6:
+            if self.ipv6 and self.ipv6only:
                 valid = self.check_ipv6(value)
+            elif self.ipv6:
+                valid = self.check_ipv4(value) or self.check_ipv6(value)
+            else:
+                valid = self.check_ipv4(value)
 
         if not valid:
             if self.message is None:
