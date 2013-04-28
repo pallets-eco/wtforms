@@ -1,14 +1,14 @@
 # Translations template for WTForms.
-# Copyright (C) 2012 WTForms Team
+# Copyright (C) 2013 WTForms Team
 # This file is distributed under the same license as the WTForms project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: WTForms 1.0.3\n"
+"Project-Id-Version: WTForms 1.0.4\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-09-02 14:13-0600\n"
+"POT-Creation-Date: 2013-04-28 15:30-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,40 +73,46 @@ msgstr ""
 msgid "Invalid email address."
 msgstr ""
 
-#: wtforms/validators.py:297
+#: wtforms/validators.py:298
 msgid "Invalid IP address."
 msgstr ""
 
-#: wtforms/validators.py:345
+#: wtforms/validators.py:346
 msgid "Invalid Mac address."
 msgstr ""
 
-#: wtforms/validators.py:370
+#: wtforms/validators.py:371
 msgid "Invalid URL."
 msgstr ""
 
-#: wtforms/validators.py:388
+#: wtforms/validators.py:389
 msgid "Invalid UUID."
 msgstr ""
 
-#: wtforms/validators.py:415
+#: wtforms/validators.py:416
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
 msgstr ""
 
-#: wtforms/validators.py:442
+#: wtforms/validators.py:443
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
 msgstr ""
 
-#: wtforms/ext/appengine/fields.py:90 wtforms/ext/django/fields.py:89
-#: wtforms/ext/sqlalchemy/fields.py:125 wtforms/ext/sqlalchemy/fields.py:175
-#: wtforms/ext/sqlalchemy/fields.py:180 wtforms/fields/core.py:419
+#: wtforms/ext/appengine/fields.py:91 wtforms/ext/appengine/fields.py:173
+#: wtforms/ext/appengine/fields.py:175 wtforms/ext/django/fields.py:89
+#: wtforms/ext/sqlalchemy/fields.py:126 wtforms/ext/sqlalchemy/fields.py:128
+#: wtforms/ext/sqlalchemy/fields.py:178 wtforms/ext/sqlalchemy/fields.py:183
+#: wtforms/fields/core.py:436
 msgid "Not a valid choice"
 msgstr ""
 
-#: wtforms/ext/appengine/fields.py:109
+#: wtforms/ext/appengine/fields.py:194
 msgid "Not a valid list"
+msgstr ""
+
+#: wtforms/ext/appengine/fields.py:213
+msgid "Not a valid integer list"
 msgstr ""
 
 #: wtforms/ext/csrf/form.py:47
@@ -137,36 +143,36 @@ msgstr ""
 msgid "Already exists."
 msgstr ""
 
-#: wtforms/fields/core.py:412
+#: wtforms/fields/core.py:429
 msgid "Invalid Choice: could not coerce"
 msgstr ""
 
-#: wtforms/fields/core.py:445
+#: wtforms/fields/core.py:462
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
 msgstr ""
 
-#: wtforms/fields/core.py:452
+#: wtforms/fields/core.py:469
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
 msgstr ""
 
-#: wtforms/fields/core.py:507
+#: wtforms/fields/core.py:524
 msgid "Not a valid integer value"
 msgstr ""
 
-#: wtforms/fields/core.py:554
+#: wtforms/fields/core.py:574
 msgid "Not a valid decimal value"
 msgstr ""
 
-#: wtforms/fields/core.py:581
+#: wtforms/fields/core.py:601
 msgid "Not a valid float value"
 msgstr ""
 
-#: wtforms/fields/core.py:632
+#: wtforms/fields/core.py:652
 msgid "Not a valid datetime value"
 msgstr ""
 
-#: wtforms/fields/core.py:649
+#: wtforms/fields/core.py:669
 msgid "Not a valid date value"
 msgstr ""
 
