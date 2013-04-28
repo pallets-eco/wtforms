@@ -41,7 +41,8 @@ Datastore-backed Fields
 NDB
 ~~~
 
-WTForms now includes support for NDB models.
+WTForms now includes support for NDB models and can support mapping the 
+relationship fields as well as generating forms from models.
 
 .. module:: wtforms.ext.appengine.fields
 

@@ -7,6 +7,7 @@ Not yet released.
 
 - Add widgets and field implementations for HTML5 specialty input types.
 - ext.appengine: Add NDB support.
+- Add translations: Korean, Traditional Chinese
 
 Version 1.0.3
 -------------

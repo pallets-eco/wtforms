@@ -10,6 +10,7 @@ Contributors:
 - Adam Lowry
 - Ali Aafshar
 - Andreas Madsack
+- Arni Birgisson
 - Christopher Grebs
 - Dima Moroz
 - Eduardo Schettino
