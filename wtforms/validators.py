@@ -281,6 +281,8 @@ class IPAddress(object):
         Error message to raise in case of a validation error.
     """
     def __init__(self, ipv4=True, ipv6=False, message=None):
+        if not ipv4 and not ipv6:
+            raise ValueError('IP Address Validator must have at least one of ipv4 or ipv6 enabled.')
         self.ipv4 = ipv4
         self.ipv6 = ipv6
         self.message = message
