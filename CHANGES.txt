@@ -5,7 +5,8 @@ Version 1.0.5
 -------------
 Not yet released.
 
--
+- Fix a bug in validators which causes translations to happen once then
+  clobber any future translations.
 
 Version 1.0.4
 -------------

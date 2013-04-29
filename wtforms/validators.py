@@ -58,10 +58,11 @@ class EqualTo(object):
                 'other_label': hasattr(other, 'label') and other.label.text or self.fieldname,
                 'other_name': self.fieldname
             }
-            if self.message is None:
-                self.message = field.gettext('Field must be equal to %(other_name)s.')
+            message = self.message
+            if message is None:
+                message = field.gettext('Field must be equal to %(other_name)s.')
 
-            raise ValidationError(self.message % d)
+            raise ValidationError(message % d)
 
 
 class Length(object):
@@ -80,7 +81,7 @@ class Length(object):
         are provided depending on the existence of min and max.
     """
     def __init__(self, min=-1, max=-1, message=None):
-        assert min != -1 or max!=-1, 'At least one of `min` or `max` must be specified.'
+        assert min != -1 or max != -1, 'At least one of `min` or `max` must be specified.'
         assert max == -1 or min <= max, '`min` cannot be more than `max`.'
         self.min = min
         self.max = max
@@ -89,17 +90,18 @@ class Length(object):
     def __call__(self, form, field):
         l = field.data and len(field.data) or 0
         if l < self.min or self.max != -1 and l > self.max:
-            if self.message is None:
+            message = self.message
+            if message is None:
                 if self.max == -1:
-                    self.message = field.ngettext('Field must be at least %(min)d character long.',
-                                                  'Field must be at least %(min)d characters long.', self.min)
+                    message = field.ngettext('Field must be at least %(min)d character long.',
+                                             'Field must be at least %(min)d characters long.', self.min)
                 elif self.min == -1:
-                    self.message = field.ngettext('Field cannot be longer than %(max)d character.',
-                                                  'Field cannot be longer than %(max)d characters.', self.max)
+                    message = field.ngettext('Field cannot be longer than %(max)d character.',
+                                             'Field cannot be longer than %(max)d characters.', self.max)
                 else:
-                    self.message = field.gettext('Field must be between %(min)d and %(max)d characters long.')
+                    message = field.gettext('Field must be between %(min)d and %(max)d characters long.')
 
-            raise ValidationError(self.message % dict(min=self.min, max=self.max))
+            raise ValidationError(message % dict(min=self.min, max=self.max))
 
 
 class NumberRange(object):
@@ -243,10 +245,13 @@ class Regexp(object):
         self.regex = regex
         self.message = message
 
-    def __call__(self, form, field):
+    def __call__(self, form, field, message=None):
         if not self.regex.match(field.data or ''):
-            if self.message is None:
-                self.message = field.gettext('Invalid input.')
+            if message is None:
+                if self.message is None:
+                    message = field.gettext('Invalid input.')
+                else:
+                    message = self.message
 
             raise ValidationError(self.message)
 
@@ -264,10 +269,11 @@ class Email(Regexp):
         super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,10}$', re.IGNORECASE, message)
 
     def __call__(self, form, field):
-        if self.message is None:
-            self.message = field.gettext('Invalid email address.')
+        message = self.message
+        if message is None:
+            message = field.gettext('Invalid email address.')
 
-        super(Email, self).__call__(form, field)
+        super(Email, self).__call__(form, field, message)
 
 
 class IPAddress(object):
@@ -295,9 +301,10 @@ class IPAddress(object):
             valid = (self.ipv4 and self.check_ipv4(value)) or (self.ipv6 and self.check_ipv6(value))
 
         if not valid:
-            if self.message is None:
-                self.message = field.gettext('Invalid IP address.')
-            raise ValidationError(self.message)
+            message = self.message
+            if message is None:
+                message = field.gettext('Invalid IP address.')
+            raise ValidationError(message)
 
     def check_ipv4(self, value):
         parts = value.split('.')
@@ -343,10 +350,11 @@ class MacAddress(Regexp):
         super(MacAddress, self).__init__(pattern, message=message)
 
     def __call__(self, form, field):
-        if self.message is None:
-            self.message = field.gettext('Invalid Mac address.')
+        message = self.message
+        if message is None:
+            message = field.gettext('Invalid Mac address.')
 
-        super(MacAddress, self).__call__(form, field)
+        super(MacAddress, self).__call__(form, field, message)
 
 
 class URL(Regexp):
@@ -368,10 +376,11 @@ class URL(Regexp):
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
     def __call__(self, form, field):
-        if self.message is None:
-            self.message = field.gettext('Invalid URL.')
+        message = self.message
+        if message is None:
+            message = field.gettext('Invalid URL.')
 
-        super(URL, self).__call__(form, field)
+        super(URL, self).__call__(form, field, message)
 
 
 class UUID(Regexp):
@@ -386,10 +395,11 @@ class UUID(Regexp):
         super(UUID, self).__init__(pattern, message=message)
 
     def __call__(self, form, field):
-        if self.message is None:
-            self.message = field.gettext('Invalid UUID.')
+        message = self.message
+        if message is None:
+            message = field.gettext('Invalid UUID.')
 
-        super(UUID, self).__call__(form, field)
+        super(UUID, self).__call__(form, field, message)
 
 
 class AnyOf(object):
@@ -408,15 +418,20 @@ class AnyOf(object):
         self.values = values
         self.message = message
         if values_formatter is None:
-            values_formatter = lambda v: ', '.join(text_type(x) for x in v)
+            values_formatter = self.default_values_formatter
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
         if field.data not in self.values:
-            if self.message is None:
-                self.message = field.gettext('Invalid value, must be one of: %(values)s.')
+            message = self.message
+            if message is None:
+                message = field.gettext('Invalid value, must be one of: %(values)s.')
 
-            raise ValidationError(self.message % dict(values=self.values_formatter(self.values)))
+            raise ValidationError(message % dict(values=self.values_formatter(self.values)))
+
+    @staticmethod
+    def default_values_formatter(values):
+        return ', '.join(text_type(x) for x in values)
 
 
 class NoneOf(object):
@@ -440,10 +455,11 @@ class NoneOf(object):
 
     def __call__(self, form, field):
         if field.data in self.values:
-            if self.message is None:
-                self.message = field.gettext('Invalid value, can\'t be any of: %(values)s.')
+            message = self.message
+            if message is None:
+                message = field.gettext('Invalid value, can\'t be any of: %(values)s.')
 
-            raise ValidationError(self.message % dict(values=self.values_formatter(self.values)))
+            raise ValidationError(message % dict(values=self.values_formatter(self.values)))
 
 
 email = Email
