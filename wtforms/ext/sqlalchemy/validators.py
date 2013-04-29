@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-
+import warnings
 from wtforms import ValidationError
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -19,6 +19,7 @@ class Unique(object):
     field_flags = ('unique', )
 
     def __init__(self, get_session, model, column, message=None):
+        warnings.warn('The Unique validator will be removed in WTForms 1.1', DeprecationWarning)
         self.get_session = get_session
         self.model = model
         self.column = column
