@@ -273,6 +273,7 @@ class Email(Regexp):
 class IPAddress(object):
     """
     Validates an IP address.
+
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
     :param ipv6:
