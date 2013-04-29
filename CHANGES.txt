@@ -1,6 +1,12 @@
 WTForms Changelog
 =================
 
+Version 1.0.5
+-------------
+Not yet released.
+
+-
+
 Version 1.0.4
 -------------
 Released April 28, 2013
