@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 1.0.4
 -------------
-Not yet released.
+Released April 28, 2013
 
 - Add widgets and field implementations for HTML5 specialty input types.
 - ext.appengine: Add NDB support.

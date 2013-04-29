@@ -44,8 +44,6 @@ NDB
 WTForms now includes support for NDB models and can support mapping the 
 relationship fields as well as generating forms from models.
 
-.. module:: wtforms.ext.appengine.fields
-
 .. autoclass:: KeyPropertyField(default field arguments, reference_class=None, get_label=None, allow_blank=False, blank_text='')
 
 .. module:: wtforms.ext.appengine.ndb
