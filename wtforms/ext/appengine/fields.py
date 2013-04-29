@@ -113,14 +113,9 @@ class KeyPropertyField(fields.SelectFieldBase):
     widget = widgets.Select()
 
     def __init__(self, label=None, validators=None, reference_class=None,
-                 label_attr=None, get_label=None, allow_blank=False,
-                 blank_text=u'', **kwargs):
-        super(KeyPropertyField, self).__init__(label, validators,
-                                                     **kwargs)
-        if label_attr is not None:
-            warnings.warn('label_attr= will be removed in WTForms 1.1, use get_label= instead.', DeprecationWarning)
-            self.get_label = operator.attrgetter(label_attr)
-        elif get_label is None:
+                 get_label=None, allow_blank=False, blank_text=u'', **kwargs):
+        super(KeyPropertyField, self).__init__(label, validators, **kwargs)
+        if get_label is None:
             self.get_label = lambda x: x
         elif isinstance(get_label, basestring):
             self.get_label = operator.attrgetter(get_label)
