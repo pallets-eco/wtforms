@@ -229,23 +229,7 @@ refer to a single input from the form.
    except for in cases where an IEEE float is absolutely desired over a decimal
    value.
 
-.. autoclass:: HiddenField(default field arguments)
-
-    HiddenField is useful for providing data from a model or the application to
-    be used on the form handler side for making choices or finding records.
-    Very frequently, CRUD forms will use the hidden field for an object's id.   
-
-    Hidden fields are like any other field in that they can take validators and
-    values and be accessed on the form object.   You should consider validating
-    your hidden fields just as you'd validate an input field, to prevent from
-    malicious people playing with your data.
-
 .. autoclass:: IntegerField(default field arguments)
-
-.. autoclass:: PasswordField(default field arguments)
-
-    Other than the fact that this makes a password input field, this field
-    functions exactly like a text-input field.
 
 .. autoclass:: RadioField(default field arguments, choices=[], coerce=unicode)
 
@@ -309,17 +293,35 @@ refer to a single input from the form.
 
 .. autoclass:: SubmitField(default field arguments)
 
+.. autoclass:: StringField(default field arguments)
+
+   .. code-block:: jinja
+
+        {{ form.username(size=30, maxlength=50) }}
+
+
+Convenience Fields
+------------------
+
+.. autoclass:: HiddenField(default field arguments)
+
+    HiddenField is useful for providing data from a model or the application to
+    be used on the form handler side for making choices or finding records.
+    Very frequently, CRUD forms will use the hidden field for an object's id.   
+
+    Hidden fields are like any other field in that they can take validators and
+    values and be accessed on the form object.   You should consider validating
+    your hidden fields just as you'd validate an input field, to prevent from
+    malicious people playing with your data.
+
+.. autoclass:: PasswordField(default field arguments)
+
 .. autoclass:: TextAreaField(default field arguments)
 
     .. code-block: jinja
 
         {{ form.textarea(rows=7, cols=90) }}
 
-.. autoclass:: TextField(default field arguments)
-
-   .. code-block:: jinja
-
-        {{ form.username(size=30, maxlength=50) }}
 
 Field Enclosures
 ----------------
