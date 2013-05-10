@@ -193,9 +193,6 @@ class FileInput(object):
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
-        value = field._value()
-        if value:
-            kwargs.setdefault('value', value)
         return HTMLString('<input %s>' % html_params(name=field.name, type='file', **kwargs))
 
 
