@@ -137,7 +137,7 @@ msgstr "Неверное значение даты/времени"
 
 #: wtforms/ext/sqlalchemy/validators.py:33
 msgid "Already exists."
-msgstr ""
+msgstr "Уже существует."
 
 #: wtforms/fields/core.py:412
 msgid "Invalid Choice: could not coerce"
