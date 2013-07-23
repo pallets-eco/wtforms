@@ -344,7 +344,7 @@ class FileFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), """<input id="a" name="a" type="file" value="LE DEFAULT">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="file">""")
 
 
 class IntegerFieldTest(TestCase):
