@@ -95,7 +95,7 @@ To define a form, one makes a subclass of :class:`Form` and defines the fields
 declaratively as class attributes::
 
     class MyForm(Form):
-        first_name = TextField(u'First Name', validators=[validators.required()])
+        first_name = TextField(u'First Name', validators=[validators.input_required()])
         last_name  = TextField(u'Last Name', validators=[validators.optional()])
 
 Field names can be any valid python identifier, with the following restrictions:

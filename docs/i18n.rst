@@ -30,7 +30,7 @@ Here's a simple example of how one would provide translated strings to WTForms::
     from wtforms import Form, TextField, IntegerField, validators as v
 
     class RegistrationForm(Form):
-        name = TextField(_(u'Name'), [v.Required(_(u'Please provide your name'))])
+        name = TextField(_(u'Name'), [v.InputRequired(_(u'Please provide your name'))])
         age = IntegerField(
             _(u'Age'),
             [v.NumberRange(min=12, message=_(u'Must be at least %(min)d years old.'))]

@@ -26,12 +26,12 @@ Built-in validators
     scenarios, the password change form::
 
         class ChangePassword(Form):
-            password = PasswordField('New Password', [Required(), EqualTo('confirm', message='Passwords must match')])
+            password = PasswordField('New Password', [InputRequired(), EqualTo('confirm', message='Passwords must match')])
             confirm  = PasswordField('Repeat Password')
 
-    In the example, we use the Required validator to prevent the EqualTo
+    In the example, we use the InputRequired validator to prevent the EqualTo
     validator from trying to see if the passwords do not match if there was no
-    passwords specified at all. Because Required stops the validation chain,
+    passwords specified at all. Because InputRequired stops the validation chain,
     EqualTo is not run in the case the password field is left empty.
 
 .. autoclass:: wtforms.validators.InputRequired
@@ -76,7 +76,7 @@ case-specific one to a generic reusable validator.
 Let's start with a simple form with a name field and its validation::
 
     class MyForm(Form):
-        name = TextField('Name', [Required()])
+        name = TextField('Name', [InputRequired()])
 
         def validate_name(form, field):
             if len(field.data) > 50:
@@ -95,7 +95,7 @@ So let's start on the process of splitting the validator out for re-use::
             raise ValidationError('Field must be less than 50 characters')
 
     class MyForm(Form):
-        name = TextField('Name', [Required(), my_length_check])
+        name = TextField('Name', [InputRequired(), my_length_check])
 
 All we've done here is move the exact same code out of the class and as a
 function. Since a validator can be any callable which accepts the two
@@ -116,7 +116,7 @@ factory which returns a callable::
         return _length
 
     class MyForm(Form):
-        name = TextField('Name', [Required(), length(max=50)])
+        name = TextField('Name', [InputRequired(), length(max=50)])
 
 Now we have a configurable length-checking validator that handles both minimum
 and maximum lengths. When ``length(max=50)`` is passed in your validators list,

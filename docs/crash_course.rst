@@ -75,10 +75,10 @@ Let's get right down to business and define our first form::
     class RegistrationForm(Form):
         username     = TextField('Username', [validators.Length(min=4, max=25)])
         email        = TextField('Email Address', [validators.Length(min=6, max=35)])
-        accept_rules = BooleanField('I accept the site rules', [validators.Required()])
+        accept_rules = BooleanField('I accept the site rules', [validators.InputRequired()])
 
 When you create a form, you define the fields in a way that is similar to the
-way many ORM’s have you define their columns; By defining class variables which
+way many ORM’s have you define their columns: By defining class variables which
 are instantiations of the fields.
 
 Because forms are regular Python classes, you can easily extend them as you
