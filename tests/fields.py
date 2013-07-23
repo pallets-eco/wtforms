@@ -435,7 +435,7 @@ class FloatFieldTest(TestCase):
 class BooleanFieldTest(TestCase):
     class BoringForm(Form):
         bool1 = BooleanField()
-        bool2 = BooleanField(default=True)
+        bool2 = BooleanField(default=True, false_values=())
 
     obj = AttrDict(bool1=None, bool2=True)
 
@@ -456,6 +456,9 @@ class BooleanFieldTest(TestCase):
         form = self.BoringForm(DummyPostData(bool1=['a']))
         self.assertEqual(form.bool1.raw_data, ['a'])
         self.assertEqual(form.bool1.data, True)
+        form = self.BoringForm(DummyPostData(bool1=['false'], bool2=['false']))
+        self.assertEqual(form.bool1.data, False)
+        self.assertEqual(form.bool2.data, True)
 
     def test_with_model_data(self):
         form = self.BoringForm(obj=self.obj)

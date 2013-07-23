@@ -604,20 +604,28 @@ class FloatField(Field):
 class BooleanField(Field):
     """
     Represents an ``<input type="checkbox">``.
+
+    :param false_values:
+        If provided, a sequence of strings each of which is an exact match
+        string of what is considered a "false" value. Defaults to the tuple
+        ``('false', '')``
     """
     widget = widgets.CheckboxInput()
+    false_values = ('false', '')
 
-    def __init__(self, label=None, validators=None, **kwargs):
+    def __init__(self, label=None, validators=None, false_values=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
+        if false_values is not None:
+            self.false_values = false_values
 
     def process_data(self, value):
         self.data = bool(value)
 
     def process_formdata(self, valuelist):
-        # Checkboxes and submit buttons simply do not send a value when
-        # unchecked/not pressed. So the actual value="" doesn't matter for
-        # purpose of determining .data, only whether one exists or not.
-        self.data = bool(valuelist)
+        if not valuelist or valuelist[0] in self.false_values:
+            self.data = False
+        else:
+            self.data = True
 
     def _value(self):
         if self.raw_data:
