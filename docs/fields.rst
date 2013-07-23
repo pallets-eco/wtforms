@@ -177,7 +177,7 @@ The Field base class
 
         An object containing boolean flags set either by the field itself, or
         by validators on the field. For example, the built-in
-        :class:`~wtforms.validators.Required` validator sets the `required` flag.
+        :class:`~wtforms.validators.InputRequired` validator sets the `required` flag.
         An unset flag will result in :const:`False`.
 
         .. code-block:: html+django
@@ -195,7 +195,7 @@ Basic fields
 Basic fields generally represent scalar data types with single values, and
 refer to a single input from the form.
 
-.. autoclass:: BooleanField(default field arguments)
+.. autoclass:: BooleanField(default field arguments, false_values=None)
 
 .. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
 
