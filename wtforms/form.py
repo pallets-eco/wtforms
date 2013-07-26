@@ -31,6 +31,7 @@ class BaseForm(object):
         if hasattr(fields, 'iteritems'):
             fields = fields.iteritems()
         elif hasattr(fields, 'items'):
+            # Python 3.x
             fields = fields.items()
 
         translations = self._get_translations()

@@ -157,7 +157,7 @@ class FormTest(TestCase):
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'kiwi', 'apple'])
         MyForm.strawberry = TextField()
         self.assertEqual([x.name for x in MyForm()], ['kiwi', 'apple', 'strawberry'])
-        # Ensure sort is stable: two fields with the same creation counter 
+        # Ensure sort is stable: two fields with the same creation counter
         # should be subsequently sorted by name.
         MyForm.cherry = MyForm.kiwi
         self.assertEqual([x.name for x in MyForm()], ['cherry', 'kiwi', 'apple', 'strawberry'])

@@ -548,8 +548,8 @@ class FormFieldTest(TestCase):
     def test_formdata(self):
         form = self.F1(DummyPostData({'a-a':['moo']}))
         self.assertEqual(form.a.form.a.name, 'a-a')
-        self.assertEqual(form.a.form.a.data, 'moo')
-        self.assertEqual(form.a.form.b.data, '')
+        self.assertEqual(form.a['a'].data, 'moo')
+        self.assertEqual(form.a['b'].data, '')
         self.assertTrue(form.validate())
 
     def test_iteration(self):
@@ -591,12 +591,20 @@ class FormFieldTest(TestCase):
         form = C()
         self.assertRaises(TypeError, form.validate)
 
+    def test_populate_missing_obj(self):
+        obj = AttrDict(a=None)
+        obj2 = AttrDict(a=AttrDict(a='mmm'))
+        form = self.F1()
+        self.assertRaises(TypeError, form.populate_obj, obj)
+        form.populate_obj(obj2)
+
+
 
 class FieldListTest(TestCase):
     t = TextField(validators=[validators.Required()])
 
     def test_form(self):
-        F = make_form(a = FieldList(self.t))
+        F = make_form(a=FieldList(self.t))
         data = ['foo', 'hi', 'rawr']
         a = F(a=data).a
         self.assertEqual(a.entries[1].data, 'hi')
@@ -619,6 +627,7 @@ class FieldListTest(TestCase):
         form = F(pdata, a=data)
         self.assertEqual(len(form.a.entries), 2)
         self.assertEqual(form.a.data, ['a', 'b'])
+        self.assertEqual(list(iter(form.a)), list(form.a.entries))
 
     def test_enclosed_subform(self):
         make_inner = lambda: AttrDict(a=None)
@@ -646,6 +655,10 @@ class FieldListTest(TestCase):
         self.assertTrue(obj.a[0] is inner_obj)
         self.assertEqual(obj.a[0].a, 'foo')
         self.assertEqual(obj.a[1].a, 'bar')
+
+        # Test failure on populate
+        obj2 = AttrDict(a=42)
+        self.assertRaises(TypeError, form.populate_obj, obj2)
 
     def test_entry_management(self):
         F = make_form(a = FieldList(self.t))
@@ -696,6 +709,10 @@ class FieldListTest(TestCase):
         form = F(DummyPostData({'a-0': ['']}))
         assert not form.validate()
         self.assertEqual(form.a.errors, [['This field is required.']])
+
+    def test_no_filters(self):
+        my_filter = lambda x: x
+        self.assertRaises(TypeError, FieldList, self.t, filters=[my_filter], _form=Form(), _name='foo')
 
 
 class MyCustomField(TextField):

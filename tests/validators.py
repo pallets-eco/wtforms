@@ -41,6 +41,12 @@ def grab_error_message(callable, form, field):
     except ValidationError as e:
         return e.args[0]
 
+def grab_stop_message(callable, form, field):
+    try:
+        callable(form, field)
+    except StopValidation as e:
+        return e.args[0]
+
 class ValidatorsTest(TestCase):
     def setUp(self):
         self.form = DummyForm()
@@ -78,6 +84,9 @@ class ValidatorsTest(TestCase):
 
         for good_address in ('::1', 'dead:beef:0:0:0:0:42:1', 'abcd:ef::42:1'):
             self.assertEqual(ip_address(ipv6=True)(self.form, DummyField(good_address)), None)
+
+        #Test ValueError on ipv6=False and ipv4=False
+        self.assertRaises(ValueError, ip_address, ipv4=False, ipv6=False)
 
     def test_mac_address(self):
         self.assertEqual(mac_address()(self.form,
@@ -125,19 +134,32 @@ class ValidatorsTest(TestCase):
         self.assertTrue('between 2 and 5' in grab(min=2, max=5))
 
     def test_required(self):
+        # Make sure we stop the validation chain
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
         self.assertRaises(StopValidation, required(), self.form, DummyField(''))
         self.assertRaises(StopValidation, required(), self.form, DummyField(' '))
         self.assertEqual(required().field_flags, ('required', ))
+
+        # Make sure we clobber errors
         f = DummyField('', ['Invalid Integer Value'])
         self.assertEqual(len(f.errors), 1)
         self.assertRaises(StopValidation, required(), self.form, f)
         self.assertEqual(len(f.errors), 0)
 
+        # Check message and custom message
+        grab = lambda **k: grab_stop_message(required(**k), self.form, DummyField(''))
+        self.assertEqual(grab(), 'This field is required.')
+        self.assertEqual(grab(message='foo'), 'foo')
+
     def test_input_required(self):
         self.assertEqual(input_required()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
         self.assertRaises(StopValidation, input_required(), self.form, DummyField('', raw_data=['']))
         self.assertEqual(input_required().field_flags, ('required', ))
+
+        # Check message and custom message
+        grab = lambda **k: grab_stop_message(input_required(**k), self.form, DummyField('', raw_data=['']))
+        self.assertEqual(grab(), 'This field is required.')
+        self.assertEqual(grab(message='foo'), 'foo')
 
     def test_optional(self):
         self.assertEqual(optional()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
@@ -165,6 +187,9 @@ class ValidatorsTest(TestCase):
         self.assertEqual(regexp(re.compile('^a', re.I))(self.form, DummyField('ABcd')), None)
         self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField('foo'))
         self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField(None))
+
+        # Check custom message
+        self.assertEqual(grab_error_message(regexp('^a', message='foo'), self.form, DummyField('f')), 'foo')
 
     def test_url(self):
         self.assertEqual(url()(self.form, DummyField('http://foobar.dk')), None)
