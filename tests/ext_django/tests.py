@@ -94,8 +94,8 @@ class ModelFormTest(TestCase):
 
     def test_form_sanity(self):
         self.assertEqual(self.F.__name__, 'UserForm')
-        self.assertEqual(len([x for x in self.form]), 13)
-        self.assertEqual(len([x for x in self.form_with_pk]), 14)
+        self.assertEqual(len([x for x in self.form]), 14)
+        self.assertEqual(len([x for x in self.form_with_pk]), 15)
 
     def test_label(self):
         self.assertEqual(self.form.reg_ip.label.text, 'IP Addy')
@@ -131,6 +131,11 @@ class ModelFormTest(TestCase):
     def test_field_args(self):
         self.assertTrue(contains_validator(self.form.posts, validators.NumberRange))
         self.assertEqual(self.form.posts.description, 'Test')
+
+    def test_nullbool(self):
+        field = self.form.nullbool
+        assert isinstance(field, fields.SelectField)
+        self.assertEqual(len(field.choices), 3)
 
 class QuerySetSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']

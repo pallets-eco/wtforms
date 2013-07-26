@@ -25,4 +25,5 @@ class User(models.Model):
     bool     = models.BooleanField()
     time1    = models.TimeField()
     slug     = models.SlugField()
+    nullbool = models.NullBooleanField()
 

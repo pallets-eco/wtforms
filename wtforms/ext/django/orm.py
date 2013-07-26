@@ -100,9 +100,12 @@ class ModelConverter(ModelConverterBase):
         return f.TextField(**kwargs)
 
     def conv_NullBooleanField(self, model, field, kwargs):
+        from django.db.models.fields import NOT_PROVIDED
         def coerce_nullbool(value):
             d = {'None': None, None: None, 'True': True, 'False': False}
-            if value in d:
+            if isinstance(value, NOT_PROVIDED):
+                return None
+            elif value in d:
                 return d[value]
             else:
                 return bool(int(value))
