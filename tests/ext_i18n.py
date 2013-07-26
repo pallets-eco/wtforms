@@ -26,7 +26,7 @@ class FormTest(TestCase):
         form = self.F()
 
         assert ('en_US', 'en') in tcache
-        self.assertIs(form._get_translations(), tcache[('en_US', 'en')])
+        assert form._get_translations() is tcache[('en_US', 'en')]
         assert not form.validate()
         self.assertEqual(form.a.errors[0], 'This field is required.')
 
