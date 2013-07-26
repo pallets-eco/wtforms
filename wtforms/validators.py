@@ -235,7 +235,7 @@ class InputRequired(object):
                 message = self.message
 
             field.errors[:] = []
-            raise StopValidation(self.message)
+            raise StopValidation(message)
 
 
 class Regexp(object):
@@ -265,7 +265,7 @@ class Regexp(object):
                 else:
                     message = self.message
 
-            raise ValidationError(self.message)
+            raise ValidationError(message)
 
 
 class Email(Regexp):
