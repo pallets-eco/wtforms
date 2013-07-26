@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from unittest import TestCase
 from wtforms.widgets import html_params, Input
 from wtforms.widgets import *
-
+from wtforms.widgets import html5
 
 class DummyField(object):
     def __init__(self, data, name='f', label='', id='', type='TextField'):
@@ -57,7 +57,7 @@ class TableWidgetTest(TestCase):
 class BasicWidgetsTest(TestCase):
     """Test most of the basic input widget types"""
 
-    field = DummyField('foo', name='bar', label='label', id='id') 
+    field = DummyField('foo', name='bar', label='label', id='id')
 
     def test_input_type(self):
         a = Input()
@@ -99,10 +99,27 @@ class SelectTest(TestCase):
     field = DummyField([('foo', 'lfoo', True), ('bar', 'lbar', False)])
 
     def test(self):
-        self.assertEqual(Select()(self.field), 
+        self.assertEqual(Select()(self.field),
             '<select id="" name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>')
-        self.assertEqual(Select(multiple=True)(self.field), 
+        self.assertEqual(Select(multiple=True)(self.field),
             '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>')
+
+
+class HTML5Test(TestCase):
+    field = DummyField('42', name='bar', id='id')
+
+    def test_number(self):
+        i1 = html5.NumberInput(step='any')
+        self.assertEqual(i1(self.field), '<input id="id" name="bar" step="any" type="number" value="42">')
+        i2 = html5.NumberInput(step=2)
+        self.assertEqual(i1(self.field, step=3), '<input id="id" name="bar" step="3" type="number" value="42">')
+
+    def test_number(self):
+        i1 = html5.RangeInput(step='any')
+        self.assertEqual(i1(self.field), '<input id="id" name="bar" step="any" type="range" value="42">')
+        i2 = html5.RangeInput(step=2)
+        self.assertEqual(i1(self.field, step=3), '<input id="id" name="bar" step="3" type="range" value="42">')
+
 
 if __name__ == '__main__':
     from unittest import main
