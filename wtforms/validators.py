@@ -129,18 +129,19 @@ class NumberRange(object):
     def __call__(self, form, field):
         data = field.data
         if data is None or (self.min is not None and data < self.min) or \
-            (self.max is not None and data > self.max):
-            if self.message is None:
+                (self.max is not None and data > self.max):
+            message = self.message
+            if message is None:
                 # we use %(min)s interpolation to support floats, None, and
                 # Decimals without throwing a formatting exception.
                 if self.max is None:
-                    self.message = field.gettext('Number must be at least %(min)s.')
+                    message = field.gettext('Number must be at least %(min)s.')
                 elif self.min is None:
-                    self.message = field.gettext('Number must be at most %(max)s.')
+                    message = field.gettext('Number must be at most %(max)s.')
                 else:
-                    self.message = field.gettext('Number must be between %(min)s and %(max)s.')
+                    message = field.gettext('Number must be between %(min)s and %(max)s.')
 
-            raise ValidationError(self.message % dict(min=self.min, max=self.max))
+            raise ValidationError(message % dict(min=self.min, max=self.max))
 
 
 class Optional(object):
@@ -229,7 +230,9 @@ class InputRequired(object):
     def __call__(self, form, field):
         if not field.raw_data or not field.raw_data[0]:
             if self.message is None:
-                self.message = field.gettext('This field is required.')
+                message = field.gettext('This field is required.')
+            else:
+                message = self.message
 
             field.errors[:] = []
             raise StopValidation(self.message)
