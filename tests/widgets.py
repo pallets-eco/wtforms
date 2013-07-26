@@ -114,7 +114,7 @@ class HTML5Test(TestCase):
         i2 = html5.NumberInput(step=2)
         self.assertEqual(i1(self.field, step=3), '<input id="id" name="bar" step="3" type="number" value="42">')
 
-    def test_number(self):
+    def test_range(self):
         i1 = html5.RangeInput(step='any')
         self.assertEqual(i1(self.field), '<input id="id" name="bar" step="any" type="range" value="42">')
         i2 = html5.RangeInput(step=2)
