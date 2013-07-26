@@ -79,8 +79,9 @@ class ModelConverterBase(object):
                 kwargs['validators'].append(validators.Required())
 
             if db_session and column.unique:
-                kwargs['validators'].append(Unique(lambda: db_session, model,
-                    column))
+                kwargs['validators'].append(Unique(
+                    lambda: db_session, model, column
+                ))
 
             if self.use_mro:
                 types = inspect.getmro(type(column.type))
@@ -122,8 +123,13 @@ class ModelConverterBase(object):
         if field_args:
             kwargs.update(field_args)
 
-        return converter(model=model, mapper=mapper, prop=prop, column=column,
-            field_args=kwargs)
+        return converter(
+            model=model,
+            mapper=mapper,
+            prop=prop,
+            column=column,
+            field_args=kwargs
+        )
 
 
 class ModelConverter(ModelConverterBase):
@@ -176,7 +182,7 @@ class ModelConverter(ModelConverterBase):
             field_args['places'] = places
         return f.DecimalField(**field_args)
 
-    @converts('databases.mysql.MSYear')
+    @converts('databases.mysql.MSYear', 'dialects.mysql.base.YEAR')
     def conv_MSYear(self, field_args, **extra):
         field_args['validators'].append(validators.NumberRange(min=1901, max=2155))
         return f.TextField(**field_args)
