@@ -11,6 +11,7 @@ Not yet released.
 - Allow blank string and the string 'false' to be considered false values
   for BooleanField (configurable). This is technically a breaking change,
   but it is not likey to affect the majority of users adversely.
+- ext.i18n form allows passing LANGUAGES to the constructor.
 
 Version 1.0.4
 -------------
