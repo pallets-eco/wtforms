@@ -42,7 +42,7 @@ class QuerySetSelectField(SelectFieldBase):
         self.blank_text = blank_text
         self._set_data(None)
         if queryset is not None:
-            self.queryset = queryset.all() # Make sure the queryset is fresh
+            self.queryset = queryset.all()  # Make sure the queryset is fresh
 
         if get_label is None:
             self.get_label = lambda x: x

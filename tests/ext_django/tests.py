@@ -166,10 +166,16 @@ class QuerySetSelectFieldTest(DjangoTestCase):
         self.assertEqual(form.a.validate(form), True)
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.b.validate(form), False)
-        form = self.F(DummyPostData(b=[2]))
+        form = self.F(DummyPostData(a=['__None'], b=[2]))
+        assert form.a.data is None
         self.assertEqual(form.b.data.pk, 2)
         self.assertEqual(form.b.validate(form), True)
 
+    def test_get_label_alt(self):
+        class TestForm(Form):
+            a = QuerySetSelectField(queryset=self.queryset, widget=lazy_select, get_label=lambda x: x.name.upper())
+        form = TestForm()
+        self.assertEqual(form.a(), ('N:1:USERS', 'N:2:ADMINS'))
 
 class ModelSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']

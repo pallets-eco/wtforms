@@ -99,14 +99,6 @@ class ModelConverter(ModelConverterBase):
         kwargs['validators'].append(validators.url())
         return f.TextField(**kwargs)
 
-    def conv_USStateField(self, model, field, kwargs):
-        try:
-            from django.contrib.localflavor.us.us_states import STATE_CHOICES
-        except ImportError:
-            STATE_CHOICES = []
-
-        return f.SelectField(choices=STATE_CHOICES, **kwargs)
-
     def conv_NullBooleanField(self, model, field, kwargs):
         def coerce_nullbool(value):
             d = {'None': None, None: None, 'True': True, 'False': False}
