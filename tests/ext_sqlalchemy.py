@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.schema import MetaData, Table, Column, ColumnDefault
-from sqlalchemy.types import String, Integer, Date
+from sqlalchemy.types import String, Integer, Numeric, Date, Text, Enum
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -11,9 +11,9 @@ from unittest import TestCase
 
 from wtforms.compat import text_type, iteritems
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
-from wtforms.form import Form
+from wtforms import Form, fields
 from wtforms.fields import TextField
-from wtforms.ext.sqlalchemy.orm import model_form
+from wtforms.ext.sqlalchemy.orm import model_form, ModelConversionError
 from wtforms.validators import Optional, Required, Length
 from wtforms.ext.sqlalchemy.validators import Unique
 
@@ -92,8 +92,8 @@ class QuerySelectFieldTest(TestBase):
         self._fill(sess)
 
         class F(Form):
-            a = QuerySelectField(get_label=(lambda model: model.name), query_factory=lambda:sess.query(self.Test), widget=LazySelect())
-            b = QuerySelectField(allow_blank=True, query_factory=lambda:sess.query(self.PKTest), widget=LazySelect())
+            a = QuerySelectField(get_label=(lambda model: model.name), query_factory=lambda: sess.query(self.Test), widget=LazySelect())
+            b = QuerySelectField(allow_blank=True, query_factory=lambda: sess.query(self.PKTest), widget=LazySelect())
 
         form = F()
         self.assertEqual(form.a.data, None)
@@ -183,6 +183,10 @@ class ModelFormTest(TestCase):
             __tablename__ = "course"
             id = Column(Integer, primary_key=True)
             name = Column(String(255), nullable=False)
+            # These are for better model form testing
+            cost = Column(Numeric(5, 2), nullable=False)
+            description = Column(Text, nullable=False)
+            level = Column(Enum('Primary', 'Secondary'))
 
         class School(Model):
             __tablename__ = "school"
@@ -194,15 +198,18 @@ class ModelFormTest(TestCase):
             id = Column(Integer, primary_key=True)
             full_name = Column(String(255), nullable=False, unique=True)
             dob = Column(Date(), nullable=True)
-            current_school_id = Column(Integer, ForeignKey(School.id),
-                nullable=False)
+            current_school_id = Column(Integer, ForeignKey(School.id), nullable=False)
 
             current_school = relationship(School, backref=backref('students'))
-            courses = relationship("Course", secondary=student_course,
-                backref=backref("students", lazy='dynamic'))
+            courses = relationship(
+                "Course",
+                secondary=student_course,
+                backref=backref("students", lazy='dynamic')
+            )
 
         self.School = School
         self.Student = Student
+        self.Course = Course
 
         engine = create_engine('sqlite:///:memory:', echo=False)
         Session = sessionmaker(bind=engine)
@@ -258,9 +265,16 @@ class ModelFormTest(TestCase):
         self.assertTrue(issubclass(QuerySelectMultipleField,
             student_form._fields['courses'].__class__))
 
+    def test_convert_basic(self):
+        self.assertRaises(TypeError, model_form, None)
+        self.assertRaises(ModelConversionError, model_form, self.Course)
+        form_class = model_form(self.Course, exclude=['students'])
+        form = form_class()
+        self.assertEqual(len(list(form)), 4)
+        assert isinstance(form.cost, fields.DecimalField)
+
 
 class ModelFormColumnDefaultTest(TestCase):
-
     def setUp(self):
         Model = declarative_base()
 

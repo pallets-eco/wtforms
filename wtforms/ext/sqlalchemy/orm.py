@@ -23,6 +23,11 @@ def converts(*args):
     return _inner
 
 
+class ModelConversionError(Exception):
+    def __init__(self, message):
+        Exception.__init__(self, message)
+
+
 class ModelConverterBase(object):
     def __init__(self, converters, use_mro=True):
         self.use_mro = use_mro
@@ -53,6 +58,7 @@ class ModelConverterBase(object):
 
         converter = None
         column = None
+        types = None
 
         if not hasattr(prop, 'direction'):
             column = prop.columns[0]
@@ -89,8 +95,7 @@ class ModelConverterBase(object):
                 types = [type(column.type)]
 
             for col_type in types:
-                type_string = '%s.%s' % (col_type.__module__,
-                    col_type.__name__)
+                type_string = '%s.%s' % (col_type.__module__, col_type.__name__)
                 if type_string.startswith('sqlalchemy'):
                     type_string = type_string[11:]
 
@@ -103,9 +108,12 @@ class ModelConverterBase(object):
                         converter = self.converters[col_type.__name__]
                         break
                 else:
-                    return
+                    raise ModelConversionError('Could not find field converter for %s (%r).' % (prop.key, types[0]))
+        else:
+            # We have a property with a direction.
+            if not db_session:
+                raise ModelConversionError("Cannot convert field %s, need DB session." % prop.key)
 
-        if db_session and hasattr(prop, 'direction'):
             foreign_model = prop.mapper.class_
 
             nullable = True
@@ -146,7 +154,7 @@ class ModelConverter(ModelConverterBase):
         self._string_common(field_args=field_args, **extra)
         return f.TextField(**field_args)
 
-    @converts('Text', 'UnicodeText', 'types.LargeBinary', 'types.Binary')
+    @converts('types.Text', 'UnicodeText', 'types.LargeBinary', 'types.Binary')
     def conv_Text(self, field_args, **extra):
         self._string_common(field_args=field_args, **extra)
         return f.TextAreaField(**field_args)
@@ -215,15 +223,12 @@ class ModelConverter(ModelConverterBase):
 
 
 def model_fields(model, db_session=None, only=None, exclude=None,
-    field_args=None, converter=None):
+        field_args=None, converter=None):
     """
     Generate a dictionary of fields for a given SQLAlchemy model.
 
     See `model_form` docstring for description of parameters.
     """
-    if not hasattr(model, '_sa_class_manager'):
-        raise TypeError('model must be a sqlalchemy mapped model')
-
     mapper = model._sa_class_manager.mapper
     converter = converter or ModelConverter()
     field_args = field_args or {}
@@ -279,12 +284,8 @@ def model_form(model, db_session=None, base_class=Form, only=None,
     :param type_name:
         An optional string to set returned type name.
     """
-    class ModelForm(base_class):
-        """Sets object as form attribute."""
-        def __init__(self, *args, **kwargs):
-            if 'obj' in kwargs:
-                self._obj = kwargs['obj']
-            super(ModelForm, self).__init__(*args, **kwargs)
+    if not hasattr(model, '_sa_class_manager'):
+        raise TypeError('model must be a sqlalchemy mapped model')
 
     if not exclude:
         exclude = []
@@ -293,11 +294,10 @@ def model_form(model, db_session=None, base_class=Form, only=None,
         if not hasattr(prop, 'direction') and prop.columns[0].primary_key:
             if exclude_pk:
                 exclude.append(prop.key)
-        if hasattr(prop, 'direction') and  exclude_fk and \
+        if hasattr(prop, 'direction') and exclude_fk and \
                 prop.direction.name != 'MANYTOMANY':
             for pair in prop.local_remote_pairs:
                 exclude.append(pair[0].key)
     type_name = type_name or str(model.__name__ + 'Form')
-    field_dict = model_fields(model, db_session, only, exclude, field_args,
-        converter)
-    return type(type_name, (ModelForm, ), field_dict)
+    field_dict = model_fields(model, db_session, only, exclude, field_args, converter)
+    return type(type_name, (base_class, ), field_dict)
