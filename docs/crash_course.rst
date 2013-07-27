@@ -50,31 +50,34 @@ and clone the repository.
 Key Concepts
 ------------
 
- - **Forms** are the core container of WTForms. Forms represent a collection of
-   fields, which can be accessed on the form dictionary-style or atrribute
-   style.
- - **Fields** do most of the heavy lifting. Each field represents a *data type*
+ - :class:`Forms <wtforms.form.Form>` are the core container of WTForms. Forms
+   represent a collection of fields, which can be accessed on the form 
+   dictionary-style or attribute style.
+ - :mod:`Fields <wtforms.fields>` do most of the heavy lifting. Each field represents a *data type*
    and the field handles coercing form input to that datatype. For example,
-   `IntegerField` and `TextField` represent two different data types. Fields
+   `IntegerField` and `StringField` represent two different data types. Fields
    contain a number of useful properties, such as a label, description, and a
    list of validation errors, in addition to the data the field contains.
- - Every field has a **Widget** instance. The widget's job is rendering an HTML
-   representation of that field. Widget instances can be specified for each
-   field but every field has one by default which makes sense. Some fields are
-   simply conveniences, for example `TextAreaField` is simply a `TextField`
-   with the default widget being a `TextArea`.
- - In order to specify validation rules, fields contain a list of **Validators**.
+ - Every field has a :mod:`Widget <wtforms.widgets>` instance. The widget's job
+   is rendering an HTML representation of that field. Widget instances can be
+   specified for each field but every field has one by default which makes 
+   sense. Some fields are simply conveniences, for example 
+   :class:`~wtforms.fields.TextAreaField` is simply a 
+   :class:`~wtforms.fields.StringField` with the default widget being a
+   :class:`~wtforms.widgets.TextArea`.
+ - In order to specify validation rules, fields contain a list of 
+   :mod:`Validators <wtforms.validators>`.
 
 Getting Started
 ---------------
 
 Let's get right down to business and define our first form::
 
-    from wtforms import Form, BooleanField, TextField, validators
+    from wtforms import Form, BooleanField, StringField, validators
 
     class RegistrationForm(Form):
-        username     = TextField('Username', [validators.Length(min=4, max=25)])
-        email        = TextField('Email Address', [validators.Length(min=6, max=35)])
+        username     = StringField('Username', [validators.Length(min=4, max=25)])
+        email        = StringField('Email Address', [validators.Length(min=6, max=35)])
         accept_rules = BooleanField('I accept the site rules', [validators.InputRequired()])
 
 When you create a form, you define the fields in a way that is similar to the
@@ -89,10 +92,10 @@ would expect::
         signature = TextAreaField('Forum Signature')
 
     class AdminProfileForm(ProfileForm):
-        username = TextField('Username', [validators.Length(max=40)])
+        username = StringField('Username', [validators.Length(max=40)])
         level    = IntegerField('User Level', [validators.NumberRange(min=0, max=10)])
 
-Via subclassing, `AdminProfileForm`, gains all the fields already defined in
+Via subclassing, `AdminProfileForm` gains all the fields already defined in
 `ProfileForm`. This allows you to easily share common subsets of fields between
 forms, such as the example above, where we are adding admin-only fields to
 `ProfileForm`.
@@ -155,13 +158,13 @@ WTForms forms are very simple container objects, and perhaps the easiest way to
 find out what's available to you in a form is to play around with a form in the
 console::
 
-    >>> from wtforms import Form, TextField, validators
+    >>> from wtforms import Form, StringField, validators
     >>> class UsernameForm(Form):
-    ...     username = TextField('Username', [validators.Length(min=5)], default=u'test')
+    ...     username = StringField('Username', [validators.Length(min=5)], default=u'test')
     ...
     >>> form = UsernameForm()
     >>> form['username']
-    <wtforms.fields.TextField object at 0x827eccc>
+    <wtforms.fields.StringField object at 0x827eccc>
     >>> form.username.data
     u'test'
     >>> form.validate()
@@ -174,7 +177,8 @@ instances of all the fields, which can be accessed via either dictionary-style
 or attribute-style. These fields have their own properties, as does the enclosing form.
 
 When we validate the form, it returns False, meaning at least one validator was
-not satisfied. form.errors will give you a summary of all the errors.
+not satisfied. :attr:`form.errors <wtforms.form.Form.errors>` will give you a 
+summary of all the errors.
 
 .. code-block:: python
 
@@ -230,13 +234,13 @@ run when the containing form is validated. You provide these via the field
 constructor's second argument, `validators`::
 
     class ChangeEmailForm(Form):
-        email = TextField('Email', [validators.Length(min=6, max=120), validators.Email()])
+        email = StringField('Email', [validators.Length(min=6, max=120), validators.Email()])
 
 You can provide any number of validators to a field. Typically, you will want to
 provide a custom error message::
 
     class ChangeEmailForm(Form):
-        email = TextField('Email', [
+        email = StringField('Email', [
             validators.Length(min=6, message=_(u'Little short for an email address?')),
             validators.Email(message=_(u'That\'s not a valid email address.'))
         ])
@@ -253,9 +257,9 @@ Rendering Fields
 
 Rendering a field is as simple as coercing it to a string::
 
-    >>> from wtforms import Form, TextField
+    >>> from wtforms import Form, StringField
     >>> class SimpleForm(Form):
-    ...   content = TextField('content')
+    ...   content = StringField('content')
     ...
     >>> form = SimpleForm(content='foobar')
     >>> str(form.content)
@@ -274,7 +278,7 @@ Now let's apply this power to rendering a form in a `Jinja <http://jinja.pocoo.o
 template. First, our form::
 
     class LoginForm(Form):
-        username = TextField('Username')
+        username = StringField('Username')
         password = PasswordField('Password')
 
     form = LoginForm()

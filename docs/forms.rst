@@ -95,8 +95,8 @@ To define a form, one makes a subclass of :class:`Form` and defines the fields
 declaratively as class attributes::
 
     class MyForm(Form):
-        first_name = TextField(u'First Name', validators=[validators.input_required()])
-        last_name  = TextField(u'Last Name', validators=[validators.optional()])
+        first_name = StringField(u'First Name', validators=[validators.input_required()])
+        last_name  = StringField(u'Last Name', validators=[validators.optional()])
 
 Field names can be any valid python identifier, with the following restrictions:
 
@@ -118,7 +118,7 @@ name re-used on a subclass causes the new definition to obscure the original.
         code     = TextAreaField()
 
     class PastebinEntry(PastebinEdit):
-        name = TextField(u'User Name')
+        name = StringField(u'User Name')
 
 
 .. _inline-validators:
@@ -248,7 +248,7 @@ fields.
         .. code-block:: python
 
             form = BaseForm({
-                'name': TextField(),
+                'name': StringField(),
                 'customer.age': IntegerField("Customer's Age")
             })
 
@@ -290,7 +290,7 @@ fields.
 
         .. code-block:: python
 
-            form['openid.name'] = TextField()
+            form['openid.name'] = StringField()
 
         Fields can be added and replaced in this way, but this must be done
         **before** :meth:`process` is called, or the fields will not have the

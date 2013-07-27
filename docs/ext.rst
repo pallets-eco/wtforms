@@ -105,12 +105,12 @@ Model forms
     :func:`model_form` attempts to glean as much metadata as possible from
     inspecting the model's fields, and will even attempt to guess at what
     validation might be wanted based on the field type. For example, converting
-    an `EmailField` will result in a :class:`~wtforms.fields.TextField` with
-    the :func:`~wtforms.validators.email` validator on it. if the `blank`
+    an `EmailField` will result in a :class:`~wtforms.fields.StringField` with
+    the :class:`~wtforms.validators.Email` validator on it. if the `blank`
     property is set on a model field, the resulting form field will have the
-    :func:`~wtforms.validators.optional` validator set.
+    :class:`~wtforms.validators.Optional` validator set.
 
-    Just like any other Form, forms created by ModelForm can be extended via
+    Just like any other Form, forms created by model_form can be extended via
     inheritance::
 
         UserFormBase = model_form(User)
@@ -140,7 +140,7 @@ helpful tools to use the django ORM along with wtforms.
     .. code-block:: python
 
         class ArticleEdit(Form):
-            title    = TextField()
+            title    = StringField()
             column   = QuerySetSelectField(get_label='title', allow_blank=True)
             category = QuerySetSelectField(queryset=Category.objects.all())
 
@@ -177,7 +177,7 @@ your forms.
         return Category.query.filter_by(enabled=True)
 
     class BlogPostEdit(Form):
-        title    = TextField()
+        title    = StringField()
         blog     = QuerySelectField(get_label='title')
         category = QuerySelectField(query_factory=enabled_categories, allow_blank=True)
 
@@ -262,8 +262,8 @@ First, let's create our SecureForm base class::
 Now that we have this taken care of, let's write a simple form and view which would implement this::
 
     class RegistrationForm(IPSecureForm):
-        name = TextField('Your Name')
-        email = TextField('Email', [validators.email()])
+        name = StringField('Your Name')
+        email = StringField('Email', [validators.email()])
 
     def register(request):
         form = RegistrationForm(request.POST, csrf_context=request.ip)
@@ -353,7 +353,7 @@ for any forms you want CSRF support for::
 Now incorporate it into any form/view by further subclassing::
 
     class Registration(MyBaseForm):
-        name = TextField()
+        name = StringField()
 
     def view(request):
         form = Registration(request.POST, csrf_context=request.session)

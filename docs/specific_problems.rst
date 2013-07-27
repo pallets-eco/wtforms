@@ -41,7 +41,7 @@ post-instantiation by using the ``del`` keyword:
 .. code-block:: python
 
     class MagazineIssueForm(Form):
-        title  = TextField()
+        title  = StringField()
         year   = IntegerField('Year')
         month  = SelectField(choices=MONTHS)
 
@@ -73,9 +73,9 @@ subclasses:
         class F(MyBaseForm):
             pass
 
-        F.username = TextField('username')
+        F.username = StringField('username')
         for name in iterate_some_model_dynamically():
-            setattr(F, name, TextField(name.title())) 
+            setattr(F, name, StringField(name.title())) 
 
         form = F(request.POST, ...)
         # do view stuff

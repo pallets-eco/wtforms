@@ -76,7 +76,7 @@ case-specific one to a generic reusable validator.
 Let's start with a simple form with a name field and its validation::
 
     class MyForm(Form):
-        name = TextField('Name', [InputRequired()])
+        name = StringField('Name', [InputRequired()])
 
         def validate_name(form, field):
             if len(field.data) > 50:
@@ -95,7 +95,7 @@ So let's start on the process of splitting the validator out for re-use::
             raise ValidationError('Field must be less than 50 characters')
 
     class MyForm(Form):
-        name = TextField('Name', [InputRequired(), my_length_check])
+        name = StringField('Name', [InputRequired(), my_length_check])
 
 All we've done here is move the exact same code out of the class and as a
 function. Since a validator can be any callable which accepts the two
@@ -116,7 +116,7 @@ factory which returns a callable::
         return _length
 
     class MyForm(Form):
-        name = TextField('Name', [InputRequired(), length(max=50)])
+        name = StringField('Name', [InputRequired(), length(max=50)])
 
 Now we have a configurable length-checking validator that handles both minimum
 and maximum lengths. When ``length(max=50)`` is passed in your validators list,

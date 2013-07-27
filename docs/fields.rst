@@ -12,7 +12,7 @@ Field definitions
 Fields are defined as members on a form in a declarative fashion::
 
     class MyForm(Form):
-        name    = TextField(u'Full Name', [validators.required(), validators.length(max=10)])
+        name    = StringField(u'Full Name', [validators.required(), validators.length(max=10)])
         address = TextAreaField(u'Mailing Address', [validators.optional(), validators.length(max=200)])
 
 When a field is defined on a form, the construction parameters are saved until
@@ -344,11 +344,11 @@ complex data structures such as lists and nested objects can be represented.
         class TelephoneForm(Form):
             country_code = IntegerField('Country Code', [validators.required()])
             area_code    = IntegerField('Area Code/Exchange', [validators.required()])
-            number       = TextField('Number')
+            number       = StringField('Number')
 
         class ContactForm(Form):
-            first_name   = TextField()
-            last_name    = TextField()
+            first_name   = StringField()
+            last_name    = StringField()
             mobile_phone = FormField(TelephoneForm)
             office_phone = FormField(TelephoneForm)
 
@@ -387,11 +387,11 @@ complex data structures such as lists and nested objects can be represented.
 
         class IMForm(Form):
             protocol = SelectField(choices=[('aim', 'AIM'), ('msn', 'MSN')])
-            username = TextField()
+            username = StringField()
 
         class ContactForm(Form):
-            first_name  = TextField()
-            last_name   = TextField()
+            first_name  = StringField()
+            last_name   = StringField()
             im_accounts = FieldList(FormField(IMForm))
 
 

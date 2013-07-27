@@ -27,10 +27,10 @@ e.g. change your locale before validation occurs, if you are using a suitable
 Here's a simple example of how one would provide translated strings to WTForms::
 
     from somelibrary import ugettext_lazy as _
-    from wtforms import Form, TextField, IntegerField, validators as v
+    from wtforms import Form, StringField, IntegerField, validators as v
 
     class RegistrationForm(Form):
-        name = TextField(_(u'Name'), [v.InputRequired(_(u'Please provide your name'))])
+        name = StringField(_(u'Name'), [v.InputRequired(_(u'Please provide your name'))])
         age = IntegerField(
             _(u'Age'),
             [v.NumberRange(min=12, message=_(u'Must be at least %(min)d years old.'))]
