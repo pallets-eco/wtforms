@@ -5,9 +5,9 @@ Widgets for various HTML5 input types.
 from .core import Input
 
 __all__ = (
-    'ColorInput', 'DateTimeInput', 'DateTimeLocalInput', 'EmailInput',
-    'MonthInput', 'NumberInput', 'RangeInput', 'SearchInput', 'TelInput',
-    'TimeInput', 'URLInput', 'WeekInput',
+    'ColorInput', 'DateInput', 'DateTimeInput', 'DateTimeLocalInput',
+    'EmailInput', 'MonthInput', 'NumberInput', 'RangeInput', 'SearchInput',
+    'TelInput', 'TimeInput', 'URLInput', 'WeekInput',
 )
 
 
