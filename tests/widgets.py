@@ -36,7 +36,7 @@ class ListWidgetTest(TestCase):
         # 'field' so that is what we will give it
         field = DummyField([DummyField(x, label='l' + x) for x in ['foo', 'bar']], id='hai')
 
-        self.assertEqual(ListWidget()(field), '<ul id="hai"><li>lfoo: foo</li><li>lbar: bar</li></ul>')
+        self.assertEqual(ListWidget()(field), '<ul id="hai"><li>lfoo foo</li><li>lbar bar</li></ul>')
 
         w = ListWidget(html_tag='ol', prefix_label=False)
         self.assertEqual(w(field), '<ol id="hai"><li>foo lfoo</li><li>bar lbar</li></ol>')
