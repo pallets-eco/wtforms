@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import datetime
 import decimal
 import itertools
-import time
 
 from wtforms import widgets
 from wtforms.compat import text_type, izip
@@ -753,7 +752,7 @@ class FieldList(Field):
     Encapsulate an ordered list of multiple instances of the same field type,
     keeping data as a list.
 
-    >>> authors = FieldList(TextField('Name', [validators.required()]))
+    >>> authors = FieldList(StringField('Name', [validators.required()]))
 
     :param unbound_field:
         A partially-instantiated field definition, just like that would be
