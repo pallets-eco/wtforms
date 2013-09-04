@@ -229,19 +229,20 @@ class TestModelForm(TestCase):
         self.assertEqual(form.is_admin.label.text, 'Administrative rights')
 
     def test_reference_property(self):
-        keys = ['__None']
+        keys = set(['__None'])
         for name in ['foo', 'bar', 'baz']:
             author = Author(name=name, age=26)
             author.put()
-            keys.append(str(author.key()))
+            keys.add(str(author.key()))
 
         form_class = model_form(Book)
         form = form_class()
 
-        i = 0
         for key, name, value in form.author.iter_choices():
-            self.assertEqual(key, keys[i])
-            i += 1
+            assert key in keys
+            keys.remove(key)
+
+        assert not keys
 
 
 class TestFields(TestCase):

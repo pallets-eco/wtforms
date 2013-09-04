@@ -19,7 +19,7 @@ class Author(ndb.Model):
 
 
 class Book(ndb.Model):
-    author = ndb.KeyProperty(Author)
+    author = ndb.KeyProperty(kind=Author)
 
 
 class TestKeyPropertyField(TestCase):
@@ -63,8 +63,18 @@ class TestKeyPropertyField(TestCase):
 class TestModelForm(TestCase):
     EXPECTED_AUTHOR = [('name', TextField), ('city', TextField), ('age', IntegerField), ('is_admin', BooleanField)]
 
-    def test(self):
+    def test_author(self):
         form = model_form(Author)
         for (expected_name, expected_type), field in zip(self.EXPECTED_AUTHOR, form()):
             self.assertEqual(field.name, expected_name)
             self.assertEqual(type(field), expected_type)
+
+    def test_book(self):
+        authors = set(text_type(x.key.id()) for x in fill_authors(Author))
+        authors.add('__None')
+        form = model_form(Book)
+        keys = set()
+        for key, b, c in form().author.iter_choices():
+            keys.add(key)
+
+        self.assertEqual(authors, keys)
