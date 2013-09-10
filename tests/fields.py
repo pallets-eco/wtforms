@@ -64,6 +64,7 @@ class LabelTest(TestCase):
             self.assertEqual(repr(label), "Label(u'test', u'Caption')")
         else:
             self.assertEqual(repr(label), "Label('test', 'Caption')")
+            self.assertEqual(label.__unicode__(), expected)
 
     def test_auto_label(self):
         t1 = TextField().bind(Form(), 'foo_bar')
@@ -103,6 +104,11 @@ class FlagsTest(TestCase):
 
     def test_repr(self):
         self.assertEqual(repr(self.flags), '<wtforms.fields.Flags: {required}>')
+
+    def test_underscore_property(self):
+        self.assertRaises(AttributeError, getattr, self.flags, '_foo')
+        self.flags._foo = 42
+        self.assertEqual(self.flags._foo, 42)
 
 
 class FiltersTest(TestCase):
