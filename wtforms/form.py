@@ -1,11 +1,10 @@
-import sys
+from wtforms.compat import with_metaclass, iteritems, itervalues
 
 __all__ = (
     'BaseForm',
     'Form',
 )
 
-from wtforms.compat import with_metaclass, iteritems, itervalues
 
 class BaseForm(object):
     """
