@@ -144,6 +144,20 @@ class FormTest(TestCase):
         # Try deleting a nonexistent field
         self.assertRaises(AttributeError, form.__delattr__, 'fake')
 
+    def test_delattr_idempotency(self):
+        form = self.F()
+        del form.test
+        self.assertEqual(form.test, None)
+
+        # Make sure deleting a normal attribute works
+        form.foo = 9
+        del form.foo
+        self.assertRaises(AttributeError, form.__delattr__, 'foo')
+
+        # Check idempotency
+        del form.test
+        self.assertEqual(form.test, None)
+
     def test_ordered_fields(self):
         class MyForm(Form):
             strawberry = TextField()

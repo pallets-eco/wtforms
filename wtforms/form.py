@@ -247,10 +247,16 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         setattr(self, name, None)
 
     def __delattr__(self, name):
-        try:
+        if name in self._fields:
             self.__delitem__(name)
-        except KeyError:
-            super(Form, self).__delattr__(name)
+        else:
+            # This is done for idempotency, if we have a name which is a field,
+            # we want to mask it by setting the value to None.
+            unbound_field = getattr(self.__class__, name, None)
+            if unbound_field is not None and hasattr(unbound_field, '_formfield'):
+                setattr(self, name, None)
+            else:
+                super(Form, self).__delattr__(name)
 
     def validate(self):
         """
