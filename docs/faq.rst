@@ -78,7 +78,7 @@ know on the `mailing list`_. For bugs and feature requests, you can file a
 ticket on the `project page`_.
 
 .. _mailing list: http://groups.google.com/group/wtforms
-.. _project page: http://bitbucket.org/simplecodes/wtforms
+.. _project page: http://github.com/wtforms/wtforms
 
 
 How do I mark in a template when a field is required?
