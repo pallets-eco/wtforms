@@ -13,7 +13,7 @@
 
 def _fix_import_path():
     """
-    Don't want to pollute the config globals, so do path munging 
+    Don't want to pollute the config globals, so do path munging
     here in this function
     """
     import sys, os
@@ -56,7 +56,7 @@ copyright = '2010 by Thomas Johansson, James Crasta'
 # The short X.Y version.
 version = '1.0.5'
 # The full version, including alpha/beta/rc tags.
-release = '1.0.5dev'
+release = '1.0.5'
 
 
 # There are two options for replacing |today|: either, you set today to some

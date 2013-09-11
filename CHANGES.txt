@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 1.0.5
 -------------
-Not yet released.
+Released September 10, 2013
 
 - Fix a bug in validators which causes translations to happen once then
   clobber any future translations.
