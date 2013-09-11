@@ -38,13 +38,12 @@ You can also `download`_ WTForms manually
 from PyPI and then run ``python setup.py install``.
 
 If you're the sort that likes to risk it all and run the latest version from
-Mercurial, you can grab a `packaged up version`_
-of the tip, or head over to `Bitbucket`_ 
-and clone the repository.
+Git, you can grab a `packaged up version`_ of the tip, or head over 
+to the `project page`_ and clone the repository.
 
 .. _download: http://pypi.python.org/pypi/WTForms 
-.. _packaged up version: http://bitbucket.org/simplecodes/wtforms/get/tip.zip
-.. _Bitbucket: http://bitbucket.org/simplecodes/wtforms
+.. _packaged up version: https://github.com/wtforms/wtforms/archive/develop.zip
+.. _project page: http://github.com/wtforms/wtforms
 
 
 Key Concepts
