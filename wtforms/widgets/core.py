@@ -237,7 +237,6 @@ class Select(object):
     def __init__(self, multiple=False, default_html_params=dict()):
         self.default_html_params = default_html_params
         self.multiple = multiple
-        
 
     def __call__(self, field, **kwargs):
         kwargs = self.default_html_params.copy().update(kwargs)
