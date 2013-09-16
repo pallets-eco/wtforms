@@ -1,3 +1,4 @@
+import warnings
 from wtforms import form
 from wtforms.ext.i18n.utils import get_translations
 
@@ -26,8 +27,7 @@ class Form(form.Form):
     LANGUAGES = None
 
     def __init__(self, *args, **kwargs):
-        if 'LANGUAGES' in kwargs:
-            self.LANGUAGES = kwargs.pop('LANGUAGES')
+        warnings.warn('wtforms.ext.i18n will be removed in WTForms 1.2', DeprecationWarning)
         super(Form, self).__init__(*args, **kwargs)
 
     def _get_translations(self):

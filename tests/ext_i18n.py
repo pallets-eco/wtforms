@@ -31,8 +31,8 @@ class FormTest(TestCase):
         self.assertEqual(form.a.errors[0], 'This field is required.')
 
         form = self.F(LANGUAGES=['es'])
-        assert len(tcache) == 2
         assert ('es', ) in tcache
+        self.assertEquals(len(tcache), 2)
         assert not form.validate()
         self.assertEqual(form.a.errors[0], 'Este campo es obligatorio.')
 
