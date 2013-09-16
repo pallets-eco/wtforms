@@ -580,7 +580,9 @@ class DecimalField(LocaleAwareNumberField):
         if self.raw_data:
             return self.raw_data[0]
         elif self.data is not None:
-            if self.places is not None:
+            if self.use_locale:
+                return text_type(self._format_decimal(self.data))
+            elif self.places is not None:
                 if hasattr(self.data, 'quantize'):
                     exp = decimal.Decimal('.1') ** self.places
                     if self.rounding is None:
@@ -601,7 +603,10 @@ class DecimalField(LocaleAwareNumberField):
     def process_formdata(self, valuelist):
         if valuelist:
             try:
-                self.data = decimal.Decimal(valuelist[0])
+                if self.use_locale:
+                    self.data = self._parse_decimal(valuelist[0])
+                else:
+                    self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 self.data = None
                 raise ValueError(self.gettext('Not a valid decimal value'))
