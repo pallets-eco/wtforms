@@ -17,7 +17,7 @@ if sys.version_info >= (3, ):
 
 setup(
     name='WTForms',
-    version='1.0.5',
+    version='1.0.6dev',
     url='http://wtforms.simplecodes.com/',
     license='BSD',
     author='Thomas Johansson, James Crasta',
@@ -52,7 +52,7 @@ setup(
         'wtforms.ext.sqlalchemy',
     ],
     package_data={
-        'wtforms.ext.i18n': ['messages/wtforms.pot', 'messages/*/*/*'],
+        'wtforms': ['locale/wtforms.pot', 'locale/*/*/*'],
     },
     **extra
 )

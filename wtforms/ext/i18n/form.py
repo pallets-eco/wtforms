@@ -1,3 +1,4 @@
+import warnings
 from wtforms import form
 from wtforms.ext.i18n.utils import get_translations
 
@@ -7,6 +8,10 @@ translations_cache = {}
 class Form(form.Form):
     """
     Base form for a simple localized WTForms form.
+
+    **NOTE** this class is now un-necessary as the i18n features have
+    been moved into the core of WTForms, but it will be kept for
+    compatibility reasons until WTForms 1.2.
 
     This will use the stdlib gettext library to retrieve an appropriate
     translations object for the language, by default using the locale
@@ -26,8 +31,7 @@ class Form(form.Form):
     LANGUAGES = None
 
     def __init__(self, *args, **kwargs):
-        if 'LANGUAGES' in kwargs:
-            self.LANGUAGES = kwargs.pop('LANGUAGES')
+        warnings.warn('i18n is now in core, wtforms.ext.i18n will be removed in WTForms 1.2', DeprecationWarning)
         super(Form, self).__init__(*args, **kwargs)
 
     def _get_translations(self):

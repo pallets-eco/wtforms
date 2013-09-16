@@ -1,9 +1,12 @@
 from wtforms.compat import with_metaclass, iteritems, itervalues
+from wtforms import i18n
 
 __all__ = (
     'BaseForm',
     'Form',
 )
+
+_unset_value = object()
 
 
 class BaseForm(object):
@@ -11,14 +14,21 @@ class BaseForm(object):
     Base Form Class.  Provides core behaviour like field construction,
     validation, and data and error proxying.
     """
+    LANGUAGES = False
 
-    def __init__(self, fields, prefix=''):
+    def __init__(self, fields, prefix='', LANGUAGES=_unset_value):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
+        :param LANGUAGES:
+            If this is a sequence of locale name strings, this is the list
+            of locales to try via the translation provider, in order.
+            If this is the value `None`, then use the default locale from
+            the environment.
+            To disable built-in translations provider, set `LANGUAGES=False`.
         """
         if prefix and prefix[-1] not in '-_;:/.':
             prefix += '-'
@@ -32,6 +42,9 @@ class BaseForm(object):
         elif hasattr(fields, 'items'):
             # Python 3.x
             fields = fields.items()
+
+        if LANGUAGES is not _unset_value:
+            self.LANGUAGES = LANGUAGES
 
         translations = self._get_translations()
 
@@ -65,7 +78,10 @@ class BaseForm(object):
 
         Must return an object that provides gettext() and ngettext() methods.
         """
-        return None
+        if self.LANGUAGES is False:
+            return None
+        else:
+            return i18n.get_translations(self.LANGUAGES)
 
     def populate_obj(self, obj):
         """
@@ -204,7 +220,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     and passed to `process()`.
     """
 
-    def __init__(self, formdata=None, obj=None, prefix='', **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', LANGUAGES=_unset_value, **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
@@ -218,12 +234,17 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
+        :param LANGUAGES:
+            If provided, this is a sequence of locale name strings that is
+            the priority order of locales to try to find validator message
+            translations at.
+            If `None`, then use the default gettext locale from the environ.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
         """
-        super(Form, self).__init__(self._unbound_fields, prefix=prefix)
+        super(Form, self).__init__(self._unbound_fields, prefix=prefix, LANGUAGES=LANGUAGES)
 
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class

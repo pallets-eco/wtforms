@@ -52,6 +52,30 @@ entered a value which was not valid as an integer, then a message like "Not a
 valid integer value" would be displayed.
 
 
+Using the built-in translations provider
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+WTForms now includes a basic translations provider which uses the stdlib
+`gettext` module to localize strings based on locale information distributed
+with the package. Localizations for several languages are included, and we
+hope that soon there will be more submitted.
+
+To use the builtin translations provider, simply pass locale languages as
+`LANGUAGES` to the :meth:`constructor <wtforms.form.Form.__init__>`
+of your form::
+
+    form = MyForm(request.form, LANGUAGES=['en_US', 'en'])
+
+Alternately, if you are localizing application-wide you can define `LANGUAGES`
+at class-level in a subclass of Form::
+
+    class MyBaseForm(Form):
+        LANGUAGES = ['es_ES', 'es']
+
+Now simply have all your forms be a subclass of `MyBaseForm` and you will have
+all your default messages output in spanish.
+
+
 Writing your own translations provider
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -82,19 +106,3 @@ You control the object's constructor, its lifecycle, and everything else about
 it, so you could, for example, pass the locale per-form instantiation to the
 translation object's constructor, and anything else you need to do for
 translations to work for you.
-
-
-Using the built-in translations provider
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. module:: wtforms.ext.i18n.form
-
-WTForms now includes a basic translations provider which uses the stdlib
-`gettext` module to localize strings based on locale information distributed
-with the package. As of this writing, we are waiting for more translations to
-be submitted, but we hope that soon we will provide given localizations
-
-To use the builtin translations provider, simply import
-:class:`wtforms.ext.i18n.form.Form` and use that as your base Form class.
-
-.. autoclass:: wtforms.ext.i18n.form.Form

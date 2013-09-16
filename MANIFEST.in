@@ -8,4 +8,4 @@ recursive-include docs *
 recursive-include tests *
 recursive-exclude docs/_build *
 recursive-exclude tests *.pyc
-recursive-include wtforms/ext/i18n/messages *
+recursive-include wtforms/locale *
