@@ -52,7 +52,7 @@ setup(
         'wtforms.ext.sqlalchemy',
     ],
     package_data={
-        'wtforms.ext.i18n': ['messages/wtforms.pot', 'messages/*/*/*'],
+        'wtforms': ['locale/wtforms.pot', 'locale/*/*/*'],
     },
     **extra
 )
