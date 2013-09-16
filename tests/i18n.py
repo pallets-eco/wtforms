@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-import warnings
-
 from unittest import TestCase
 from wtforms import TextField, validators
 from wtforms.i18n import get_translations
@@ -46,7 +44,10 @@ class CoreFormTest(TestCase):
         a = TextField(validators=[validators.Required()])
 
     class F2(form.Form):
-        a = TextField(validators=[validators.Required()])
+        a = TextField(validators=[validators.Required(), validators.Length(max=3)])
+
+    class F3(form.Form):
+        a = TextField(validators=[validators.Length(max=1)])
 
     def _common_test(self, expected_error, form_kwargs, form_class=None):
         if not form_class:
@@ -73,6 +74,17 @@ class CoreFormTest(TestCase):
 
     def test_override_languages(self):
         self._common_test('Este campo es obligatorio.', dict(LANGUAGES=['es_ES']))
+
+    def test_ngettext(self):
+        language_settings = [
+            (['en_US', 'en'], 'Field cannot be longer than 3 characters.', 'Field cannot be longer than 1 character.'),
+            (['de_DE', 'de'], 'Feld kann nicht l\xe4nger als 3 Zeichen sein.', 'Feld kann nicht l\xe4nger als 1 Zeichen sein.'),
+        ]
+        for languages, match1, match2 in language_settings:
+            settings = dict(a='toolong', LANGUAGES=languages)
+            self._common_test(match1, settings, self.F2)
+            self._common_test(match2, settings, self.F3)
+
 
 
 if __name__ == '__main__':
