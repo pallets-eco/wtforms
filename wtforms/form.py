@@ -1,5 +1,5 @@
 from wtforms.compat import with_metaclass, iteritems, itervalues
-from wtforms.ext.i18n import utils as i18n
+from wtforms import i18n
 
 __all__ = (
     'BaseForm',
