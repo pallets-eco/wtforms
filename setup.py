@@ -13,7 +13,7 @@ except ImportError:
 
 if sys.version_info >= (3, ):
     if not has_setuptools:
-        raise Exception('Python3 support in WTForms requires distribute.')
+        raise Exception('Python3 support in WTForms requires setuptools.')
 
 setup(
     name='WTForms',
