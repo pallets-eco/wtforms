@@ -11,9 +11,8 @@ except ImportError:
     from distutils.core import setup
     has_setuptools = False
 
-if sys.version_info >= (3, ):
-    if not has_setuptools:
-        raise Exception('Python3 support in WTForms requires setuptools.')
+if sys.version_info >= (3,) and not has_setuptools:
+    raise Exception('Python 3 support requires setuptools.')
 
 setup(
     name='WTForms',
