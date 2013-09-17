@@ -5,7 +5,7 @@ WTForms is a flexible forms validation and rendering library for python web deve
 
 To get started using WTForms, we recommend reading the crash course on the website: http://wtforms.simplecodes.com/.
 
-If you downloaded the package from PyPI, there will be a prebuilt copy of the html documentation in the `docs/html/` directory
+If you downloaded the package from PyPI, there will be a prebuilt copy of the html documentation in the `docs/html/` directory.
 
 You can also manually generate the documentation by running `make html` in the docs directory.
 
