@@ -27,6 +27,7 @@ For a quick introduction, as well as download/installation instructions, check o
    specific_problems
    crash_course
    i18n
+   changes
 
 **Indices and tables:**
 

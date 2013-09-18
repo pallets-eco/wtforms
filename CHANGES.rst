@@ -30,9 +30,11 @@ Released January 24, 2013
 - Minor fixes in documentation for clarity.
 - FieldList now can take validators on the entire FieldList.
 - ext.sqlalchemy model_form:
+
   * Fix issue with QuerySelectField
   * Fix issue in ColumnDefault conversion
   * Support Enum type
+
 - Field class now allows traversal in Django 1.4 templates.
 
 Version 1.0.2
@@ -47,6 +49,7 @@ Released August 24, 2012
 - Built-in localizations for more languages
 
 - Validator cleanup:
+
   * Distinguish Required validator into InputRequired and DataRequired
   * Better IP address validation, including IPv6 support.
   * AnyOf / NoneOf now work properly formatting other datatypes than strings.
@@ -73,10 +76,12 @@ Released February 28, 2012
 - Added ext.csrf for a way to implement CSRF protection
 
 - ext.sqlalchemy:
+
   * Support PGInet, MACADDR, and UUID field conversion
   * Support callable defaults
 
 - ext.appengine:
+
   * model_form now supports generating forms with the same ordering as model.
   * ReferencePropertyField now gets get_label like the other ORM fields
 
@@ -85,6 +90,7 @@ Released February 28, 2012
 - Python 3 support (via 2to3)
 
 - Minor changes/fixes:
+
   * An empty label string can be specified on fields if desired
   * Option widget can now take kwargs customization
   * Field subclasses can provide default validators as a class property
@@ -102,9 +108,10 @@ Released April 24, 2011
 - ext.django: QuerySetSelectField (and ModelSelectField) now accept get_label
   similar to sqlalchemy equivalents.
 
-- ext.appengine:
- * model_form fixes: FloatField(#50), TimeField, DateTimeField(#55)
- * ReferencePropertyField: now properly stores model object, not key. (#48)
+- ext.appengine
+
+  * model_form fixes: FloatField(#50), TimeField, DateTimeField(#55)
+  * ReferencePropertyField: now properly stores model object, not key. (#48)
 
 
 Version 0.6.2
@@ -112,9 +119,10 @@ Version 0.6.2
 Released January 22, 2011
 
 - Bug Fixes:
- * ext.appengine: various field fixes (#34, #48), model_form changes (#41)
- * Fix issue in Optional with non-string input.
- * Make numeric fields more consistent.
+
+  * ext.appengine: various field fixes (#34, #48), model_form changes (#41)
+  * Fix issue in Optional with non-string input.
+  * Make numeric fields more consistent.
 
 - Tests: Improve test coverage substantially.
 
@@ -123,6 +131,7 @@ Version 0.6.1
 Released September 17th, 2010
 
 - Bug Fixes:
+
   * ext.appengine ReferencePropertyField (#36, #37)
   * dateutil fields: render issue (r419), and consistency issue (#35)
   * Optional validator failed when raw_data was absent (r418)
@@ -138,10 +147,12 @@ Version 0.6
 Released April 25th, 2010.
 
 - Widgets:
+
   * HTML is now marked as safe (using __html__) so that compatible templating
     engines will not auto-escape it.
 
 - Fields:
+
   * Field._default is now Field.default.
   * All fields now have a `raw_data` property.
   * Fields which are select fields (including those in .ext) can be
@@ -151,6 +162,7 @@ Released April 25th, 2010.
   * Added FloatField, based on IntegerField.
 
 - Extensions:
+
   * ext.appengine now supports FloatProperty and GeoPtProperty.
   * ext.sqlalchemy QueryMultipleSelectField changed to QuerySelectMultipleField.
 
@@ -163,12 +175,14 @@ Released February 13th, 2010.
   functionality of Form without requiring declarative subclassing.
 
 - Fields:
+
   * Field labels now default to a humanized field name.
   * Fields now have a `short_name` property which is the un-prefixed name.
   * DecimalField now rounds values for display without float coercion.
     See docs for details on how to format decimals.
 
 - Extensions:
+
   * ext.sqlalchemy.fields now has an additional QuerySelectMultipleField, and
     all fields can now support multiple-column primary keys.
   * ext.sqlalchemy.orm contains tools for making forms from ORM models.
@@ -228,6 +242,7 @@ Released January 18th, 2009.
   be updated to use the new hooks.
 
 - Changes in how `process_data` and `process_formdata` are called:
+
     * `process_data` no longer accepts the `has_formdata` parameter.
     * At form instantiation time, `process_data` will be called only once for
       each field. If a model object is provided which contains the property,
