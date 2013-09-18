@@ -18,11 +18,11 @@ class DummyPostData(dict):
 
 class TestLocaleDecimal(TestCase):
     class F(Form):
-        LANGUAGES = ['hi_IN', 'en_US']
+        LOCALES = ['hi_IN', 'en_US']
         a = DecimalField(use_locale=True)
 
-    def _format_test(self, expected, val, LANGUAGES=_unset_value):
-        form = self.F(LANGUAGES=LANGUAGES, a=Decimal(val))
+    def _format_test(self, expected, val, LOCALES=_unset_value):
+        form = self.F(LOCALES=LOCALES, a=Decimal(val))
         self.assertEqual(form.a._value(), expected)
 
     def test_formatting(self):
@@ -37,8 +37,8 @@ class TestLocaleDecimal(TestCase):
         self._format_test('-5,2', neg, ['de_DE'])
         self._format_test("-12'345.2", '-12345.2', ['de_CH'])
 
-    def _parse_test(self, raw_val, expected, LANGUAGES=_unset_value):
-        form = self.F(DummyPostData(a=raw_val), LANGUAGES=LANGUAGES)
+    def _parse_test(self, raw_val, expected, LOCALES=_unset_value):
+        form = self.F(DummyPostData(a=raw_val), LOCALES=LOCALES)
         if not form.validate():
             raise AssertionError(
                 'Expected value %r to parse as a decimal, instead got %r' % (
@@ -47,8 +47,8 @@ class TestLocaleDecimal(TestCase):
             )
         self.assertEqual(form.a.data, expected)
 
-    def _fail_parse(self, raw_val, expected_error, LANGUAGES=_unset_value):
-        form = self.F(DummyPostData(a=raw_val), LANGUAGES=LANGUAGES)
+    def _fail_parse(self, raw_val, expected_error, LOCALES=_unset_value):
+        form = self.F(DummyPostData(a=raw_val), LOCALES=LOCALES)
         assert not form.validate()
         self.assertEqual(form.a.errors[0], expected_error)
 
