@@ -7,6 +7,9 @@ try:
     from setuptools import setup
     has_setuptools = True
     extra['test_suite'] = 'tests.runtests'
+    extra['extras_require'] = {
+        'Locale': ['Babel>=1.3'],
+    }
 except ImportError:
     from distutils.core import setup
     has_setuptools = False

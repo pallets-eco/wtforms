@@ -5,7 +5,7 @@ import decimal
 import itertools
 
 from wtforms import widgets
-from wtforms.compat import text_type, izip
+from wtforms.compat import text_type, izip, string_types
 from wtforms.validators import StopValidation
 
 
@@ -496,6 +496,34 @@ class StringField(Field):
         return text_type(self.data) if self.data is not None else ''
 
 
+class LocaleAwareNumberField(Field):
+    """
+    Base class for implementing locale-aware number parsing.
+
+    Locale-aware numbers require the 'babel' package to be present.
+    """
+    def __init__(self, label=None, validators=None, use_locale=False, number_format=None, **kwargs):
+        super(LocaleAwareNumberField, self).__init__(label, validators, **kwargs)
+        self.use_locale = use_locale
+        if use_locale:
+            self.number_format = number_format
+            self.locale = kwargs['_form'].LANGUAGES[0]
+            self._init_babel()
+
+    def _init_babel(self):
+        try:
+            from babel import numbers
+            self.babel_numbers = numbers
+        except ImportError:
+            raise ImportError('Using locale-aware decimals requires the babel library.')
+
+    def _parse_decimal(self, value):
+        return self.babel_numbers.parse_decimal(value, self.locale)
+
+    def _format_decimal(self, value):
+        return self.babel_numbers.format_decimal(value, self.number_format, self.locale)
+
+
 class IntegerField(Field):
     """
     A text field, except all input is coerced to an integer.  Erroneous input
@@ -523,7 +551,7 @@ class IntegerField(Field):
                 raise ValueError(self.gettext('Not a valid integer value'))
 
 
-class DecimalField(Field):
+class DecimalField(LocaleAwareNumberField):
     """
     A text field which displays and coerces data of the `decimal.Decimal` type.
 
@@ -534,6 +562,12 @@ class DecimalField(Field):
         How to round the value during quantize, for example
         `decimal.ROUND_UP`. If unset, uses the rounding value from the
         current thread's context.
+    :param use_locale:
+        If True, use locale-based number formatting. Locale-based number
+        formatting requires the 'babel' package.
+    :param number_format:
+        Optional number format for locale. If omitted, use the default decimal
+        format for the locale.
     """
     widget = widgets.TextInput()
 
@@ -546,7 +580,9 @@ class DecimalField(Field):
         if self.raw_data:
             return self.raw_data[0]
         elif self.data is not None:
-            if self.places is not None:
+            if self.use_locale:
+                return text_type(self._format_decimal(self.data))
+            elif self.places is not None:
                 if hasattr(self.data, 'quantize'):
                     exp = decimal.Decimal('.1') ** self.places
                     if self.rounding is None:
@@ -567,7 +603,10 @@ class DecimalField(Field):
     def process_formdata(self, valuelist):
         if valuelist:
             try:
-                self.data = decimal.Decimal(valuelist[0])
+                if self.use_locale:
+                    self.data = self._parse_decimal(valuelist[0])
+                else:
+                    self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 self.data = None
                 raise ValueError(self.gettext('Not a valid decimal value'))
