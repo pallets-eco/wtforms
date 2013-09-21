@@ -25,6 +25,7 @@ from .form import SecureForm
 
 __all__ = ('SessionSecureForm', )
 
+
 class SessionSecureForm(SecureForm):
     TIME_FORMAT = '%Y%m%d%H%M%S'
     TIME_LIMIT = timedelta(minutes=30)

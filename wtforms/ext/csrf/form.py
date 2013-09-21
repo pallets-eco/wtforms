@@ -14,8 +14,8 @@ class SecureForm(Form):
 
     def __init__(self, formdata=None, obj=None, prefix='', csrf_context=None, **kwargs):
         """
-        :param csrf_context: 
-            Optional extra data which is passed transparently to your 
+        :param csrf_context:
+            Optional extra data which is passed transparently to your
             CSRF implementation.
         """
         super(SecureForm, self).__init__(formdata, obj, prefix, **kwargs)
@@ -30,7 +30,7 @@ class SecureForm(Form):
         deterministically so that on the form POST, the generated string is
         (usually) the same assuming the user is using the site normally.
 
-        :param csrf_context: 
+        :param csrf_context:
             A transparent object which can be used as contextual info for
             generating the token.
         """

@@ -24,7 +24,7 @@ def html_params(**kwargs):
     True
     """
     params = []
-    for k,v in sorted(iteritems(kwargs)):
+    for k, v in sorted(iteritems(kwargs)):
         if k in ('class_', 'class__', 'for_'):
             k = k[:-1]
         if v is True:
@@ -262,4 +262,3 @@ class Option(object):
     """
     def __call__(self, field, **kwargs):
         return Select.render_option(field._value(), field.label.text, field.checked, **kwargs)
-
