@@ -7,6 +7,7 @@ Not yet released.
 
 - Move i18n into core. Deprecate `wtforms.ext.i18n`.
 - Fix issue rendering SelectFields with value=True
+- Make `DecimalField` able to use babel locale-based number formatting.
 
 Version 1.0.5
 -------------

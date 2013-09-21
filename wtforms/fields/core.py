@@ -579,8 +579,13 @@ class DecimalField(LocaleAwareNumberField):
     """
     widget = widgets.TextInput()
 
-    def __init__(self, label=None, validators=None, places=2, rounding=None, **kwargs):
+    def __init__(self, label=None, validators=None, places=_unset_value, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
+        if self.use_locale and (places is not _unset_value or rounding is not None):
+            raise TypeError("When using locale-aware numbers, 'places' and 'rounding' are ignored.")
+
+        if places is _unset_value:
+            places = 2
         self.places = places
         self.rounding = rounding
 

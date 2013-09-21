@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import babel
 
-from decimal import Decimal
+from decimal import Decimal, ROUND_UP
 from unittest import TestCase
 from wtforms.form import _unset_value
 from wtforms import Form
@@ -24,6 +24,21 @@ class TestLocaleDecimal(TestCase):
     def _format_test(self, expected, val, LOCALES=_unset_value):
         form = self.F(LOCALES=LOCALES, a=Decimal(val))
         self.assertEqual(form.a._value(), expected)
+
+    def test_typeerror(self):
+        def build(**kw):
+            form = self.F()
+            f = DecimalField(
+                use_locale=True,
+                _form=form,
+                _name='a',
+                _translations=form._get_translations(),
+                **kw
+            )
+            print repr(f)
+
+        self.assertRaises(TypeError, build, places=2)
+        self.assertRaises(TypeError, build, rounding=ROUND_UP)
 
     def test_formatting(self):
         val = Decimal('123456.789')

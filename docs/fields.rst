@@ -201,9 +201,9 @@ refer to a single input from the form.
 
 .. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
-  For better date/time fields, see the :mod:`dateutil extension <wtforms.ext.dateutil.fields>`
+    For better date/time fields, see the :mod:`dateutil extension <wtforms.ext.dateutil.fields>`
 
-.. autoclass:: DecimalField(default field arguments, places=2, rounding=None)
+.. autoclass:: DecimalField(default field arguments, places=2, rounding=None, use_locale=False, number_format=None)
 
 .. autoclass:: FileField(default field arguments)
 
