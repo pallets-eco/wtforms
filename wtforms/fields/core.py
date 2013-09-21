@@ -5,7 +5,7 @@ import decimal
 import itertools
 
 from wtforms import widgets
-from wtforms.compat import text_type, izip, string_types
+from wtforms.compat import text_type, izip
 from wtforms.validators import StopValidation
 
 
@@ -886,7 +886,7 @@ class FieldList(Field):
                 self.errors.append(subfield.errors)
 
         chain = itertools.chain(self.validators, extra_validators)
-        stop_validation = self._run_validation_chain(form, chain)
+        self._run_validation_chain(form, chain)
 
         return len(self.errors) == 0
 
