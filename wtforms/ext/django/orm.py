@@ -51,7 +51,7 @@ class ModelConverter(ModelConverterBase):
         f.DecimalField: ['DecimalField', 'FloatField'],
         f.FileField: ['FileField', 'FilePathField', 'ImageField'],
         f.DateTimeField: ['DateTimeField'],
-        f.DateField : ['DateField'],
+        f.DateField: ['DateField'],
         f.BooleanField: ['BooleanField'],
         f.TextField: ['CharField', 'PhoneNumberField', 'SlugField'],
         f.TextAreaField: ['TextField', 'XMLField'],
@@ -101,6 +101,7 @@ class ModelConverter(ModelConverterBase):
 
     def conv_NullBooleanField(self, model, field, kwargs):
         from django.db.models.fields import NOT_PROVIDED
+
         def coerce_nullbool(value):
             d = {'None': None, None: None, 'True': True, 'False': False}
             if isinstance(value, NOT_PROVIDED):

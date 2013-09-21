@@ -7,6 +7,7 @@ TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'translatio
 
 OPTIONAL_TESTS = ('ext_django.tests', 'ext_sqlalchemy', 'ext_dateutil', 'locale_babel')
 
+
 def make_suite(prefix='', extra=()):
     tests = TESTS + extra
     test_names = list(prefix + x for x in tests)
@@ -20,11 +21,13 @@ def make_suite(prefix='', extra=()):
             sys.stderr.write("### Disabled test '%s', dependency not found\n" % name)
     return suite
 
+
 def additional_tests():
     """
     This is called automatically by setup.py test
     """
     return make_suite('tests.')
+
 
 def main():
     my_dir = os.path.dirname(os.path.abspath(__file__))
@@ -42,7 +45,7 @@ def main():
         guide = pep8.StyleGuide(
             ignore=['E501'],
             paths=['wtforms/'],
-            exclude=['wtforms/ext/sqlalchemy', 'wtforms/ext/appengine', 'wtforms/ext/django']
+            exclude=['wtforms/ext/sqlalchemy', 'wtforms/ext/appengine']
         )
         report = guide.check_files()
         if report.total_errors:

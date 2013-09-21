@@ -45,7 +45,7 @@ def do_form_field(parser, token):
     Render a WTForms form field allowing optional HTML attributes.
     Invocation looks like this:
       {% form_field form.username class="big_text" onclick="alert('hello')" %}
-    where form.username is the path to the field value we want.  Any number 
+    where form.username is the path to the field value we want.  Any number
     of key="value" arguments are supported. Unquoted values are resolved as
     template variables.
     """
@@ -59,15 +59,16 @@ def do_form_field(parser, token):
         if (len(raw_args) % 2) != 0:
             raise template.TemplateSyntaxError('%r tag received the incorrect number of key=value arguments.' % parts[0])
         for x in range(0, len(raw_args), 2):
-            html_attrs[str(raw_args[x])] = Variable(raw_args[x+1])
+            html_attrs[str(raw_args[x])] = Variable(raw_args[x + 1])
 
     return FormFieldNode(parts[1], html_attrs)
 
 
 args_split_re = re.compile(r'''("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s=]+)''')
 
+
 def args_split(text):
-    """ Split space-separated key=value arguments.  Keeps quoted strings intact. """ 
+    """ Split space-separated key=value arguments.  Keeps quoted strings intact. """
     for bit in args_split_re.finditer(text):
         bit = bit.group(0)
         if bit[0] == '"' and bit[-1] == '"':
