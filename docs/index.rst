@@ -28,6 +28,7 @@ For a quick introduction, as well as download/installation instructions, check o
    crash_course
    i18n
    changes
+   contributing
 
 **Indices and tables:**
 

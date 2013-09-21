@@ -1,8 +1,8 @@
 WTForms Changelog
 =================
 
-Version 1.0.6
--------------
+Version 1.1
+-----------
 Not yet released.
 
 - Move i18n into core. Deprecate `wtforms.ext.i18n`.
