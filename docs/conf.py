@@ -54,9 +54,9 @@ copyright = '2010 by Thomas Johansson, James Crasta'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '1.0.6'
+version = '1.1'
 # The full version, including alpha/beta/rc tags.
-release = '1.0.6dev'
+release = '1.1dev'
 
 
 # There are two options for replacing |today|: either, you set today to some
@@ -170,8 +170,8 @@ htmlhelp_basename = 'WTFormsdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'WTForms.tex', 'WTForms Documentation',
-   'Thomas Johansson, James Crasta', 'manual'),
+    ('index', 'WTForms.tex', 'WTForms Documentation',
+    'Thomas Johansson, James Crasta', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
