@@ -29,6 +29,24 @@ def additional_tests():
 def main():
     my_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, os.path.abspath(os.path.join(my_dir, '..')))
+    has_pep8 = False
+    try:
+        import pep8
+        has_pep8 = True
+    except ImportError:
+        if '--with-pep8' in sys.argv[1:]:
+            sys.stderr.write('# Could not find pep8 library.')
+            sys.exit(1)
+
+    if has_pep8:
+        guide = pep8.StyleGuide(
+            ignore=['E501'],
+            paths=['wtforms/'],
+            exclude=['wtforms/ext/sqlalchemy', 'wtforms/ext/appengine', 'wtforms/ext/django']
+        )
+        report = guide.check_files()
+        if report.total_errors:
+            sys.exit(1)
 
     extra_tests = tuple(x for x in sys.argv[1:] if '-' not in x)
     suite = make_suite('', extra_tests)
