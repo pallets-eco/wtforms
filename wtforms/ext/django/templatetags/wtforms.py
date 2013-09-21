@@ -51,7 +51,8 @@ def do_form_field(parser, token):
     """
     parts = token.contents.split(' ', 2)
     if len(parts) < 2:
-        raise template.TemplateSyntaxError('%r tag must have the form field name as the first value, followed by optional key="value" attributes.' % parts[0])
+        error_text = '%r tag must have the form field name as the first value, followed by optional key="value" attributes.'
+        raise template.TemplateSyntaxError(error_text % parts[0])
 
     html_attrs = {}
     if len(parts) == 3:

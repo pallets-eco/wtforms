@@ -218,7 +218,10 @@ class TextArea(object):
     """
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
-        return HTMLString('<textarea %s>%s</textarea>' % (html_params(name=field.name, **kwargs), escape(text_type(field._value()))))
+        return HTMLString('<textarea %s>%s</textarea>' % (
+            html_params(name=field.name, **kwargs),
+            escape(text_type(field._value()))
+        ))
 
 
 class Select(object):

@@ -43,9 +43,10 @@ def main():
 
     if has_pep8:
         guide = pep8.StyleGuide(
-            ignore=['E501'],
+            ignore=[],
             paths=['wtforms/'],
-            exclude=['wtforms/ext/sqlalchemy', 'wtforms/ext/appengine']
+            exclude=['wtforms/ext/sqlalchemy', 'wtforms/ext/appengine'],
+            max_line_length=120,
         )
         report = guide.check_files()
         if report.total_errors:

@@ -310,7 +310,15 @@ class UnboundField(object):
         self.creation_counter = UnboundField.creation_counter
 
     def bind(self, form, name, prefix='', translations=None, **kwargs):
-        return self.field_class(_form=form, _prefix=prefix, _name=name, _translations=translations, *self.args, **dict(self.kwargs, **kwargs))
+        kw = dict(
+            self.kwargs,
+            _form=form,
+            _prefix=prefix,
+            _name=name,
+            _translations=translations,
+            **kwargs
+        )
+        return self.field_class(*self.args, **kw)
 
     def __repr__(self):
         return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
