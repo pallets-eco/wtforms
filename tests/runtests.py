@@ -46,7 +46,7 @@ def main():
             ignore=[],
             paths=['wtforms/'],
             exclude=['wtforms/ext/sqlalchemy', 'wtforms/ext/appengine'],
-            max_line_length=120,
+            max_line_length=130,
         )
         report = guide.check_files()
         if report.total_errors:
