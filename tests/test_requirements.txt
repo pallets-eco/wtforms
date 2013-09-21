@@ -1,0 +1,4 @@
+Django
+SQLAlchemy
+python-dateutil
+pep8
