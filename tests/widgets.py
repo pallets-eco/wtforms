@@ -104,6 +104,17 @@ class SelectTest(TestCase):
         self.assertEqual(Select(multiple=True)(self.field),
             '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>')
 
+    def test_render_option(self):
+        # value, label, selected
+        self.assertEqual(
+            Select.render_option('bar', 'foo', False),
+            '<option value="bar">foo</option>'
+        )
+        self.assertEqual(
+            Select.render_option(True, 'foo', True),
+            '<option selected value="True">foo</option>'
+        )
+
 
 class HTML5Test(TestCase):
     field = DummyField('42', name='bar', id='id')

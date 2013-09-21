@@ -250,6 +250,10 @@ class Select(object):
 
     @classmethod
     def render_option(cls, value, label, selected, **kwargs):
+        if value is True:
+            # Handle the special case of a 'True' value.
+            value = text_type(value)
+
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
