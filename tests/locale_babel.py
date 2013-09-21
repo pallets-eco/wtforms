@@ -28,14 +28,13 @@ class TestLocaleDecimal(TestCase):
     def test_typeerror(self):
         def build(**kw):
             form = self.F()
-            f = DecimalField(
+            DecimalField(
                 use_locale=True,
                 _form=form,
                 _name='a',
                 _translations=form._get_translations(),
                 **kw
             )
-            print repr(f)
 
         self.assertRaises(TypeError, build, places=2)
         self.assertRaises(TypeError, build, rounding=ROUND_UP)
