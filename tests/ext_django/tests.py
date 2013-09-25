@@ -45,8 +45,7 @@ from unittest import TestCase
 from wtforms import Form, fields, validators
 from wtforms.compat import text_type
 from wtforms.ext.django.orm import model_form
-from wtforms.ext.django.fields import (QuerySetSelectField, ModelSelectField,
-                                       DateTimeField)
+from wtforms.ext.django.fields import QuerySetSelectField, ModelSelectField, DateTimeField
 
 def contains_validator(field, v_type):
     for v in field.validators:

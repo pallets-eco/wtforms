@@ -114,8 +114,6 @@ class DateTimeField(fields.DateTimeField):
 
     def _value(self):
         date = self.data
-        if settings.USE_TZ and \
-                isinstance(date, datetime.datetime) and \
-                timezone.is_aware(date):
+        if settings.USE_TZ and isinstance(date, datetime.datetime) and timezone.is_aware(date):
             self.data = timezone.localtime(date)
         return super(DateTimeField, self)._value()
