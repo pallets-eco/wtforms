@@ -3,20 +3,22 @@ Useful form fields for use with the Django ORM.
 """
 from __future__ import unicode_literals
 
+import datetime
 import operator
 
-from wtforms import widgets
+from django.conf import settings
+from django.utils import timezone
+
+from wtforms import fields, widgets
 from wtforms.compat import string_types
-from wtforms.fields import SelectFieldBase
 from wtforms.validators import ValidationError
 
-
 __all__ = (
-    'ModelSelectField', 'QuerySetSelectField',
+    'ModelSelectField', 'QuerySetSelectField', 'DateTimeField'
 )
 
 
-class QuerySetSelectField(SelectFieldBase):
+class QuerySetSelectField(fields.SelectFieldBase):
     """
     Given a QuerySet either at initialization or inside a view, will display a
     select drop-down field of choices. The `data` property actually will
@@ -96,3 +98,22 @@ class ModelSelectField(QuerySetSelectField):
     """
     def __init__(self, label=None, validators=None, model=None, **kwargs):
         super(ModelSelectField, self).__init__(label, validators, queryset=model._default_manager.all(), **kwargs)
+
+
+class DateTimeField(fields.DateTimeField):
+    """
+    Adds support for Django's timezone utilities.
+    Requires Django >= 1.4
+    """
+    def process_formdata(self, valuelist):
+        super(DateTimeField, self).process_formdata(valuelist)
+        date = self.data
+        if settings.USE_TZ and date is not None and timezone.is_naive(date):
+            current_timezone = timezone.get_current_timezone()
+            self.data = timezone.make_aware(date, current_timezone)
+
+    def _value(self):
+        date = self.data
+        if settings.USE_TZ and isinstance(date, datetime.datetime) and timezone.is_aware(date):
+            self.data = timezone.localtime(date)
+        return super(DateTimeField, self)._value()
