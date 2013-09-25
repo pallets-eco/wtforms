@@ -51,6 +51,7 @@ setup(
         'wtforms.ext.django.templatetags',
         'wtforms.ext.i18n',
         'wtforms.ext.sqlalchemy',
+        'wtforms.ext.tornado',
     ],
     package_data={
         'wtforms': ['locale/wtforms.pot', 'locale/*/*/*'],
