@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import json
-
 from unittest import TestCase
 from wtforms.ext.tornado import TornadoInputWrapper
 from wtforms.ext.tornado.i18n import Form
@@ -64,28 +62,13 @@ class DummyHandler(web.RequestHandler):
     def get(self):
         form = SearchForm(self.request.arguments, locale_code=self.locale.code)
         if bool(self.get_argument('label', False)):
-            self.finish({'label': form.search.label.text})
+            self.finish(form.search.label.text)
         else:
             if form.validate():
                 self.finish(form.data)
             else:
                 self.set_status(500)
                 self.finish(form.errors)
-
-if type('') is not type(b''):
-    def u(s):
-        return s
-    bytes_type = bytes
-else:
-    def u(s):
-        return s.decode('unicode_escape')
-    bytes_type = str
-
-
-def utf8(value):
-    if isinstance(value, (bytes_type, type(None))):
-        return value
-    return value.encode("utf-8")
 
 
 class TornadoApplicationTest(testing.AsyncHTTPTestCase,
@@ -100,31 +83,25 @@ class TornadoApplicationTest(testing.AsyncHTTPTestCase,
 
     def test_successful_form(self):
         response = self.fetch('/?search=wtforms&page=2')
-        body = json.loads(response.body)
         self.assertEqual(response.code, 200)
-        self.assertEqual(body, {'search': 'wtforms'})
+        self.assertEqual(response.body, '{"search": "wtforms"}')
 
     def test_wrong_form(self):
         response = self.fetch('/?fake=wtforms')
-        body = json.loads(response.body)
         self.assertEqual(response.code, 500)
-        self.assertEqual(body, {'search': ['Search field is required']})
+        self.assertEqual(response.body, '{"search": ["Search field is required"]}')
 
     def test_translations_default(self):
         response = self.fetch('/?label=True&search=wtforms')
-        body = json.loads(response.body)
-        self.assertEqual(body, {'label': 'Search'})
+        self.assertEqual(response.body, 'Search')
 
     def test_translations_en(self):
         response = self.fetch('/?locale=en_US&label=True&search=wtforms')
-        body = json.loads(response.body)
-        self.assertEqual(body, {'label': 'Search'})
+        self.assertEqual(response.body, 'Search')
 
     def test_translations_es(self):
         response = self.fetch('/?locale=es_ES&label=True&search=wtforms')
-        body = json.loads(response.body)
-        self.assertEqual(body['label'], u('B\xfasqueda'))
-        self.assertEqual(utf8(body['label']), b'B\xc3\xbasqueda')
+        self.assertEqual(response.body, b'B\xc3\xbasqueda')
 
 if __name__ == '__main__':
     from unittest import main
