@@ -84,20 +84,20 @@ class TornadoApplicationTest(testing.AsyncHTTPTestCase,
     def test_successful_form(self):
         response = self.fetch('/?search=wtforms&page=2')
         self.assertEqual(response.code, 200)
-        self.assertEqual(response.body, '{"search": "wtforms"}')
+        self.assertEqual(response.body, b'{"search": "wtforms"}')
 
     def test_wrong_form(self):
         response = self.fetch('/?fake=wtforms')
         self.assertEqual(response.code, 500)
-        self.assertEqual(response.body, '{"search": ["Search field is required"]}')
+        self.assertEqual(response.body, b'{"search": ["Search field is required"]}')
 
     def test_translations_default(self):
         response = self.fetch('/?label=True&search=wtforms')
-        self.assertEqual(response.body, 'Search')
+        self.assertEqual(response.body, b'Search')
 
     def test_translations_en(self):
         response = self.fetch('/?locale=en_US&label=True&search=wtforms')
-        self.assertEqual(response.body, 'Search')
+        self.assertEqual(response.body, b'Search')
 
     def test_translations_es(self):
         response = self.fetch('/?locale=es_ES&label=True&search=wtforms')
