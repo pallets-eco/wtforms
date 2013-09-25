@@ -116,6 +116,5 @@ class DateTimeField(fields.DateTimeField):
         if settings.USE_TZ and \
                 isinstance(date, datetime.datetime) and \
                 timezone.is_aware(date):
-            current_timezone = timezone.get_current_timezone()
-            self.data = timezone.make_naive(date, current_timezone)
+            self.data = timezone.localtime(date)
         return super(DateTimeField, self)._value()

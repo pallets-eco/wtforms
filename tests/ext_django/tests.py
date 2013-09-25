@@ -27,10 +27,7 @@ settings.configure(
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': ':memory:'
         }
-    },
-
-    USE_TZ = True,
-    TIME_ZONE = 'America/Los_Angeles'
+    }
 )
 
 from django.db import connection
@@ -38,9 +35,11 @@ connection.creation.create_test_db(verbosity=0)
 
 # -- End hacky Django initialization
 
+import datetime
 from django.template import Context, Template
 from django.utils import timezone
 from django.test import TestCase as DjangoTestCase
+from django.test.utils import override_settings
 from ext_django import models as test_models
 from unittest import TestCase
 from wtforms import Form, fields, validators
@@ -202,7 +201,8 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
     class F(Form):
         a = DateTimeField()
 
-    def test_convert_to_current_timezone(self):
+    @override_settings(USE_TZ=True, TIME_ZONE='America/Los_Angeles')
+    def test_convert_input_to_current_timezone(self):
         post_data = {'a': ['2013-09-24 00:00:00']}
         form = self.F(DummyPostData(post_data))
         self.assertTrue(form.validate())
@@ -211,6 +211,13 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
         self.assertEquals(
             timezone._get_timezone_name(date.tzinfo),
             timezone._get_timezone_name(timezone.get_current_timezone()))
+
+    @override_settings(USE_TZ=True, TIME_ZONE='America/Los_Angeles')
+    def test_stored_value_converted_to_current_timezone(self):
+        utc_date = datetime.datetime(2013, 9, 25, 2, 15, tzinfo=timezone.utc)
+        form = self.F(a=utc_date)
+        self.assertTrue('2013-09-24 19:15:00' in form.a())
+
 
 if __name__ == '__main__':
     import unittest
