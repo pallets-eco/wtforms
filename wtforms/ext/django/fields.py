@@ -99,6 +99,7 @@ class ModelSelectField(QuerySetSelectField):
     def __init__(self, label=None, validators=None, model=None, **kwargs):
         super(ModelSelectField, self).__init__(label, validators, queryset=model._default_manager.all(), **kwargs)
 
+
 class DateTimeField(fields.DateTimeField):
     """
     Adds support for Django's timezone utilities.
