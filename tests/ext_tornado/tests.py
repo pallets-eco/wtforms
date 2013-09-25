@@ -72,6 +72,21 @@ class DummyHandler(web.RequestHandler):
                 self.set_status(500)
                 self.finish(form.errors)
 
+if type('') is not type(b''):
+    def u(s):
+        return s
+    bytes_type = bytes
+else:
+    def u(s):
+        return s.decode('unicode_escape')
+    bytes_type = str
+
+
+def utf8(value):
+    if isinstance(value, (bytes_type, type(None))):
+        return value
+    return value.encode("utf-8")
+
 
 class TornadoApplicationTest(testing.AsyncHTTPTestCase,
                              testing.LogTrapTestCase):
@@ -108,7 +123,8 @@ class TornadoApplicationTest(testing.AsyncHTTPTestCase,
     def test_translations_es(self):
         response = self.fetch('/?locale=es_ES&label=True&search=wtforms')
         body = json.loads(response.body)
-        self.assertEqual(body, {'label': u'B\xfasqueda'})
+        self.assertEqual(body['label'], u('B\xfasqueda'))
+        self.assertEqual(utf8(body['label']), b'B\xc3\xbasqueda')
 
 if __name__ == '__main__':
     from unittest import main
