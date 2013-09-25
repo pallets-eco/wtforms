@@ -78,7 +78,7 @@ class TornadoApplicationTest(testing.AsyncHTTPTestCase,
 
     def setUp(self):
         super(TornadoApplicationTest, self).setUp()
-        locale.load_translations('translations')
+        locale.load_translations('tests/ext_tornado/translations')
 
     def get_app(self):
         return web.Application([('/', DummyHandler)])
@@ -108,9 +108,8 @@ class TornadoApplicationTest(testing.AsyncHTTPTestCase,
     def test_translations_es(self):
         response = self.fetch('/?locale=es_ES&label=True&search=wtforms')
         body = json.loads(response.body)
-        self.assertEqual(body, {'label': 'B\xfasqueda'})
+        self.assertEqual(body, {'label': u'B\xfasqueda'})
 
 if __name__ == '__main__':
     from unittest import main
     main()
-
