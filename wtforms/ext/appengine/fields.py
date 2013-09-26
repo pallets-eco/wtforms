@@ -31,14 +31,11 @@ class ReferencePropertyField(fields.SelectFieldBase):
     widget = widgets.Select()
 
     def __init__(self, label=None, validators=None, reference_class=None,
-                 label_attr=None, get_label=None, allow_blank=False,
+                 get_label=None, allow_blank=False,
                  blank_text='', **kwargs):
         super(ReferencePropertyField, self).__init__(label, validators,
                                                      **kwargs)
-        if label_attr is not None:
-            warnings.warn('label_attr= will be removed in WTForms 1.1, use get_label= instead.', DeprecationWarning)
-            self.get_label = operator.attrgetter(label_attr)
-        elif get_label is None:
+        if get_label is None:
             self.get_label = lambda x: x
         elif isinstance(get_label, string_types):
             self.get_label = operator.attrgetter(get_label)
