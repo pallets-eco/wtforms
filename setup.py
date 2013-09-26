@@ -18,7 +18,7 @@ if sys.version_info >= (3,) and not has_setuptools:
 
 setup(
     name='WTForms',
-    version='1.1dev',
+    version='2.0dev',
     url='http://wtforms.simplecodes.com/',
     license='BSD',
     author='Thomas Johansson, James Crasta',
