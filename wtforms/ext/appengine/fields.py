@@ -2,11 +2,9 @@ from __future__ import unicode_literals
 
 import decimal
 import operator
-import warnings
 
 from wtforms import fields, widgets
 from wtforms.compat import text_type, string_types
-
 
 class ReferencePropertyField(fields.SelectFieldBase):
     """
