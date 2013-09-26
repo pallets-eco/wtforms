@@ -1,4 +1,7 @@
+Babel
 Django
 SQLAlchemy
 python-dateutil
 pep8
+coverage
+coveralls

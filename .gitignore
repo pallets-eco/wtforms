@@ -8,6 +8,7 @@
 MANIFEST
 WTForms.egg-info
 .coverage
+.coveralls.yml
 
 # Directories
 build/
