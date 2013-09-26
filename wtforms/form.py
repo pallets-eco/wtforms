@@ -1,5 +1,5 @@
 from wtforms.compat import with_metaclass, iteritems, itervalues
-from wtforms import i18n
+from wtforms.meta import DefaultMeta
 
 __all__ = (
     'BaseForm',
@@ -16,13 +16,16 @@ class BaseForm(object):
     """
     LOCALES = False
 
-    def __init__(self, fields, prefix='', LOCALES=_unset_value):
+    def __init__(self, fields, prefix='', meta=DefaultMeta(), LOCALES=_unset_value):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
+        :param meta:
+            A meta instance which is used for configuration and customization
+            of WTForms behaviors.
         :param LOCALES:
             If this is a sequence of locale name strings, this is the list
             of locales to try via the translation provider, in order.
@@ -33,6 +36,7 @@ class BaseForm(object):
         if prefix and prefix[-1] not in '-_;:/.':
             prefix += '-'
 
+        self.meta = meta
         self._prefix = prefix
         self._errors = None
         self._fields = {}
@@ -49,7 +53,8 @@ class BaseForm(object):
         translations = self._get_translations()
 
         for name, unbound_field in fields:
-            field = unbound_field.bind(form=self, name=name, prefix=prefix, translations=translations)
+            options = dict(name=name, prefix=prefix, translations=translations)
+            field = meta.bind_field(self, unbound_field, options)
             self._fields[name] = field
 
     def __iter__(self):
@@ -74,14 +79,15 @@ class BaseForm(object):
 
     def _get_translations(self):
         """
+        **Deprecated**.
+        `Form._get_translations` is being removed in WTForms 3.0, use
+        `Meta.get_translations` instead.
+
         Override in subclasses to provide alternate translations factory.
 
         Must return an object that provides gettext() and ngettext() methods.
         """
-        if self.LOCALES is False:
-            return None
-        else:
-            return i18n.get_translations(self.LOCALES)
+        return self.meta.get_translations(self)
 
     def populate_obj(self, obj):
         """
@@ -174,6 +180,7 @@ class FormMeta(type):
     def __init__(cls, name, bases, attrs):
         type.__init__(cls, name, bases, attrs)
         cls._unbound_fields = None
+        cls._wtforms_meta = None
 
     def __call__(cls, *args, **kwargs):
         """
@@ -191,6 +198,13 @@ class FormMeta(type):
             # to ensure a stable sort.
             fields.sort(key=lambda x: (x[1].creation_counter, x[0]))
             cls._unbound_fields = fields
+        if cls._wtforms_meta is None:
+            bases = []
+            for mro_class in cls.__mro__:
+                if 'Meta' in mro_class.__dict__:
+                    bases.append(mro_class.Meta)
+            meta_type = type('Meta', tuple(bases), {})
+            cls._wtforms_meta = meta_type()
         return type.__call__(cls, *args, **kwargs)
 
     def __setattr__(cls, name, value):
@@ -219,6 +233,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     In addition, form and instance input data are taken at construction time
     and passed to `process()`.
     """
+    Meta = DefaultMeta
 
     def __init__(self, formdata=None, obj=None, prefix='', LOCALES=_unset_value, **kwargs):
         """
@@ -244,13 +259,13 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
         """
-        super(Form, self).__init__(self._unbound_fields, prefix=prefix, LOCALES=LOCALES)
+        super(Form, self).__init__(self._unbound_fields, meta=self._wtforms_meta, prefix=prefix, LOCALES=LOCALES)
 
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
             setattr(self, name, field)
-
+        formdata = self.meta.wrap_formdata(self, formdata)
         self.process(formdata, obj, **kwargs)
 
     def __iter__(self):
