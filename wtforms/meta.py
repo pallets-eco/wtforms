@@ -20,8 +20,9 @@ class DefaultMeta(object):
         :param form: The form.
         :param unbound_field: The unbound field.
         :param options:
+            A dictionary of options which are typically passed to the field.
 
-        :return A bound field
+        :return: A bound field
         """
         return unbound_field.bind(form=form, **options)
 
@@ -33,6 +34,7 @@ class DefaultMeta(object):
 
         :param form: The form.
         :param formdata: Form data.
+        :return: A form-input wrapper compatible with WTForms.
         """
         return formdata
 
@@ -42,6 +44,9 @@ class DefaultMeta(object):
 
     @lazy_property
     def csrf_class(self):
+        """
+        The class which provides the CSRF implementation.
+        """
         # FIXME TODO fix import
         from wtforms.csrf import SessionCSRF
         return SessionCSRF
