@@ -1,4 +1,3 @@
-Babel
 Django
 SQLAlchemy
 python-dateutil
