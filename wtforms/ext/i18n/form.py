@@ -31,7 +31,7 @@ class Form(form.Form):
     LANGUAGES = None
 
     def __init__(self, *args, **kwargs):
-        warnings.warn('i18n is now in core, wtforms.ext.i18n will be removed in WTForms 1.2', DeprecationWarning)
+        warnings.warn('i18n is now in core, wtforms.ext.i18n will be removed in WTForms 3.0', DeprecationWarning)
         if 'LANGUAGES' in kwargs:
             self.LANGUAGES = kwargs['LOCALES'] = kwargs.pop('LANGUAGES')
         super(Form, self).__init__(*args, **kwargs)
