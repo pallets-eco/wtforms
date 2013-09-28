@@ -40,7 +40,8 @@ class ClassicI18nFormTest(TestCase):
 
 class CoreFormTest(TestCase):
     class F(form.Form):
-        LOCALES = ['en_US', 'en']
+        class Meta:
+            locales = ['en_US', 'en']
         a = TextField(validators=[validators.Required()])
 
     class F2(form.Form):
@@ -65,15 +66,15 @@ class CoreFormTest(TestCase):
 
         form = self._common_test('This field is required.', {}, self.F2)
         assert form._get_translations() is None
-        assert form.LOCALES is False
+        assert form.meta.locales is False
         self.assertEqual(form.a.gettext(''), '')
 
     def test_fallback(self):
-        form = self._common_test('This field is required.', dict(LOCALES=False))
+        form = self._common_test('This field is required.', dict(meta=dict(locales=False)))
         self.assertEqual(form.a.gettext(''), '')
 
     def test_override_languages(self):
-        self._common_test('Este campo es obligatorio.', dict(LOCALES=['es_ES']))
+        self._common_test('Este campo es obligatorio.', dict(meta=dict(locales=['es_ES'])))
 
     def test_ngettext(self):
         language_settings = [
@@ -81,7 +82,7 @@ class CoreFormTest(TestCase):
             (['de_DE', 'de'], 'Feld kann nicht l\xe4nger als 3 Zeichen sein.', 'Feld kann nicht l\xe4nger als 1 Zeichen sein.'),
         ]
         for languages, match1, match2 in language_settings:
-            settings = dict(a='toolong', LOCALES=languages)
+            settings = dict(a='toolong', meta=dict(locales=languages))
             self._common_test(match1, settings, self.F2)
             self._common_test(match2, settings, self.F3)
 

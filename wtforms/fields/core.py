@@ -515,7 +515,7 @@ class LocaleAwareNumberField(Field):
         self.use_locale = use_locale
         if use_locale:
             self.number_format = number_format
-            self.locale = kwargs['_form'].LOCALES[0]
+            self.locale = kwargs['_form'].meta.locales[0]
             self._init_babel()
 
     def _init_babel(self):

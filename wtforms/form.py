@@ -14,9 +14,8 @@ class BaseForm(object):
     Base Form Class.  Provides core behaviour like field construction,
     validation, and data and error proxying.
     """
-    LOCALES = False
 
-    def __init__(self, fields, prefix='', meta=DefaultMeta(), LOCALES=_unset_value, csrf=_unset_value):
+    def __init__(self, fields, prefix='', meta=DefaultMeta(), csrf=_unset_value):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
@@ -26,12 +25,6 @@ class BaseForm(object):
         :param meta:
             A meta instance which is used for configuration and customization
             of WTForms behaviors.
-        :param LOCALES:
-            If this is a sequence of locale name strings, this is the list
-            of locales to try via the translation provider, in order.
-            If this is the value `None`, then use the default locale from
-            the environment.
-            To disable built-in translations provider, set `LOCALES=False`.
         """
         if prefix and prefix[-1] not in '-_;:/.':
             prefix += '-'
@@ -48,9 +41,6 @@ class BaseForm(object):
         elif hasattr(fields, 'items'):
             # Python 3.x
             fields = fields.items()
-
-        if LOCALES is not _unset_value:
-            self.LOCALES = LOCALES
 
         translations = self._get_translations()
 
@@ -239,7 +229,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     """
     Meta = DefaultMeta
 
-    def __init__(self, formdata=None, obj=None, prefix='', meta=None, LOCALES=_unset_value, **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', meta=None, **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
@@ -253,11 +243,6 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
-        :param LOCALES:
-            If provided, this is a sequence of locale name strings that is
-            the priority order of locales to try to find validator message
-            translations at.
-            If `None`, then use the default gettext locale from the environ.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
@@ -266,7 +251,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         meta_obj = self._wtforms_meta()
         if meta is not None and isinstance(meta, dict):
             meta_obj.update_values(meta)
-        super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix, LOCALES=LOCALES)
+        super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
 
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class

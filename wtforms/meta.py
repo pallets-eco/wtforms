@@ -64,7 +64,7 @@ class DefaultMeta(object):
 
         See the i18n documentation for more.
         """
-        locales = self.locales or form.LOCALES
+        locales = self.locales
         if locales is False:
             return None
         else:
