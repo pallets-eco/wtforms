@@ -42,6 +42,8 @@ class DefaultMeta(object):
 
     csrf = False
     csrf_field_name = 'csrf_token'
+    csrf_secret = None
+    csrf_context = None
 
     @lazy_property
     def csrf_class(self):

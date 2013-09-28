@@ -5,6 +5,7 @@ from unittest import TestCase
 from wtforms.fields import TextField
 from wtforms.form import Form
 from wtforms.ext.csrf import SecureForm
+from wtforms.csrf.core import CSRF
 
 import datetime
 import hashlib
@@ -26,6 +27,11 @@ class InsecureForm(SecureForm):
     a = TextField()
 
 
+class DummyCSRF(CSRF):
+    def generate_csrf_token(self):
+        return 'dummytoken'
+
+
 class FakeSessionRequest(object):
     def __init__(self, session):
         self.session = session
@@ -40,10 +46,19 @@ class CSRFTest(TestCase):
     class F(Form):
         class Meta:
             csrf = True
+            csrf_class = DummyCSRF
+
+    def test_base_class(self):
+        self.assertRaises(NotImplementedError, self.F, meta={'csrf_class': CSRF})
 
     def test_basic_impl(self):
         form = self.F()
         assert 'csrf_token' in form
+        assert not form.validate()
+        form = self.F(DummyPostData(csrf_token='dummytoken'))
+        assert form.validate()
+
+    def test_csrf_off(self):
         form = self.F(meta={'csrf': False})
         assert 'csrf_token' not in form
 

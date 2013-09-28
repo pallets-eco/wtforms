@@ -5,6 +5,10 @@ from wtforms.fields import HiddenField
 class CSRFTokenField(HiddenField):
     current_token = None
 
+    def __init__(self, *args, **kw):
+        self.csrf_impl = kw.pop('csrf_impl')
+        super(CSRFTokenField, self).__init__(*args, **kw)
+
     def _value(self):
         """
         We want to always return the current token on render, regardless of
@@ -18,6 +22,10 @@ class CSRFTokenField(HiddenField):
         """
         pass
 
+    def process(self, *args):
+        super(CSRFTokenField, self).process(*args)
+        self.current_token = self.csrf_impl.generate_csrf_token()
+
 
 class CSRF(object):
     field_class = CSRFTokenField
@@ -29,9 +37,14 @@ class CSRF(object):
     def setup_form(self, form):
         meta = form.meta
         field_name = meta.csrf_field_name
-        return [(field_name, self.field_class())]
+        unbound_field = self.field_class(
+            label='CSRF Token',
+            validators=[self.validate_csrf_token],
+            csrf_impl=self
+        )
+        return [(field_name, unbound_field)]
 
-    def generate_csrf_token(self, csrf_context):
+    def generate_csrf_token(self):
         """
         Implementations must override this to provide a method with which one
         can get a CSRF token for this form.
@@ -46,7 +59,7 @@ class CSRF(object):
         """
         raise NotImplementedError()
 
-    def validate_csrf_token(self, field):
+    def validate_csrf_token(self, form, field):
         """
         Override this method to provide custom CSRF validation logic.
 

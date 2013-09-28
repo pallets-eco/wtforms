@@ -107,7 +107,7 @@ class SessionSecureFormTest(TestCase):
         # Now test a valid CSRF with invalid timestamp
         evil_form = self.BadTimeSSF(csrf_context=session)
         bad_token = evil_form.csrf_token._value()
-        
+
         postdata = DummyPostData(csrf_token=bad_token)
         form = self.SSF(postdata, csrf_context=session)
         assert not form.validate()
