@@ -29,15 +29,19 @@ __all__ = ('SessionSecureForm', )
 class SessionCSRF(CSRF):
     TIME_FORMAT = '%Y%m%d%H%M%S'
     TIME_LIMIT = timedelta(minutes=30)
-    SECRET_KEY = None
 
-    def generate_csrf_token(self, csrf_context):
-        if self.SECRET_KEY is None:
-            raise Exception('must set SECRET_KEY in a subclass of this form for it to work')
-        if csrf_context is None:
+    def setup_form(self, form):
+        self.form_meta = form.meta
+        return super(SessionCSRF, self).setup_form(form)
+
+    def generate_csrf_token(self):
+        meta = self.form_meta
+        if meta.csrf_secret is None:
+            raise Exception('must set `csrf_secret` on class Meta for SessionCSRF to work')
+        if meta.csrf_context is None:
             raise TypeError('Must provide a session-like object as csrf context')
 
-        session = getattr(csrf_context, 'session', csrf_context)
+        session = getattr(meta.csrf_context, 'session', meta.csrf_context)
 
         if 'csrf' not in session:
             session['csrf'] = sha1(os.urandom(64)).hexdigest()
@@ -53,7 +57,7 @@ class SessionCSRF(CSRF):
         hmac_csrf = hmac.new(self.SECRET_KEY, csrf_build.encode('utf8'), digestmod=sha1)
         return '%s##%s' % (expires, hmac_csrf.hexdigest())
 
-    def validate_csrf_token(self, field):
+    def validate_csrf_token(self, form, field):
         if not field.data or '##' not in field.data:
             raise ValidationError(field.gettext('CSRF token missing'))
 
