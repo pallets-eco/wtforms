@@ -1,3 +1,5 @@
+import itertools
+
 from wtforms.compat import with_metaclass, iteritems, itervalues
 from wtforms.meta import DefaultMeta
 
@@ -15,7 +17,7 @@ class BaseForm(object):
     validation, and data and error proxying.
     """
 
-    def __init__(self, fields, prefix='', meta=DefaultMeta(), csrf=_unset_value):
+    def __init__(self, fields, prefix='', meta=DefaultMeta()):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
@@ -30,8 +32,6 @@ class BaseForm(object):
             prefix += '-'
 
         self.meta = meta
-        if csrf is _unset_value:
-            csrf = meta.csrf
         self._prefix = prefix
         self._errors = None
         self._fields = {}
@@ -43,14 +43,15 @@ class BaseForm(object):
             fields = fields.items()
 
         translations = self._get_translations()
+        extra_fields = []
+        if meta.csrf:
+            self._csrf = meta.csrf_class()
+            extra_fields.extend(self._csrf.setup_form(self))
 
-        for name, unbound_field in fields:
+        for name, unbound_field in itertools.chain(fields, extra_fields):
             options = dict(name=name, prefix=prefix, translations=translations)
             field = meta.bind_field(self, unbound_field, options)
             self._fields[name] = field
-
-        if csrf:
-            self.csrf = meta.csrf_class(self)
 
     def __iter__(self):
         """ Iterate form fields in arbitrary order """
