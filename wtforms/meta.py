@@ -41,6 +41,7 @@ class DefaultMeta(object):
     # -- CSRF
 
     csrf = False
+    csrf_field_name = 'csrf_token'
 
     @lazy_property
     def csrf_class(self):
@@ -48,7 +49,7 @@ class DefaultMeta(object):
         The class which provides the CSRF implementation.
         """
         # FIXME TODO fix import
-        from wtforms.csrf import SessionCSRF
+        from wtforms.csrf.session import SessionCSRF
         return SessionCSRF
 
     # -- i18n
@@ -68,3 +69,10 @@ class DefaultMeta(object):
             return None
         else:
             return i18n.get_translations(locales)
+
+    def update_values(self, values):
+        """
+        Given a dictionary of values, update values on this `Meta` instance.
+        """
+        for key, value in values.items():
+            setattr(self, key, value)

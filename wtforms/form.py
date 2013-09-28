@@ -16,7 +16,7 @@ class BaseForm(object):
     """
     LOCALES = False
 
-    def __init__(self, fields, prefix='', meta=DefaultMeta(), LOCALES=_unset_value):
+    def __init__(self, fields, prefix='', meta=DefaultMeta(), LOCALES=_unset_value, csrf=_unset_value):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
@@ -37,6 +37,8 @@ class BaseForm(object):
             prefix += '-'
 
         self.meta = meta
+        if csrf is _unset_value:
+            csrf = meta.csrf
         self._prefix = prefix
         self._errors = None
         self._fields = {}
@@ -56,6 +58,9 @@ class BaseForm(object):
             options = dict(name=name, prefix=prefix, translations=translations)
             field = meta.bind_field(self, unbound_field, options)
             self._fields[name] = field
+
+        if csrf:
+            self.csrf = meta.csrf_class(self)
 
     def __iter__(self):
         """ Iterate form fields in arbitrary order """
@@ -203,8 +208,7 @@ class FormMeta(type):
             for mro_class in cls.__mro__:
                 if 'Meta' in mro_class.__dict__:
                     bases.append(mro_class.Meta)
-            meta_type = type('Meta', tuple(bases), {})
-            cls._wtforms_meta = meta_type()
+            cls._wtforms_meta = type('Meta', tuple(bases), {})
         return type.__call__(cls, *args, **kwargs)
 
     def __setattr__(cls, name, value):
@@ -235,7 +239,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     """
     Meta = DefaultMeta
 
-    def __init__(self, formdata=None, obj=None, prefix='', LOCALES=_unset_value, **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', meta=None, LOCALES=_unset_value, **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
@@ -259,7 +263,10 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
         """
-        super(Form, self).__init__(self._unbound_fields, meta=self._wtforms_meta, prefix=prefix, LOCALES=LOCALES)
+        meta_obj = self._wtforms_meta()
+        if meta is not None and isinstance(meta, dict):
+            meta_obj.update_values(meta)
+        super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix, LOCALES=LOCALES)
 
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class
