@@ -7,7 +7,12 @@ import datetime
 import operator
 
 from django.conf import settings
-from django.utils import timezone
+
+try:
+    from django.utils import timezone
+    has_timezone = True
+except ImportError:
+    has_timezone = False
 
 from wtforms import fields, widgets
 from wtforms.compat import string_types
@@ -103,17 +108,27 @@ class ModelSelectField(QuerySetSelectField):
 class DateTimeField(fields.DateTimeField):
     """
     Adds support for Django's timezone utilities.
-    Requires Django >= 1.4
+    Requires Django >= 1.5
     """
+    def __init__(self, *args, **kwargs):
+        if not has_timezone:
+            raise ImportError('DateTimeField requires Django >= 1.5')
+
+        super(DateTimeField, self).__init__(*args, **kwargs)
+
     def process_formdata(self, valuelist):
         super(DateTimeField, self).process_formdata(valuelist)
+        
         date = self.data
+        
         if settings.USE_TZ and date is not None and timezone.is_naive(date):
             current_timezone = timezone.get_current_timezone()
             self.data = timezone.make_aware(date, current_timezone)
 
     def _value(self):
         date = self.data
+        
         if settings.USE_TZ and isinstance(date, datetime.datetime) and timezone.is_aware(date):
             self.data = timezone.localtime(date)
+        
         return super(DateTimeField, self)._value()
