@@ -118,17 +118,17 @@ class DateTimeField(fields.DateTimeField):
 
     def process_formdata(self, valuelist):
         super(DateTimeField, self).process_formdata(valuelist)
-        
+
         date = self.data
-        
+
         if settings.USE_TZ and date is not None and timezone.is_naive(date):
             current_timezone = timezone.get_current_timezone()
             self.data = timezone.make_aware(date, current_timezone)
 
     def _value(self):
         date = self.data
-        
+
         if settings.USE_TZ and isinstance(date, datetime.datetime) and timezone.is_aware(date):
             self.data = timezone.localtime(date)
-        
+
         return super(DateTimeField, self)._value()
