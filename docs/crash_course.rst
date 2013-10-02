@@ -268,7 +268,7 @@ Rendering a field is as simple as coercing it to a string::
 
 However, the real power comes from rendering the field with its :meth:`~wtforms.fields.Field.__call__`
 method. By calling the field, you can provide keyword arguments, which will be
-injected as html parameters in the output::
+injected as html attributes in the output::
 
     >>> form.content(style="width: 200px;", class_="bar")
     u'<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar" />'
