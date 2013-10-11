@@ -29,6 +29,8 @@ def html_params(**kwargs):
             k = k[:-1]
         if v is True:
             params.append(k)
+        elif v is False:
+            pass
         else:
             params.append('%s="%s"' % (text_type(k), escape(text_type(v), quote=True)))
     return ' '.join(params)
