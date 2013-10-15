@@ -45,7 +45,7 @@ class BaseForm(object):
         translations = self._get_translations()
         extra_fields = []
         if meta.csrf:
-            self._csrf = meta.csrf_class()
+            self._csrf = meta.build_csrf(self)
             extra_fields.extend(self._csrf.setup_form(self))
 
         for name, unbound_field in itertools.chain(fields, extra_fields):

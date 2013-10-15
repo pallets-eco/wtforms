@@ -1,5 +1,4 @@
 from wtforms import i18n
-from wtforms.utils import lazy_property
 
 
 class DefaultMeta(object):
@@ -44,15 +43,18 @@ class DefaultMeta(object):
     csrf_field_name = 'csrf_token'
     csrf_secret = None
     csrf_context = None
+    csrf_class = None
 
-    @lazy_property
-    def csrf_class(self):
+    def build_csrf(self, form):
         """
-        The class which provides the CSRF implementation.
+        Build a CSRF implementation.
         """
+        if self.csrf_class is not None:
+            return self.csrf_class()
+
         # FIXME TODO fix import
         from wtforms.csrf.session import SessionCSRF
-        return SessionCSRF
+        return SessionCSRF()
 
     # -- i18n
 
