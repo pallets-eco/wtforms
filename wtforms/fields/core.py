@@ -497,7 +497,7 @@ class StringField(Field):
     def process_formdata(self, valuelist):
         if valuelist:
             self.data = valuelist[0]
-        else:
+        elif self.data is None:
             self.data = ''
 
     def _value(self):

@@ -155,6 +155,18 @@ class FieldTest(TestCase):
     def test_unicode_coerce(self):
         self.assertEqual(text_type(self.field), self.field())
 
+    def test_process(self):
+        Field.process(self.field, DummyPostData({'a': [42]}))
+        self.assertEqual(self.field.data, 42)
+
+    def test_process_with_data(self):
+        Field.process(self.field, DummyPostData({'a': [42]}), data=84)
+        self.assertEqual(self.field.data, 42)
+
+    def test_process_with_data_and_no_applicable_form_data(self):
+        Field.process(self.field, DummyPostData({'b': [42]}), data=84)
+        self.assertEqual(self.field.data, 84)
+
     def test_process_formdata(self):
         Field.process_formdata(self.field, [42])
         self.assertEqual(self.field.data, 42)
