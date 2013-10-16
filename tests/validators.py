@@ -24,8 +24,9 @@ class DummyForm(dict):
 
 class DummyField(object):
     _translations = DummyTranslations()
-    def __init__(self, data, errors=(), raw_data=None):
+    def __init__(self, data, errors=(), default=None, raw_data=None):
         self.data = data
+        self.default = default
         self.errors = list(errors)
         self.raw_data = raw_data
 

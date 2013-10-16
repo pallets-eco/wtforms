@@ -14,8 +14,10 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleF
 from wtforms import Form, fields
 from wtforms.fields import TextField
 from wtforms.ext.sqlalchemy.orm import model_form, ModelConversionError
-from wtforms.validators import Optional, Required, Length
-from wtforms.ext.sqlalchemy.validators import Unique
+from wtforms.validators import Optional, Length, StopValidation
+from wtforms.ext.sqlalchemy.validators import Unique, NotNone
+
+from validators import DummyField, DummyForm, grab_stop_message
 
 
 class LazySelect(object):
@@ -224,7 +226,7 @@ class ModelFormTest(TestCase):
 
     def test_required_field(self):
         student_form = model_form(self.Student, self.sess)()
-        self.assertTrue(issubclass(Required,
+        self.assertTrue(issubclass(NotNone,
             student_form._fields['full_name'].validators[0].__class__))
 
     def test_unique_field(self):
@@ -346,6 +348,22 @@ class UniqueValidatorTest(TestCase):
     def test_wrong(self):
         user_form = self.UserForm(DummyPostData(username=['batman']))
         self.assertFalse(user_form.validate())
+
+
+class NotNoneValidatorTest(TestCase):
+    def test_validator(self):
+        form = DummyForm()
+        self.assertEqual(NotNone()(form, DummyField('foobar', raw_data=['foobar'])), None)
+        self.assertEqual(NotNone()(form, DummyField('foobar', raw_data=[''])), None)
+        self.assertEqual(NotNone()(form, DummyField('foobar', raw_data=[''])), None)
+        self.assertEqual(NotNone()(form, DummyField('foobar', raw_data=None, default='')), None)
+        self.assertRaises(StopValidation, NotNone(), form, DummyField('', raw_data=None))
+        self.assertEqual(NotNone().field_flags, ('required', ))
+
+        # Check message and custom message
+        grab = lambda **k: grab_stop_message(NotNone(**k), form, DummyField('', raw_data=None))
+        self.assertEqual(grab(), 'This field is required.')
+        self.assertEqual(grab(message='foo'), 'foo')
 
 
 if __name__ == '__main__':

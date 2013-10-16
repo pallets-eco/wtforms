@@ -13,6 +13,8 @@ Version 1.0.5
 -------------
 Released September 10, 2013
 
+- Fix a bug in ORM modeling which would incorrectly raise a validation
+  error for a valid, but boolean false input (for non-nullable columns).
 - Fix a bug in validators which causes translations to happen once then
   clobber any future translations.
 - ext.sqlalchemy / ext.appengine: minor cleanups / deprecation.

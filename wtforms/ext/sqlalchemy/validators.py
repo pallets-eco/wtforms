@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import warnings
 from wtforms import ValidationError
+from wtforms.validators import StopValidation
 from sqlalchemy.orm.exc import NoResultFound
 
 
@@ -35,3 +36,21 @@ class Unique(object):
                 raise ValidationError(self.message)
         except NoResultFound:
             pass
+
+
+class NotNone(object):
+    """
+    Validates that input was provided for this field.
+    """
+    field_flags = ('required', )
+
+    def __init__(self, message=None):
+        self.message = message
+
+    def __call__(self, form, field):
+        if field.raw_data is None and field.default is None:
+            if self.message is None:
+                self.message = field.gettext('This field is required.')
+
+            field.errors[:] = []
+            raise StopValidation(self.message)
