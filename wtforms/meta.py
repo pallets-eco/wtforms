@@ -47,12 +47,16 @@ class DefaultMeta(object):
 
     def build_csrf(self, form):
         """
-        Build a CSRF implementation.
+        Build a CSRF implementation. This is called once per form instance.
+
+        The default implementation builds the class referenced to by
+        :attr:`csrf_class` with zero arguments. If `csrf_class` is ``None``,
+        will instead use the default implementation
+        :class:`wtforms.csrf.session.SessionCSRF`.
         """
         if self.csrf_class is not None:
             return self.csrf_class()
 
-        # FIXME TODO fix import
         from wtforms.csrf.session import SessionCSRF
         return SessionCSRF()
 

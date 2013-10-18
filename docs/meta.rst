@@ -22,7 +22,16 @@ the entire API of the `Meta` interface is shown here.
         also be overridden per-instance by providing ``csrf=True/False`` to
         the constructor of Form.
 
-    .. autoattribute:: csrf_class
+    .. attribute:: csrf_class
+
+        If set, this is a class which is used to implement CSRF protection.
+        Read the documentation on CSRF to get more information
+
+
+    .. attribute:: csrf_field_name
+
+        The name of the automatically added CSRF token field. Defaults to 
+        ``csrf_token``.
 
     .. attribute:: locales
 
@@ -38,6 +47,8 @@ the entire API of the `Meta` interface is shown here.
 
     Usually, you do not need to override these methods, as they provide core
     behaviors of WTForms.
+
+    .. automethod:: build_csrf
 
     .. automethod:: get_translations
 
