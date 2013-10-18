@@ -1,3 +1,4 @@
 SQLAlchemy
 python-dateutil
 pep8
+Babel>=1.3

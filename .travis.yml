@@ -25,5 +25,6 @@ install:
   - "pip install $DJANGO --use-mirrors"
   - "pip install . --use-mirrors"
   - "pip install -r tests/test_requirements.txt --use-mirrors"
+
 # command to run tests
 script: tests/runtests.py --with-pep8

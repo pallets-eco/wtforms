@@ -46,6 +46,11 @@ from wtforms import Form, fields, validators
 from wtforms.compat import text_type
 from wtforms.ext.django.orm import model_form
 from wtforms.ext.django.fields import QuerySetSelectField, ModelSelectField, DateTimeField
+try:
+    import pytz
+    has_pytz = (pytz.VERSION >= '2012')
+except ImportError:
+    has_pytz = False
 
 def contains_validator(field, v_type):
     for v in field.validators:
@@ -213,6 +218,9 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
 
     @override_settings(USE_TZ=True, TIME_ZONE='America/Los_Angeles')
     def test_stored_value_converted_to_current_timezone(self):
+        if not has_pytz:
+            # Ignore this test if we don't have pytz.
+            return
         utc_date = datetime.datetime(2013, 9, 25, 2, 15, tzinfo=timezone.utc)
         form = self.F(a=utc_date)
         self.assertTrue('2013-09-24 19:15:00' in form.a())
