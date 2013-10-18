@@ -53,6 +53,9 @@ class DefaultMeta(object):
         :attr:`csrf_class` with zero arguments. If `csrf_class` is ``None``,
         will instead use the default implementation
         :class:`wtforms.csrf.session.SessionCSRF`.
+
+        :param form: The form.
+        :return: A CSRF implementation.
         """
         if self.csrf_class is not None:
             return self.csrf_class()
@@ -69,10 +72,10 @@ class DefaultMeta(object):
     def get_translations(self, form):
         """
         Override in subclasses to provide alternate translations factory.
-
-        Must return an object that provides gettext() and ngettext() methods.
-
         See the i18n documentation for more.
+
+        :param form: The form.
+        :return: An object that provides gettext() and ngettext() methods.
         """
         locales = self.locales
         if locales is False:
