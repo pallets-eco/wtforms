@@ -59,6 +59,8 @@ class DefaultMeta(object):
     # -- i18n
 
     locales = False
+    cache_translations = True
+    translations_cache = {}
 
     def get_translations(self, form):
         """
@@ -71,8 +73,20 @@ class DefaultMeta(object):
         locales = self.locales
         if locales is False:
             return None
-        else:
-            return i18n.get_translations(locales)
+
+        if self.cache_translations:
+            # Make locales be a hashable value
+            locales = tuple(locales) if locales else None
+
+            translations = self.translations_cache.get(locales)
+            if translations is None:
+                translations = self.translations_cache[locales] = i18n.get_translations(locales)
+
+            return translations
+
+        return i18n.get_translations(locales)
+
+    # -- General
 
     def update_values(self, values):
         """

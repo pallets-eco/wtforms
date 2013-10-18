@@ -29,6 +29,10 @@ the entire API of the `Meta` interface is shown here.
         Setting `locales` to a sequence of strings specifies the priority order
         of locales to try to find translations for built-in messages of WTForms.
 
+    .. attribute:: cache_translations
+
+        If `True` (the default) then cache translation objects. The default 
+        cache is done at class-level so it's shared with all class Meta.
 
     **Advanced Customization**
 
