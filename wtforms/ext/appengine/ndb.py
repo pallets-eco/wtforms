@@ -164,15 +164,15 @@ class ModelConverterBase(object):
         if prop._required and prop_type_name not in self.NO_AUTO_REQUIRED:
             kwargs['validators'].append(validators.required())
 
-        if kwargs.get('choices', None):
+        choices = kwargs.get('choices', prop._choices)
+        if choices:
             # Use choices in a select field.
-            kwargs['choices'] = [(v, v) for v in kwargs.get('choices')]
-            return f.SelectField(**kwargs)
+            kwargs['choices'] = [(v, v) for v in choices]
 
-        if prop._choices:
-            # Use choices in a select field.
-            kwargs['choices'] = [(v, v) for v in prop._choices]
-            return f.SelectField(**kwargs)
+            if prop._repeated:
+                return f.SelectMultipleField(**kwargs)
+            else:
+                return f.SelectField(**kwargs)
 
         else:
             converter = self.converters.get(prop_type_name, None)
