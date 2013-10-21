@@ -5,17 +5,23 @@ from gaetest_common import DummyPostData, fill_authors
 
 from google.appengine.ext import ndb
 from unittest import TestCase
-from wtforms import Form, TextField, IntegerField, BooleanField
+from wtforms import Form, TextField, IntegerField, BooleanField, \
+        SelectField, SelectMultipleField
 from wtforms.compat import text_type
 from wtforms.ext.appengine.fields import KeyPropertyField
 from wtforms.ext.appengine.ndb import model_form
 
+GENRES = ['sci-fi', 'fantasy', 'other']
 
 class Author(ndb.Model):
     name = ndb.StringProperty(required=True)
     city = ndb.StringProperty()
     age = ndb.IntegerProperty(required=True)
     is_admin = ndb.BooleanProperty(default=False)
+
+    # Test both repeated choice-fields and non-repeated.
+    genre = ndb.StringProperty(choices=GENRES)
+    genres = ndb.StringProperty(choices=GENRES, repeated=True)
 
 
 class Book(ndb.Model):
@@ -61,7 +67,14 @@ class TestKeyPropertyField(TestCase):
 
 
 class TestModelForm(TestCase):
-    EXPECTED_AUTHOR = [('name', TextField), ('city', TextField), ('age', IntegerField), ('is_admin', BooleanField)]
+    EXPECTED_AUTHOR = [
+        ('name', TextField),
+        ('city', TextField),
+        ('age', IntegerField),
+        ('is_admin', BooleanField),
+        ('genre', SelectField),
+        ('genres', SelectMultipleField),
+    ]
 
     def test_author(self):
         form = model_form(Author)
@@ -78,3 +91,15 @@ class TestModelForm(TestCase):
             keys.add(key)
 
         self.assertEqual(authors, keys)
+
+    def test_choices(self):
+        form = model_form(Author)
+        bound_form = form()
+
+        # Sort both sets of choices. NDB stores the choices as a frozenset
+        # and as such, ends up in the wtforms field unsorted.
+        expected = sorted([(v,v) for v in GENRES])
+
+        self.assertEqual(sorted(bound_form['genre'].choices), expected)
+        self.assertEqual(sorted(bound_form['genres'].choices), expected)
+
