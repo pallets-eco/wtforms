@@ -98,7 +98,7 @@ class Field(object):
         self.type = type(self).__name__
         self.validators = validators or list(self.validators)
         self.attributes = attributes
-        self.properties = dict([(prop, prop) for prop in properties])
+        self.attributes.update(dict([(prop, prop) for prop in properties]))
         self.id = id or self.name
         self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
 
@@ -138,7 +138,8 @@ class Field(object):
         Any HTML attribute passed to the method will be added to the tag
         and entity-escaped properly.
         """
-        return self.widget(self, **kwargs, **self.attributes)
+        kwargs.update(self.attributes)
+        return self.widget(self, **kwargs)
 
     def gettext(self, string):
         return self._translations.gettext(string)

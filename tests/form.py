@@ -176,6 +176,13 @@ class FormTest(TestCase):
         MyForm.cherry = MyForm.kiwi
         self.assertEqual([x.name for x in MyForm()], ['cherry', 'kiwi', 'apple', 'strawberry'])
 
+    def test_form_properties(self):
+        expected = r'<input id="pattern" name="pattern" pattern="[\d]+" type="text" value="">'
+        class MyForm(Form):
+            pattern = TextField(attributes={'pattern': r'[\d]+'})
+        form = MyForm()
+        self.assertEqual(form.pattern(), expected)
+
 
 if __name__ == '__main__':
     from unittest import main
