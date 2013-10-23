@@ -51,6 +51,7 @@ class Field(object):
 
     def __init__(self, label=None, validators=None, filters=tuple(),
                  description='', id=None, default=None, widget=None,
+                 attributes={}, properties=[],
                  _form=None, _name=None, _prefix='', _translations=None):
         """
         Construct a new field.
@@ -96,7 +97,8 @@ class Field(object):
         self.short_name = _name
         self.type = type(self).__name__
         self.validators = validators or list(self.validators)
-
+        self.attributes = attributes
+        self.properties = dict([(prop, prop) for prop in properties])
         self.id = id or self.name
         self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
 
@@ -136,7 +138,7 @@ class Field(object):
         Any HTML attribute passed to the method will be added to the tag
         and entity-escaped properly.
         """
-        return self.widget(self, **kwargs)
+        return self.widget(self, **kwargs, **self.attributes)
 
     def gettext(self, string):
         return self._translations.gettext(string)
