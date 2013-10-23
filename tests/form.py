@@ -177,9 +177,9 @@ class FormTest(TestCase):
         self.assertEqual([x.name for x in MyForm()], ['cherry', 'kiwi', 'apple', 'strawberry'])
 
     def test_form_properties(self):
-        expected = r'<input id="pattern" name="pattern" pattern="[\d]+" type="text" value="">'
+        expected = r'<input id="pattern" name="pattern" pattern="[\d]+" required="required" type="text" value="">'
         class MyForm(Form):
-            pattern = TextField(attributes={'pattern': r'[\d]+'})
+            pattern = TextField(attributes={'pattern': r'[\d]+'}, properties=['required'])
         form = MyForm()
         self.assertEqual(form.pattern(), expected)
 
