@@ -7,7 +7,7 @@ from datetime import date, datetime
 from decimal import Decimal, ROUND_UP, ROUND_DOWN
 from unittest import TestCase
 
-from wtforms import validators, widgets
+from wtforms import validators, widgets, meta
 from wtforms.fields import *
 from wtforms.fields import Label, Field, SelectFieldBase
 from wtforms.form import Form
@@ -158,6 +158,19 @@ class FieldTest(TestCase):
     def test_process_formdata(self):
         Field.process_formdata(self.field, [42])
         self.assertEqual(self.field.data, 42)
+
+    def test_meta_attribute(self):
+        # Can we pass in meta via _form?
+        form = self.F()
+        self.assertIs(form.a._form_meta, form.meta)
+
+        # Can we pass in meta via _meta?
+        form_meta = meta.DefaultMeta()
+        field = TextField(_name='Foo', _form=None, _meta=form_meta)
+        self.assertIs(field._form_meta, form_meta)
+
+        # Do we fail if both _meta and _form are None?
+        self.assertRaises(TypeError, TextField, _name='foo', _form=None)
 
 
 class PrePostTestField(TextField):

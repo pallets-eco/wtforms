@@ -144,10 +144,14 @@ class Field(object):
         """
         Render this field as HTML, using keyword args as additional attributes.
 
-        Any HTML attribute passed to the method will be added to the tag
-        and entity-escaped properly.
+        By default, field rendering is delegated to the field's widget,
+        passing any keyword arguments from this call along to the widget.
+
+        In all of the WTForms HTML widgets, keyword arguments are turned to
+        HTML attributes, though in theory a widget is free to do anything it
+        wants with the supplied keyword arguments.
         """
-        return self.widget(self, **kwargs)
+        return self._form_meta.render_field(self, kwargs)
 
     def gettext(self, string):
         return self._translations.gettext(string)
