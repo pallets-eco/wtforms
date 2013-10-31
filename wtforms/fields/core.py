@@ -51,7 +51,8 @@ class Field(object):
 
     def __init__(self, label=None, validators=None, filters=tuple(),
                  description='', id=None, default=None, widget=None,
-                 _form=None, _name=None, _prefix='', _translations=None):
+                 _form=None, _name=None, _prefix='', _translations=None,
+                 _meta=None):
         """
         Construct a new field.
 
@@ -80,6 +81,9 @@ class Field(object):
         :param _prefix:
             The prefix to prepend to the form name of this field, passed by
             the enclosing form during construction.
+        :param _meta:
+            If provided, this is the 'meta' instance from the form. You usually
+            don't pass this yourself.
 
         If `_form` and `_name` isn't provided, an :class:`UnboundField` will be
         returned instead. Call its :func:`bind` method with a form instance and
@@ -87,6 +91,13 @@ class Field(object):
         """
         if _translations is not None:
             self._translations = _translations
+
+        if _meta is not None:
+            self._form_meta = _meta
+        elif _form is not None:
+            self._form_meta = _form.meta
+        else:
+            raise TypeError("Must provide one of _form or _meta")
 
         self.default = default
         self.description = description
@@ -396,7 +407,7 @@ class SelectFieldBase(Field):
         raise NotImplementedError()
 
     def __iter__(self):
-        opts = dict(widget=self.option_widget, _name=self.name, _form=None)
+        opts = dict(widget=self.option_widget, _name=self.name, _form=None, _meta=self._form_meta)
         for i, (value, label, checked) in enumerate(self.iter_choices()):
             opt = self._Option(label=label, id='%s-%d' % (self.id, i), **opts)
             opt.process(None, value)
@@ -919,7 +930,7 @@ class FieldList(Field):
         new_index = self.last_index = index or (self.last_index + 1)
         name = '%s-%d' % (self.short_name, new_index)
         id = '%s-%d' % (self.id, new_index)
-        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id)
+        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self._form_meta)
         field.process(formdata, data)
         self.entries.append(field)
         return field
