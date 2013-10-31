@@ -8,7 +8,8 @@ Not yet released.
 - Add new `class Meta` paradigm for much more powerful customization 
   of WTForms.
 - Move i18n into core. Deprecate `wtforms.ext.i18n`.
-- Fix issue rendering SelectFields with value=True
+- Move CSRF into core. Deprecate `wtforms.ext.csrf`.
+- Fix issue rendering SelectFields with ``value=True``
 - Make `DecimalField` able to use babel locale-based number formatting.
 
 Version 1.0.5
