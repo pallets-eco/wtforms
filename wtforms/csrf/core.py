@@ -22,29 +22,30 @@ class CSRFTokenField(HiddenField):
         """
         pass
 
+    def pre_validate(self, form):
+        """
+        Handle validation of this token field.
+        """
+        self.csrf_impl.validate_csrf_token(form, self)
+
     def process(self, *args):
         super(CSRFTokenField, self).process(*args)
-        self.current_token = self.csrf_impl.generate_csrf_token()
+        self.current_token = self.csrf_impl.generate_csrf_token(self)
 
 
 class CSRF(object):
     field_class = CSRFTokenField
-
-    def __init__(self, form=None):
-        if form is not None:
-            self.setup_form(form, form.meta)
 
     def setup_form(self, form):
         meta = form.meta
         field_name = meta.csrf_field_name
         unbound_field = self.field_class(
             label='CSRF Token',
-            validators=[self.validate_csrf_token],
             csrf_impl=self
         )
         return [(field_name, unbound_field)]
 
-    def generate_csrf_token(self):
+    def generate_csrf_token(self, csrf_token_field):
         """
         Implementations must override this to provide a method with which one
         can get a CSRF token for this form.
@@ -53,9 +54,8 @@ class CSRF(object):
         deterministically so that on the form POST, the generated string is
         (usually) the same assuming the user is using the site normally.
 
-        :param csrf_context:
-            A transparent object which can be used as contextual info for
-            generating the token.
+        :param csrf_token_field:
+            The field which is being used for CSRF.
         """
         raise NotImplementedError()
 
@@ -65,6 +65,9 @@ class CSRF(object):
 
         The default CSRF validation logic simply checks if the recently
         generated token equals the one we received as formdata.
+
+        :param form: The form which has this CSRF token.
+        :param field: The CSRF token field.
         """
         if field.current_token != field.data:
             raise ValidationError(field.gettext('Invalid CSRF Token'))

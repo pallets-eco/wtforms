@@ -28,48 +28,61 @@ __all__ = ('SessionSecureForm', )
 
 class SessionCSRF(CSRF):
     TIME_FORMAT = '%Y%m%d%H%M%S'
-    TIME_LIMIT = timedelta(minutes=30)
 
     def setup_form(self, form):
         self.form_meta = form.meta
         return super(SessionCSRF, self).setup_form(form)
 
-    def generate_csrf_token(self):
+    def generate_csrf_token(self, csrf_token_field):
         meta = self.form_meta
         if meta.csrf_secret is None:
             raise Exception('must set `csrf_secret` on class Meta for SessionCSRF to work')
         if meta.csrf_context is None:
             raise TypeError('Must provide a session-like object as csrf context')
 
-        session = getattr(meta.csrf_context, 'session', meta.csrf_context)
+        session = self.session
 
         if 'csrf' not in session:
             session['csrf'] = sha1(os.urandom(64)).hexdigest()
 
-        self.csrf_token.csrf_key = session['csrf']
-        if self.TIME_LIMIT:
-            expires = (datetime.now() + self.TIME_LIMIT).strftime(self.TIME_FORMAT)
+        if self.time_limit:
+            expires = (self.now() + self.time_limit).strftime(self.TIME_FORMAT)
             csrf_build = '%s%s' % (session['csrf'], expires)
         else:
             expires = ''
             csrf_build = session['csrf']
 
-        hmac_csrf = hmac.new(self.SECRET_KEY, csrf_build.encode('utf8'), digestmod=sha1)
+        hmac_csrf = hmac.new(meta.csrf_secret, csrf_build.encode('utf8'), digestmod=sha1)
         return '%s##%s' % (expires, hmac_csrf.hexdigest())
 
     def validate_csrf_token(self, form, field):
+        meta = self.form_meta
         if not field.data or '##' not in field.data:
             raise ValidationError(field.gettext('CSRF token missing'))
 
         expires, hmac_csrf = field.data.split('##')
 
-        check_val = (field.csrf_key + expires).encode('utf8')
+        check_val = (self.session['csrf'] + expires).encode('utf8')
 
-        hmac_compare = hmac.new(self.SECRET_KEY, check_val, digestmod=sha1)
+        hmac_compare = hmac.new(meta.csrf_secret, check_val, digestmod=sha1)
         if hmac_compare.hexdigest() != hmac_csrf:
             raise ValidationError(field.gettext('CSRF failed'))
 
-        if self.TIME_LIMIT:
-            now_formatted = datetime.now().strftime(self.TIME_FORMAT)
+        if self.time_limit:
+            now_formatted = self.now().strftime(self.TIME_FORMAT)
             if now_formatted > expires:
                 raise ValidationError(field.gettext('CSRF token expired'))
+
+    def now(self):
+        """
+        Get the current time. Used for test mocking/overriding mainly.
+        """
+        return datetime.now()
+
+    @property
+    def time_limit(self):
+        return getattr(self.form_meta, 'csrf_time_limit', timedelta(minutes=30))
+
+    @property
+    def session(self):
+        return getattr(self.form_meta.csrf_context, 'session', self.form_meta.csrf_context)
