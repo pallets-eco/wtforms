@@ -80,13 +80,22 @@ class CoreFormTest(TestCase):
         language_settings = [
             (['en_US', 'en'], 'Field cannot be longer than 3 characters.', 'Field cannot be longer than 1 character.'),
             (['de_DE', 'de'], 'Feld kann nicht l\xe4nger als 3 Zeichen sein.', 'Feld kann nicht l\xe4nger als 1 Zeichen sein.'),
+            (['et'], 'V\xe4li ei tohi olla \xfcle 3 t\xe4hem\xe4rgi pikk.', 'V\xe4li ei tohi olla \xfcle 1 t\xe4hem\xe4rgi pikk.'),
         ]
         for languages, match1, match2 in language_settings:
             settings = dict(a='toolong', meta=dict(locales=languages))
             self._common_test(match1, settings, self.F2)
             self._common_test(match2, settings, self.F3)
 
-
+    def test_cache(self):
+        settings = {'meta': {'locales': ['de_DE'], 'cache_translations': True}}
+        expected = 'Dieses Feld wird ben\xf6tigt.'
+        form1 = self._common_test(expected, settings)
+        form2 = self._common_test(expected, settings)
+        assert form1.meta.get_translations(form1) is form2.meta.get_translations(form2)
+        settings['meta']['cache_translations'] = False
+        form3 = self._common_test(expected, settings)
+        assert form2.meta.get_translations(form2) is not form3.meta.get_translations(form3)
 
 if __name__ == '__main__':
     from unittest import main
