@@ -21,7 +21,7 @@ matrix:
 
 # command to install dependencies
 install:
-  - "pip install $DJANGO --use-mirrors"
+  - "pip install $DJANGO $DATEUTIL --use-mirrors"
   - "pip install . --use-mirrors"
   - "pip install -r tests/test_requirements.txt --use-mirrors"
 
