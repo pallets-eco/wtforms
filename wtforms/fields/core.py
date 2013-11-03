@@ -7,6 +7,7 @@ import itertools
 from wtforms import widgets
 from wtforms.compat import text_type, izip
 from wtforms.validators import StopValidation
+from wtforms.utils import unset_value as unset_value
 
 
 __all__ = (
@@ -14,9 +15,6 @@ __all__ = (
     'FloatField', 'FormField', 'IntegerField', 'RadioField', 'SelectField',
     'SelectMultipleField', 'StringField',
 )
-
-
-_unset_value = object()
 
 
 class DummyTranslations(object):
@@ -237,7 +235,7 @@ class Field(object):
         """
         pass
 
-    def process(self, formdata, data=_unset_value):
+    def process(self, formdata, data=unset_value):
         """
         Process incoming data, calling process_data, process_formdata as needed,
         and run filters.
@@ -251,7 +249,7 @@ class Field(object):
         inputs.
         """
         self.process_errors = []
-        if data is _unset_value:
+        if data is unset_value:
             try:
                 data = self.default()
             except TypeError:
@@ -594,12 +592,12 @@ class DecimalField(LocaleAwareNumberField):
     """
     widget = widgets.TextInput()
 
-    def __init__(self, label=None, validators=None, places=_unset_value, rounding=None, **kwargs):
+    def __init__(self, label=None, validators=None, places=unset_value, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
-        if self.use_locale and (places is not _unset_value or rounding is not None):
+        if self.use_locale and (places is not unset_value or rounding is not None):
             raise TypeError("When using locale-aware numbers, 'places' and 'rounding' are ignored.")
 
-        if places is _unset_value:
+        if places is unset_value:
             places = 2
         self.places = places
         self.rounding = rounding
@@ -765,8 +763,8 @@ class FormField(Field):
         if validators:
             raise TypeError('FormField does not accept any validators. Instead, define them on the enclosed form.')
 
-    def process(self, formdata, data=_unset_value):
-        if data is _unset_value:
+    def process(self, formdata, data=unset_value):
+        if data is unset_value:
             try:
                 data = self.default()
             except TypeError:
@@ -846,9 +844,9 @@ class FieldList(Field):
         self.last_index = -1
         self._prefix = kwargs.get('_prefix', '')
 
-    def process(self, formdata, data=_unset_value):
+    def process(self, formdata, data=unset_value):
         self.entries = []
-        if data is _unset_value or not data:
+        if data is unset_value or not data:
             try:
                 data = self.default()
             except TypeError:
@@ -866,7 +864,7 @@ class FieldList(Field):
                 try:
                     obj_data = next(idata)
                 except StopIteration:
-                    obj_data = _unset_value
+                    obj_data = unset_value
                 self._add_entry(formdata, obj_data, index=index)
         else:
             for obj_data in data:
@@ -928,7 +926,7 @@ class FieldList(Field):
 
         setattr(obj, name, output)
 
-    def _add_entry(self, formdata=None, data=_unset_value, index=None):
+    def _add_entry(self, formdata=None, data=unset_value, index=None):
         assert not self.max_entries or len(self.entries) < self.max_entries, \
             'You cannot have more than max_entries entries in this FieldList'
         new_index = self.last_index = index or (self.last_index + 1)
@@ -939,7 +937,7 @@ class FieldList(Field):
         self.entries.append(field)
         return field
 
-    def append_entry(self, data=_unset_value):
+    def append_entry(self, data=unset_value):
         """
         Create a new entry with optional default data.
 

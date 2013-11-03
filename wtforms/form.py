@@ -8,8 +8,6 @@ __all__ = (
     'Form',
 )
 
-_unset_value = object()
-
 
 class BaseForm(object):
     """

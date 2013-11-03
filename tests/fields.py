@@ -9,9 +9,10 @@ from unittest import TestCase
 
 from wtforms import validators, widgets, meta
 from wtforms.fields import *
-from wtforms.fields import Label, Field, SelectFieldBase, _unset_value, html5
+from wtforms.fields import Label, Field, SelectFieldBase, html5
 from wtforms.form import Form
 from wtforms.compat import text_type
+from wtforms.utils import unset_value
 
 PYTHON_VERSION = sys.version_info
 
@@ -109,6 +110,16 @@ class FlagsTest(TestCase):
         self.assertRaises(AttributeError, getattr, self.flags, '_foo')
         self.flags._foo = 42
         self.assertEqual(self.flags._foo, 42)
+
+
+class UnsetValueTest(TestCase):
+    def test(self):
+        self.assertEqual(str(unset_value), '<unset value>')
+        self.assertEqual(repr(unset_value), '<unset value>')
+        self.assertEqual(bool(unset_value), False)
+        assert not unset_value
+        self.assertEqual(unset_value.__nonzero__(), False)
+        self.assertEqual(unset_value.__bool__(), False)
 
 
 class FiltersTest(TestCase):
@@ -772,8 +783,8 @@ class HTML5FieldsTest(TestCase):
         int_range = html5.IntegerRangeField()
         decimal_range = html5.DecimalRangeField()
 
-    def _build_value(self, key, form_input, expected_html, data=_unset_value):
-        if data is _unset_value:
+    def _build_value(self, key, form_input, expected_html, data=unset_value):
+        if data is unset_value:
             data = form_input
         if expected_html.startswith('type='):
             expected_html = '<input id="%s" name="%s" %s value="%s">' % (key, key, expected_html, form_input)

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 from unittest import TestCase
 from wtforms.form import BaseForm, WebobInputWrapper
-from wtforms.fields import Field, _unset_value 
+from wtforms.utils import unset_value
+from wtforms.fields import Field
 
 try:
     from webob.multidict import MultiDict
@@ -40,7 +41,7 @@ class SneakyField(Field):
         super(SneakyField, self).__init__(*args, **kwargs)
         self.sneaky_callable = sneaky_callable
 
-    def process(self, formdata, data=_unset_value): 
+    def process(self, formdata, data=unset_value):
         self.sneaky_callable(formdata)
 
 
