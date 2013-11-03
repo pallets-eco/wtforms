@@ -6,6 +6,7 @@ import operator
 from wtforms import fields, widgets
 from wtforms.compat import text_type, string_types
 
+
 class ReferencePropertyField(fields.SelectFieldBase):
     """
     A field for ``db.ReferenceProperty``. The list items are rendered in a
