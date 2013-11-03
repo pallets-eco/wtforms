@@ -40,6 +40,7 @@ setup(
     ],
     packages=[
         'wtforms',
+        'wtforms.csrf',
         'wtforms.fields',
         'wtforms.widgets',
         'wtforms.ext',
