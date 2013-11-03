@@ -33,7 +33,7 @@ class ClassicI18nFormTest(TestCase):
 
         form = self.F(LANGUAGES=['es'])
         assert ('es', ) in tcache
-        self.assertEquals(len(tcache), 2)
+        self.assertEqual(len(tcache), 2)
         assert not form.validate()
         self.assertEqual(form.a.errors[0], 'Este campo es obligatorio.')
 

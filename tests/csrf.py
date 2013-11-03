@@ -70,7 +70,7 @@ class DummyCSRFTest(TestCase):
         form = self.F()
         assert 'csrf_token' in form
         assert not form.validate()
-        self.assertEquals(form.csrf_token._value(), 'dummytoken')
+        self.assertEqual(form.csrf_token._value(), 'dummytoken')
         form = self.F(DummyPostData(csrf_token='dummytoken'))
         assert form.validate()
 
@@ -88,7 +88,7 @@ class DummyCSRFTest(TestCase):
         form = self.F(a='test', csrf_token='dummytoken')
         form.populate_obj(obj)
         assert obj.csrf_token is None
-        self.assertEquals(obj.a, 'test')
+        self.assertEqual(obj.a, 'test')
 
 
 class SessionCSRFTest(TestCase):
@@ -133,20 +133,20 @@ class SessionCSRFTest(TestCase):
         with TimePin.pin_time(dt(8, 11, 12)):
             form = self._test_phase1(self.Pinned, session)
             token = form.csrf_token.current_token
-            self.assertEquals(token, '20130115084112##53812764d65abb8fa88384551a751ca590dff5fb')
+            self.assertEqual(token, '20130115084112##53812764d65abb8fa88384551a751ca590dff5fb')
 
         # Make sure that CSRF validates in a normal case.
         with TimePin.pin_time(dt(8, 18)):
             form = self._test_phase2(self.Pinned, session, token)
             new_token = form.csrf_token.current_token
-            self.assertNotEquals(new_token, token)
-            self.assertEquals(new_token, '20130115084800##e399e3a6a84860762723672b694134507ba21b58')
+            self.assertNotEqual(new_token, token)
+            self.assertEqual(new_token, '20130115084800##e399e3a6a84860762723672b694134507ba21b58')
 
         # Make sure that CSRF fails when we're past time
         with TimePin.pin_time(dt(8, 43)):
             form = self._test_phase2(self.Pinned, session, token, False)
             assert not form.validate()
-            self.assertEquals(form.csrf_token.errors, ['CSRF token expired'])
+            self.assertEqual(form.csrf_token.errors, ['CSRF token expired'])
 
             # We can succeed with a slightly newer token
             self._test_phase2(self.Pinned, session, new_token)
