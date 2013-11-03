@@ -4,9 +4,13 @@ python:
   - 2.7
   - 3.3
 env:
-  - DJANGO=Django==1.3.7
-  - DJANGO=Django==1.4.8
-  - DJANGO=Django==1.5.4
+  global:
+    - DATEUTIL=python-dateutil==2.1
+  matrix:
+    - DJANGO=Django==1.3.7
+    - DJANGO=Django==1.4.8
+    - DJANGO=Django==1.5.4
+    - DJANGO=https://github.com/django/django/tarball/stable/1.6.x DATEUTIL=python-dateutil==2.2
 
 matrix:
   exclude:
