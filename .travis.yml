@@ -9,7 +9,6 @@ env:
     - DATEUTIL=python-dateutil==2.1
     - LOCALFLAVOR=
   matrix:
-    - DJANGO=Django==1.3.7
     - DJANGO=Django==1.4.8
     - DJANGO=Django==1.5.4 DATEUTIL=python-dateutil==2.2
     - DJANGO=Django==1.5.4 LOCALFLAVOR=django-localflavor
