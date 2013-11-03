@@ -9,7 +9,7 @@ from unittest import TestCase
 
 from wtforms import validators, widgets, meta
 from wtforms.fields import *
-from wtforms.fields import Label, Field, SelectFieldBase
+from wtforms.fields import Label, Field, SelectFieldBase, _unset_value, html5
 from wtforms.form import Form
 from wtforms.compat import text_type
 
@@ -756,6 +756,66 @@ class CustomFieldQuirksTest(TestCase):
     def test_default_impls(self):
         f = self.F()
         self.assertRaises(NotImplementedError, f.b.iter_choices)
+
+
+class HTML5FieldsTest(TestCase):
+    class F(Form):
+        search = html5.SearchField()
+        telephone = html5.TelField()
+        url = html5.URLField()
+        email = html5.EmailField()
+        datetime = html5.DateTimeField()
+        date = html5.DateField()
+        dt_local = html5.DateTimeLocalField()
+        integer = html5.IntegerField()
+        decimal = html5.DecimalField()
+        int_range = html5.IntegerRangeField()
+        decimal_range = html5.DecimalRangeField()
+
+    def _build_value(self, key, form_input, expected_html, data=_unset_value):
+        if data is _unset_value:
+            data = form_input
+        if expected_html.startswith('type='):
+            expected_html = '<input id="%s" name="%s" %s value="%s">' % (key, key, expected_html, form_input)
+        return {
+            'key': key,
+            'form_input': form_input,
+            'expected_html': expected_html,
+            'data': data
+        }
+
+    def test_simple(self):
+        b = self._build_value
+        VALUES = (
+            b('search', 'search', 'type="search"'),
+            b('telephone', '123456789', 'type="tel"'),
+            b('url', 'http://wtforms.simplecodes.com/', 'type="url"'),
+            b('email', 'foo@bar.com', 'type="email"'),
+            b('datetime', '2013-09-05 00:23:42', 'type="datetime"', datetime(2013, 9, 5, 0, 23, 42)),
+            b('date', '2013-09-05', 'type="date"', date(2013, 9, 5)),
+            b('dt_local', '2013-09-05 00:23:42', 'type="datetime-local"', datetime(2013, 9, 5, 0, 23, 42)),
+            b('integer', '42', '<input id="integer" name="integer" step="1" type="number" value="42">', 42),
+            b('decimal', '43.5', '<input id="decimal" name="decimal" step="any" type="number" value="43.5">', Decimal('43.5')),
+            b('int_range', '4', '<input id="int_range" name="int_range" step="1" type="range" value="4">', 4),
+            b('decimal_range', '58', '<input id="decimal_range" name="decimal_range" step="any" type="range" value="58">', 58),
+        )
+        formdata = DummyPostData()
+        kw = {}
+        for item in VALUES:
+            formdata[item['key']] = item['form_input']
+            kw[item['key']] = item['data']
+
+        form = self.F(formdata)
+        for item in VALUES:
+            field = form[item['key']]
+            render_value = field()
+            if render_value != item['expected_html']:
+                tmpl = 'Field {key} render mismatch: {render_value!r} != {expected_html!r}'
+                raise AssertionError(tmpl.format(render_value=render_value, **item))
+            if field.data != item['data']:
+                tmpl = 'Field {key} data mismatch: {field.data!r} != {data!r}'
+                raise AssertionError(tmpl.format(field=field, **item))
+
 
 if __name__ == '__main__':
     from unittest import main
