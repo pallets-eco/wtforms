@@ -28,6 +28,6 @@ install:
   - "pip install -r tests/test_requirements.txt --use-mirrors"
 
 # command to run tests
-script: coverage run --source=wtforms tests/runtests.py --with-pep8
+script: coverage run --source=wtforms tests/runtests.py --with-pep8 --force-all
 after_success:
   - coveralls
