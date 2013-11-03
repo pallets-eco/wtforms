@@ -6,11 +6,13 @@ python:
 env:
   global:
     - DATEUTIL=python-dateutil==2.1
+    - LOCALFLAVOR=
   matrix:
     - DJANGO=Django==1.3.7
     - DJANGO=Django==1.4.8
-    - DJANGO=Django==1.5.4
-    - DJANGO=https://github.com/django/django/tarball/stable/1.6.x DATEUTIL=python-dateutil==2.2
+    - DJANGO=Django==1.5.4 DATEUTIL=python-dateutil==2.2
+    - DJANGO=Django==1.5.4 LOCALFLAVOR=django-localflavor
+    - DJANGO=https://github.com/django/django/tarball/stable/1.6.x LOCALFLAVOR=django-localflavor
 
 matrix:
   exclude:
@@ -21,7 +23,7 @@ matrix:
 
 # command to install dependencies
 install:
-  - "pip install $DJANGO $DATEUTIL --use-mirrors"
+  - "pip install $DJANGO $DATEUTIL $LOCALFLAVOR --use-mirrors"
   - "pip install . --use-mirrors"
   - "pip install -r tests/test_requirements.txt --use-mirrors"
 
