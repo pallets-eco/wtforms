@@ -16,6 +16,7 @@ __all__ = (
     'model_fields', 'model_form',
 )
 
+
 def converts(*args):
     def _inner(func):
         func._converter_for = frozenset(args)
@@ -47,8 +48,9 @@ class ModelConverterBase(object):
         if not hasattr(prop, 'columns') and not hasattr(prop, 'direction'):
             return
         elif not hasattr(prop, 'direction') and len(prop.columns) != 1:
-            raise TypeError('Do not know how to convert multiple-column '
-                + 'properties currently')
+            raise TypeError(
+                'Do not know how to convert multiple-column properties currently'
+            )
 
         kwargs = {
             'validators': [],
@@ -223,7 +225,7 @@ class ModelConverter(ModelConverterBase):
 
 
 def model_fields(model, db_session=None, only=None, exclude=None,
-        field_args=None, converter=None):
+                 field_args=None, converter=None):
     """
     Generate a dictionary of fields for a given SQLAlchemy model.
 
@@ -241,8 +243,10 @@ def model_fields(model, db_session=None, only=None, exclude=None,
 
     field_dict = {}
     for name, prop in properties:
-        field = converter.convert(model, mapper, prop,
-            field_args.get(name), db_session)
+        field = converter.convert(
+            model, mapper, prop,
+            field_args.get(name), db_session
+        )
         if field is not None:
             field_dict[name] = field
 
@@ -250,8 +254,8 @@ def model_fields(model, db_session=None, only=None, exclude=None,
 
 
 def model_form(model, db_session=None, base_class=Form, only=None,
-    exclude=None, field_args=None, converter=None, exclude_pk=True,
-    exclude_fk=True, type_name=None):
+               exclude=None, field_args=None, converter=None, exclude_pk=True,
+               exclude_fk=True, type_name=None):
     """
     Create a wtforms Form for a given SQLAlchemy model class::
 

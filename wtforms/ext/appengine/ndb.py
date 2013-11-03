@@ -340,7 +340,6 @@ class ModelConverter(ModelConverterBase):
         return KeyPropertyField(**kwargs)
 
 
-
 def model_fields(model, only=None, exclude=None, field_args=None,
                  converter=None):
     """

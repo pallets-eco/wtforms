@@ -45,7 +45,7 @@ def main():
         guide = pep8.StyleGuide(
             ignore=[],
             paths=['wtforms/'],
-            exclude=['wtforms/ext/sqlalchemy', 'wtforms/ext/appengine'],
+            exclude=[],
             max_line_length=130,
         )
         report = guide.check_files()

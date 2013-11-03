@@ -17,7 +17,6 @@ except ImportError:
     has_identity_key = False
 
 
-
 __all__ = (
     'QuerySelectField', 'QuerySelectMultipleField',
 )
