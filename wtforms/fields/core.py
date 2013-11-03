@@ -7,7 +7,7 @@ import itertools
 from wtforms import widgets
 from wtforms.compat import text_type, izip
 from wtforms.validators import StopValidation
-from wtforms.utils import unset_value as unset_value
+from wtforms.utils import unset_value
 
 
 __all__ = (
