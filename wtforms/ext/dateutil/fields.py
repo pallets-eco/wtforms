@@ -15,6 +15,19 @@ __all__ = (
 )
 
 
+# This is a fix to handle issues in dateutil which arose in version 2.2.
+# A bug ticket is filed: https://bugs.launchpad.net/dateutil/+bug/1247643
+try:
+    parser.parse('foobar')
+except TypeError:
+    DATEUTIL_TYPEERROR_ISSUE = True
+except ValueError:
+    DATEUTIL_TYPEERROR_ISSUE = False
+else:
+    import warnings
+    warnings.warn('In testing for a dateutil issue, we ran into a very strange error.', ImportWarning)
+
+
 class DateTimeField(Field):
     """
     DateTimeField represented by a text input, accepts all input text formats
@@ -58,6 +71,14 @@ class DateTimeField(Field):
             try:
                 self.data = parser.parse(date_str, **parse_kwargs)
             except ValueError:
+                self.data = None
+                raise ValidationError(self.gettext('Invalid date/time input'))
+            except TypeError:
+                if not DATEUTIL_TYPEERROR_ISSUE:
+                    raise
+
+                # If we're using dateutil 2.2, then consider it a normal
+                # ValidationError. Hopefully dateutil fixes this issue soon.
                 self.data = None
                 raise ValidationError(self.gettext('Invalid date/time input'))
 

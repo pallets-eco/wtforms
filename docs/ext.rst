@@ -183,7 +183,7 @@ your forms.
 
     def edit_blog_post(request, id):
         post = Post.query.get(id)
-        form = ArticleEdit(obj=post)
+        form = BlogPostEdit(obj=post)
         # Since we didn't provide a query_factory for the 'blog' field, we need
         # to set a dynamic one in the view.
         form.blog.query = Blog.query.filter(Blog.author == request.user).order_by(Blog.name)
@@ -191,7 +191,7 @@ your forms.
 
 .. autoclass:: QuerySelectField(default field args, query_factory=None, get_pk=None, get_label=None, allow_blank=False, blank_text=u'')
 
-.. autoclass:: QuerySelectMultipleField(default field args, query_factory=None, get_pk=None, get_label=None, allow_blank=False, blank_text=u'')
+.. autoclass:: QuerySelectMultipleField(default field args, query_factory=None, get_pk=None, get_label=None)
 
 
 CSRF

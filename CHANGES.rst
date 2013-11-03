@@ -11,6 +11,7 @@ Not yet released.
 - Move CSRF into core. Deprecate `wtforms.ext.csrf`.
 - Fix issue rendering SelectFields with ``value=True``
 - Make `DecimalField` able to use babel locale-based number formatting.
+- Drop Python 3.2 support (Python3 support for 3.3+ only)
 
 Version 1.0.5
 -------------
