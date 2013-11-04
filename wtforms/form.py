@@ -250,7 +250,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
             setattr(self, name, field)
-
+        self._obj = obj
         self.process(formdata, obj, **kwargs)
 
     def __iter__(self):

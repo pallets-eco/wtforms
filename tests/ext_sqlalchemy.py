@@ -375,7 +375,7 @@ class TestObjectLoad(TestCase):
 
     def test_obj_load(self):
         form = self.Form(obj=self.test_subject)
-        self.assertTrue(getattr(form, '_obj', False))
+        self.assertTrue(hasattr(form, '_obj'))
 
     def test_obj_same(self):
         form = self.Form(obj=self.test_subject)
