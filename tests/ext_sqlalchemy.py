@@ -348,7 +348,7 @@ class UniqueValidatorTest(TestCase):
         self.assertFalse(user_form.validate())
 
 class TestObjectLoad(TestCase):
-    """Test case docstring"""
+    """Test for model_form obj kwarg"""
 
     def setUp(self):
         Model = declarative_base()
