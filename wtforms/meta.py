@@ -41,7 +41,7 @@ class DefaultMeta(object):
         """
         render_field allows customization of how widget rendering is done.
 
-        The default implementation calls field.widget(field, **render_kw)
+        The default implementation calls ``field.widget(field, **render_kw)``
         """
         return field.widget(field, **render_kw)
 

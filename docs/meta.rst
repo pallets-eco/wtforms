@@ -27,11 +27,12 @@ the entire API of the `Meta` interface is shown here.
     
     .. autoattribute:: csrf
 
-        Setting `csrf` to True will enable CSRF for the form. The value can 
+        Setting ``csrf`` to `True` will enable CSRF for the form. The value can 
         also be overridden per-instance via instantiation-time customization
         (for example, if csrf needs to be turned off only in a special case)
 
         .. code-block:: python
+
             form = MyForm(request.form, meta={'csrf': False})
 
     .. autoattribute:: csrf_class

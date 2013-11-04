@@ -17,6 +17,7 @@ For a quick introduction, as well as download/installation instructions, check o
    validators
    widgets
    meta
+   csrf
    ext
 
 **Additional Help**

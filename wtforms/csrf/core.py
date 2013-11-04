@@ -1,8 +1,18 @@
 from wtforms.validators import ValidationError
 from wtforms.fields import HiddenField
 
+__all__ = ('CSRFTokenField', 'CSRF')
+
 
 class CSRFTokenField(HiddenField):
+    """
+    A subclass of HiddenField designed for sending the CSRF token that is used
+    for most CSRF protection schemes.
+
+    Notably different from a normal field, this field always renders the
+    current token regardless of the submitted value, and also will not be
+    populated over to object data via populate_obj
+    """
     current_token = None
 
     def __init__(self, *args, **kw):
