@@ -347,6 +347,40 @@ class UniqueValidatorTest(TestCase):
         user_form = self.UserForm(DummyPostData(username=['batman']))
         self.assertFalse(user_form.validate())
 
+class TestObjectLoad(TestCase):
+    """Test for model_form obj kwarg"""
+
+    def setUp(self):
+        Model = declarative_base()
+
+        class Programmer(Model):
+            __tablename__ = "programmer"
+            id = Column(Integer, primary_key=True)
+            name = Column(String(100), nullable=True)
+
+        engine = create_engine('sqlite:///:memory:', echo=False)
+        Session = sessionmaker(bind=engine)
+        self.metadata = Model.metadata
+        self.metadata.create_all(bind=engine)
+        self.sess = Session()
+
+        self.test_subject = Programmer(name='Linus')
+        self.sess.add(self.test_subject)
+        self.sess.commit()
+        
+        self.Form = model_form(Programmer, db_session=self.sess)
+
+    def tearDown(self):
+        pass
+
+    def test_obj_load(self):
+        form = self.Form(obj=self.test_subject)
+        self.assertTrue(hasattr(form, '_obj'))
+
+    def test_obj_same(self):
+        form = self.Form(obj=self.test_subject)
+        assert getattr(form, '_obj', False), 'No _obj found'
+        self.assertEqual(form._obj.name, self.test_subject.name)
 
 if __name__ == '__main__':
     from unittest import main
