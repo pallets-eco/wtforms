@@ -92,6 +92,7 @@ class Field(object):
         self.description = description
         self.filters = filters
         self.flags = Flags()
+        self.form = _form
         self.name = _prefix + _name
         self.short_name = _name
         self.type = type(self).__name__
