@@ -216,7 +216,7 @@ class Required(DataRequired):
 
 class InputRequired(object):
     """
-    Validates that input was provided for this field.
+    Validates that non-trivial input was provided for this field.
 
     Note there is a distinction between this and DataRequired in that
     InputRequired looks that form-input data was provided, and DataRequired

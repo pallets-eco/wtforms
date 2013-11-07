@@ -5,6 +5,8 @@ Version 1.1
 -----------
 Not yet released.
 
+- Fix a bug in ORM modeling which would incorrectly raise a validation
+  error for a valid, but boolean false input (for non-nullable columns).
 - Move i18n into core. Deprecate `wtforms.ext.i18n`.
 - Fix issue rendering SelectFields with value=True
 - Make `DecimalField` able to use babel locale-based number formatting.

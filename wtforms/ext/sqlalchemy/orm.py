@@ -10,7 +10,7 @@ from wtforms import validators
 from wtforms.form import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
-from wtforms.ext.sqlalchemy.validators import Unique
+from wtforms.ext.sqlalchemy.validators import Unique, NotNone
 
 __all__ = (
     'model_fields', 'model_form',
@@ -84,7 +84,7 @@ class ModelConverterBase(object):
             if column.nullable:
                 kwargs['validators'].append(validators.Optional())
             else:
-                kwargs['validators'].append(validators.Required())
+                kwargs['validators'].append(NotNone())
 
             if db_session and column.unique:
                 kwargs['validators'].append(Unique(
