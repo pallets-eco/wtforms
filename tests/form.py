@@ -179,6 +179,13 @@ class FormTest(TestCase):
         MyForm.cherry = MyForm.kiwi
         self.assertEqual([x.name for x in MyForm()], ['cherry', 'kiwi', 'apple', 'strawberry'])
 
+    def test_data_arg(self):
+        data = {'test': 'foo'}
+        form = self.F(data=data)
+        self.assertEqual(form.test.data, 'foo')
+        form = self.F(data=data, test='bar')
+        self.assertEqual(form.test.data, 'bar')
+
 
 class MetaTest(TestCase):
     class F(Form):

@@ -94,7 +94,7 @@ class BaseForm(object):
         for name, field in iteritems(self._fields):
             field.populate_obj(obj, name)
 
-    def process(self, formdata=None, obj=None, **kwargs):
+    def process(self, formdata=None, obj=None, data=None, **kwargs):
         """
         Take form, object data, and keyword arg input and have the fields
         process them.
@@ -106,6 +106,10 @@ class BaseForm(object):
             If `formdata` is empty or not provided, this object is checked for
             attributes matching form field names, which will be used for field
             values.
+        :param data:
+            If provided, must be a dictionary of data. This is only used if
+            `formdata` is empty or not provided and `obj` does not contain
+            an attribute named the same as the field.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
@@ -116,6 +120,11 @@ class BaseForm(object):
                 formdata = WebobInputWrapper(formdata)
             else:
                 raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
+
+        if data is not None:
+            # XXX we want to eventually process 'data' as a new entity.
+            #     Temporarily, this can simply be merged with kwargs.
+            kwargs = dict(data, **kwargs)
 
         for name, field, in iteritems(self._fields):
             if obj is not None and hasattr(obj, name):
@@ -228,7 +237,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     """
     Meta = DefaultMeta
 
-    def __init__(self, formdata=None, obj=None, prefix='', meta=None, **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None, **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
@@ -242,6 +251,12 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
+        :param data:
+            Accept a dictionary of data. This is only used if `formdata` and
+            `obj` are not present.
+        :param meta:
+            If provided, this is a dictionary of values to override attributes
+            on this form's meta instance.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
@@ -257,7 +272,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             # attributes with the same names.
             setattr(self, name, field)
         formdata = self.meta.wrap_formdata(self, formdata)
-        self.process(formdata, obj, **kwargs)
+        self.process(formdata, obj, data=data, **kwargs)
 
     def __iter__(self):
         """ Iterate form fields in their order of definition on the form. """
