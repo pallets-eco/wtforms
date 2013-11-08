@@ -1,3 +1,5 @@
+import warnings
+
 from .. import widgets
 from .core import StringField, BooleanField
 
@@ -12,9 +14,15 @@ class TextField(StringField):
     """
     Legacy alias for StringField
     """
+    def __init__(self, *args, **kw):
+        super(TextField, self).__init__(*args, **kw)
+        warnings.warn(
+            'The TextField alias for StringField has been deprecated and will be removed in WTForms 3.0',
+            DeprecationWarning
+        )
 
 
-class TextAreaField(TextField):
+class TextAreaField(StringField):
     """
     This field represents an HTML ``<textarea>`` and can be used to take
     multi-line input.
@@ -22,16 +30,17 @@ class TextAreaField(TextField):
     widget = widgets.TextArea()
 
 
-class PasswordField(TextField):
+class PasswordField(StringField):
     """
     A StringField, except renders an ``<input type="password">``.
 
-    Also, whatever value is accepted by this field
+    Also, whatever value is accepted by this field is not rendered back
+    to the browser like normal fields.
     """
     widget = widgets.PasswordInput()
 
 
-class FileField(TextField):
+class FileField(StringField):
     """
     Can render a file-upload field.  Will take any passed filename value, if
     any is sent by the browser in the post params.  This field will NOT
@@ -41,7 +50,7 @@ class FileField(TextField):
     widget = widgets.FileInput()
 
 
-class HiddenField(TextField):
+class HiddenField(StringField):
     """
     HiddenField is a convenience for a StringField with a HiddenInput widget.
 

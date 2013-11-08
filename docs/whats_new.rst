@@ -25,6 +25,11 @@ deprecated and will cause a DeprecationWarning and will be removed in WTForms 3.
     :meth:`Meta.get_translations <wtforms.meta.DefaultMeta.get_translations>`
     instead.
 
+* **Fields**
+
+  * The ``TextField`` alias for 
+    :class:`~wtforms.fields.StringField` is deprecated.
+
 * **WTForms Extensions**
   All the extensions are being deprecated. We feel like the extensions we had
   would actually benefit from being pulled outside the WTForms package, 
@@ -32,7 +37,7 @@ deprecated and will cause a DeprecationWarning and will be removed in WTForms 3.
   their companion libraries.
 
   * :mod:`wtforms.ext.appengine` Is deprecated, see `WTForms-Appengine`_
-  * :mod:`wtforms.ext.csrf` csrf is now :doc:`built in <csrf>`
+  * :mod:`wtforms.ext.csrf` CSRF protection is now :doc:`built in <csrf>`
   * :mod:`wtforms.ext.dateutil` Is deprecated, but does not have a new home yet.
   * :mod:`wtforms.ext.django` Is deprecated, except for the templatetag which
     has moved. For fields and model_form, see `WTForms-Django`_
