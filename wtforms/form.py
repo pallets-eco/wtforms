@@ -56,7 +56,7 @@ class BaseForm(object):
             self._fields[name] = field
 
     def __iter__(self):
-        """ Iterate form fields in arbitrary order """
+        """Iterate form fields in creation order."""
         return iter(itervalues(self._fields))
 
     def __contains__(self, name):
@@ -277,10 +277,6 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             setattr(self, name, field)
         formdata = self.meta.wrap_formdata(self, formdata)
         self.process(formdata, obj, data=data, **kwargs)
-
-    def __iter__(self):
-        """ Iterate form fields in their order of definition on the form. """
-        return itervalues(self._fields)
 
     def __setitem__(self, name, value):
         raise TypeError('Fields may not be added to Form instances, only classes.')
