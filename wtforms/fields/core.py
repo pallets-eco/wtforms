@@ -7,6 +7,7 @@ import itertools
 from wtforms import widgets
 from wtforms.compat import text_type, izip
 from wtforms.validators import StopValidation
+from wtforms.utils import unset_value
 
 
 __all__ = (
@@ -14,9 +15,6 @@ __all__ = (
     'FloatField', 'FormField', 'IntegerField', 'RadioField', 'SelectField',
     'SelectMultipleField', 'StringField',
 )
-
-
-_unset_value = object()
 
 
 class DummyTranslations(object):
@@ -51,7 +49,8 @@ class Field(object):
 
     def __init__(self, label=None, validators=None, filters=tuple(),
                  description='', id=None, default=None, widget=None,
-                 _form=None, _name=None, _prefix='', _translations=None):
+                 _form=None, _name=None, _prefix='', _translations=None,
+                 _meta=None):
         """
         Construct a new field.
 
@@ -80,6 +79,9 @@ class Field(object):
         :param _prefix:
             The prefix to prepend to the form name of this field, passed by
             the enclosing form during construction.
+        :param _meta:
+            If provided, this is the 'meta' instance from the form. You usually
+            don't pass this yourself.
 
         If `_form` and `_name` isn't provided, an :class:`UnboundField` will be
         returned instead. Call its :func:`bind` method with a form instance and
@@ -87,6 +89,13 @@ class Field(object):
         """
         if _translations is not None:
             self._translations = _translations
+
+        if _meta is not None:
+            self._form_meta = _meta
+        elif _form is not None:
+            self._form_meta = _form.meta
+        else:
+            raise TypeError("Must provide one of _form or _meta")
 
         self.default = default
         self.description = description
@@ -133,10 +142,14 @@ class Field(object):
         """
         Render this field as HTML, using keyword args as additional attributes.
 
-        Any HTML attribute passed to the method will be added to the tag
-        and entity-escaped properly.
+        By default, field rendering is delegated to the field's widget,
+        passing any keyword arguments from this call along to the widget.
+
+        In all of the WTForms HTML widgets, keyword arguments are turned to
+        HTML attributes, though in theory a widget is free to do anything it
+        wants with the supplied keyword arguments.
         """
-        return self.widget(self, **kwargs)
+        return self._form_meta.render_field(self, kwargs)
 
     def gettext(self, string):
         return self._translations.gettext(string)
@@ -222,7 +235,7 @@ class Field(object):
         """
         pass
 
-    def process(self, formdata, data=_unset_value):
+    def process(self, formdata, data=unset_value):
         """
         Process incoming data, calling process_data, process_formdata as needed,
         and run filters.
@@ -236,7 +249,7 @@ class Field(object):
         inputs.
         """
         self.process_errors = []
-        if data is _unset_value:
+        if data is unset_value:
             try:
                 data = self.default()
             except TypeError:
@@ -396,7 +409,7 @@ class SelectFieldBase(Field):
         raise NotImplementedError()
 
     def __iter__(self):
-        opts = dict(widget=self.option_widget, _name=self.name, _form=None)
+        opts = dict(widget=self.option_widget, _name=self.name, _form=None, _meta=self._form_meta)
         for i, (value, label, checked) in enumerate(self.iter_choices()):
             opt = self._Option(label=label, id='%s-%d' % (self.id, i), **opts)
             opt.process(None, value)
@@ -515,7 +528,7 @@ class LocaleAwareNumberField(Field):
         self.use_locale = use_locale
         if use_locale:
             self.number_format = number_format
-            self.locale = kwargs['_form'].LOCALES[0]
+            self.locale = kwargs['_form'].meta.locales[0]
             self._init_babel()
 
     def _init_babel(self):
@@ -579,12 +592,12 @@ class DecimalField(LocaleAwareNumberField):
     """
     widget = widgets.TextInput()
 
-    def __init__(self, label=None, validators=None, places=_unset_value, rounding=None, **kwargs):
+    def __init__(self, label=None, validators=None, places=unset_value, rounding=None, **kwargs):
         super(DecimalField, self).__init__(label, validators, **kwargs)
-        if self.use_locale and (places is not _unset_value or rounding is not None):
+        if self.use_locale and (places is not unset_value or rounding is not None):
             raise TypeError("When using locale-aware numbers, 'places' and 'rounding' are ignored.")
 
-        if places is _unset_value:
+        if places is unset_value:
             places = 2
         self.places = places
         self.rounding = rounding
@@ -750,8 +763,8 @@ class FormField(Field):
         if validators:
             raise TypeError('FormField does not accept any validators. Instead, define them on the enclosed form.')
 
-    def process(self, formdata, data=_unset_value):
-        if data is _unset_value:
+    def process(self, formdata, data=unset_value):
+        if data is unset_value:
             try:
                 data = self.default()
             except TypeError:
@@ -831,9 +844,9 @@ class FieldList(Field):
         self.last_index = -1
         self._prefix = kwargs.get('_prefix', '')
 
-    def process(self, formdata, data=_unset_value):
+    def process(self, formdata, data=unset_value):
         self.entries = []
-        if data is _unset_value or not data:
+        if data is unset_value or not data:
             try:
                 data = self.default()
             except TypeError:
@@ -851,7 +864,7 @@ class FieldList(Field):
                 try:
                     obj_data = next(idata)
                 except StopIteration:
-                    obj_data = _unset_value
+                    obj_data = unset_value
                 self._add_entry(formdata, obj_data, index=index)
         else:
             for obj_data in data:
@@ -913,18 +926,18 @@ class FieldList(Field):
 
         setattr(obj, name, output)
 
-    def _add_entry(self, formdata=None, data=_unset_value, index=None):
+    def _add_entry(self, formdata=None, data=unset_value, index=None):
         assert not self.max_entries or len(self.entries) < self.max_entries, \
             'You cannot have more than max_entries entries in this FieldList'
         new_index = self.last_index = index or (self.last_index + 1)
         name = '%s-%d' % (self.short_name, new_index)
         id = '%s-%d' % (self.id, new_index)
-        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id)
+        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self._form_meta)
         field.process(formdata, data)
         self.entries.append(field)
         return field
 
-    def append_entry(self, data=_unset_value):
+    def append_entry(self, data=unset_value):
         """
         Create a new entry with optional default data.
 

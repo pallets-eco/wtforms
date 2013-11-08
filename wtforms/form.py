@@ -1,12 +1,16 @@
+import itertools
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
+
 from wtforms.compat import with_metaclass, iteritems, itervalues
-from wtforms import i18n
+from wtforms.meta import DefaultMeta
 
 __all__ = (
     'BaseForm',
     'Form',
 )
-
-_unset_value = object()
 
 
 class BaseForm(object):
@@ -14,28 +18,25 @@ class BaseForm(object):
     Base Form Class.  Provides core behaviour like field construction,
     validation, and data and error proxying.
     """
-    LOCALES = False
 
-    def __init__(self, fields, prefix='', LOCALES=_unset_value):
+    def __init__(self, fields, prefix='', meta=DefaultMeta()):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
-        :param LOCALES:
-            If this is a sequence of locale name strings, this is the list
-            of locales to try via the translation provider, in order.
-            If this is the value `None`, then use the default locale from
-            the environment.
-            To disable built-in translations provider, set `LOCALES=False`.
+        :param meta:
+            A meta instance which is used for configuration and customization
+            of WTForms behaviors.
         """
         if prefix and prefix[-1] not in '-_;:/.':
             prefix += '-'
 
+        self.meta = meta
         self._prefix = prefix
         self._errors = None
-        self._fields = {}
+        self._fields = OrderedDict()
 
         if hasattr(fields, 'iteritems'):
             fields = fields.iteritems()
@@ -43,13 +44,15 @@ class BaseForm(object):
             # Python 3.x
             fields = fields.items()
 
-        if LOCALES is not _unset_value:
-            self.LOCALES = LOCALES
-
         translations = self._get_translations()
+        extra_fields = []
+        if meta.csrf:
+            self._csrf = meta.build_csrf(self)
+            extra_fields.extend(self._csrf.setup_form(self))
 
-        for name, unbound_field in fields:
-            field = unbound_field.bind(form=self, name=name, prefix=prefix, translations=translations)
+        for name, unbound_field in itertools.chain(fields, extra_fields):
+            options = dict(name=name, prefix=prefix, translations=translations)
+            field = meta.bind_field(self, unbound_field, options)
             self._fields[name] = field
 
     def __iter__(self):
@@ -74,14 +77,15 @@ class BaseForm(object):
 
     def _get_translations(self):
         """
+        **Deprecated**.
+        `Form._get_translations` is being removed in WTForms 3.0, use
+        `Meta.get_translations` instead.
+
         Override in subclasses to provide alternate translations factory.
 
         Must return an object that provides gettext() and ngettext() methods.
         """
-        if self.LOCALES is False:
-            return None
-        else:
-            return i18n.get_translations(self.LOCALES)
+        return self.meta.get_translations(self)
 
     def populate_obj(self, obj):
         """
@@ -94,7 +98,7 @@ class BaseForm(object):
         for name, field in iteritems(self._fields):
             field.populate_obj(obj, name)
 
-    def process(self, formdata=None, obj=None, **kwargs):
+    def process(self, formdata=None, obj=None, data=None, **kwargs):
         """
         Take form, object data, and keyword arg input and have the fields
         process them.
@@ -106,6 +110,10 @@ class BaseForm(object):
             If `formdata` is empty or not provided, this object is checked for
             attributes matching form field names, which will be used for field
             values.
+        :param data:
+            If provided, must be a dictionary of data. This is only used if
+            `formdata` is empty or not provided and `obj` does not contain
+            an attribute named the same as the field.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
@@ -116,6 +124,11 @@ class BaseForm(object):
                 formdata = WebobInputWrapper(formdata)
             else:
                 raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
+
+        if data is not None:
+            # XXX we want to eventually process 'data' as a new entity.
+            #     Temporarily, this can simply be merged with kwargs.
+            kwargs = dict(data, **kwargs)
 
         for name, field, in iteritems(self._fields):
             if obj is not None and hasattr(obj, name):
@@ -174,6 +187,7 @@ class FormMeta(type):
     def __init__(cls, name, bases, attrs):
         type.__init__(cls, name, bases, attrs)
         cls._unbound_fields = None
+        cls._wtforms_meta = None
 
     def __call__(cls, *args, **kwargs):
         """
@@ -191,6 +205,12 @@ class FormMeta(type):
             # to ensure a stable sort.
             fields.sort(key=lambda x: (x[1].creation_counter, x[0]))
             cls._unbound_fields = fields
+        if cls._wtforms_meta is None:
+            bases = []
+            for mro_class in cls.__mro__:
+                if 'Meta' in mro_class.__dict__:
+                    bases.append(mro_class.Meta)
+            cls._wtforms_meta = type('Meta', tuple(bases), {})
         return type.__call__(cls, *args, **kwargs)
 
     def __setattr__(cls, name, value):
@@ -219,8 +239,9 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     In addition, form and instance input data are taken at construction time
     and passed to `process()`.
     """
+    Meta = DefaultMeta
 
-    def __init__(self, formdata=None, obj=None, prefix='', LOCALES=_unset_value, **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None, **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
@@ -234,30 +255,32 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         :param prefix:
             If provided, all fields will have their name prefixed with the
             value.
-        :param LOCALES:
-            If provided, this is a sequence of locale name strings that is
-            the priority order of locales to try to find validator message
-            translations at.
-            If `None`, then use the default gettext locale from the environ.
+        :param data:
+            Accept a dictionary of data. This is only used if `formdata` and
+            `obj` are not present.
+        :param meta:
+            If provided, this is a dictionary of values to override attributes
+            on this form's meta instance.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
         """
-        super(Form, self).__init__(self._unbound_fields, prefix=prefix, LOCALES=LOCALES)
+        meta_obj = self._wtforms_meta()
+        if meta is not None and isinstance(meta, dict):
+            meta_obj.update_values(meta)
+        super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
 
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
             setattr(self, name, field)
-
-        self.process(formdata, obj, **kwargs)
+        formdata = self.meta.wrap_formdata(self, formdata)
+        self.process(formdata, obj, data=data, **kwargs)
 
     def __iter__(self):
         """ Iterate form fields in their order of definition on the form. """
-        for name, _ in self._unbound_fields:
-            if name in self._fields:
-                yield self._fields[name]
+        return itervalues(self._fields)
 
     def __setitem__(self, name, value):
         raise TypeError('Fields may not be added to Form instances, only classes.')

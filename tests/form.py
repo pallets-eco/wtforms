@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from unittest import TestCase
 
 from wtforms.form import BaseForm, Form
+from wtforms.meta import DefaultMeta
 from wtforms.fields import TextField, IntegerField
 from wtforms.validators import ValidationError
 
@@ -11,6 +12,7 @@ from wtforms.validators import ValidationError
 class DummyPostData(dict):
     def getlist(self, key):
         return self[key]
+
 
 class BaseFormTest(TestCase):
     def get_form(self, **kwargs):
@@ -117,6 +119,7 @@ class FormMetaTest(TestCase):
         self.assertEqual(A._unbound_fields, [('a', A.a), ('c', A.c)])
         self.assertEqual(B._unbound_fields, [('a', B.a), ('b', B.b), ('c', B.c)])
 
+
 class FormTest(TestCase):
     class F(Form):
         test = TextField()
@@ -175,6 +178,56 @@ class FormTest(TestCase):
         # should be subsequently sorted by name.
         MyForm.cherry = MyForm.kiwi
         self.assertEqual([x.name for x in MyForm()], ['cherry', 'kiwi', 'apple', 'strawberry'])
+
+    def test_data_arg(self):
+        data = {'test': 'foo'}
+        form = self.F(data=data)
+        self.assertEqual(form.test.data, 'foo')
+        form = self.F(data=data, test='bar')
+        self.assertEqual(form.test.data, 'bar')
+
+
+class MetaTest(TestCase):
+    class F(Form):
+        class Meta:
+            foo = 9
+
+        test = TextField()
+
+    class G(Form):
+        class Meta:
+            foo = 12
+            bar = 8
+
+    class H(F, G):
+        class Meta:
+            quux = 42
+
+    class I(F, G):
+        pass
+
+    def test_basic(self):
+        form = self.H()
+        meta = form.meta
+        self.assertEqual(meta.foo, 9)
+        self.assertEqual(meta.bar, 8)
+        self.assertEqual(meta.csrf, False)
+        assert isinstance(meta, self.F.Meta)
+        assert isinstance(meta, self.G.Meta)
+        self.assertEqual(type(meta).__bases__, (
+            self.H.Meta,
+            self.F.Meta,
+            self.G.Meta,
+            DefaultMeta
+        ))
+
+    def test_missing_diamond(self):
+        meta = self.I().meta
+        self.assertEqual(type(meta).__bases__, (
+            self.F.Meta,
+            self.G.Meta,
+            DefaultMeta
+        ))
 
 
 if __name__ == '__main__':

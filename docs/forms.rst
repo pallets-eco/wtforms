@@ -51,6 +51,12 @@ The Form class
         first access it. If you call :meth:`validate` after accessing it, the
         cached result will be invalidated and regenerated on next access.
 
+    .. attribute:: meta
+
+        This is an object which contains various configuration options and also
+        ability to customize the behavior of the form. See the :doc:`meta` doc
+        for more information on what can be customized with the class Meta options.
+
     **Methods**
 
     .. automethod:: validate

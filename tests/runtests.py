@@ -3,12 +3,12 @@ import os
 import sys
 from unittest import defaultTestLoader, TextTestRunner, TestSuite
 
-TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'translations', 'ext_csrf', 'i18n')
+TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'csrf', 'translations', 'ext_csrf', 'i18n')
 
 OPTIONAL_TESTS = ('ext_django.tests', 'ext_sqlalchemy', 'ext_dateutil', 'locale_babel')
 
 
-def make_suite(prefix='', extra=()):
+def make_suite(prefix='', extra=(), force_all=False):
     tests = TESTS + extra
     test_names = list(prefix + x for x in tests)
     suite = TestSuite()
@@ -18,6 +18,9 @@ def make_suite(prefix='', extra=()):
         try:
             suite.addTest(defaultTestLoader.loadTestsFromName(test_name))
         except (ImportError, AttributeError):
+            if force_all:
+                # If force_all, don't let us skip tests
+                raise ImportError('Could not load test module %s and force_all is enabled.' % test_name)
             sys.stderr.write("### Disabled test '%s', dependency not found\n" % name)
     return suite
 
@@ -32,12 +35,20 @@ def additional_tests():
 def main():
     my_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, os.path.abspath(os.path.join(my_dir, '..')))
+
+    from optparse import OptionParser
+    parser = OptionParser()
+    parser.add_option('--with-pep8', action='store_true', dest='with_pep8', default=False)
+    parser.add_option('--force-all', action='store_true', dest='force_all', default=False)
+    parser.add_option('-v', '--verbose', action='count', dest='verbosity', default=0)
+    parser.add_option('-q', '--quiet', action='count', dest='quietness', default=0)
+    options, extra_args = parser.parse_args()
     has_pep8 = False
     try:
         import pep8
         has_pep8 = True
     except ImportError:
-        if '--with-pep8' in sys.argv[1:]:
+        if options.with_pep8:
             sys.stderr.write('# Could not find pep8 library.')
             sys.exit(1)
 
@@ -52,10 +63,9 @@ def main():
         if report.total_errors:
             sys.exit(1)
 
-    extra_tests = tuple(x for x in sys.argv[1:] if '-' not in x)
-    suite = make_suite('', extra_tests)
+    suite = make_suite('', tuple(extra_args), options.force_all)
 
-    runner = TextTestRunner(verbosity=(sys.argv.count('-v') - sys.argv.count('-q') + 1))
+    runner = TextTestRunner(verbosity=options.verbosity - options.quietness + 1)
     result = runner.run(suite)
     sys.exit(not result.wasSuccessful())
 

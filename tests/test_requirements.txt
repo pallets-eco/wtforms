@@ -1,4 +1,6 @@
 SQLAlchemy
 python-dateutil
 pep8
+coverage
+coveralls
 Babel>=1.3

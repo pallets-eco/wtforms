@@ -212,7 +212,7 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
         self.assertTrue(form.validate())
         date = form.data['a']
         assert date.tzinfo
-        self.assertEquals(
+        self.assertEqual(
             timezone._get_timezone_name(date.tzinfo),
             timezone._get_timezone_name(timezone.get_current_timezone()))
 

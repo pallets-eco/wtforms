@@ -61,16 +61,17 @@ with the package. Localizations for several languages are included, and we
 hope that soon there will be more submitted.
 
 To use the builtin translations provider, simply pass locale languages as
-`LOCALES` to the :meth:`constructor <wtforms.form.Form.__init__>`
-of your form::
+locales in the `meta` section of the 
+:meth:`constructor <wtforms.form.Form.__init__>` of your form::
 
-    form = MyForm(request.form, LOCALES=['en_US', 'en'])
+    form = MyForm(request.form, meta={'locales': ['en_US', 'en']})
 
-Alternately, if you are localizing application-wide you can define `LOCALES`
-at class-level in a subclass of Form::
+Alternately, if you are localizing application-wide you can define locales
+at meta-level in a subclass of Form:
 
     class MyBaseForm(Form):
-        LOCALES = ['es_ES', 'es']
+        class Meta:
+            locales = ['es_ES', 'es']
 
 Now simply have all your forms be a subclass of `MyBaseForm` and you will have
 all your default messages output in spanish.

@@ -9,6 +9,8 @@ try:
     extra['extras_require'] = {
         'Locale': ['Babel>=1.3'],
     }
+    if sys.version_info < (2, 7):
+        extra['install_requires'] = ['ordereddict>=1.1']
 except ImportError:
     from distutils.core import setup
     has_setuptools = False
@@ -18,7 +20,7 @@ if sys.version_info >= (3,) and not has_setuptools:
 
 setup(
     name='WTForms',
-    version='1.1dev',
+    version='2.0dev',
     url='http://wtforms.simplecodes.com/',
     license='BSD',
     author='Thomas Johansson, James Crasta',
@@ -40,6 +42,7 @@ setup(
     ],
     packages=[
         'wtforms',
+        'wtforms.csrf',
         'wtforms.fields',
         'wtforms.widgets',
         'wtforms.ext',
