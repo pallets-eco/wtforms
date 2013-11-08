@@ -7,6 +7,8 @@ This is the documentation for WTForms |release|, generated |today|.
 
 For a quick introduction, as well as download/installation instructions, check out the :doc:`crash_course`.
 
+Coming from WTForms 1.x? Check out :doc:`whats_new`.
+
 **API**
 
 .. toctree::
@@ -31,6 +33,7 @@ For a quick introduction, as well as download/installation instructions, check o
    i18n
    changes
    contributing
+   whats_new
 
 **Indices and tables:**
 

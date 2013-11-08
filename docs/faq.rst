@@ -6,19 +6,6 @@ version of this document can always be found on the `WTForms Website`_.
 
 .. _WTForms Website: http://wtforms.simplecodes.com
 
-Why does WTForms copy Django Forms?
------------------------------------
-
-Were we a bit more audacious, we'd probably say Django Forms copied us, but the
-reality is that WTForms and Django's "newforms" were actually written at about
-the same time.
-
-When WTForms was written, our primary goals were to provide HTML customization
-through templates, easily customized validation and a simple, declarative
-ORM-style API. At the time there was no newforms and the other alternatives
-either didn't support HTML generation, were very tightly coupled with a
-single framework, or relied too heavily on an ORM.
-
 
 Does WTForms work with [library here]?
 --------------------------------------

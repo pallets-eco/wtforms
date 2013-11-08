@@ -54,6 +54,7 @@ relationship fields as well as generating forms from models.
 
 Dateutil
 --------
+.. module:: wtforms.ext.dateutil
 .. module:: wtforms.ext.dateutil.fields
 
 For better date-time parsing using the `python-dateutil`_  package,
@@ -380,3 +381,12 @@ request.
         this is how long til a generated token expires. Defaults to
         ``timedelta(minutes=30)``
 
+
+I18n
+----
+.. module:: wtforms.ext.i18n
+
+I18n extension is now deprecated in favor of using the built-in locales 
+support on the form.
+
+TODO document classic I18n
