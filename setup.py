@@ -9,6 +9,8 @@ try:
     extra['extras_require'] = {
         'Locale': ['Babel>=1.3'],
     }
+    if sys.version_info < (2, 7):
+        extra['install_requires'] = ['ordereddict>=1.1']
 except ImportError:
     from distutils.core import setup
     has_setuptools = False

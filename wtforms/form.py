@@ -1,4 +1,8 @@
 import itertools
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 
 from wtforms.compat import with_metaclass, iteritems, itervalues
 from wtforms.meta import DefaultMeta
@@ -32,7 +36,7 @@ class BaseForm(object):
         self.meta = meta
         self._prefix = prefix
         self._errors = None
-        self._fields = {}
+        self._fields = OrderedDict()
 
         if hasattr(fields, 'iteritems'):
             fields = fields.iteritems()
@@ -276,9 +280,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
 
     def __iter__(self):
         """ Iterate form fields in their order of definition on the form. """
-        for name, _ in self._unbound_fields:
-            if name in self._fields:
-                yield self._fields[name]
+        return itervalues(self._fields)
 
     def __setitem__(self, name, value):
         raise TypeError('Fields may not be added to Form instances, only classes.')
