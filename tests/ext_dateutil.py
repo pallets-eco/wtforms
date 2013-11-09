@@ -6,14 +6,8 @@ from unittest import TestCase
 
 from wtforms.form import Form
 from wtforms.ext.dateutil.fields import DateTimeField, DateField
+from tests.common import DummyPostData
 
-
-class DummyPostData(dict):
-    def getlist(self, key):
-        v = self[key]
-        if not isinstance(v, (list, tuple)):
-            v = [v]
-        return v
 
 class DateutilTest(TestCase):
     class F(Form):

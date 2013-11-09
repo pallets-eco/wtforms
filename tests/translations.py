@@ -24,7 +24,7 @@ class MyFormBase(Form):
         return Lower_Translator()
 
 
-class DummyTranslationsTest(TestCase):
+class TranslationsTest(TestCase):
     class F(Form):
         a = TextField(validators=[v.Length(max=5)])
 
@@ -40,7 +40,6 @@ class DummyTranslationsTest(TestCase):
         self.assertEqual(getit(0), "antelopes")
         self.assertEqual(getit(1), "antelope")
         self.assertEqual(getit(2), "antelopes")
-
 
 
 class TranslationsTest(TestCase):

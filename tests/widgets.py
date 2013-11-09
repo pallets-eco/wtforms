@@ -6,6 +6,7 @@ from wtforms.widgets import html_params, Input
 from wtforms.widgets import *
 from wtforms.widgets import html5
 
+
 class DummyField(object):
     def __init__(self, data, name='f', label='', id='', type='TextField'):
         self.data = data

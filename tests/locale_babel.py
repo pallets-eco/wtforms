@@ -6,14 +6,7 @@ from unittest import TestCase
 from wtforms import Form
 from wtforms.fields import DecimalField
 from wtforms.utils import unset_value
-
-
-class DummyPostData(dict):
-    def getlist(self, key):
-        v = self[key]
-        if not isinstance(v, (list, tuple)):
-            v = [v]
-        return v
+from tests.common import DummyPostData
 
 
 class TestLocaleDecimal(TestCase):

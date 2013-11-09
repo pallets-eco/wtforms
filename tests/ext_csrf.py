@@ -5,17 +5,12 @@ from unittest import TestCase
 from wtforms.fields import TextField
 from wtforms.ext.csrf import SecureForm
 from wtforms.ext.csrf.session import SessionSecureForm
+from tests.common import DummyPostData
 
 import datetime
 import hashlib
 import hmac
 
-class DummyPostData(dict):
-    def getlist(self, key):
-        v = self[key]
-        if not isinstance(v, (list, tuple)):
-            v = [v]
-        return v
 
 class InsecureForm(SecureForm):
     def generate_csrf_token(self, csrf_context):

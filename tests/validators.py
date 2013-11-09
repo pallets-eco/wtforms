@@ -8,44 +8,12 @@ from wtforms.validators import (
     input_required, data_required
 )
 from functools import partial
+from tests.common import DummyField, grab_error_message, grab_stop_message
 
-class DummyTranslations(object):
-    def gettext(self, string):
-        return string
-
-    def ngettext(self, singular, plural, n):
-        if n == 1:
-            return singular
-
-        return plural
 
 class DummyForm(dict):
     pass
 
-class DummyField(object):
-    _translations = DummyTranslations()
-    def __init__(self, data, errors=(), raw_data=None):
-        self.data = data
-        self.errors = list(errors)
-        self.raw_data = raw_data
-
-    def gettext(self, string):
-        return self._translations.gettext(string)
-
-    def ngettext(self, singular, plural, n):
-        return self._translations.ngettext(singular, plural, n)
-
-def grab_error_message(callable, form, field):
-    try:
-        callable(form, field)
-    except ValidationError as e:
-        return e.args[0]
-
-def grab_stop_message(callable, form, field):
-    try:
-        callable(form, field)
-    except StopValidation as e:
-        return e.args[0]
 
 class ValidatorsTest(TestCase):
     def setUp(self):
@@ -104,8 +72,8 @@ class ValidatorsTest(TestCase):
 
 
     def test_uuid(self):
-        self.assertEqual(UUID()(self.form, DummyField(
-                    '2bc1c94f-0deb-43e9-92a1-4775189ec9f8')), None)
+        self.assertEqual(UUID()(self.form,
+            DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f8')), None)
         self.assertRaises(ValidationError, UUID(), self.form,
                           DummyField('2bc1c94f-deb-43e9-92a1-4775189ec9f8'))
         self.assertRaises(ValidationError, UUID(), self.form,
@@ -127,7 +95,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(AssertionError, length, min=5, max=2)
 
         # Test new formatting features
-        grab = lambda **k : grab_error_message(length(**k), self.form, field)
+        grab = lambda **k: grab_error_message(length(**k), self.form, field)
         self.assertEqual(grab(min=2, max=5, message='%(min)d and %(max)d'), '2 and 5')
         self.assertTrue('at least 8' in grab(min=8))
         self.assertTrue('longer than 5' in grab(max=5))
@@ -240,7 +208,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(Exception, text_type, message)
         self.assertTrue(equal_to('fieldname', message=message))
         self.assertTrue(length(min=1, message=message))
-        self.assertTrue(NumberRange(1,5, message=message))
+        self.assertTrue(NumberRange(1, 5, message=message))
         self.assertTrue(required(message=message))
         self.assertTrue(regexp('.+', message=message))
         self.assertTrue(email(message=message))

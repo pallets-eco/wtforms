@@ -16,15 +16,13 @@ from wtforms.fields import TextField
 from wtforms.ext.sqlalchemy.orm import model_form, ModelConversionError
 from wtforms.validators import Optional, Required, Length
 from wtforms.ext.sqlalchemy.validators import Unique
+from tests.common import DummyPostData
 
 
 class LazySelect(object):
     def __call__(self, field, **kwargs):
         return list((val, text_type(label), selected) for val, label, selected in field.iter_choices())
 
-class DummyPostData(dict):
-    def getlist(self, key):
-        return self[key]
 
 class Base(object):
     def __init__(self, **kwargs):

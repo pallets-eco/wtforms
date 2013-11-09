@@ -7,11 +7,7 @@ from wtforms.form import BaseForm, Form
 from wtforms.meta import DefaultMeta
 from wtforms.fields import TextField, IntegerField
 from wtforms.validators import ValidationError
-
-
-class DummyPostData(dict):
-    def getlist(self, key):
-        return self[key]
+from tests.common import DummyPostData
 
 
 class BaseFormTest(TestCase):

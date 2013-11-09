@@ -13,16 +13,9 @@ from wtforms.fields import Label, Field, SelectFieldBase, html5
 from wtforms.form import Form
 from wtforms.compat import text_type
 from wtforms.utils import unset_value
+from tests.common import DummyPostData
 
 PYTHON_VERSION = sys.version_info
-
-
-class DummyPostData(dict):
-    def getlist(self, key):
-        v = self[key]
-        if not isinstance(v, (list, tuple)):
-            v = [v]
-        return v
 
 
 class AttrDict(object):

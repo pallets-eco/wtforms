@@ -8,18 +8,11 @@ from wtforms.fields import TextField
 from wtforms.form import Form
 from wtforms.csrf.core import CSRF
 from wtforms.csrf.session import SessionCSRF
+from tests.common import DummyPostData
 
 import datetime
 import hashlib
 import hmac
-
-
-class DummyPostData(dict):
-    def getlist(self, key):
-        v = self[key]
-        if not isinstance(v, (list, tuple)):
-            v = [v]
-        return v
 
 
 class DummyCSRF(CSRF):
