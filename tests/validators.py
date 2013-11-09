@@ -220,13 +220,13 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValueError, AnyOf(['a', 'b', 'c']), self.form, DummyField(None))
 
         # Anyof in 1.0.1 failed on numbers for formatting the error with a TypeError
-        check_num = AnyOf([1,2,3])
+        check_num = AnyOf([1, 2, 3])
         self.assertEqual(check_num(self.form, DummyField(2)), None)
         self.assertRaises(ValueError, check_num, self.form, DummyField(4))
 
         # Test values_formatter
         formatter = lambda values: '::'.join(text_type(x) for x in reversed(values))
-        checker = AnyOf([7,8,9], message='test %(values)s', values_formatter=formatter)
+        checker = AnyOf([7, 8, 9], message='test %(values)s', values_formatter=formatter)
         self.assertEqual(grab_error_message(checker, self.form, DummyField(4)), 'test 9::8::7')
 
     def test_none_of(self):

@@ -28,6 +28,9 @@ class TranslationsTest(TestCase):
     class F(Form):
         a = TextField(validators=[v.Length(max=5)])
 
+    class F2(MyFormBase):
+        a = TextField('', [v.Length(max=5)])
+
     def setUp(self):
         self.a = self.F().a
 
@@ -41,12 +44,10 @@ class TranslationsTest(TestCase):
         self.assertEqual(getit(1), "antelope")
         self.assertEqual(getit(2), "antelopes")
 
-
-class TranslationsTest(TestCase):
-    class F(MyFormBase):
-        a = TextField('', [v.Length(max=5)])
-
     def test_validator_translation(self):
-        form = self.F(a='hellobye')
+        form = self.F2(a='hellobye')
         self.assertFalse(form.validate())
         self.assertEqual(form.a.errors[0], 'field cannot be longer than 5 characters.')
+        form = self.F(a='hellobye')
+        self.assertFalse(form.validate())
+        self.assertEqual(form.a.errors[0], 'Field cannot be longer than 5 characters.')

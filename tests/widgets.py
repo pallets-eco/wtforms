@@ -15,11 +15,11 @@ class DummyField(object):
         self.id = id
         self.type = type
 
-    _value       = lambda x: x.data
-    __unicode__  = lambda x: x.data
-    __str__      = lambda x: x.data
-    __call__     = lambda x, **k: x.data
-    __iter__     = lambda x: iter(x.data)
+    _value = lambda x: x.data
+    __unicode__ = lambda x: x.data
+    __str__ = lambda x: x.data
+    __call__ = lambda x, **k: x.data
+    __iter__ = lambda x: iter(x.data)
     iter_choices = lambda x: iter(x.data)
 
 
@@ -52,7 +52,10 @@ class TableWidgetTest(TestCase):
             DummyField('hidden2', type='HiddenField'),
         ]
         field = DummyField(inner_fields, id='hai')
-        self.assertEqual(TableWidget()(field), '<table id="hai"><tr><th>lfoo</th><td>hidden1foo</td></tr><tr><th>lbar</th><td>bar</td></tr></table>hidden2')
+        self.assertEqual(
+            TableWidget()(field),
+            '<table id="hai"><tr><th>lfoo</th><td>hidden1foo</td></tr><tr><th>lbar</th><td>bar</td></tr></table>hidden2'
+        )
 
 
 class BasicWidgetsTest(TestCase):
@@ -88,7 +91,7 @@ class BasicWidgetsTest(TestCase):
         self.assertTrue('checked' not in CheckboxInput()(field2))
 
     def test_radio_input(self):
-        pass # TODO
+        pass  # TODO
 
     def test_textarea(self):
         # Make sure textareas escape properly and render properly
@@ -100,10 +103,14 @@ class SelectTest(TestCase):
     field = DummyField([('foo', 'lfoo', True), ('bar', 'lbar', False)])
 
     def test(self):
-        self.assertEqual(Select()(self.field),
-            '<select id="" name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>')
-        self.assertEqual(Select(multiple=True)(self.field),
-            '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>')
+        self.assertEqual(
+            Select()(self.field),
+            '<select id="" name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>'
+        )
+        self.assertEqual(
+            Select(multiple=True)(self.field),
+            '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>'
+        )
 
     def test_render_option(self):
         # value, label, selected
@@ -124,13 +131,13 @@ class HTML5Test(TestCase):
         i1 = html5.NumberInput(step='any')
         self.assertEqual(i1(self.field), '<input id="id" name="bar" step="any" type="number" value="42">')
         i2 = html5.NumberInput(step=2)
-        self.assertEqual(i1(self.field, step=3), '<input id="id" name="bar" step="3" type="number" value="42">')
+        self.assertEqual(i2(self.field, step=3), '<input id="id" name="bar" step="3" type="number" value="42">')
 
     def test_range(self):
         i1 = html5.RangeInput(step='any')
         self.assertEqual(i1(self.field), '<input id="id" name="bar" step="any" type="range" value="42">')
         i2 = html5.RangeInput(step=2)
-        self.assertEqual(i1(self.field, step=3), '<input id="id" name="bar" step="3" type="range" value="42">')
+        self.assertEqual(i2(self.field, step=3), '<input id="id" name="bar" step="3" type="range" value="42">')
 
 
 if __name__ == '__main__':

@@ -18,9 +18,11 @@ class InsecureForm(SecureForm):
 
     a = TextField()
 
+
 class FakeSessionRequest(object):
     def __init__(self, session):
         self.session = session
+
 
 class StupidObject(object):
     a = None
@@ -68,7 +70,6 @@ class SecureFormTest(TestCase):
         self.assertEqual(form.csrf_token._value(), 'test')
 
 
-
 class SessionSecureFormTest(TestCase):
     class SSF(SessionSecureForm):
         SECRET_KEY = 'abcdefghijklmnop'.encode('ascii')
@@ -86,6 +87,7 @@ class SessionSecureFormTest(TestCase):
         self.assertRaises(TypeError, self.SSF)
         session = {}
         form = self.SSF(csrf_context=FakeSessionRequest(session))
+        assert 'csrf_token' in form
         assert 'csrf' in session
 
     def test_timestamped(self):
@@ -97,7 +99,7 @@ class SessionSecureFormTest(TestCase):
         assert form.csrf_token._value() != session['csrf']
         assert not form.validate()
         self.assertEqual(form.csrf_token.errors[0], 'CSRF failed')
-        good_token = form.csrf_token._value()
+        #good_token = form.csrf_token._value()
 
         # Now test a valid CSRF with invalid timestamp
         evil_form = self.BadTimeSSF(csrf_context=session)

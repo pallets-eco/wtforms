@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from __future__ import unicode_literals
 
 from unittest import TestCase
@@ -106,10 +105,13 @@ class FormMetaTest(TestCase):
         class A(Form):
             a = TextField()
             c = TextField()
+
         class B(A):
             b = TextField()
             c = TextField()
-        A(); B()
+        A()
+        B()
+
         self.assertTrue(A.a is B.a)
         self.assertTrue(A.c is not B.c)
         self.assertEqual(A._unbound_fields, [('a', A.a), ('c', A.c)])
@@ -119,6 +121,7 @@ class FormMetaTest(TestCase):
 class FormTest(TestCase):
     class F(Form):
         test = TextField()
+
         def validate_test(form, field):
             if field.data != 'foobar':
                 raise ValidationError('error')
@@ -224,8 +227,3 @@ class MetaTest(TestCase):
             self.G.Meta,
             DefaultMeta
         ))
-
-
-if __name__ == '__main__':
-    from unittest import main
-    main()

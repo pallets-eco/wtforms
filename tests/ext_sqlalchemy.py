@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from __future__ import unicode_literals
 
 from sqlalchemy import create_engine, ForeignKey
@@ -29,6 +28,7 @@ class Base(object):
         for k, v in iteritems(kwargs):
             setattr(self, k, v)
 
+
 class TestBase(TestCase):
     def _do_tables(self, mapper, engine):
         metadata = MetaData()
@@ -57,7 +57,7 @@ class TestBase(TestCase):
         metadata.create_all(bind=engine)
 
     def _fill(self, sess):
-        for i, n in [(1, 'apple'),(2, 'banana')]:
+        for i, n in [(1, 'apple'), (2, 'banana')]:
             s = self.Test(id=i, name=n)
             p = self.PKTest(foobar='hello%s' % (i, ), baz=n)
             sess.add(s)
@@ -76,6 +76,7 @@ class QuerySelectFieldTest(TestBase):
     def test_without_factory(self):
         sess = self.Session()
         self._fill(sess)
+
         class F(Form):
             a = QuerySelectField(get_label='name', widget=LazySelect(), get_pk=lambda x: x.id)
         form = F(DummyPostData(a=['1']))
@@ -158,6 +159,7 @@ class QuerySelectMultipleFieldTest(TestBase):
 
     def test_single_default_value(self):
         first_test = self.sess.query(self.Test).get(2)
+
         class F(Form):
             a = QuerySelectMultipleField(get_label='name', default=[first_test],
                 widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
@@ -344,8 +346,3 @@ class UniqueValidatorTest(TestCase):
     def test_wrong(self):
         user_form = self.UserForm(DummyPostData(username=['batman']))
         self.assertFalse(user_form.validate())
-
-
-if __name__ == '__main__':
-    from unittest import main
-    main()

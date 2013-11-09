@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from __future__ import unicode_literals
 
 import sys
@@ -71,7 +70,6 @@ class LabelTest(TestCase):
         label = Label('test', 'Caption')
         self.assertEqual(label(for_='foo'), """<label for="foo">Caption</label>""")
         self.assertEqual(label(**{'for': 'bar'}), """<label for="bar">Caption</label>""")
-
 
 
 class FlagsTest(TestCase):
@@ -219,7 +217,7 @@ class PrePostValidationTest(TestCase):
 
 class SelectFieldTest(TestCase):
     class F(Form):
-        a = SelectField(choices=[('a', 'hello'), ('btest','bye')], default='a')
+        a = SelectField(choices=[('a', 'hello'), ('btest', 'bye')], default='a')
         b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int, option_widget=widgets.TextInput())
 
     def test_defaults(self):
@@ -247,8 +245,10 @@ class SelectFieldTest(TestCase):
         form = self.F()
         first_option = list(form.a)[0]
         self.assertTrue(isinstance(first_option, form.a._Option))
-        self.assertEqual(list(text_type(x) for x in form.a), ['<option selected value="a">hello</option>',
-                                                            '<option value="btest">bye</option>'])
+        self.assertEqual(
+            list(text_type(x) for x in form.a),
+            ['<option selected value="a">hello</option>', '<option value="btest">bye</option>']
+        )
         self.assertTrue(isinstance(first_option.widget, widgets.Option))
         self.assertTrue(isinstance(list(form.b)[0].widget, widgets.TextInput))
         self.assertEqual(first_option(disabled=True), '<option disabled selected value="a">hello</option>')
@@ -264,7 +264,7 @@ class SelectFieldTest(TestCase):
 
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
-        a = SelectMultipleField(choices=[('a', 'hello'), ('b','bye'), ('c', 'something')], default=('a', ))
+        a = SelectMultipleField(choices=[('a', 'hello'), ('b', 'bye'), ('c', 'something')], default=('a', ))
         b = SelectMultipleField(coerce=int, choices=[(1, 'A'), (2, 'B'), (3, 'C')], default=("1", "3"))
 
     def test_defaults(self):
@@ -294,12 +294,12 @@ class SelectMultipleFieldTest(TestCase):
         self.assertEqual(form.b.data, None)
         form = self.F(DummyPostData(b=['fake']))
         assert not form.validate()
-        self.assertEqual(form.b.data, [1,3])
+        self.assertEqual(form.b.data, [1, 3])
 
 
 class RadioFieldTest(TestCase):
     class F(Form):
-        a = RadioField(choices=[('a', 'hello'), ('b','bye')], default='a')
+        a = RadioField(choices=[('a', 'hello'), ('b', 'bye')], default='a')
         b = RadioField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int)
 
     def test(self):
@@ -318,6 +318,7 @@ class RadioFieldTest(TestCase):
         form = F()
         self.assertEqual(form.a(), '<ul id="a"><li><input id="a-0" name="a" type="radio" value="True"> <label for="a-0">yes</label></li><li><input checked id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>')
 
+
 class TextFieldTest(TestCase):
     class F(Form):
         a = TextField()
@@ -331,6 +332,7 @@ class TextFieldTest(TestCase):
         self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="hello">""")
         form = self.F(DummyPostData(b=['hello']))
         self.assertEqual(form.a.data, '')
+
 
 class HiddenFieldTest(TestCase):
     class F(Form):
@@ -537,14 +539,11 @@ class DateTimeFieldTest(TestCase):
         self.assertFalse(form.validate())
         self.assertEqual(form.a.errors[0], 'Not a valid datetime value')
 
-        form = self.F(a=d,b=d)
+        form = self.F(a=d, b=d)
         self.assertTrue(form.validate())
         self.assertEqual(form.a._value(), '2008-05-05 04:30:00')
 
     def test_microseconds(self):
-        if PYTHON_VERSION < (2, 6):
-            return # Microsecond formatting support was only added in 2.6
-
         d = datetime(2011, 5, 7, 3, 23, 14, 424200)
         F = make_form(a=DateTimeField(format='%Y-%m-%d %H:%M:%S.%f'))
         form = F(DummyPostData(a=['2011-05-07 03:23:14.4242']))
@@ -562,14 +561,14 @@ class SubmitFieldTest(TestCase):
 class FormFieldTest(TestCase):
     def setUp(self):
         F = make_form(
-            a = TextField(validators=[validators.required()]),
-            b = TextField(),
+            a=TextField(validators=[validators.required()]),
+            b=TextField(),
         )
-        self.F1 = make_form('F1', a = FormField(F))
-        self.F2 = make_form('F2', a = FormField(F, separator='::'))
+        self.F1 = make_form('F1', a=FormField(F))
+        self.F2 = make_form('F2', a=FormField(F, separator='::'))
 
     def test_formdata(self):
-        form = self.F1(DummyPostData({'a-a':['moo']}))
+        form = self.F1(DummyPostData({'a-a': ['moo']}))
         self.assertEqual(form.a.form.a.name, 'a-a')
         self.assertEqual(form.a['a'].data, 'moo')
         self.assertEqual(form.a['b'].data, '')
@@ -603,12 +602,14 @@ class FormFieldTest(TestCase):
         class A(Form):
             a = FormField(self.F1, validators=[validators.required()])
         self.assertRaises(TypeError, A)
+
         class B(Form):
             a = FormField(self.F1, filters=[lambda x: x])
         self.assertRaises(TypeError, B)
 
         class C(Form):
             a = FormField(self.F1)
+
             def validate_a(form, field):
                 pass
         form = C()
@@ -620,7 +621,6 @@ class FormFieldTest(TestCase):
         form = self.F1()
         self.assertRaises(TypeError, form.populate_obj, obj)
         form.populate_obj(obj2)
-
 
 
 class FieldListTest(TestCase):
@@ -655,7 +655,7 @@ class FieldListTest(TestCase):
     def test_enclosed_subform(self):
         make_inner = lambda: AttrDict(a=None)
         F = make_form(
-            a = FieldList(FormField(make_form('FChild', a=self.t), default=make_inner))
+            a=FieldList(FormField(make_form('FChild', a=self.t), default=make_inner))
         )
         data = [{'a': 'hello'}]
         form = F(a=data)
@@ -684,7 +684,7 @@ class FieldListTest(TestCase):
         self.assertRaises(TypeError, form.populate_obj, obj2)
 
     def test_entry_management(self):
-        F = make_form(a = FieldList(self.t))
+        F = make_form(a=FieldList(self.t))
         a = F(a=['hello', 'bye']).a
         self.assertEqual(a.pop_entry().name, 'a-1')
         self.assertEqual(a.data, ['hello'])
@@ -696,7 +696,7 @@ class FieldListTest(TestCase):
         self.assertRaises(IndexError, a.pop_entry)
 
     def test_min_max_entries(self):
-        F = make_form(a = FieldList(self.t, min_entries=1, max_entries=3))
+        F = make_form(a=FieldList(self.t, min_entries=1, max_entries=3))
         a = F().a
         self.assertEqual(len(a), 1)
         self.assertEqual(a[0].data, None)
@@ -714,7 +714,7 @@ class FieldListTest(TestCase):
             elif len(field.data) > 2:
                 raise ValueError('too many')
 
-        F = make_form(a = FieldList(self.t, validators=[validator]))
+        F = make_form(a=FieldList(self.t, validators=[validator]))
 
         # Case 1: length checking validators work as expected.
         fdata = DummyPostData({'a-0': ['hello'], 'a-1': ['bye'], 'a-2': ['test3']})
@@ -819,8 +819,3 @@ class HTML5FieldsTest(TestCase):
             if field.data != item['data']:
                 tmpl = 'Field {key} data mismatch: {field.data!r} != {data!r}'
                 raise AssertionError(tmpl.format(field=field, **item))
-
-
-if __name__ == '__main__':
-    from unittest import main
-    main()
