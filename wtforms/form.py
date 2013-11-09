@@ -38,10 +38,7 @@ class BaseForm(object):
         self._errors = None
         self._fields = OrderedDict()
 
-        if hasattr(fields, 'iteritems'):
-            fields = fields.iteritems()
-        elif hasattr(fields, 'items'):
-            # Python 3.x
+        if hasattr(fields, 'items'):
             fields = fields.items()
 
         translations = self._get_translations()
