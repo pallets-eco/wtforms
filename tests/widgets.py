@@ -60,7 +60,8 @@ class TableWidgetTest(TestCase):
 class BasicWidgetsTest(TestCase):
     """Test most of the basic input widget types"""
 
-    field = DummyField('foo', name='bar', label='label', id='id')
+    def setUp(self):
+        self.field = DummyField('foo', name='bar', label='label', id='id')
 
     def test_input_type(self):
         a = Input()
@@ -90,7 +91,11 @@ class BasicWidgetsTest(TestCase):
         self.assertTrue('checked' not in CheckboxInput()(field2))
 
     def test_radio_input(self):
-        pass  # TODO
+        self.field.checked = True
+        expected = '<input checked id="id" name="bar" type="radio" value="foo">'
+        self.assertEqual(RadioInput()(self.field), expected)
+        self.field.checked = False
+        self.assertEqual(RadioInput()(self.field), expected.replace(' checked', ''))
 
     def test_textarea(self):
         # Make sure textareas escape properly and render properly
