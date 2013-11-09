@@ -22,11 +22,16 @@ def get_builtin_gnu_translations(languages=None):
     return gettext.translation('wtforms', messages_path(), languages)
 
 
-def get_translations(languages=None):
+def get_translations(languages=None, getter=get_builtin_gnu_translations):
     """
-    Get a WTForms translation object which wraps the builtin GNUTranslations object.
+    Get a WTForms translation object which wraps a low-level translations object.
+
+    :param languages:
+        A sequence of languages to try, in order.
+    :param getter:
+        A single-argument callable which returns a low-level translations object.
     """
-    translations = get_builtin_gnu_translations(languages)
+    translations = getter(languages)
 
     if hasattr(translations, 'ugettext'):
         return DefaultTranslations(translations)
@@ -48,3 +53,20 @@ class DefaultTranslations(object):
 
     def ngettext(self, singular, plural, n):
         return self.translations.ungettext(singular, plural, n)
+
+
+class DummyTranslations(object):
+    """
+    A translations object which simply returns unmodified strings.
+
+    This is typically used when translations are disabled or if no valid
+    translations provider can be found.
+    """
+    def gettext(self, string):
+        return string
+
+    def ngettext(self, singular, plural, n):
+        if n == 1:
+            return singular
+
+        return plural

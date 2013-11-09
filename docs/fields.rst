@@ -110,6 +110,12 @@ The Field base class
         auto-escaped. To allow for printing a bare field without calling it,
         all WTForms fields implement this method as well.
 
+    **Message Translations**
+
+    .. automethod:: gettext
+
+    .. automethod:: ngettext
+
     **Properties**
 
     .. attribute:: name

@@ -6,6 +6,7 @@ import itertools
 
 from wtforms import widgets
 from wtforms.compat import text_type, izip
+from wtforms.i18n import DummyTranslations
 from wtforms.validators import StopValidation
 from wtforms.utils import unset_value
 
@@ -15,17 +16,6 @@ __all__ = (
     'FloatField', 'FormField', 'IntegerField', 'RadioField', 'SelectField',
     'SelectMultipleField', 'StringField',
 )
-
-
-class DummyTranslations(object):
-    def gettext(self, string):
-        return string
-
-    def ngettext(self, singular, plural, n):
-        if n == 1:
-            return singular
-
-        return plural
 
 
 class Field(object):
@@ -79,6 +69,10 @@ class Field(object):
         :param _prefix:
             The prefix to prepend to the form name of this field, passed by
             the enclosing form during construction.
+        :param _translations:
+            A translations object providing message translations. Usually
+            passed by the enclosing form during construction. See
+            :doc:`I18n docs <i18n>` for information on message translations.
         :param _meta:
             If provided, this is the 'meta' instance from the form. You usually
             don't pass this yourself.
@@ -155,9 +149,24 @@ class Field(object):
         return self.meta.render_field(self, kwargs)
 
     def gettext(self, string):
+        """
+        Get a translation for the given message.
+
+        This proxies for the internal translations object.
+
+        :param string: A unicode string to be translated.
+        :return: A unicode string which is the translated output.
+        """
         return self._translations.gettext(string)
 
     def ngettext(self, singular, plural, n):
+        """
+        Get a translation for a message which can be pluralized.
+
+        :param str singular: The singular form of the message.
+        :param str plural: The plural form of the message.
+        :param int n: The number of elements this message is referring to
+        """
         return self._translations.ngettext(singular, plural, n)
 
     def validate(self, form, extra_validators=tuple()):
