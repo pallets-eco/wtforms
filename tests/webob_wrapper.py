@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from unittest import TestCase
 from wtforms.form import BaseForm, WebobInputWrapper
 from wtforms.utils import unset_value
@@ -71,15 +70,9 @@ class WebobWrapperTest(TestCase):
         formdata = WebobInputWrapper(self.filled_mdict)
         self.assertTrue(formdata)
         self.assertEqual(len(formdata), 3)
-        self.assertEqual(list(formdata), ['a','b','a'])
+        self.assertEqual(list(formdata), ['a', 'b', 'a'])
         self.assertTrue('b' in formdata)
         self.assertTrue('fake' not in formdata)
         self.assertEqual(formdata.getlist('a'), ['Apple', 'Cherry'])
         self.assertEqual(formdata.getlist('b'), ['Banana'])
         self.assertEqual(formdata.getlist('fake'), [])
-
-
-if __name__ == '__main__':
-    from unittest import main
-    main()
-

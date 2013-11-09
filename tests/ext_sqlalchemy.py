@@ -33,12 +33,14 @@ class TestBase(TestCase):
     def _do_tables(self, mapper, engine):
         metadata = MetaData()
 
-        test_table = Table('test', metadata,
+        test_table = Table(
+            'test', metadata,
             Column('id', Integer, primary_key=True, nullable=False),
             Column('name', String, nullable=False),
         )
 
-        pk_test_table = Table('pk_test', metadata,
+        pk_test_table = Table(
+            'pk_test', metadata,
             Column('foobar', String, primary_key=True, nullable=False),
             Column('baz', String, nullable=False),
         )
@@ -161,8 +163,10 @@ class QuerySelectMultipleFieldTest(TestBase):
         first_test = self.sess.query(self.Test).get(2)
 
         class F(Form):
-            a = QuerySelectMultipleField(get_label='name', default=[first_test],
-                widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test))
+            a = QuerySelectMultipleField(
+                get_label='name', default=[first_test],
+                widget=LazySelect(), query_factory=lambda: self.sess.query(self.Test)
+            )
         form = F()
         self.assertEqual([v.id for v in form.a.data], [2])
         self.assertEqual(form.a(), [('1', 'apple', False), ('2', 'banana', True)])
@@ -219,18 +223,18 @@ class ModelFormTest(TestCase):
 
     def test_nullable_field(self):
         student_form = model_form(self.Student, self.sess)()
-        self.assertTrue(issubclass(Optional,
-            student_form._fields['dob'].validators[0].__class__))
+        v_class = student_form._fields['dob'].validators[0].__class__
+        assert issubclass(Optional, v_class)
 
     def test_required_field(self):
         student_form = model_form(self.Student, self.sess)()
-        self.assertTrue(issubclass(Required,
-            student_form._fields['full_name'].validators[0].__class__))
+        v_class = student_form._fields['full_name'].validators[0].__class__
+        assert issubclass(Required, v_class)
 
     def test_unique_field(self):
         student_form = model_form(self.Student, self.sess)()
-        self.assertTrue(issubclass(Unique,
-            student_form._fields['full_name'].validators[1].__class__))
+        v_class = student_form._fields['full_name'].validators[1].__class__
+        assert issubclass(Unique, v_class)
 
     def test_include_pk(self):
         form_class = model_form(self.Student, self.sess, exclude_pk=False)
@@ -252,18 +256,18 @@ class ModelFormTest(TestCase):
 
     def test_convert_many_to_one(self):
         student_form = model_form(self.Student, self.sess)()
-        self.assertTrue(issubclass(QuerySelectField,
-            student_form._fields['current_school'].__class__))
+        f_class = student_form._fields['current_school'].__class__
+        assert issubclass(QuerySelectField, f_class)
 
     def test_convert_one_to_many(self):
         school_form = model_form(self.School, self.sess)()
-        self.assertTrue(issubclass(QuerySelectMultipleField,
-            school_form._fields['students'].__class__))
+        f_class = school_form._fields['students'].__class__
+        assert issubclass(QuerySelectMultipleField, f_class)
 
     def test_convert_many_to_many(self):
         student_form = model_form(self.Student, self.sess)()
-        self.assertTrue(issubclass(QuerySelectMultipleField,
-            student_form._fields['courses'].__class__))
+        f_class = student_form._fields['courses'].__class__
+        assert issubclass(QuerySelectMultipleField, f_class)
 
     def test_convert_basic(self):
         self.assertRaises(TypeError, model_form, None)

@@ -110,7 +110,6 @@ class SessionSecureFormTest(TestCase):
         assert not form.validate()
         self.assertEqual(form.csrf_token.errors[0], 'CSRF token expired')
 
-
     def test_notime(self):
         session = {}
         form = self.NoTimeSSF(csrf_context=session)

@@ -116,7 +116,6 @@ class SessionCSRFTest(TestCase):
         form = self._test_phase1(self.F, session)
         self._test_phase2(self.F, session, form.csrf_token.current_token)
 
-
     def test_detailed_expected_values(self):
         """
         A full test with the date and time pinned so we get deterministic output.
@@ -148,7 +147,6 @@ class SessionCSRFTest(TestCase):
             bad_token = '20130115084800##e399e3a6a84860762723672b694134507ba21b59'
             form = self._test_phase2(self.Pinned, session, bad_token, False)
             assert not form.validate()
-
 
     def _test_phase1(self, form_class, session):
         form = form_class(meta={'csrf_context': session})

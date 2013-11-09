@@ -2,7 +2,8 @@
 
 from __future__ import unicode_literals
 
-import sys, os
+import sys
+import os
 TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, TESTS_DIR)
 
@@ -16,13 +17,13 @@ sys.path.insert(0, TESTS_DIR)
 
 from django.conf import settings
 settings.configure(
-    INSTALLED_APPS = ['ext_django', 'wtforms.ext.django'],
+    INSTALLED_APPS=['ext_django', 'wtforms.ext.django'],
     # Django 1.0 to 1.3
-    DATABASE_ENGINE = 'sqlite3',
-    TEST_DATABASE_NAME = ':memory:',
+    DATABASE_ENGINE='sqlite3',
+    TEST_DATABASE_NAME=':memory:',
 
     # Django 1.4
-    DATABASES = {
+    DATABASES={
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': ':memory:'
@@ -52,11 +53,13 @@ try:
 except ImportError:
     has_pytz = False
 
+
 def contains_validator(field, v_type):
     for v in field.validators:
         if isinstance(v, v_type):
             return True
     return False
+
 
 def lazy_select(field, **kwargs):
     output = []
@@ -65,9 +68,11 @@ def lazy_select(field, **kwargs):
         output.append('%s:%s:%s' % (s, text_type(val), text_type(label)))
     return tuple(output)
 
+
 class DummyPostData(dict):
     def getlist(self, key):
         return self[key]
+
 
 class TemplateTagsTest(TestCase):
     load_tag = '{% load wtforms %}'
@@ -78,7 +83,7 @@ class TemplateTagsTest(TestCase):
 
     def _render(self, source):
         t = Template(self.load_tag + source)
-        return t.render(Context({'form': self.F(), 'a': self.F().a,  'someclass': "CLASSVAL>!"}))
+        return t.render(Context({'form': self.F(), 'a': self.F().a, 'someclass': "CLASSVAL>!"}))
 
     def test_simple_print(self):
         self.assertEqual(self._render('{% autoescape off %}{{ form.a }}{% endautoescape %}'), '<input id="a" name="a" type="text" value="">')
@@ -87,11 +92,14 @@ class TemplateTagsTest(TestCase):
 
     def test_form_field(self):
         self.assertEqual(self._render('{% form_field form.a %}'), '<input id="a" name="a" type="text" value="">')
-        self.assertEqual(self._render('{% form_field a class=someclass onclick="alert()" %}'),
-                         '<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="">')
+        self.assertEqual(
+            self._render('{% form_field a class=someclass onclick="alert()" %}'),
+            '<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="">'
+        )
+
 
 class ModelFormTest(TestCase):
-    F = model_form(test_models.User, exclude=['id'], field_args = {
+    F = model_form(test_models.User, exclude=['id'], field_args={
         'posts': {
             'validators': [validators.NumberRange(min=4, max=7)],
             'description': 'Test'
@@ -145,12 +153,14 @@ class ModelFormTest(TestCase):
         assert isinstance(field, fields.SelectField)
         self.assertEqual(len(field.choices), 3)
 
+
 class QuerySetSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
 
     def setUp(self):
-        from django.core.management import call_command
+        #from django.core.management import call_command
         self.queryset = test_models.Group.objects.all()
+
         class F(Form):
             a = QuerySetSelectField(allow_blank=True, get_label='name', widget=lazy_select)
             b = QuerySetSelectField(queryset=self.queryset, widget=lazy_select)
@@ -190,6 +200,7 @@ class QuerySetSelectFieldTest(DjangoTestCase):
         form = TestForm()
         self.assertEqual(form.a(), ('N:1:USERS', 'N:2:ADMINS'))
 
+
 class ModelSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
 
@@ -199,6 +210,7 @@ class ModelSelectFieldTest(DjangoTestCase):
     def test(self):
         form = self.F()
         self.assertEqual(form.a(), ('N:1:Users(1)', 'N:2:Admins(2)'))
+
 
 class DateTimeFieldTimezoneTest(DjangoTestCase):
 

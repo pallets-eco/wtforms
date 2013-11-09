@@ -307,16 +307,38 @@ class RadioFieldTest(TestCase):
         self.assertEqual(form.a.data, 'a')
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.validate(), False)
-        self.assertEqual(form.a(), """<ul id="a"><li><input checked id="a-0" name="a" type="radio" value="a"> <label for="a-0">hello</label></li><li><input id="a-1" name="a" type="radio" value="b"> <label for="a-1">bye</label></li></ul>""")
-        self.assertEqual(form.b(), """<ul id="b"><li><input id="b-0" name="b" type="radio" value="1"> <label for="b-0">Item 1</label></li><li><input id="b-1" name="b" type="radio" value="2"> <label for="b-1">Item 2</label></li></ul>""")
-        self.assertEqual([text_type(x) for x in form.a], ['<input checked id="a-0" name="a" type="radio" value="a">', '<input id="a-1" name="a" type="radio" value="b">'])
+        self.assertEqual(
+            form.a(),
+            (
+                """<ul id="a">"""
+                """<li><input checked id="a-0" name="a" type="radio" value="a"> <label for="a-0">hello</label></li>"""
+                """<li><input id="a-1" name="a" type="radio" value="b"> <label for="a-1">bye</label></li></ul>"""
+            )
+        )
+        self.assertEqual(
+            form.b(),
+            (
+                """<ul id="b">"""
+                """<li><input id="b-0" name="b" type="radio" value="1"> <label for="b-0">Item 1</label></li>"""
+                """<li><input id="b-1" name="b" type="radio" value="2"> <label for="b-1">Item 2</label></li></ul>"""
+            )
+        )
+        self.assertEqual(
+            [text_type(x) for x in form.a],
+            ['<input checked id="a-0" name="a" type="radio" value="a">', '<input id="a-1" name="a" type="radio" value="b">']
+        )
 
     def test_text_coercion(self):
         # Regression test for text coercsion scenarios where the value is a boolean.
         coerce_func = lambda x: False if x == 'False' else bool(x)
         F = make_form(a=RadioField(choices=[(True, 'yes'), (False, 'no')], coerce=coerce_func))
         form = F()
-        self.assertEqual(form.a(), '<ul id="a"><li><input id="a-0" name="a" type="radio" value="True"> <label for="a-0">yes</label></li><li><input checked id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>')
+        self.assertEqual(
+            form.a(),
+            '''<ul id="a">'''
+            '''<li><input id="a-0" name="a" type="radio" value="True"> <label for="a-0">yes</label></li>'''
+            '''<li><input checked id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>'''
+        )
 
 
 class TextFieldTest(TestCase):
@@ -590,7 +612,13 @@ class FormFieldTest(TestCase):
         self.assertEqual(obj_inner.b, None)
 
     def test_widget(self):
-        self.assertEqual(self.F1().a(), '''<table id="a"><tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" type="text" value=""></td></tr><tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value=""></td></tr></table>''')
+        self.assertEqual(
+            self.F1().a(),
+            '''<table id="a">'''
+            '''<tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" type="text" value=""></td></tr>'''
+            '''<tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value=""></td></tr>'''
+            '''</table>'''
+        )
 
     def test_separator(self):
         form = self.F2(DummyPostData({'a-a': 'fake', 'a::a': 'real'}))
@@ -700,7 +728,7 @@ class FieldListTest(TestCase):
         a = F().a
         self.assertEqual(len(a), 1)
         self.assertEqual(a[0].data, None)
-        big_input = ['foo',  'flaf', 'bar', 'baz']
+        big_input = ['foo', 'flaf', 'bar', 'baz']
         self.assertRaises(AssertionError, F, a=big_input)
         pdata = DummyPostData(('a-%d' % i, v) for i, v in enumerate(big_input))
         a = F(pdata).a

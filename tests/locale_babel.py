@@ -76,6 +76,5 @@ class TestLocaleDecimal(TestCase):
         self._parse_test('1.23.456,789', expected, ['de_DE'])
         self._parse_test("1'23'456.789", expected, ['de_CH'])
 
-
         self._fail_parse('1,23,456.5', 'Keine g\xfcltige Dezimalzahl', ['de_DE'])
         self._fail_parse('1.234.567,5', 'Not a valid decimal value', ['en_US'])

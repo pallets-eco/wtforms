@@ -163,8 +163,8 @@ class FormTest(TestCase):
     def test_ordered_fields(self):
         class MyForm(Form):
             strawberry = TextField()
-            banana     = TextField()
-            kiwi       = TextField()
+            banana = TextField()
+            kiwi = TextField()
 
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi'])
         MyForm.apple = TextField()

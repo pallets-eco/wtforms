@@ -53,15 +53,21 @@ def main():
             sys.exit(1)
 
     if has_pep8:
-        guide = pep8.StyleGuide(
+        guide_main = pep8.StyleGuide(
             ignore=[],
             paths=['wtforms/'],
             exclude=[],
             max_line_length=130,
         )
-        report = guide.check_files()
-        if report.total_errors:
-            sys.exit(1)
+        guide_tests = pep8.StyleGuide(
+            ignore=['E221'],
+            paths=['tests/'],
+            max_line_length=150,
+        )
+        for guide in (guide_main, guide_tests):
+            report = guide.check_files()
+            if report.total_errors:
+                sys.exit(1)
 
     suite = make_suite('', tuple(extra_args), options.force_all)
 

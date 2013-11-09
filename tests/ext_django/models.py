@@ -8,7 +8,7 @@ except ImportError:
 
 
 class Group(models.Model):
-    name  = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
 
     def __unicode__(self):
         return '%s(%d)' % (self.name, self.pk)
@@ -31,4 +31,3 @@ class User(models.Model):
     time1    = models.TimeField()
     slug     = models.SlugField()
     nullbool = models.NullBooleanField()
-

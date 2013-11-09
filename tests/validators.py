@@ -70,10 +70,11 @@ class ValidatorsTest(TestCase):
         check_fail(DummyField('01:23:45:67:89:gh'))
         check_fail(DummyField('123:23:45:67:89:00'))
 
-
     def test_uuid(self):
-        self.assertEqual(UUID()(self.form,
-            DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f8')), None)
+        self.assertEqual(
+            UUID()(self.form, DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f8')),
+            None
+        )
         self.assertRaises(ValidationError, UUID(), self.form,
                           DummyField('2bc1c94f-deb-43e9-92a1-4775189ec9f8'))
         self.assertRaises(ValidationError, UUID(), self.form,
@@ -104,7 +105,6 @@ class ValidatorsTest(TestCase):
     def test_required(self):
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
         self.assertRaises(StopValidation, required(), self.form, DummyField(''))
-
 
     def test_data_required(self):
         # Make sure we stop the validation chain
