@@ -5,7 +5,7 @@ from wtforms.validators import (
     StopValidation, ValidationError, email, equal_to,
     ip_address, length, required, optional, regexp,
     url, NumberRange, AnyOf, NoneOf, mac_address, UUID,
-    input_required,
+    input_required, data_required
 )
 from functools import partial
 
@@ -134,20 +134,25 @@ class ValidatorsTest(TestCase):
         self.assertTrue('between 2 and 5' in grab(min=2, max=5))
 
     def test_required(self):
-        # Make sure we stop the validation chain
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
         self.assertRaises(StopValidation, required(), self.form, DummyField(''))
-        self.assertRaises(StopValidation, required(), self.form, DummyField(' '))
-        self.assertEqual(required().field_flags, ('required', ))
+
+
+    def test_data_required(self):
+        # Make sure we stop the validation chain
+        self.assertEqual(data_required()(self.form, DummyField('foobar')), None)
+        self.assertRaises(StopValidation, data_required(), self.form, DummyField(''))
+        self.assertRaises(StopValidation, data_required(), self.form, DummyField(' '))
+        self.assertEqual(data_required().field_flags, ('required', ))
 
         # Make sure we clobber errors
         f = DummyField('', ['Invalid Integer Value'])
         self.assertEqual(len(f.errors), 1)
-        self.assertRaises(StopValidation, required(), self.form, f)
+        self.assertRaises(StopValidation, data_required(), self.form, f)
         self.assertEqual(len(f.errors), 0)
 
         # Check message and custom message
-        grab = lambda **k: grab_stop_message(required(**k), self.form, DummyField(''))
+        grab = lambda **k: grab_stop_message(data_required(**k), self.form, DummyField(''))
         self.assertEqual(grab(), 'This field is required.')
         self.assertEqual(grab(message='foo'), 'foo')
 

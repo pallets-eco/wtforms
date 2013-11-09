@@ -10,25 +10,29 @@ along with companion libraries.
 New Features
 ------------
 
-TODO
+* :doc:`Class Meta <meta>` paradigm allows customization of many aspects of WTForms.
+* :doc:`CSRF <csrf>` and :doc:`i18n <i18n>` are core features not needing 
+  extensions anymore.
 
 
 Deprecated API's
 ----------------
 
-Most API's work exactly the same as they did in WTForms 1.x, though some are 
-deprecated and will cause a DeprecationWarning and will be removed in WTForms 3.
+These API's still work, but in most cases will cause a DeprecationWarning.
+The deprecated API's will be removed in WTForms 3.0, so write code against
+the new API's unless it needs to work across both WTForms 1.x and 2.x
 
-* **Form**
+* **Core**
 
   * :meth:`Form._get_translations <wtforms.form.Form._get_translations>` Use
     :meth:`Meta.get_translations <wtforms.meta.DefaultMeta.get_translations>`
     instead.
-
-* **Fields**
-
   * The ``TextField`` alias for 
     :class:`~wtforms.fields.StringField` is deprecated.
+  * ``wtforms.validators.Required`` is now
+    :class:`wtforms.validators.DataRequired`
+  * ``wtforms.fields._unset_value`` is now ``wtforms.utils.unset_value``
+
 
 * **WTForms Extensions**
   All the extensions are being deprecated. We feel like the extensions we had

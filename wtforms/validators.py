@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import re
+import warnings
 
 from wtforms.compat import string_types, text_type
 
@@ -210,8 +211,10 @@ class Required(DataRequired):
     This is needed over simple aliasing for those who require that the
     class-name of required be 'Required.'
 
-    This class will start throwing deprecation warnings in WTForms 1.1 and be removed by 1.2.
     """
+    def __init__(self, *args, **kwargs):
+        super(Required, self).__init__(*args, **kwargs)
+        warnings.warn('Required is going away in WTForms 3.0, use DataRequired', DeprecationWarning)
 
 
 class InputRequired(object):
