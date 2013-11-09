@@ -1,10 +1,34 @@
 from __future__ import unicode_literals
 
 from unittest import TestCase
-from wtforms import TextField, validators
+from wtforms import form, TextField, validators
 from wtforms.i18n import get_translations
-from wtforms import form
 from wtforms.ext.i18n import form as i18n_form
+
+
+def gettext_lower(self, s):
+    return s.lower()
+
+
+def ngettext_lower(self, singular, plural, n):
+    if n == 1:
+        return singular.lower()
+    else:
+        return plural.lower()
+
+
+class Lower_Translator(object):
+    """A fake translator that just converts everything to lowercase."""
+
+    gettext = gettext_lower
+    ngettext = ngettext_lower
+
+
+class Python2_Translator(object):
+    """A mock translator which implements python2 ugettext methods."""
+
+    ugettext = gettext_lower
+    ungettext = ngettext_lower
 
 
 class I18NTest(TestCase):
@@ -14,6 +38,25 @@ class I18NTest(TestCase):
     def test_us_translation(self):
         translations = get_translations(['en_US'])
         self.assertEqual(translations.gettext('Invalid Mac address.'), 'Invalid MAC address.')
+
+    def _test_converter(self, translator):
+        getter = lambda x: translator
+
+        translations = get_translations([], getter=getter)
+        self.assertEqual(translations.gettext('Foo'), 'foo')
+        self.assertEqual(translations.ngettext('Foo', 'Foos', 1), 'foo')
+        self.assertEqual(translations.ngettext('Foo', 'Foos', 2), 'foos')
+        return translations
+
+    def test_python2_wrap(self):
+        translator = Python2_Translator()
+        translations = self._test_converter(translator)
+        assert translations is not translator
+
+    def test_python3_nowrap(self):
+        translator = Lower_Translator()
+        translations = self._test_converter(translator)
+        assert translations is translator
 
 
 class ClassicI18nFormTest(TestCase):
@@ -96,3 +139,35 @@ class CoreFormTest(TestCase):
         settings['meta']['cache_translations'] = False
         form3 = self._common_test(expected, settings)
         assert form2.meta.get_translations(form2) is not form3.meta.get_translations(form3)
+
+
+class TranslationsTest(TestCase):
+    class F(form.Form):
+        a = TextField(validators=[validators.Length(max=5)])
+
+    class F2(form.Form):
+        def _get_translations(self):
+            return Lower_Translator()
+
+        a = TextField('', [validators.Length(max=5)])
+
+    def setUp(self):
+        self.a = self.F().a
+
+    def test_gettext(self):
+        x = "foo"
+        self.assertTrue(self.a.gettext(x) is x)
+
+    def test_ngettext(self):
+        getit = lambda n: self.a.ngettext("antelope", "antelopes", n)
+        self.assertEqual(getit(0), "antelopes")
+        self.assertEqual(getit(1), "antelope")
+        self.assertEqual(getit(2), "antelopes")
+
+    def test_validator_translation(self):
+        form = self.F2(a='hellobye')
+        self.assertFalse(form.validate())
+        self.assertEqual(form.a.errors[0], 'field cannot be longer than 5 characters.')
+        form = self.F(a='hellobye')
+        self.assertFalse(form.validate())
+        self.assertEqual(form.a.errors[0], 'Field cannot be longer than 5 characters.')
