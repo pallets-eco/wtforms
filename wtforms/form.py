@@ -217,7 +217,9 @@ class FormMeta(type):
         """
         Add an attribute to the class, clearing `_unbound_fields` if needed.
         """
-        if not name.startswith('_') and hasattr(value, '_formfield'):
+        if name == 'Meta':
+            cls._wtforms_meta = None
+        elif not name.startswith('_') and hasattr(value, '_formfield'):
             cls._unbound_fields = None
         type.__setattr__(cls, name, value)
 

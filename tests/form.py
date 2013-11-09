@@ -117,6 +117,24 @@ class FormMetaTest(TestCase):
         self.assertEqual(A._unbound_fields, [('a', A.a), ('c', A.c)])
         self.assertEqual(B._unbound_fields, [('a', B.a), ('b', B.b), ('c', B.c)])
 
+    def test_class_meta_reassign(self):
+        class MetaA:
+            pass
+
+        class MetaB:
+            pass
+
+        class F(Form):
+            Meta = MetaA
+
+        self.assertEqual(F._wtforms_meta, None)
+        assert isinstance(F().meta, MetaA)
+        assert issubclass(F._wtforms_meta, MetaA)
+        F.Meta = MetaB
+        self.assertEqual(F._wtforms_meta, None)
+        assert isinstance(F().meta, MetaB)
+        assert issubclass(F._wtforms_meta, MetaB)
+
 
 class FormTest(TestCase):
     class F(Form):
