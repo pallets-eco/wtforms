@@ -245,11 +245,11 @@ it will bind at instantiation, and hold in an internal dict. Dict-style access
 on a BaseForm instance will allow you to access (and modify) the enclosed
 fields.
 
-.. autoclass:: BaseForm
+.. autoclass:: BaseForm()
 
     **Construction**
 
-    .. automethod:: __init__
+    .. automethod:: __init__(fields, prefix='', meta=<DefaultMeta>)
 
         .. code-block:: python
 
