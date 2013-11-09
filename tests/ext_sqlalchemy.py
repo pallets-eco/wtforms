@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.schema import MetaData, Table, Column, ColumnDefault
-from sqlalchemy.types import String, Integer, Numeric, Date, Text, Enum
+from sqlalchemy.types import String, Integer, Numeric, Date, Text, Enum, Boolean, DateTime
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -12,10 +12,10 @@ from wtforms.compat import text_type, iteritems
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms import Form, fields
 from wtforms.fields import TextField
-from wtforms.ext.sqlalchemy.orm import model_form, ModelConversionError
+from wtforms.ext.sqlalchemy.orm import model_form, ModelConversionError, ModelConverter
 from wtforms.validators import Optional, Required, Length
 from wtforms.ext.sqlalchemy.validators import Unique
-from tests.common import DummyPostData
+from tests.common import DummyPostData, contains_validator
 
 
 class LazySelect(object):
@@ -27,6 +27,10 @@ class Base(object):
     def __init__(self, **kwargs):
         for k, v in iteritems(kwargs):
             setattr(self, k, v)
+
+
+class AnotherInteger(Integer):
+    """Use me to test if MRO works like we want"""
 
 
 class TestBase(TestCase):
@@ -88,6 +92,11 @@ class QuerySelectFieldTest(TestBase):
         self.assertEqual(form.a(), [('1', 'apple', True), ('2', 'banana', False)])
         self.assertTrue(form.validate())
 
+        form = F(a=sess.query(self.Test).filter_by(name='banana').first())
+        form.a.query = sess.query(self.Test).filter(self.Test.name != 'banana')
+        assert not form.validate()
+        self.assertEqual(form.a.errors, ['Not a valid choice'])
+
     def test_with_query_factory(self):
         sess = self.Session()
         self._fill(sess)
@@ -119,9 +128,11 @@ class QuerySelectFieldTest(TestBase):
         self.assertEqual(form.a(), [('1', 'apple', True), ('2', 'banana', False), ('3', 'meh', False)])
 
         # Test bad data
-        form = F(DummyPostData(b=['bogus'], a=['fail']))
+        form = F(DummyPostData(b=['__None'], a=['fail']))
         assert not form.validate()
-        self.assertEqual(form.b.errors, ['Not a valid choice'])
+        self.assertEqual(form.a.errors, ['Not a valid choice'])
+        self.assertEqual(form.b.errors, [])
+        self.assertEqual(form.b.data, None)
 
 
 class QuerySelectMultipleFieldTest(TestBase):
@@ -191,6 +202,9 @@ class ModelFormTest(TestCase):
             cost = Column(Numeric(5, 2), nullable=False)
             description = Column(Text, nullable=False)
             level = Column(Enum('Primary', 'Secondary'))
+            has_prereqs = Column(Boolean, nullable=False)
+            started = Column(DateTime, nullable=False)
+            grade = Column(AnotherInteger(unsigned=True), nullable=False)
 
         class School(Model):
             __tablename__ = "school"
@@ -221,20 +235,11 @@ class ModelFormTest(TestCase):
         self.metadata.create_all(bind=engine)
         self.sess = Session()
 
-    def test_nullable_field(self):
+    def test_auto_validators(self):
         student_form = model_form(self.Student, self.sess)()
-        v_class = student_form._fields['dob'].validators[0].__class__
-        assert issubclass(Optional, v_class)
-
-    def test_required_field(self):
-        student_form = model_form(self.Student, self.sess)()
-        v_class = student_form._fields['full_name'].validators[0].__class__
-        assert issubclass(Required, v_class)
-
-    def test_unique_field(self):
-        student_form = model_form(self.Student, self.sess)()
-        v_class = student_form._fields['full_name'].validators[1].__class__
-        assert issubclass(Unique, v_class)
+        assert contains_validator(student_form.dob, Optional)
+        assert contains_validator(student_form.full_name, Required)
+        assert contains_validator(student_form.full_name, Unique)
 
     def test_include_pk(self):
         form_class = model_form(self.Student, self.sess, exclude_pk=False)
@@ -256,26 +261,40 @@ class ModelFormTest(TestCase):
 
     def test_convert_many_to_one(self):
         student_form = model_form(self.Student, self.sess)()
-        f_class = student_form._fields['current_school'].__class__
-        assert issubclass(QuerySelectField, f_class)
+        assert isinstance(student_form.current_school, QuerySelectField)
 
     def test_convert_one_to_many(self):
         school_form = model_form(self.School, self.sess)()
-        f_class = school_form._fields['students'].__class__
-        assert issubclass(QuerySelectMultipleField, f_class)
+        assert isinstance(school_form.students, QuerySelectMultipleField)
 
     def test_convert_many_to_many(self):
         student_form = model_form(self.Student, self.sess)()
-        f_class = student_form._fields['courses'].__class__
-        assert issubclass(QuerySelectMultipleField, f_class)
+        assert isinstance(student_form.courses, QuerySelectMultipleField)
 
     def test_convert_basic(self):
         self.assertRaises(TypeError, model_form, None)
         self.assertRaises(ModelConversionError, model_form, self.Course)
         form_class = model_form(self.Course, exclude=['students'])
         form = form_class()
-        self.assertEqual(len(list(form)), 4)
+        self.assertEqual(len(list(form)), 7)
         assert isinstance(form.cost, fields.DecimalField)
+        assert isinstance(form.has_prereqs, fields.BooleanField)
+        assert isinstance(form.started, fields.DateTimeField)
+
+    def test_only(self):
+        desired_fields = ['id', 'cost', 'description']
+        form = model_form(self.Course, only=desired_fields)()
+        self.assertEqual(len(list(form)), 2)
+        form = model_form(self.Course, only=desired_fields, exclude_pk=False)()
+        self.assertEqual(len(list(form)), 3)
+
+    def test_no_mro(self):
+        converter = ModelConverter(use_mro=False)
+        # Without MRO, will not be able to convert 'grade'
+        self.assertRaises(ModelConversionError, model_form, self.Course, self.sess, converter=converter)
+        # If we exclude 'grade' everything should continue working
+        F = model_form(self.Course, self.sess, exclude=['grade'], converter=converter)
+        self.assertEqual(len(list(F())), 7)
 
 
 class ModelFormColumnDefaultTest(TestCase):

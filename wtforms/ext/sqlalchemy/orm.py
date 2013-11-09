@@ -143,8 +143,8 @@ class ModelConverterBase(object):
 
 
 class ModelConverter(ModelConverterBase):
-    def __init__(self, extra_converters=None):
-        super(ModelConverter, self).__init__(extra_converters)
+    def __init__(self, extra_converters=None, use_mro=True):
+        super(ModelConverter, self).__init__(extra_converters, use_mro=use_mro)
 
     @classmethod
     def _string_common(cls, column, field_args, **extra):
@@ -225,7 +225,8 @@ class ModelConverter(ModelConverterBase):
 
 
 def model_fields(model, db_session=None, only=None, exclude=None,
-                 field_args=None, converter=None):
+                 field_args=None, converter=None, exclude_pk=False,
+                 exclude_fk=False):
     """
     Generate a dictionary of fields for a given SQLAlchemy model.
 
@@ -234,8 +235,18 @@ def model_fields(model, db_session=None, only=None, exclude=None,
     mapper = model._sa_class_manager.mapper
     converter = converter or ModelConverter()
     field_args = field_args or {}
+    properties = []
 
-    properties = ((p.key, p) for p in mapper.iterate_properties)
+    for prop in mapper.iterate_properties:
+        if getattr(prop, 'columns', None):
+            if exclude_fk and prop.columns[0].foreign_keys:
+                continue
+            elif exclude_pk and prop.columns[0].primary_key:
+                continue
+
+        properties.append((prop.key, prop))
+
+    #((p.key, p) for p in mapper.iterate_properties)
     if only:
         properties = (x for x in properties if x[0] in only)
     elif exclude:
@@ -291,17 +302,9 @@ def model_form(model, db_session=None, base_class=Form, only=None,
     if not hasattr(model, '_sa_class_manager'):
         raise TypeError('model must be a sqlalchemy mapped model')
 
-    if not exclude:
-        exclude = []
-    model_mapper = model.__mapper__
-    for prop in model_mapper.iterate_properties:
-        if not hasattr(prop, 'direction') and prop.columns[0].primary_key:
-            if exclude_pk:
-                exclude.append(prop.key)
-        if hasattr(prop, 'direction') and exclude_fk and \
-                prop.direction.name != 'MANYTOMANY':
-            for pair in prop.local_remote_pairs:
-                exclude.append(pair[0].key)
     type_name = type_name or str(model.__name__ + 'Form')
-    field_dict = model_fields(model, db_session, only, exclude, field_args, converter)
+    field_dict = model_fields(
+        model, db_session, only, exclude, field_args, converter,
+        exclude_pk=exclude_pk, exclude_fk=exclude_fk
+    )
     return type(type_name, (base_class, ), field_dict)

@@ -41,6 +41,13 @@ def grab_stop_message(callable, form, field):
         return e.args[0]
 
 
+def contains_validator(field, v_type):
+    for v in field.validators:
+        if isinstance(v, v_type):
+            return True
+    return False
+
+
 class DummyPostData(dict):
     def getlist(self, key):
         v = self[key]
