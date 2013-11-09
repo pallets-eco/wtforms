@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from __future__ import unicode_literals
 
 from datetime import datetime, date
@@ -43,8 +42,3 @@ class DateutilTest(TestCase):
     def test_render(self):
         f = self.F()
         self.assertEqual(f.b(), r'<input id="b" name="b" type="text" value="2004-09-12">')
-
-
-if __name__ == '__main__':
-    from unittest import main
-    main()

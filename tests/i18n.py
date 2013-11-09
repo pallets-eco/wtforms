@@ -96,7 +96,3 @@ class CoreFormTest(TestCase):
         settings['meta']['cache_translations'] = False
         form3 = self._common_test(expected, settings)
         assert form2.meta.get_translations(form2) is not form3.meta.get_translations(form3)
-
-if __name__ == '__main__':
-    from unittest import main
-    main()

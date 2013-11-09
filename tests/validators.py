@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from unittest import TestCase
 from wtforms.compat import text_type
 from wtforms.validators import (
@@ -232,7 +231,3 @@ class ValidatorsTest(TestCase):
     def test_none_of(self):
         self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)
         self.assertRaises(ValueError, NoneOf(['a', 'b', 'c']), self.form, DummyField('a'))
-
-if __name__ == '__main__':
-    from unittest import main
-    main()

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from __future__ import unicode_literals
 
 import sys
@@ -236,8 +234,3 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
         utc_date = datetime.datetime(2013, 9, 25, 2, 15, tzinfo=timezone.utc)
         form = self.F(a=utc_date)
         self.assertTrue('2013-09-24 19:15:00' in form.a())
-
-
-if __name__ == '__main__':
-    import unittest
-    unittest.main()

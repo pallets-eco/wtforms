@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from __future__ import unicode_literals
 
 from unittest import TestCase
@@ -138,8 +137,3 @@ class HTML5Test(TestCase):
         self.assertEqual(i1(self.field), '<input id="id" name="bar" step="any" type="range" value="42">')
         i2 = html5.RangeInput(step=2)
         self.assertEqual(i2(self.field, step=3), '<input id="id" name="bar" step="3" type="range" value="42">')
-
-
-if __name__ == '__main__':
-    from unittest import main
-    main()
