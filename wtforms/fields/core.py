@@ -91,9 +91,9 @@ class Field(object):
             self._translations = _translations
 
         if _meta is not None:
-            self._form_meta = _meta
+            self.meta = _meta
         elif _form is not None:
-            self._form_meta = _form.meta
+            self.meta = _form.meta
         else:
             raise TypeError("Must provide one of _form or _meta")
 
@@ -149,7 +149,7 @@ class Field(object):
         HTML attributes, though in theory a widget is free to do anything it
         wants with the supplied keyword arguments.
         """
-        return self._form_meta.render_field(self, kwargs)
+        return self.meta.render_field(self, kwargs)
 
     def gettext(self, string):
         return self._translations.gettext(string)
@@ -409,7 +409,7 @@ class SelectFieldBase(Field):
         raise NotImplementedError()
 
     def __iter__(self):
-        opts = dict(widget=self.option_widget, _name=self.name, _form=None, _meta=self._form_meta)
+        opts = dict(widget=self.option_widget, _name=self.name, _form=None, _meta=self.meta)
         for i, (value, label, checked) in enumerate(self.iter_choices()):
             opt = self._Option(label=label, id='%s-%d' % (self.id, i), **opts)
             opt.process(None, value)
@@ -932,7 +932,7 @@ class FieldList(Field):
         new_index = self.last_index = index or (self.last_index + 1)
         name = '%s-%d' % (self.short_name, new_index)
         id = '%s-%d' % (self.id, new_index)
-        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self._form_meta)
+        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self.meta)
         field.process(formdata, data)
         self.entries.append(field)
         return field

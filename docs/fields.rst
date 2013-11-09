@@ -189,6 +189,12 @@ The Field base class
                 </tr>
             {% endfor %}
 
+    .. attribute:: meta
+
+        The same :doc:`meta object <meta>` instance as is available as
+        :attr:`Form.meta <wtforms.form.Form.meta>`
+
+
 Basic fields
 ------------
 

@@ -164,12 +164,12 @@ class FieldTest(TestCase):
     def test_meta_attribute(self):
         # Can we pass in meta via _form?
         form = self.F()
-        assert form.a._form_meta is form.meta
+        assert form.a.meta is form.meta
 
         # Can we pass in meta via _meta?
         form_meta = meta.DefaultMeta()
         field = TextField(_name='Foo', _form=None, _meta=form_meta)
-        assert field._form_meta is form_meta
+        assert field.meta is form_meta
 
         # Do we fail if both _meta and _form are None?
         self.assertRaises(TypeError, TextField, _name='foo', _form=None)
