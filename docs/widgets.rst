@@ -27,11 +27,17 @@ Built-in widgets
 .. autoclass:: TextArea
 .. autoclass:: Select
 
-Widget Utilities
-----------------
+Widget-Building Utilities
+-------------------------
+
+These utilities are used in WTForms widgets to help render HTML and also in
+order to work along with HTML templating frameworks. They can be imported for
+use in building custom widgets as well.
 
 .. autofunction:: html_params
 
+.. autoclass:: HTMLString
+    :members: __html__
 
 Custom widgets
 --------------

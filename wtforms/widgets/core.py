@@ -44,7 +44,27 @@ def html_params(**kwargs):
 
 
 class HTMLString(text_type):
+    """
+    This is an "HTML safe string" class that is returned by WTForms widgets.
+
+    For the most part, HTMLString acts like a normal unicode string, except
+    in that it has a `__html__` method. This method is invoked by a compatible
+    auto-escaping HTML framework to get the HTML-safe version of a string.
+
+    Usage::
+
+        HTMLString('<input type="text" value="hello">')
+
+    """
     def __html__(self):
+        """
+        Give an HTML-safe string.
+
+        This method actually returns itself, because it's assumed that
+        whatever you give to HTMLString is a string with any unsafe values
+        already escaped. This lets auto-escaping template frameworks
+        know that this string is safe for HTML rendering.
+        """
         return self
 
 
