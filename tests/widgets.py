@@ -28,6 +28,7 @@ class HTMLParamsTest(TestCase):
         self.assertEqual(html_params(class_='foo'), 'class="foo"')
         self.assertEqual(html_params(class__='foo'), 'class_="foo"')
         self.assertEqual(html_params(for_='foo'), 'for="foo"')
+        self.assertEqual(html_params(readonly=False, foo=9), 'foo="9"')
 
 
 class ListWidgetTest(TestCase):

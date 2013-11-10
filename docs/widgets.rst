@@ -27,6 +27,12 @@ Built-in widgets
 .. autoclass:: TextArea
 .. autoclass:: Select
 
+Widget Utilities
+----------------
+
+.. autofunction:: html_params
+
+
 Custom widgets
 --------------
 
