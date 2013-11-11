@@ -92,7 +92,7 @@ class ModelConverterBase(object):
                 ))
 
             if self.use_mro:
-                types = inspect.getmro(type(column.type))
+                types = list(inspect.getmro(type(column.type)))
             else:
                 types = [type(column.type)]
 
@@ -100,6 +100,20 @@ class ModelConverterBase(object):
                 type_string = '%s.%s' % (col_type.__module__, col_type.__name__)
                 if type_string.startswith('sqlalchemy'):
                     type_string = type_string[11:]
+
+                # Handles for `TypeDecorator` implemented columns. If column is
+                # a subclass of `sqlalchemy.types.TypeDecorator`, replaces
+                # `col_type` with `TypeDecorator.impl`.
+                elif col_type.__bases__:
+                    base = col_type.__bases__[0]
+                    base_string = '%s.%s' % (base.__module__, base.__name__)
+                    if base_string == 'sqlalchemy.types.TypeDecorator':
+                        # Replaces `col_type` with TypeDecorator's `impl`.
+                        types[types.index(col_type)] = type(column.type.impl)
+                        type_string = '%s.%s' % \
+                                      (col_type.__module__, col_type.__name__)
+                        if type_string.startswith('sqlalchemy'):
+                            type_string = type_string[11:]
 
                 if type_string in self.converters:
                     converter = self.converters[type_string]
