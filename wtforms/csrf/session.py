@@ -60,7 +60,7 @@ class SessionCSRF(CSRF):
         if not field.data or '##' not in field.data:
             raise ValidationError(field.gettext('CSRF token missing'))
 
-        expires, hmac_csrf = field.data.split('##')
+        expires, hmac_csrf = field.data.split('##', 1)
 
         check_val = (self.session['csrf'] + expires).encode('utf8')
 
