@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 from ..validators import ValidationError
 from .core import CSRF
 
-__all__ = ('SessionSecureForm', )
+__all__ = ('SessionCSRF', )
 
 
 class SessionCSRF(CSRF):
