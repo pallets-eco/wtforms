@@ -15,11 +15,16 @@ sys.path.insert(0, TESTS_DIR)
 
 from django.conf import settings
 settings.configure(
-    INSTALLED_APPS=['ext_django', 'wtforms.ext.django'],
+    INSTALLED_APPS=[
+        'ext_django', 'wtforms.ext.django',
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes'
+    ],
     # Django 1.0 to 1.3
     DATABASE_ENGINE='sqlite3',
     TEST_DATABASE_NAME=':memory:',
-
+    LANGUAGE_CODE='es',
     # Django 1.4
     DATABASES={
         'default': {
@@ -45,6 +50,7 @@ from wtforms import Form, fields, validators
 from wtforms.compat import text_type
 from wtforms.ext.django.orm import model_form
 from wtforms.ext.django.fields import QuerySetSelectField, ModelSelectField, DateTimeField
+from wtforms.ext.django import i18n
 try:
     import pytz
     has_pytz = (pytz.VERSION >= '2012')
@@ -234,3 +240,20 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
         utc_date = datetime.datetime(2013, 9, 25, 2, 15, tzinfo=timezone.utc)
         form = self.F(a=utc_date)
         self.assertTrue('2013-09-24 19:15:00' in form.a())
+
+
+class I18NTest(DjangoTestCase):
+    def test_django_translations(self):
+        trans = i18n.DjangoTranslations()
+        self.assertEqual(trans.gettext('Username'), u'Nombre de usuario')
+        check = lambda n: trans.ngettext('%(counter)s result', "%(counter)s results", n)
+        self.assertEqual(check(1), '%(counter)s resultado')
+        self.assertEqual(check(3), '%(counter)s resultados')
+
+    def test_i18n_form(self):
+        class F(i18n.Form):
+            a = fields.IntegerField()
+
+        form = F()
+        assert isinstance(form._get_translations(), i18n.DjangoTranslations)
+        self.assertEqual(form.a.gettext('Username'), u'Nombre de usuario')
