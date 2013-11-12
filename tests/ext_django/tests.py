@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 
 import sys
 import os
@@ -40,12 +40,13 @@ connection.creation.create_test_db(verbosity=0)
 # -- End hacky Django initialization
 
 import datetime
-from django.template import Context, Template
+from django.template import Context, Template, TemplateSyntaxError
 from django.utils import timezone
 from django.test import TestCase as DjangoTestCase
 from django.test.utils import override_settings
 from ext_django import models as test_models
 from unittest import TestCase
+from tests.common import DummyPostData, contains_validator, assert_raises_text
 from wtforms import Form, fields, validators
 from wtforms.compat import text_type
 from wtforms.ext.django.orm import model_form
@@ -58,24 +59,12 @@ except ImportError:
     has_pytz = False
 
 
-def contains_validator(field, v_type):
-    for v in field.validators:
-        if isinstance(v, v_type):
-            return True
-    return False
-
-
 def lazy_select(field, **kwargs):
     output = []
     for val, label, selected in field.iter_choices():
         s = selected and 'Y' or 'N'
         output.append('%s:%s:%s' % (s, text_type(val), text_type(label)))
     return tuple(output)
-
-
-class DummyPostData(dict):
-    def getlist(self, key):
-        return self[key]
 
 
 class TemplateTagsTest(TestCase):
@@ -100,6 +89,25 @@ class TemplateTagsTest(TestCase):
             self._render('{% form_field a class=someclass onclick="alert()" %}'),
             '<input class="CLASSVAL&gt;!" id="a" name="a" onclick="alert()" type="text" value="">'
         )
+        self.assertEqual(
+            self._render('''{% form_field a class='foo"bar"' %}'''),
+            '<input class="foo&quot;bar&quot;" id="a" name="a" type="text" value="">'
+        )
+
+    @override_settings(TEMPLATE_STRING_IF_INVALID='__INVALID')
+    def test_invalid(self):
+        self.assertEqual(self._render('{% form_field form.c %}'), '__INVALID')
+        self.assertEqual(
+            self._render('{% form_field form.a foo=bar %}'),
+            '<input foo="__INVALID" id="a" name="a" type="text" value="">'
+        )
+
+    def test_bad_syntax(self):
+        with assert_raises_text(TemplateSyntaxError, '^.*must have the form field name as the first value.*$'):
+            self._render('{% form_field %}')
+
+        with assert_raises_text(TemplateSyntaxError, '^.*incorrect number of key=value arguments.$'):
+            self._render('{% form_field foo=bar baz= quux=hello %}')
 
 
 class ModelFormTest(TestCase):
