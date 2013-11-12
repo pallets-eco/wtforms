@@ -1,0 +1,10 @@
+[run]
+include =
+    wtforms/*
+omit =
+    wtforms/ext/appengine/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    except ImportError:
