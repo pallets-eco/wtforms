@@ -33,6 +33,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar.ab12'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar@baz.lvp'))
 
     def test_equal_to(self):
         self.form['foo'] = DummyField('test')
