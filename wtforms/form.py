@@ -74,9 +74,9 @@ class BaseForm(object):
 
     def _get_translations(self):
         """
-        **Deprecated**.
-        `Form._get_translations` is being removed in WTForms 3.0, use
-        `Meta.get_translations` instead.
+        .. deprecated:: 2.0
+            `_get_translations` is being removed in WTForms 3.0, use
+            `Meta.get_translations` instead.
 
         Override in subclasses to provide alternate translations factory.
 

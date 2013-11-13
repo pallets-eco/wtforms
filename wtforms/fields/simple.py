@@ -13,6 +13,8 @@ __all__ = (
 class TextField(StringField):
     """
     Legacy alias for StringField
+
+    .. deprecated:: 2.0
     """
     def __init__(self, *args, **kw):
         super(TextField, self).__init__(*args, **kw)

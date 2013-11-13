@@ -1,5 +1,3 @@
-.. _extensions:
-
 Extensions
 ==========
 .. module:: wtforms.ext
@@ -14,11 +12,13 @@ Appengine
 WTForms includes support for AppEngine fields as well as auto-form
 generation from models.
 
-.. note:: 
-    WTForms supports both `appengine.ext.db` and `appengine.ext.ndb` style models now, 
-    and there is some overlap between them. For the near future, we will continue
-    to support both, but at some point WTForms will go to only supporting AppEngine
-    for python 2.7 and drop support for ext.db models as well.
+.. deprecated:: 2.0
+    ``wtforms.ext.appengine`` is now deprecated, and will be removed in
+    WTForms 3.0. For an appengine module that will continue to be updated,
+    see `WTForms-Appengine`_
+
+
+.. _WTForms-Appengine: http://github.com/wtforms/wtforms-appengine
 
 Model Forms
 ~~~~~~~~~~~
@@ -41,7 +41,7 @@ Datastore-backed Fields
 NDB
 ~~~
 
-WTForms now includes support for NDB models and can support mapping the 
+WTForms includes support for NDB models and can support mapping the 
 relationship fields as well as generating forms from models.
 
 .. autoclass:: KeyPropertyField(default field arguments, reference_class=None, get_label=None, allow_blank=False, blank_text='')
@@ -74,6 +74,13 @@ Django
 This extension provides templatetags to make it easier to work with Django
 templates and WTForms' html attribute rendering. It also provides a generator
 for automatically creating forms based on Django ORM models.
+
+.. deprecated:: 2.0 
+    ``wtforms.ext.django`` is now deprecated, and will be removed in
+    WTForms 3.0. For Django support that will continue to be updated,
+    see `WTForms-Django`_
+
+.. _WTForms-Django: http://github.com/wtforms/wtforms-django
 
 Templatetags
 ~~~~~~~~~~~~
@@ -199,7 +206,7 @@ CSRF
 ----
 .. module:: wtforms.ext.csrf
 
-.. note::
+.. deprecated:: 2.0
     wtforms.ext.csrf is deprecated, as CSRF is now provided as a part of
     the core of WTForms. This module exists as-is for backwards compatibility
     and will be removed in WTForms 3.0. See the :doc:`CSRF Docs <csrf>`.
@@ -282,7 +289,10 @@ I18n
 ----
 .. module:: wtforms.ext.i18n
 
-I18n extension is now deprecated in favor of using the built-in locales 
-support on the form.
+.. deprecated:: 2.0
+    I18n extension is now deprecated in favor of using the built-in locales 
+    support on the form.
 
-TODO document classic I18n
+.. module:: wtforms.ext.i18n.form
+
+.. autoclass:: Form

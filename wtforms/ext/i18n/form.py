@@ -10,8 +10,7 @@ class Form(form.Form):
     Base form for a simple localized WTForms form.
 
     **NOTE** this class is now un-necessary as the i18n features have
-    been moved into the core of WTForms, but it will be kept for
-    compatibility reasons until WTForms 1.2.
+    been moved into the core of WTForms, and will be removed in WTForms 3.0.
 
     This will use the stdlib gettext library to retrieve an appropriate
     translations object for the language, by default using the locale
