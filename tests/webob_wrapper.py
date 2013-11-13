@@ -1,5 +1,6 @@
 from unittest import TestCase
-from wtforms.form import BaseForm, WebobInputWrapper
+from wtforms.form import BaseForm
+from wtforms.utils import WebobInputWrapper
 from wtforms.utils import unset_value
 from wtforms.fields import Field
 
@@ -46,7 +47,7 @@ class SneakyField(Field):
 
 class WebobWrapperTest(TestCase):
     def setUp(self):
-        w_cls = has_webob and MultiDict or MockMultiDict
+        w_cls = MultiDict if has_webob else MockMultiDict
 
         self.test_values = [('a', 'Apple'), ('b', 'Banana'), ('a', 'Cherry')]
         self.empty_mdict = w_cls([])

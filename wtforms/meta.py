@@ -1,3 +1,4 @@
+from wtforms.utils import WebobInputWrapper
 from wtforms import i18n
 
 
@@ -38,7 +39,6 @@ class DefaultMeta(object):
         """
         if formdata is not None and not hasattr(formdata, 'getlist'):
             if hasattr(formdata, 'getall'):
-                from .form import WebobInputWrapper
                 return WebobInputWrapper(formdata)
             else:
                 raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
