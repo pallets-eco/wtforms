@@ -199,6 +199,11 @@ CSRF
 ----
 .. module:: wtforms.ext.csrf
 
+.. note::
+    wtforms.ext.csrf is deprecated, as CSRF is now provided as a part of
+    the core of WTForms. This module exists as-is for backwards compatibility
+    and will be removed in WTForms 3.0. See the :doc:`CSRF Docs <csrf>`.
+
 The CSRF package includes tools that help you implement checking against
 cross-site request forgery ("csrf"). Due to the large number of variations on
 approaches people take to CSRF (and the fact that many make compromises) the
@@ -224,115 +229,6 @@ a cryptographic hash function against some data which would be hard to forge.
     .. automethod:: generate_csrf_token
 
     .. automethod:: validate_csrf_token
-
-Creating your own CSRF implementation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Here we will sketch out a simple theoretical CSRF implementation which
-generates a hash token based on the user's IP.
-
-**Note** This is a simplistic example meant to illustrate creating a CSRF
-implementation. This isn't recommended to be used in production because the
-token is deterministic and non-changing per-IP, which means this isn't the
-most secure implementation of CSRF.
-
-First, let's create our SecureForm base class::
-
-    from wtforms.ext.csrf import SecureForm
-    from hashlib import md5
-
-    SECRET_KEY = '1234567890'
-
-    class IPSecureForm(SecureForm):
-        """
-        Generate a CSRF token based on the user's IP. I am probably not very
-        secure, so don't use me.
-        """
-
-        def generate_csrf_token(self, csrf_context):
-            # csrf_context is passed transparently from the form constructor,
-            # in this case it's the IP address of the user
-            token = md5(SECRET_KEY + csrf_context).hexdigest()
-            return token
-
-        def validate_csrf_token(self, field):
-            if field.data != field.current_token:
-                raise ValueError('Invalid CSRF')
-
-
-Now that we have this taken care of, let's write a simple form and view which would implement this::
-
-    class RegistrationForm(IPSecureForm):
-        name = StringField('Your Name')
-        email = StringField('Email', [validators.email()])
-
-    def register(request):
-        form = RegistrationForm(request.POST, csrf_context=request.ip)
-
-        if request.method == 'POST' and form.validate():
-            pass # We're all good, create a user or whatever it is you do
-        elif form.csrf_token.errors:
-            pass # If we're here we suspect the user of cross-site request forgery
-        else:
-            pass # Any other errors
-
-        return render('register.html', form=form)
-
-And finally, a simple template:
-
-.. code-block:: html+jinja
-
-    <form action="register" method="POST">
-        {{ form.csrf_token }}
-        <p>{{ form.name.label }}: {{ form.name }}</p>
-        <p>{{ form.email.label }}: {{ form.email }}</p>
-        <input type="submit" value="Register">
-    </form>
-
-
-Please note that implementing CSRF detection is not fool-proof, and even with
-the best CSRF protection implementation, it's possible for requests to be
-forged by expert attackers. However, a good CSRF protection would make it
-infeasible for someone from an external site to hijack a form submission from
-another user and perform actions as them without additional a priori knowledge.
-
-In addition, it's important to understand that very often, the more strict the
-CSRF protection, the higher the chance of false positives occurring (ie,
-legitimate users getting blocked by your CSRF protection) and choosing a CSRF
-implementation is actually a matter of compromise. We will attempt to provide a
-handful of usable reference algorithms built in to this library in the future, to
-allow that choice to be easy.
-
-Some tips on criteria people often examine when evaluating CSRF implementations:
-
- * **Reproducability** If a token is based on attributes about the user, it
-   gains the advantage that one does not need secondary storage in which to
-   store the value between requests. However, if the same attributes can be
-   reproduced by an attacker, then the attacker can potentially forge this
-   information.
-
- * **Reusability**. It might be desired to make a completely different token
-   every use, and disallow users from re-using past tokens. This is an
-   extremely powerful protection, but can have consequences on if the user uses
-   the back button (or in some cases runs forms simultaneously in multiple
-   browser tabs) and submits an old token, or otherwise. A possible compromise
-   is to allow reusability in a time window (more on that later).
-
- * **Time Ranges** Many CSRF approaches use time-based expiry to make sure that
-   a token cannot be (re)used beyond a certain point. Care must be taken in
-   choosing the time criteria for this to not lock out legitimate users. For
-   example, if a user might walk away while filling out a long-ish form, or to
-   go look for their credit card, the time for expiry should take that into
-   consideration to provide a balance between security and limiting user
-   inconvenience.
-
- * **Requirements** Some CSRF-prevention methods require the use of browser
-   cookies, and some even require client-side scripting support. The webmaster
-   implementing the CSRF needs to consider that such requirements (though
-   effective) may lock certain legitimate users out, and make this
-   determination whether it is a good idea to use. For example, for a site
-   already using cookies for login, adding another for CSRF isn't as big of a
-   deal, but for other sites it may not be feasible.
 
 
 Session-based CSRF implementation
