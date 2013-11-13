@@ -116,11 +116,7 @@ class BaseForm(object):
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
         """
-        if formdata is not None and not hasattr(formdata, 'getlist'):
-            if hasattr(formdata, 'getall'):
-                formdata = WebobInputWrapper(formdata)
-            else:
-                raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
+        formdata = self.meta.wrap_formdata(self, formdata)
 
         if data is not None:
             # XXX we want to eventually process 'data' as a new entity.
@@ -274,7 +270,6 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
             setattr(self, name, field)
-        formdata = self.meta.wrap_formdata(self, formdata)
         self.process(formdata, obj, data=data, **kwargs)
 
     def __setitem__(self, name, value):

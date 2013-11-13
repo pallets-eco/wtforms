@@ -29,12 +29,19 @@ class DefaultMeta(object):
         """
         wrap_formdata allows doing custom wrappers of WTForms formdata.
 
-        The default implementation simply passes back `formdata`.
+        The default implementation detects webob-style multidicts and wraps
+        them, otherwise passes formdata back un-changed.
 
         :param form: The form.
         :param formdata: Form data.
         :return: A form-input wrapper compatible with WTForms.
         """
+        if formdata is not None and not hasattr(formdata, 'getlist'):
+            if hasattr(formdata, 'getall'):
+                from .form import WebobInputWrapper
+                return WebobInputWrapper(formdata)
+            else:
+                raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
         return formdata
 
     def render_field(self, field, render_kw):
