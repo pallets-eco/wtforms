@@ -23,6 +23,9 @@ class ValidatorsTest(TestCase):
         self.assertEqual(email()(self.form, DummyField('123@bar.dk')), None)
         self.assertEqual(email()(self.form, DummyField('foo@456.dk')), None)
         self.assertEqual(email()(self.form, DummyField('foo@bar456.info')), None)
+        self.assertEqual(email()(self.form, DummyField('foo@bar456.info.de')), None)
+        self.assertEqual(email()(self.form, DummyField('foo@bar456.info.de')), None)
+        self.assertEqual(email()(self.form, DummyField('foo@a.a.de')), None)
         self.assertRaises(ValidationError, email(), self.form, DummyField(None))
         self.assertRaises(ValidationError, email(), self.form, DummyField(''))
         self.assertRaises(ValidationError, email(), self.form, DummyField('  '))
@@ -33,7 +36,10 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar.ab12'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.a.de'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@a..de'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar@baz.lvp'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar@baz.lvp.de'))
 
     def test_equal_to(self):
         self.form['foo'] = DummyField('test')
