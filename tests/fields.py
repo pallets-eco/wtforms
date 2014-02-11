@@ -765,6 +765,26 @@ class FieldListTest(TestCase):
         my_filter = lambda x: x
         self.assertRaises(TypeError, FieldList, self.t, filters=[my_filter], _form=Form(), _name='foo')
 
+    def test_process_prefilled(self):
+        data = ['foo', 'hi', 'rawr']
+        class A(object):
+            def __init__(self, a):
+                self.a = a
+        obj = A(data)
+        F = make_form(a=FieldList(self.t))
+        # fill form
+        form = F(obj=obj)
+        self.assertEqual(len(form.a.entries), 3)
+        # pretend to submit form unchanged
+        pdata = DummyPostData({
+            'a-0': ['foo'],
+            'a-1': ['hi'],
+            'a-2': ['rawr']})
+        form.process(formdata=pdata)
+        # check if data still the same
+        self.assertEqual(len(form.a.entries), 3)
+        self.assertEqual(form.a.data, data)
+
 
 class MyCustomField(TextField):
     def process_data(self, data):
