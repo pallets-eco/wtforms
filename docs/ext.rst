@@ -202,6 +202,15 @@ your forms.
 .. autoclass:: QuerySelectMultipleField(default field args, query_factory=None, get_pk=None, get_label=None)
 
 
+Model forms
+~~~~~~~~~~~
+.. module:: wtforms.ext.sqlalchemy.orm
+
+It is possible to generate forms from SQLAlchemy models similarly to how it can be done for Django ORM models.
+
+.. autofunction:: model_form
+
+
 CSRF
 ----
 .. module:: wtforms.ext.csrf
