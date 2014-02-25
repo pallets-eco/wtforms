@@ -6,9 +6,8 @@ from __future__ import unicode_literals
 import datetime
 import operator
 
-from django.conf import settings
-
 try:
+    from django.conf import settings
     from django.utils import timezone
     has_timezone = True
 except ImportError:
