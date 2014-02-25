@@ -281,7 +281,7 @@ class Email(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-        super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,10}$', re.IGNORECASE, message)
+        super(Email, self).__init__(r'^[^@]+@([\da-z-]+\.)*[\da-z]{1,61}\.[a-z]{2,10}$', re.IGNORECASE, message)
 
     def __call__(self, form, field):
         message = self.message
