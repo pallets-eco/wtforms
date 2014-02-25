@@ -767,6 +767,7 @@ class FieldListTest(TestCase):
 
     def test_process_prefilled(self):
         data = ['foo', 'hi', 'rawr']
+
         class A(object):
             def __init__(self, a):
                 self.a = a
