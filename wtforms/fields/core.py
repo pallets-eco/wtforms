@@ -941,9 +941,11 @@ class FieldList(Field):
     def _add_entry(self, formdata=None, data=unset_value, index=None):
         assert not self.max_entries or len(self.entries) < self.max_entries, \
             'You cannot have more than max_entries entries in this FieldList'
-        new_index = self.last_index = index or (self.last_index + 1)
-        name = '%s-%d' % (self.short_name, new_index)
-        id = '%s-%d' % (self.id, new_index)
+        if index is None:
+            index = self.last_index + 1
+        self.last_index = index
+        name = '%s-%d' % (self.short_name, index)
+        id = '%s-%d' % (self.id, index)
         field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self.meta)
         field.process(formdata, data)
         self.entries.append(field)
