@@ -149,7 +149,7 @@ class ModelConverter(ModelConverterBase):
         self._string_common(field_args=field_args, **extra)
         return f.TextField(**field_args)
 
-    @converts('types.Text', 'UnicodeText', 'types.LargeBinary', 'types.Binary')
+    @converts('types.Text', 'UnicodeText', 'types.LargeBinary', 'types.Binary', 'sql.sqltypes.Text')
     def conv_Text(self, field_args, **extra):
         self._string_common(field_args=field_args, **extra)
         return f.TextAreaField(**field_args)
