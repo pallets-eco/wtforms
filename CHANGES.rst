@@ -13,6 +13,7 @@ Not yet released.
 - Make `DecimalField` able to use babel locale-based number formatting.
 - Drop Python 3.2 support (Python3 support for 3.3+ only)
 - passing ``attr=False`` to WTForms widgets causes the value to be ignored.
+- `Unique` validator in `wtforms.ext.sqlalchemy` has been removed.
 
 Version 1.0.5
 -------------

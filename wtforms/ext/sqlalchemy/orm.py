@@ -8,9 +8,7 @@ import inspect
 from wtforms import fields as f
 from wtforms import validators
 from wtforms.form import Form
-from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from wtforms.ext.sqlalchemy.fields import QuerySelectMultipleField
-from wtforms.ext.sqlalchemy.validators import Unique
+from .fields import QuerySelectField, QuerySelectMultipleField
 
 __all__ = (
     'model_fields', 'model_form',
@@ -85,11 +83,6 @@ class ModelConverterBase(object):
                 kwargs['validators'].append(validators.Optional())
             else:
                 kwargs['validators'].append(validators.Required())
-
-            if db_session and column.unique:
-                kwargs['validators'].append(Unique(
-                    lambda: db_session, model, column
-                ))
 
             if self.use_mro:
                 types = inspect.getmro(type(column.type))

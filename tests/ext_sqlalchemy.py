@@ -11,10 +11,8 @@ from unittest import TestCase
 from wtforms.compat import text_type, iteritems
 from wtforms.ext.sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms import Form, fields
-from wtforms.fields import TextField
 from wtforms.ext.sqlalchemy.orm import model_form, ModelConversionError, ModelConverter
-from wtforms.validators import Optional, Required, Length
-from wtforms.ext.sqlalchemy.validators import Unique
+from wtforms.validators import Optional, Required
 from tests.common import DummyPostData, contains_validator
 
 
@@ -239,7 +237,6 @@ class ModelFormTest(TestCase):
         student_form = model_form(self.Student, self.sess)()
         assert contains_validator(student_form.dob, Optional)
         assert contains_validator(student_form.full_name, Required)
-        assert contains_validator(student_form.full_name, Unique)
 
     def test_include_pk(self):
         form_class = model_form(self.Student, self.sess, exclude_pk=False)
@@ -334,38 +331,3 @@ class ModelFormColumnDefaultTest(TestCase):
         student_form = model_form(self.StudentDefaultScoreScalar, self.sess)()
         assert not isinstance(student_form._fields['score'].default, ColumnDefault)
         self.assertEqual(student_form._fields['score'].default, 10)
-
-
-class UniqueValidatorTest(TestCase):
-    def setUp(self):
-        Model = declarative_base()
-
-        class User(Model):
-            __tablename__ = "user"
-            id = Column(Integer, primary_key=True)
-            username = Column(String(255), nullable=False, unique=True)
-
-        engine = create_engine('sqlite:///:memory:', echo=False)
-        Session = sessionmaker(bind=engine)
-        self.metadata = Model.metadata
-        self.metadata.create_all(bind=engine)
-        self.sess = Session()
-
-        self.sess.add(User(username='batman'))
-        self.sess.commit()
-
-        class UserForm(Form):
-            username = TextField('Username', [
-                Length(min=4, max=25),
-                Unique(lambda: self.sess, User, User.username)
-            ])
-
-        self.UserForm = UserForm
-
-    def test_validate(self):
-        user_form = self.UserForm(DummyPostData(username=['spiderman']))
-        self.assertTrue(user_form.validate())
-
-    def test_wrong(self):
-        user_form = self.UserForm(DummyPostData(username=['batman']))
-        self.assertFalse(user_form.validate())
