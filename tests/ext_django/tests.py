@@ -119,11 +119,13 @@ class ModelFormTest(TestCase):
     })
     form = F()
     form_with_pk = model_form(test_models.User)()
+    form_with_only = model_form(test_models.User, only=['nullbool', 'birthday'])()
 
     def test_form_sanity(self):
         self.assertEqual(self.F.__name__, 'UserForm')
         self.assertEqual(len([x for x in self.form]), 14)
         self.assertEqual(len([x for x in self.form_with_pk]), 15)
+        self.assertEqual(len([x for x in self.form_with_only]), 2)
 
     def test_label(self):
         self.assertEqual(self.form.reg_ip.label.text, 'IP Addy')
@@ -164,6 +166,10 @@ class ModelFormTest(TestCase):
         field = self.form.nullbool
         assert isinstance(field, fields.SelectField)
         self.assertEqual(len(field.choices), 3)
+        pairs = (('True', True), ('False', False), ('None', None), ('2', True), ('0', False))
+        for input_val, expected in pairs:
+            form = self.F(DummyPostData(nullbool=[input_val]))
+            assert form.nullbool.data is expected
 
 
 class QuerySetSelectFieldTest(DjangoTestCase):
