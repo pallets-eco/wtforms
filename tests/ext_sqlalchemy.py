@@ -202,7 +202,7 @@ class ModelFormTest(TestCase):
             level = Column(Enum('Primary', 'Secondary'))
             has_prereqs = Column(Boolean, nullable=False)
             started = Column(DateTime, nullable=False)
-            grade = Column(AnotherInteger(unsigned=True), nullable=False)
+            grade = Column(AnotherInteger, nullable=False)
 
         class School(Model):
             __tablename__ = "school"

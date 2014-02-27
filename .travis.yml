@@ -6,12 +6,13 @@ python:
   - pypy
 env:
   global:
+    - SQLALCHEMY=SQLAlchemy==0.8.5
     - DATEUTIL=python-dateutil==2.1
     - LOCALFLAVOR=
   matrix:
     - DJANGO=Django==1.4.10
-    - DJANGO=Django==1.5.4 DATEUTIL=python-dateutil==2.2
-    - DJANGO=Django==1.5.5 LOCALFLAVOR=django-localflavor
+    - DJANGO=Django==1.5.4 DATEUTIL=python-dateutil==2.2 SQLALCHEMY=SQLAlchemy==0.9.3
+    - DJANGO=Django==1.5.5 LOCALFLAVOR=django-localflavor SQLALCHEMY=SQLAlchemy==0.7.10
     - DJANGO=Django==1.6 LOCALFLAVOR=django-localflavor
 
 matrix:
@@ -21,7 +22,7 @@ matrix:
 
 # command to install dependencies
 install:
-  - "pip install $DJANGO $DATEUTIL $LOCALFLAVOR --use-mirrors"
+  - "pip install $DJANGO $DATEUTIL $LOCALFLAVOR $SQLALCHEMY --use-mirrors"
   - "pip install . --use-mirrors"
   - "pip install -r tests/test_requirements.txt --use-mirrors"
 
