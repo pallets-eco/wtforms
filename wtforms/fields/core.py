@@ -471,7 +471,7 @@ class SelectField(SelectFieldBase):
 class SelectMultipleField(SelectField):
     """
     No different from a normal select field, except this one can take (and
-    validate) multiple choices.  You'll need to specify the HTML `rows`
+    validate) multiple choices.  You'll need to specify the HTML `size`
     attribute to the select field when rendering.
     """
     widget = widgets.Select(multiple=True)
