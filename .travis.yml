@@ -20,13 +20,9 @@ matrix:
     - python: 3.3
       env: DJANGO="Django<1.5"
 
-# command to install dependencies
 install:
-  - "pip install $DJANGO $DATEUTIL $LOCALFLAVOR $SQLALCHEMY"
-  - "pip install ."
-  - "pip install -r tests/test_requirements.txt"
+  - "pip install $DJANGO $DATEUTIL $LOCALFLAVOR $SQLALCHEMY -r tests/test_requirements.txt"
 
-# command to run tests
 script: "coverage run tests/runtests.py --with-pep8 --force-all"
 after_success:
   - pip install coveralls
