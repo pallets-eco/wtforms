@@ -176,7 +176,6 @@ class QuerySetSelectFieldTest(DjangoTestCase):
     fixtures = ['ext_django.json']
 
     def setUp(self):
-        #from django.core.management import call_command
         self.queryset = test_models.Group.objects.all()
 
         class F(Form):

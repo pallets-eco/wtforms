@@ -99,7 +99,7 @@ class SessionSecureFormTest(TestCase):
         assert form.csrf_token._value() != session['csrf']
         assert not form.validate()
         self.assertEqual(form.csrf_token.errors[0], 'CSRF failed')
-        #good_token = form.csrf_token._value()
+        # good_token = form.csrf_token._value()
 
         # Now test a valid CSRF with invalid timestamp
         evil_form = self.BadTimeSSF(csrf_context=session)

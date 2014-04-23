@@ -52,7 +52,7 @@ class ValidatorsTest(TestCase):
         for good_address in ('::1', 'dead:beef:0:0:0:0:42:1', 'abcd:ef::42:1'):
             self.assertEqual(ip_address(ipv6=True)(self.form, DummyField(good_address)), None)
 
-        #Test ValueError on ipv6=False and ipv4=False
+        # Test ValueError on ipv6=False and ipv4=False
         self.assertRaises(ValueError, ip_address, ipv4=False, ipv6=False)
 
     def test_mac_address(self):
