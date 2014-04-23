@@ -10,10 +10,10 @@ env:
     - DATEUTIL=python-dateutil==2.1
     - LOCALFLAVOR=
   matrix:
-    - DJANGO=Django<1.5
+    - DJANGO="Django<1.5"
     - DJANGO=Django==1.5.4 DATEUTIL=python-dateutil==2.2 SQLALCHEMY=SQLAlchemy==0.9.3
     - DJANGO=Django==1.5.5 LOCALFLAVOR=django-localflavor SQLALCHEMY=SQLAlchemy==0.7.10
-    - DJANGO=Django<1.7 LOCALFLAVOR=django-localflavor
+    - DJANGO="Django<1.7" LOCALFLAVOR=django-localflavor
 
 matrix:
   exclude:
