@@ -19,7 +19,7 @@ matrix:
 
 install:
   - "pip install $DJANGO $LOCALFLAVOR $SQLALCHEMY"
-  - "pip install -r tests/test_requirements.txt"
+  - "pip install -r tests/test_requirements.txt ."
 
 script: "coverage run tests/runtests.py --with-pep8 --force-all"
 
