@@ -34,6 +34,8 @@ def html_params(**kwargs):
     for k, v in sorted(iteritems(kwargs)):
         if k in ('class_', 'class__', 'for_'):
             k = k[:-1]
+        elif k.startswith('data_'):
+            k = k.replace('_', '-', 1)
         if v is True:
             params.append(k)
         elif v is False:
