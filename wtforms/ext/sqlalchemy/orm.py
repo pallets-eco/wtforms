@@ -239,7 +239,7 @@ def model_fields(model, db_session=None, only=None, exclude=None,
 
         properties.append((prop.key, prop))
 
-    #((p.key, p) for p in mapper.iterate_properties)
+    # ((p.key, p) for p in mapper.iterate_properties)
     if only:
         properties = (x for x in properties if x[0] in only)
     elif exclude:

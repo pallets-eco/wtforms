@@ -145,13 +145,14 @@ class ModelConverterBase(object):
 
         prop_type_name = type(prop).__name__
 
-        #check for generic property
+        # Check for generic property
         if(prop_type_name == "GenericProperty"):
-            #try to get type from field args
+            # Try to get type from field args
             generic_type = field_args.get("type")
             if generic_type:
                 prop_type_name = field_args.get("type")
-            #if no type is found, the generic property uses string set in convert_GenericProperty
+
+            # If no type is found, the generic property uses string set in convert_GenericProperty
 
         kwargs = {
             'label': prop._code_name.replace('_', ' ').title(),
