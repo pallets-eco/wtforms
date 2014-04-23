@@ -22,9 +22,9 @@ matrix:
 
 # command to install dependencies
 install:
-  - "pip install $DJANGO $DATEUTIL $LOCALFLAVOR $SQLALCHEMY --use-mirrors"
-  - "pip install . --use-mirrors"
-  - "pip install -r tests/test_requirements.txt --use-mirrors"
+  - "pip install $DJANGO $DATEUTIL $LOCALFLAVOR $SQLALCHEMY"
+  - "pip install ."
+  - "pip install -r tests/test_requirements.txt"
 
 # command to run tests
 script: "coverage run tests/runtests.py --with-pep8 --force-all"
