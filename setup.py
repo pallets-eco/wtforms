@@ -1,22 +1,11 @@
 import sys
+from setuptools import setup
 
 extra = {}
 
-try:
-    from setuptools import setup
-    has_setuptools = True
-    extra['test_suite'] = 'tests.runtests'
-    extra['extras_require'] = {
-        'Locale': ['Babel>=1.3'],
-    }
-    if sys.version_info < (2, 7):
-        extra['install_requires'] = ['ordereddict>=1.1']
-except ImportError:
-    from distutils.core import setup
-    has_setuptools = False
+if sys.version_info < (2, 7):
+    extra['install_requires'] = ['ordereddict>=1.1']
 
-if sys.version_info >= (3,) and not has_setuptools:
-    raise Exception('Python 3 support requires setuptools.')
 
 setup(
     name='WTForms',
@@ -56,6 +45,10 @@ setup(
     ],
     package_data={
         'wtforms': ['locale/wtforms.pot', 'locale/*/*/*'],
+    },
+    test_suite='tests.runtests',
+    extras_require={
+        'Locale': ['Babel>=1.3'],
     },
     **extra
 )
