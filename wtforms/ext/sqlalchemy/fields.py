@@ -81,8 +81,9 @@ class QuerySelectField(SelectFieldBase):
 
     def _get_data(self):
         if self._formdata is not None:
+            str_form_data = text_type(self._formdata)
             for pk, obj in self._get_object_list():
-                if pk == self._formdata:
+                if pk == str_formdata:
                     self._set_data(obj)
                     break
         return self._data
@@ -148,7 +149,7 @@ class QuerySelectMultipleField(QuerySelectField):
         self._invalid_formdata = False
 
     def _get_data(self):
-        formdata = self._formdata
+        formdata = [text_type(value) for value in self._formdata]
         if formdata is not None:
             data = []
             for pk, obj in self._get_object_list():
