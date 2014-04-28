@@ -56,7 +56,7 @@ class QuerySelectField(SelectFieldBase):
 
     def __init__(self, label=None, validators=None, query_factory=None,
                  get_pk=None, get_label=None, allow_blank=False,
-                 blank_text='', **kwargs):
+                 blank_text='', coerce=text_type, **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
 
@@ -78,6 +78,7 @@ class QuerySelectField(SelectFieldBase):
         self.blank_text = blank_text
         self.query = None
         self._object_list = None
+        self.coerce = coerce
 
     def _get_data(self):
         if self._formdata is not None:
@@ -97,7 +98,7 @@ class QuerySelectField(SelectFieldBase):
         if self._object_list is None:
             query = self.query or self.query_factory()
             get_pk = self.get_pk
-            self._object_list = list((text_type(get_pk(obj)), obj) for obj in query)
+            self._object_list = list((self.coerce(get_pk(obj)), obj) for obj in query)
         return self._object_list
 
     def iter_choices(self):
