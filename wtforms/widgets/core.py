@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
-from cgi import escape
+try:
+    from html import escape
+except ImportError:
+    from cgi import escape
 
 from wtforms.compat import text_type, iteritems
 
@@ -251,7 +254,7 @@ class TextArea(object):
         kwargs.setdefault('id', field.id)
         return HTMLString('<textarea %s>%s</textarea>' % (
             html_params(name=field.name, **kwargs),
-            escape(text_type(field._value()))
+            escape(text_type(field._value()), quote=False)
         ))
 
 
@@ -288,7 +291,7 @@ class Select(object):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape(text_type(label))))
+        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape(text_type(label), quote=False)))
 
 
 class Option(object):
