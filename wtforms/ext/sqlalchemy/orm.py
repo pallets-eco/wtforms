@@ -168,7 +168,8 @@ class ModelConverter(ModelConverterBase):
 
     @converts('Enum')
     def conv_Enum(self, column, field_args, **extra):
-        field_args['choices'] = [(e, e) for e in column.type.enums]
+        if 'choices' not in field_args:
+            field_args['choices'] = [(e, e) for e in column.type.enums]
         return f.SelectField(**field_args)
 
     @converts('Integer', 'SmallInteger')
