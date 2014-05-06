@@ -102,7 +102,7 @@ class Length(object):
                 else:
                     message = field.gettext('Field must be between %(min)d and %(max)d characters long.')
 
-            raise ValidationError(message % dict(min=self.min, max=self.max))
+            raise ValidationError(message % dict(min=self.min, max=self.max, length=l))
 
 
 class NumberRange(object):
