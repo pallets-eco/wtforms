@@ -156,7 +156,7 @@ class Optional(object):
         If True (the default) also stop the validation chain on input which
         consists of only whitespace.
     """
-    field_flags = ('optional', )
+    field_flags = ('optional',)
 
     def __init__(self, strip_whitespace=True):
         if strip_whitespace:
@@ -188,7 +188,7 @@ class DataRequired(object):
     :param message:
         Error message to raise in case of a validation error.
     """
-    field_flags = ('required', )
+    field_flags = ('required',)
 
     def __init__(self, message=None):
         self.message = message
@@ -225,7 +225,7 @@ class InputRequired(object):
     InputRequired looks that form-input data was provided, and DataRequired
     looks at the post-coercion data.
     """
-    field_flags = ('required', )
+    field_flags = ('required',)
 
     def __init__(self, message=None):
         self.message = message
@@ -378,6 +378,9 @@ class URL(Regexp):
     probably want to validate the url later by other means if the url must
     resolve.
 
+    :param require_protocol:
+        If true, then the protocol portion of the URL must be defined.
+        Set this to false if you do not want to validated on the protocol.
     :param require_tld:
         If true, then the domain-name portion of the URL must contain a .tld
         suffix.  Set this to false if you want to allow domains like
@@ -385,9 +388,10 @@ class URL(Regexp):
     :param message:
         Error message to raise in case of a validation error.
     """
-    def __init__(self, require_tld=True, message=None):
+    def __init__(self, require_protocol=True, require_tld=True, message=None):
+        protocol_part = (require_protocol and r'[a-z]+://' or '')
         tld_part = (require_tld and r'\.[a-z]{2,10}' or '')
-        regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
+        regex = r'^%s([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % (protocol_part, tld_part)
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
     def __call__(self, form, field):
