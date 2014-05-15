@@ -1,4 +1,5 @@
 # File extensions
+*.mo
 *.pyc
 *.pyo
 .*.swp
