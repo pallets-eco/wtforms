@@ -74,3 +74,6 @@ companion libraries to WTForms.
   structured data which is neither formdata, object data, or defaults.
   Currently this parameter is merged with the kwargs, but the intention is to
   handle other structured data (think JSON).
+
+* Filters on fields stop on the first ValueError, instead of continuing on
+  to the next one.

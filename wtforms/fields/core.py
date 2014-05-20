@@ -284,11 +284,11 @@ class Field(object):
             except ValueError as e:
                 self.process_errors.append(e.args[0])
 
-        for filter in self.filters:
-            try:
-                self.data = filter(self.data)
-            except ValueError as e:
-                self.process_errors.append(e.args[0])
+        try:
+            for filter in self.filters:
+                    self.data = filter(self.data)
+        except ValueError as e:
+            self.process_errors.append(e.args[0])
 
     def process_data(self, value):
         """

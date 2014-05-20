@@ -116,12 +116,12 @@ class UnsetValueTest(TestCase):
 class FiltersTest(TestCase):
     class F(Form):
         a = TextField(default=' hello', filters=[lambda x: x.strip()])
-        b = TextField(default='42', filters=[lambda x: int(x)])
+        b = TextField(default='42', filters=[int, lambda x: -x])
 
     def test_working(self):
         form = self.F()
         self.assertEqual(form.a.data, 'hello')
-        self.assertEqual(form.b.data, 42)
+        self.assertEqual(form.b.data, -42)
         assert form.validate()
 
     def test_failure(self):
