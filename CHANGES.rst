@@ -3,7 +3,7 @@ WTForms Changelog
 
 Version 2.0
 -----------
-Not yet released.
+Released May 20, 2014
 
 - Add new `class Meta` paradigm for much more powerful customization 
   of WTForms.
