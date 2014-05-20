@@ -38,7 +38,8 @@ the entire API of the `Meta` interface is shown here.
     .. autoattribute:: csrf_class
 
         If set, this is a class which is used to implement CSRF protection.
-        Read the documentation on CSRF to get more information on how to use.
+        Read the :doc:`CSRF Documentation <csrf>` to get more information on 
+        how to use.
 
     .. autoattribute:: csrf_field_name
 

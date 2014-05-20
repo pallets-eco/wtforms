@@ -184,8 +184,11 @@ class FormMeta(type):
 
     def __call__(cls, *args, **kwargs):
         """
-        Construct a new `Form` instance, creating `_unbound_fields` on the
-        class if it is empty.
+        Construct a new `Form` instance.
+
+        Creates the `_unbound_fields` list and the internal `_wtforms_meta`
+        subclass of the class Meta in order to allow a proper inheritance
+        hierarchy.
         """
         if cls._unbound_fields is None:
             fields = []
@@ -198,6 +201,8 @@ class FormMeta(type):
             # to ensure a stable sort.
             fields.sort(key=lambda x: (x[1].creation_counter, x[0]))
             cls._unbound_fields = fields
+
+        # Create a subclass of the 'class Meta' using all the ancestors.
         if cls._wtforms_meta is None:
             bases = []
             for mro_class in cls.__mro__:

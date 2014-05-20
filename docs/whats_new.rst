@@ -55,3 +55,22 @@ the new API's unless it needs to work across both WTForms 1.x and 2.x
 .. _WTForms-Alchemy-docs: http://wtforms-alchemy.readthedocs.org/en/latest/
 .. _WTForms-Appengine: https://github.com/wtforms/wtforms-appengine
 .. _WTForms-Django: https://github.com/wtforms/wtforms-django
+
+
+Low-level Changes
+-----------------
+
+Most of these changes shouldn't affect the typical library user, however we
+are including these changes for completeness for those who are creating
+companion libraries to WTForms.
+
+* ``BaseForm._fields`` is now an OrderedDict, not a sequence of tuples.
+
+* :class:`BaseForm` now manages an attribute called ``_wtforms_meta`` which is
+  a subclass of any ``class Meta`` defined on ancestor form classes.
+
+* A new keyword-param called simply ``data=`` to the Form constructor has been
+  added and positioned as the place where soon we will be able to accept
+  structured data which is neither formdata, object data, or defaults.
+  Currently this parameter is merged with the kwargs, but the intention is to
+  handle other structured data (think JSON).
