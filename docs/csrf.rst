@@ -123,7 +123,7 @@ most secure implementation of CSRF.
 
 First, let's create our CSRF class::
 
-    from wtforms.csrf import CSRF
+    from wtforms.csrf.core import CSRF
     from hashlib import md5
 
     SECRET_KEY = '1234567890'
@@ -141,7 +141,7 @@ First, let's create our CSRF class::
             token = md5(SECRET_KEY + self.csrf_context).hexdigest()
             return token
 
-        def validate_csrf_token(self, field):
+        def validate_csrf_token(self, form, field):
             if field.data != field.current_token:
                 raise ValueError('Invalid CSRF')
 
