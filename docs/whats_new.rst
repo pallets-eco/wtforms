@@ -45,8 +45,7 @@ the new API's unless it needs to work across both WTForms 1.x and 2.x
   * :mod:`wtforms.ext.appengine` Is deprecated, see `WTForms-Appengine`_
   * :mod:`wtforms.ext.csrf` CSRF protection is now :doc:`built in <csrf>`
   * :mod:`wtforms.ext.dateutil` Is deprecated, but does not have a new home yet.
-  * :mod:`wtforms.ext.django` Is deprecated, except for the templatetag which
-    has moved. For fields and model_form, see `WTForms-Django`_
+  * :mod:`wtforms.ext.django` Is deprecated. For fields and model_form, see `WTForms-Django`_
   * :mod:`wtforms.ext.i18n` i18n is now :doc:`built in <i18n>`
   * :mod:`wtforms.ext.sqlalchemy` Is deprecated, look at `WTForms-Alchemy`_ 
     (`docs <WTForms-Alchemy-docs>`_)

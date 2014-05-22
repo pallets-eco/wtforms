@@ -67,7 +67,7 @@ locales in the `meta` section of the
     form = MyForm(request.form, meta={'locales': ['en_US', 'en']})
 
 Alternately, if you are localizing application-wide you can define locales
-at meta-level in a subclass of Form:
+at meta-level in a subclass of Form::
 
     class MyBaseForm(Form):
         class Meta:
