@@ -13,8 +13,12 @@ New Features
 * :doc:`Class Meta <meta>` paradigm allows customization of many aspects of WTForms.
 * :doc:`CSRF <csrf>` and :doc:`i18n <i18n>` are core features not needing 
   extensions anymore.
-* Passing ``<attribute name>=False`` to WTForms widget rendering is now ignored,
-  making it easier to deal with boolean HTML attributes.
+* Widget rendering changes:
+
+  * Passing ``<attribute name>=False`` to WTForms widget rendering is now 
+    ignored, making it easier to deal with boolean HTML attributes.
+  * Creating an html attribute ``data-foo`` can be done by passing the keyword
+    ``data_foo`` to the widget.
 
 
 Deprecated API's

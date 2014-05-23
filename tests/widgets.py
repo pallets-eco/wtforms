@@ -23,12 +23,19 @@ class DummyField(object):
 
 
 class HTMLParamsTest(TestCase):
-    def test(self):
+    def test_basic(self):
         self.assertEqual(html_params(foo=9, k='wuuu'), 'foo="9" k="wuuu"')
         self.assertEqual(html_params(class_='foo'), 'class="foo"')
         self.assertEqual(html_params(class__='foo'), 'class_="foo"')
         self.assertEqual(html_params(for_='foo'), 'for="foo"')
         self.assertEqual(html_params(readonly=False, foo=9), 'foo="9"')
+
+    def test_data_prefix(self):
+        self.assertEqual(html_params(data_foo=22), 'data-foo="22"')
+        self.assertEqual(html_params(data_foo_bar=1), 'data-foo_bar="1"')
+
+    def test_quoting(self):
+        self.assertEqual(html_params(foo='hi&bye"quot'), 'foo="hi&amp;bye&quot;quot"')
 
 
 class ListWidgetTest(TestCase):
