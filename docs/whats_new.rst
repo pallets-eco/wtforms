@@ -49,7 +49,7 @@ the new API's unless it needs to work across both WTForms 1.x and 2.x
   * :mod:`wtforms.ext.appengine` Is deprecated, see `WTForms-Appengine`_
   * :mod:`wtforms.ext.csrf` CSRF protection is now :doc:`built in <csrf>`
   * :mod:`wtforms.ext.dateutil` Is deprecated, but does not have a new home yet.
-  * :mod:`wtforms.ext.django` Is deprecated. For fields and model_form, see `WTForms-Django`_
+  * :mod:`wtforms.ext.django` Is deprecated. See `WTForms-Django`_
   * :mod:`wtforms.ext.i18n` i18n is now :doc:`built in <i18n>`
   * :mod:`wtforms.ext.sqlalchemy` Is deprecated, look at `WTForms-Alchemy`_ 
     (`docs <WTForms-Alchemy-docs>`_)
@@ -67,10 +67,11 @@ Most of these changes shouldn't affect the typical library user, however we
 are including these changes for completeness for those who are creating
 companion libraries to WTForms.
 
-* ``BaseForm._fields`` is now an OrderedDict, not a sequence of tuples.
+* ``BaseForm._fields`` is now an OrderedDict, not a plain dict.
 
-* :class:`BaseForm` now manages an attribute called ``_wtforms_meta`` which is
-  a subclass of any ``class Meta`` defined on ancestor form classes.
+* :class:`~wtforms.form.FormMeta` now manages an attribute called 
+  ``_wtforms_meta`` which is a subclass of any ``class Meta`` defined on 
+  ancestor form classes.
 
 * A new keyword-param called simply ``data=`` to the Form constructor has been
   added and positioned as the place where soon we will be able to accept
@@ -78,5 +79,5 @@ companion libraries to WTForms.
   Currently this parameter is merged with the kwargs, but the intention is to
   handle other structured data (think JSON).
 
-* Filters on fields stop on the first ValueError, instead of continuing on
-  to the next one.
+* :attr:`Filters <wtforms.fields.Field.filters>` on fields stop on the first 
+  ValueError, instead of continuing on to the next one.

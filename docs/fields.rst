@@ -201,6 +201,12 @@ The Field base class
         :attr:`Form.meta <wtforms.form.Form.meta>`
 
 
+    .. attribute:: filters
+
+        The same sequence of filters that was passed as the ``filters=`` to
+        the field constructor. This is usually a sequence of callables.
+
+
 Basic fields
 ------------
 
