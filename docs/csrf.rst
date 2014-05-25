@@ -27,12 +27,9 @@ like such::
 
     class MyBaseForm(Form):
         class Meta:
-            # Enable CSRF
-            csrf = True
-            # Set the CSRF implementation
-            csrf_class = SomeCSRF
-            # Some CSRF implementations need a secret key
-            csrf_secret = b'foobar'
+            csrf = True  # Enable CSRF
+            csrf_class = SomeCSRF  # Set the CSRF implementation
+            csrf_secret = b'foobar'  # Some implementations need a secret key.
             # Any other CSRF settings here.
 
 And once you've got this set up, you can define your forms as a subclass
@@ -109,6 +106,12 @@ a cryptographic hash function against some data which would be hard to forge.
     .. automethod:: generate_csrf_token
 
     .. automethod:: validate_csrf_token
+
+    .. autoattribute:: field_class
+
+        The class of the token field we're going to construct. Can be 
+        overridden in subclasses if need be.
+
 
 Creating your own CSRF implementation
 -------------------------------------
@@ -246,9 +249,12 @@ Session-based CSRF implementation
       Otherwise, set to a ``datetime.timedelta`` that will define how long 
       CSRF tokens are valid for. Defaults to 30 minutes.
 
-    * ``csrf_context`` This should be a ``request.session``-style object. Usually set in the constructor.
+    * ``csrf_context`` This should be a ``request.session``-style object. 
+      Usually given in the Form constructor.
 
-**Example**
+
+Example
+~~~~~~~
 
 .. code-block:: python
 
@@ -269,7 +275,39 @@ Session-based CSRF implementation
         form = Registration(request.POST, meta={'csrf_context': request.session})
         # rest of view here
 
-Note that request.session is passed as the ``csrf_context=`` parameter, this is
-so that the CSRF token can be stored in your session for comparison on a later
-request.
+Note that request.session is passed as the ``csrf_context`` override to the 
+meta info, this is so that the CSRF token can be stored in your session for 
+comparison on a later request.
 
+
+Example Integration
+~~~~~~~~~~~~~~~~~~~
+
+WTForms primitives are designed to work with a large variety of frameworks, and
+as such sometimes things seem like they are more work to use, but with some
+smart integration, you can actually clean up your code substantially.
+
+For example, if you were going to integrate with `Flask`_, and wanted to use
+the SessionCSRF implementation, here's one way to get the CSRF context to be 
+available without passing it all the time:
+
+.. code-block:: python
+
+    from flask import request
+    from wtforms.csrf.session import SessionCSRF
+
+    class MyBaseForm(Form):
+        class Meta:
+            csrf = True
+            csrf_class = SessonCSRF
+            csrf_secret = app.config['CSRF_SECRET_KEY']
+
+            @property
+            def csrf_context(self):
+                return request.session
+
+Now with any subclasses of MyBaseForm, you don't need to pass in the csrf 
+context, and on top of that, we grab the secret key out of your normal app
+configuration.
+
+.. _Flask: http://flask.pocoo.org/

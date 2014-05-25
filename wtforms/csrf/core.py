@@ -47,6 +47,19 @@ class CSRF(object):
     field_class = CSRFTokenField
 
     def setup_form(self, form):
+        """
+        Receive the form we're attached to and set up fields.
+
+        The default implementation creates a single field of
+        type :attr:`field_class` with name taken from the
+        ``csrf_field_name`` of the class meta.
+
+        :param form:
+            The form instance we're attaching to.
+        :return:
+            A sequence of `(field_name, unbound_field)` 2-tuples which
+            are unbound fields to be added to the form.
+        """
         meta = form.meta
         field_name = meta.csrf_field_name
         unbound_field = self.field_class(
@@ -60,12 +73,14 @@ class CSRF(object):
         Implementations must override this to provide a method with which one
         can get a CSRF token for this form.
 
-        A CSRF token should be a string which can be generated
-        deterministically so that on the form POST, the generated string is
-        (usually) the same assuming the user is using the site normally.
+        A CSRF token is usually a string that is generated deterministically
+        based on some sort of user data, though it can be anything which you
+        can validate on a subsequent request.
 
         :param csrf_token_field:
             The field which is being used for CSRF.
+        :return:
+            A generated CSRF string.
         """
         raise NotImplementedError()
 
