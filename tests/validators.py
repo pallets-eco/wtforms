@@ -108,6 +108,7 @@ class ValidatorsTest(TestCase):
     def test_data_required(self):
         # Make sure we stop the validation chain
         self.assertEqual(data_required()(self.form, DummyField('foobar')), None)
+        self.assertEqual(data_required()(self.form, DummyField(0)), None)  # special case
         self.assertRaises(StopValidation, data_required(), self.form, DummyField(''))
         self.assertRaises(StopValidation, data_required(), self.form, DummyField(' '))
         self.assertEqual(data_required().field_flags, ('required', ))
