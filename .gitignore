@@ -3,6 +3,7 @@
 *.pyo
 .*.swp
 .DS_Store
+.idea
 
 # Extra Files
 MANIFEST
