@@ -49,6 +49,7 @@ setup(
     test_suite='tests.runtests',
     extras_require={
         'Locale': ['Babel>=1.3'],
+        ':python_version=="2.6"': ['ordereddict'],
     },
     **extra
 )
