@@ -9,4 +9,7 @@ from wtforms.i18n import (messages_path, get_builtin_gnu_translations, get_trans
 
 
 import warnings
-warnings.warn('i18n utils have been merged into core, and this module will go away in WTForms 1.2', DeprecationWarning)
+warnings.warn(
+    'i18n utils have been merged into core, and this module will go away in WTForms 3.0',
+    category=DeprecationWarning, stacklevel=2
+)

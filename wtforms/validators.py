@@ -218,7 +218,10 @@ class Required(DataRequired):
     """
     def __init__(self, *args, **kwargs):
         super(Required, self).__init__(*args, **kwargs)
-        warnings.warn('Required is going away in WTForms 3.0, use DataRequired', DeprecationWarning)
+        warnings.warn(
+            'Required is going away in WTForms 3.0, use DataRequired',
+            DeprecationWarning, stacklevel=2
+        )
 
 
 class InputRequired(object):

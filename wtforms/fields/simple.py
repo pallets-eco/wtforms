@@ -20,7 +20,7 @@ class TextField(StringField):
         super(TextField, self).__init__(*args, **kw)
         warnings.warn(
             'The TextField alias for StringField has been deprecated and will be removed in WTForms 3.0',
-            DeprecationWarning
+            DeprecationWarning, stacklevel=2
         )
 
 
