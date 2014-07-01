@@ -1,6 +1,13 @@
 WTForms Changelog
 =================
 
+Version 2.0.1
+-------------
+Released July 1, 2014
+
+- Update wheel install to conditionally install ordereddict for python 2.6.
+- Doc improvements
+
 Version 2.0
 -----------
 Released May 20, 2014
