@@ -188,8 +188,7 @@ class Field(object):
         try:
             self.pre_validate(form)
         except StopValidation as e:
-            if e.args and e.args[0]:
-                self.errors.append(e.args[0])
+            self.errors.append(e.args[0])
             stop_validation = True
         except ValueError as e:
             self.errors.append(e.args[0])
@@ -219,8 +218,7 @@ class Field(object):
             try:
                 validator(form, self)
             except StopValidation as e:
-                if e.args and e.args[0]:
-                    self.errors.append(e.args[0])
+                self.errors.append(e.args[0])
                 return True
             except ValueError as e:
                 self.errors.append(e.args[0])

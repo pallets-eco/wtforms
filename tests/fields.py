@@ -203,7 +203,7 @@ class PrePostValidationTest(TestCase):
         self.assertEqual(a.errors, ["too long"])
 
         stoponly = self._init_field("stoponly")
-        self.assertEqual(stoponly.errors, [])
+        self.assertEqual(stoponly.errors, [''])
 
         stopmessage = self._init_field("stopmessage")
         self.assertEqual(stopmessage.errors, ["stop with message"])
