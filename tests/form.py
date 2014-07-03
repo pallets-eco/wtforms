@@ -42,8 +42,7 @@ class BaseFormTest(TestCase):
     def test_stop_validation_proxy(self):
         form = self.get_form()
         form.process(test='stop_validation')
-        form.validate()
-        self.assertEqual(form.errors, {'test': ['']})
+        self.assertFalse(form.validate())
 
         form = self.get_form(message='error')
         form.process(test='stop_validation')

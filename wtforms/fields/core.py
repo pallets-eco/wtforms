@@ -205,7 +205,7 @@ class Field(object):
         except ValueError as e:
             self.errors.append(e.args[0])
 
-        return len(self.errors) == 0
+        return not (self.errors or stop_validation)
 
     def _run_validation_chain(self, form, validators):
         """
