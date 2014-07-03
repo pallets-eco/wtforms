@@ -5,16 +5,17 @@ from unittest import TestCase
 from wtforms.form import BaseForm, Form
 from wtforms.meta import DefaultMeta
 from wtforms.fields import TextField, IntegerField
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, StopValidation
 from tests.common import DummyPostData
 
 
 class BaseFormTest(TestCase):
-    def get_form(self, **kwargs):
+    def get_form(self, message='', **kwargs):
         def validate_test(form, field):
-            if field.data != 'foobar':
-                raise ValidationError('error')
-
+            if field.data == 'validation_error':
+                raise ValidationError(message)
+            elif field.data == 'stop_validation':
+                raise StopValidation(message)
         return BaseForm({'test': TextField(validators=[validate_test])}, **kwargs)
 
     def test_data_proxy(self):
@@ -22,14 +23,30 @@ class BaseFormTest(TestCase):
         form.process(test='foo')
         self.assertEqual(form.data, {'test': 'foo'})
 
-    def test_errors_proxy(self):
+    def test_validation_errors_proxy(self):
         form = self.get_form()
         form.process(test='foobar')
         form.validate()
         self.assertEqual(form.errors, {})
 
         form = self.get_form()
-        form.process()
+        form.process(test='validation_error')
+        form.validate()
+        self.assertEqual(form.errors, {'test': ['']})
+
+        form = self.get_form(message='error')
+        form.process(test='validation_error')
+        form.validate()
+        self.assertEqual(form.errors, {'test': ['error']})
+
+    def test_stop_validation_proxy(self):
+        form = self.get_form()
+        form.process(test='stop_validation')
+        form.validate()
+        self.assertEqual(form.errors, {'test': ['']})
+
+        form = self.get_form(message='error')
+        form.process(test='stop_validation')
         form.validate()
         self.assertEqual(form.errors, {'test': ['error']})
 
