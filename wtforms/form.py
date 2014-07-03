@@ -33,7 +33,7 @@ class BaseForm(object):
         if prefix and prefix[-1] not in '-_;:/.':
             prefix += '-'
 
-        self.meta = meta
+        self._meta = meta
         self._prefix = prefix
         self._errors = None
         self._fields = OrderedDict()
@@ -82,7 +82,7 @@ class BaseForm(object):
 
         Must return an object that provides gettext() and ngettext() methods.
         """
-        return self.meta.get_translations(self)
+        return self._meta.get_translations(self)
 
     def populate_obj(self, obj):
         """
@@ -116,7 +116,7 @@ class BaseForm(object):
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
         """
-        formdata = self.meta.wrap_formdata(self, formdata)
+        formdata = self._meta.wrap_formdata(self, formdata)
 
         if data is not None:
             # XXX we want to eventually process 'data' as a new entity.
@@ -152,6 +152,12 @@ class BaseForm(object):
             if not field.validate(self, extra):
                 success = False
         return success
+
+    # Expose _meta as "meta", keeping _meta private so that a form field called "meta"
+    # doesn't break internal functionality.
+    @property
+    def meta(self):
+        return self._meta
 
     @property
     def data(self):

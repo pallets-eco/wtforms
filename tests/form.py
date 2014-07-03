@@ -245,3 +245,10 @@ class MetaTest(TestCase):
             self.G.Meta,
             DefaultMeta
         ))
+
+    def test_meta_field(self):
+        class F(Form):
+            meta = TextField()
+        f = F()
+        assert isinstance(f.meta, TextField)
+        assert isinstance(f._meta, F.Meta)
