@@ -150,13 +150,13 @@ class ValidatorsTest(TestCase):
     def test_regexp(self):
         import re
         # String regexp
-        self.assertEqual(regexp('^a')(self.form, DummyField('abcd')), None)
-        self.assertEqual(regexp('^a', re.I)(self.form, DummyField('ABcd')), None)
+        self.assertEqual(regexp('^a')(self.form, DummyField('abcd')).group(0), 'a')
+        self.assertEqual(regexp('^a', re.I)(self.form, DummyField('ABcd')).group(0), 'A')
         self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField('foo'))
         self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField(None))
         # Compiled regexp
-        self.assertEqual(regexp(re.compile('^a'))(self.form, DummyField('abcd')), None)
-        self.assertEqual(regexp(re.compile('^a', re.I))(self.form, DummyField('ABcd')), None)
+        self.assertEqual(regexp(re.compile('^a'))(self.form, DummyField('abcd')).group(0), 'a')
+        self.assertEqual(regexp(re.compile('^a', re.I))(self.form, DummyField('ABcd')).group(0), 'A')
         self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField('foo'))
         self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField(None))
 

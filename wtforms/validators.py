@@ -268,7 +268,8 @@ class Regexp(object):
         self.message = message
 
     def __call__(self, form, field, message=None):
-        if not self.regex.match(field.data or ''):
+        match = self.regex.match(field.data or '')
+        if not match:
             if message is None:
                 if self.message is None:
                     message = field.gettext('Invalid input.')
@@ -276,6 +277,7 @@ class Regexp(object):
                     message = self.message
 
             raise ValidationError(message)
+        return match
 
 
 class Email(Regexp):
