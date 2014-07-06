@@ -269,17 +269,39 @@ class Select(object):
     call on rendering; this method must yield tuples of
     `(value, label, selected)`.
     """
+    select_input_count = 0
+
     def __init__(self, multiple=False):
         self.multiple = multiple
+        Select.select_input_count += 1
+        self.select_input_count = Select.select_input_count
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         if self.multiple:
-            kwargs['multiple'] = True
+            kwargs['multiple'] = 'multiple'
+        kwargs['id'] = 'mySel%d' % (self.select_input_count)
+        kwargs['_class'] = 'select2'
+        kwargs['style'] = 'width:400px;'
+        js = '''<script type="text/javascript">
+            $.getScript('http://davidstutz.github.io/bootstrap-multiselect/js/bootstrap-multiselect.js'
+            ,function(){
+                $("#mySel%d").multiselect({
+            });            
+            $('.single option').click(function() {
+                // only affects options contained within the same optgroup
+                // and doesn't include this
+                //$(this).siblings().prop('selected', false);
+                });
+            });
+            </script>''' % (self.select_input_count)
         html = ['<select %s>' % html_params(name=field.name, **kwargs)]
+        html.append('<optgroup>')
         for val, label, selected in field.iter_choices():
             html.append(self.render_option(val, label, selected))
+        html.append('</optgroup>')
         html.append('</select>')
+        html.append(js)
         return HTMLString(''.join(html))
 
     @classmethod
@@ -291,6 +313,7 @@ class Select(object):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
+            options['_class'] = 'active'
         return HTMLString('<option %s>%s</option>' % (html_params(**options), escape(text_type(label), quote=False)))
 
 
