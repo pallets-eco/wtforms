@@ -288,7 +288,7 @@ class Email(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-        super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,10}$', re.IGNORECASE, message)
+        super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,20}$', re.IGNORECASE, message)
 
     def __call__(self, form, field):
         message = self.message
@@ -393,7 +393,7 @@ class URL(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, require_tld=True, message=None):
-        tld_part = (require_tld and r'\.[a-z]{2,10}' or '')
+        tld_part = (require_tld and r'\.[a-z]{2,20}' or '')
         regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
         super(URL, self).__init__(regex, re.IGNORECASE, message)
 
