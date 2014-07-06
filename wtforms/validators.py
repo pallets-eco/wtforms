@@ -290,14 +290,19 @@ class Email(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-        super(Email, self).__init__(r'^.+@[^.].*\.[a-z]{2,20}$', re.IGNORECASE, message)
+        self.validate_hostname = HostnameValidation(
+            require_tld=True,
+        )
+        super(Email, self).__init__(r'^.+@([^.@][^@]+)$', re.IGNORECASE, message)
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext('Invalid email address.')
 
-        super(Email, self).__call__(form, field, message)
+        match = super(Email, self).__call__(form, field, message)
+        if not self.validate_hostname(match.group(1)):
+            raise ValidationError(message)
 
 
 class IPAddress(object):
@@ -330,14 +335,16 @@ class IPAddress(object):
                 message = field.gettext('Invalid IP address.')
             raise ValidationError(message)
 
-    def check_ipv4(self, value):
+    @classmethod
+    def check_ipv4(cls, value):
         parts = value.split('.')
         if len(parts) == 4 and all(x.isdigit() for x in parts):
             numbers = list(int(x) for x in parts)
             return all(num >= 0 and num < 256 for num in numbers)
         return False
 
-    def check_ipv6(self, value):
+    @classmethod
+    def check_ipv6(cls, value):
         parts = value.split(':')
         if len(parts) > 8:
             return False
@@ -395,16 +402,21 @@ class URL(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, require_tld=True, message=None):
-        tld_part = (require_tld and r'\.[a-z]{2,20}' or '')
-        regex = r'^[a-z]+://([^/:]+%s|([0-9]{1,3}\.){3}[0-9]{1,3})(:[0-9]+)?(\/.*)?$' % tld_part
+        regex = r'^[a-z]+://(?P<host>[^/:]+)(?P<port>:[0-9]+)?(?P<path>\/.*)?$'
         super(URL, self).__init__(regex, re.IGNORECASE, message)
+        self.validate_hostname = HostnameValidation(
+            require_tld=require_tld,
+            allow_ip=True,
+        )
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext('Invalid URL.')
 
-        super(URL, self).__call__(form, field, message)
+        match = super(URL, self).__call__(form, field, message)
+        if not self.validate_hostname(match.group('host')):
+            raise ValidationError(message)
 
 
 class UUID(Regexp):
@@ -484,6 +496,45 @@ class NoneOf(object):
                 message = field.gettext('Invalid value, can\'t be any of: %(values)s.')
 
             raise ValidationError(message % dict(values=self.values_formatter(self.values)))
+
+
+class HostnameValidation(object):
+    """
+    Helper class for checking hostnames for validation.
+
+    This is not a validator in and of itself, and as such is not exported.
+    """
+    hostname_part = re.compile(r'^(xn-|[a-z0-9]+)(-[a-z0-9]+)*$', re.IGNORECASE)
+    tld_part = re.compile(r'^([a-z]{2,20}|xn--([a-z0-9]+-)*[a-z0-9]+)$', re.IGNORECASE)
+
+    def __init__(self, require_tld=True, allow_ip=False):
+        self.require_tld = require_tld
+        self.allow_ip = allow_ip
+
+    def __call__(self, hostname):
+        if self.allow_ip:
+            if IPAddress.check_ipv4(hostname) or IPAddress.check_ipv6(hostname):
+                return True
+
+        # Encode out IDNA hostnames. This makes further validation easier.
+        hostname = hostname.encode('idna')
+
+        if len(hostname) > 253:
+            return False
+
+        # Check that all labels in the hostname are valid
+        parts = hostname.split('.')
+        for part in parts:
+            if not part or len(part) > 63:
+                return False
+            if not self.hostname_part.match(part):
+                return False
+
+        if self.require_tld:
+            if len(parts) < 2 or not self.tld_part.match(parts[-1]):
+                return False
+
+        return True
 
 
 email = Email
