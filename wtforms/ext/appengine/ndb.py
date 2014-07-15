@@ -263,21 +263,24 @@ class ModelConverter(ModelConverterBase):
         if prop._auto_now or prop._auto_now_add:
             return None
 
-        return f.DateTimeField(format='%Y-%m-%d %H:%M:%S', **kwargs)
+        kwargs.setdefault('format', '%Y-%m-%d %H:%M:%S')
+        return f.DateTimeField(**kwargs)
 
     def convert_DateProperty(self, model, prop, kwargs):
         """Returns a form field for a ``ndb.DateProperty``."""
         if prop._auto_now or prop._auto_now_add:
             return None
 
-        return f.DateField(format='%Y-%m-%d', **kwargs)
+        kwargs.setdefault('format', '%Y-%m-%d')
+        return f.DateField(**kwargs)
 
     def convert_TimeProperty(self, model, prop, kwargs):
         """Returns a form field for a ``ndb.TimeProperty``."""
         if prop._auto_now or prop._auto_now_add:
             return None
 
-        return f.DateTimeField(format='%H:%M:%S', **kwargs)
+        kwargs.setdefault('format', '%H:%M:%S')
+        return f.DateTimeField(**kwargs)
 
     def convert_RepeatedProperty(self, model, prop, kwargs):
         """Returns a form field for a ``ndb.ListProperty``."""
