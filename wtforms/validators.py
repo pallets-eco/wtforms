@@ -519,6 +519,10 @@ class HostnameValidation(object):
         # Encode out IDNA hostnames. This makes further validation easier.
         hostname = hostname.encode('idna')
 
+        # Turn back into a string in Python 3x
+        if not isinstance(hostname, string_types):
+            hostname = hostname.decode('ascii')
+
         if len(hostname) > 253:
             return False
 
