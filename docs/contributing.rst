@@ -9,8 +9,10 @@ python community.
 How to Contribute
 -----------------
 
-WTForms is now on GitHub, so all contributions should be either associated
+WTForms is now on `GitHub`_, so all contributions should be either associated
 with a pull request or with a ticket & patch.
+
+.. _GitHub: https://github.com/wtforms/wtforms
 
 
 Contribution Guidelines
