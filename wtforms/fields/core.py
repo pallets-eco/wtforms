@@ -5,7 +5,7 @@ import decimal
 import itertools
 
 from wtforms import widgets
-from wtforms.compat import text_type, izip
+from wtforms.compat import string_types, text_type, izip
 from wtforms.i18n import DummyTranslations
 from wtforms.validators import StopValidation
 from wtforms.utils import unset_value
@@ -101,7 +101,12 @@ class Field(object):
         self.validators = validators or list(self.validators)
 
         self.id = id or self.name
-        self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
+        if label is None:
+            label = self.gettext(_name.replace('_', ' ').title())
+        if isinstance(label, string_types):
+            self.label = Label(self.id, label)
+        else:
+            self.label = label
 
         if widget is not None:
             self.widget = widget
