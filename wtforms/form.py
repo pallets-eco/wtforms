@@ -34,6 +34,7 @@ class BaseForm(object):
             prefix += '-'
 
         self.meta = meta
+        self.has_obj = False
         self._prefix = prefix
         self._errors = None
         self._fields = OrderedDict()
@@ -269,6 +270,8 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         meta_obj = self._wtforms_meta()
         if meta is not None and isinstance(meta, dict):
             meta_obj.update_values(meta)
+        if obj is not None:
+            self.has_obj = True
         super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
 
         for name, field in iteritems(self._fields):
