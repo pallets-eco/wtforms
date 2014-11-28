@@ -286,7 +286,7 @@ class Field(object):
 
         try:
             for filter in self.filters:
-                    self.data = filter(self.data)
+                self.data = filter(self.data)
         except ValueError as e:
             self.process_errors.append(e.args[0])
 
