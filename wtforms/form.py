@@ -172,7 +172,7 @@ class FormMeta(type):
     is a list of `UnboundField` instances sorted by their order of
     instantiation.  The list is created at the first instantiation of the form.
     If any fields are added/removed from the form, the list is cleared to be
-    re-generated on the next instantiaton.
+    re-generated on the next instantiation.
 
     Any properties which begin with an underscore or are not `UnboundField`
     instances are ignored by the metaclass.
