@@ -19,7 +19,7 @@ msgstr ""
 #: validators.py:56
 #, python-format
 msgid "Invalid field name '%s'."
-msgstr "Špatný název pole."
+msgstr "Špatný název pole '%s'."
 
 #: validators.py:64
 #, python-format
@@ -139,11 +139,11 @@ msgstr "Špatně zadaný datum/čas."
 
 #: fields/core.py:461
 msgid "Invalid Choice: could not coerce"
-msgstr "Špatná volba: nelze přinutit."
+msgstr "Špatná volba: nelze převedeny."
 
 #: fields/core.py:494
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "Špatná volba(volby): jeden nebo víc datových vstupů nemohou být přinucene."
+msgstr "Špatná volba(y): jeden nebo více datových vstupů nemohou být převedeny."
 
 #: fields/core.py:501
 #, python-format
