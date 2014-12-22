@@ -95,6 +95,18 @@ class BaseForm(object):
         for name, field in iteritems(self._fields):
             field.populate_obj(obj, name)
 
+    def populate_obj_partial(self, obj):
+        """
+        Populates the attributes of the passed `obj` with data from the form's
+        fields.
+
+        :note: This is a less destructive operation; Any attribute with the same name
+               as a field will be overridden if it's provided in formdata or kwargs
+        """
+        for name, field in iteritems(self._fields):
+            if name in self._formdata:
+                field.populate_obj(obj, name)
+
     def process(self, formdata=None, obj=None, data=None, **kwargs):
         """
         Take form, object data, and keyword arg input and have the fields
@@ -122,6 +134,9 @@ class BaseForm(object):
             # XXX we want to eventually process 'data' as a new entity.
             #     Temporarily, this can simply be merged with kwargs.
             kwargs = dict(data, **kwargs)
+
+        # save submitted form data for, checking in populate_obj_partial
+        self._formdata = formdata or kwargs
 
         for name, field, in iteritems(self._fields):
             if obj is not None and hasattr(obj, name):
