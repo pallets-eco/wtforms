@@ -89,7 +89,7 @@ class BaseForm(object):
         Populates the attributes of the passed `obj` with data from the form's
         fields.
         :param partial:
-            If True allows for "less" destructive update to applied to an object
+            If True allows for a partial update to be applied to an object
             i.e. only updates attributes if matching field supplied in formdata/data/kwargs
 
         :note: This is a destructive operation; Any attribute with the same name
