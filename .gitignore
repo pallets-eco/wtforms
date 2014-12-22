@@ -16,6 +16,3 @@ dist/
 docs/_build
 docs/html
 env/
-
-.idea
-*.iml
