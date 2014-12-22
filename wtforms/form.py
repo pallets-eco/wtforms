@@ -84,27 +84,19 @@ class BaseForm(object):
         """
         return self.meta.get_translations(self)
 
-    def populate_obj(self, obj):
+    def populate_obj(self, obj, partial=False):
         """
         Populates the attributes of the passed `obj` with data from the form's
         fields.
+        :param partial:
+            If True allows for "less" destructive update to applied to an object
+            i.e. only updates attributes if matching field supplied in formdata/data/kwargs
 
         :note: This is a destructive operation; Any attribute with the same name
-               as a field will be overridden. Use with caution.
+               as a field will be overridden. Use with caution.       
         """
         for name, field in iteritems(self._fields):
-            field.populate_obj(obj, name)
-
-    def populate_obj_partial(self, obj):
-        """
-        Populates the attributes of the passed `obj` with data from the form's
-        fields.
-
-        :note: This is a less destructive operation; Any attribute with the same name
-               as a field will be overridden if it's provided in formdata or kwargs
-        """
-        for name, field in iteritems(self._fields):
-            if name in self._formdata:
+            if not partial or (partial and name in self._formkeys):
                 field.populate_obj(obj, name)
 
     def process(self, formdata=None, obj=None, data=None, **kwargs):
@@ -135,8 +127,8 @@ class BaseForm(object):
             #     Temporarily, this can simply be merged with kwargs.
             kwargs = dict(data, **kwargs)
 
-        # save submitted form data for, checking in populate_obj_partial
-        self._formdata = formdata or kwargs
+        # save submitted form data keys, checking in populate_obj, if partial==True
+        self._formkeys = formdata.keys() if formdata else kwargs.keys()
 
         for name, field, in iteritems(self._fields):
             if obj is not None and hasattr(obj, name):
