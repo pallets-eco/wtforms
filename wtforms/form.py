@@ -90,7 +90,7 @@ class BaseForm(object):
         fields.
         :param partial:
             If True allows for a partial update to be applied to an object
-            i.e. only updates attributes if matching field supplied 
+            i.e. only updates attributes if matching field supplied
             in formdata/data/kwargs
 
         :note: This is a destructive operation; Any attribute with the same name
@@ -128,7 +128,7 @@ class BaseForm(object):
             #     Temporarily, this can simply be merged with kwargs.
             kwargs = dict(data, **kwargs)
 
-        # save submitted form data keys, checking in populate_obj, if partial==True       
+        # save submitted form data keys, checking in populate_obj, if partial==True
         self._formkeys = [k for k in formdata] if formdata else kwargs.keys()
 
         for name, field, in iteritems(self._fields):

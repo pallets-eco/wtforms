@@ -83,7 +83,7 @@ class BaseFormTest(TestCase):
         m.test = 'cat'
         m.test_b = 'dog'
         form = self.get_form()
-        form.process(DummyPostData({'test':'foobar'}))
+        form.process(DummyPostData({'test': 'foobar'}))
         form.populate_obj(m, partial=True)
         self.assertEqual(m.test, 'foobar')
         self.assertEqual(m.test_b, 'dog')
