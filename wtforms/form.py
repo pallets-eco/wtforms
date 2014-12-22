@@ -90,10 +90,11 @@ class BaseForm(object):
         fields.
         :param partial:
             If True allows for a partial update to be applied to an object
-            i.e. only updates attributes if matching field supplied in formdata/data/kwargs
+            i.e. only updates attributes if matching field supplied 
+            in formdata/data/kwargs
 
         :note: This is a destructive operation; Any attribute with the same name
-               as a field will be overridden. Use with caution.       
+               as a field will be overridden. Use with caution.
         """
         for name, field in iteritems(self._fields):
             if not partial or (partial and name in self._formkeys):
