@@ -129,7 +129,7 @@ class BaseForm(object):
             kwargs = dict(data, **kwargs)
 
         # save submitted form data keys, checking in populate_obj, if partial==True
-        self._formkeys = [k for k in formdata] if formdata else kwargs.keys()
+        self._formkeys = set([k for k in formdata]) if formdata else set(kwargs.keys())
 
         for name, field, in iteritems(self._fields):
             if obj is not None and hasattr(obj, name):
