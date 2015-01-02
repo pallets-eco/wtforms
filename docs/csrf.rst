@@ -299,7 +299,7 @@ available without passing it all the time:
     class MyBaseForm(Form):
         class Meta:
             csrf = True
-            csrf_class = SessonCSRF
+            csrf_class = SessionCSRF
             csrf_secret = app.config['CSRF_SECRET_KEY']
 
             @property
