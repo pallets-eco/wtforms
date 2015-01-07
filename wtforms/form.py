@@ -19,7 +19,7 @@ class BaseForm(object):
     validation, and data and error proxying.
     """
 
-    def __init__(self, fields, prefix='', meta=DefaultMeta()):
+    def __init__(self, fields, prefix='', meta=DefaultMeta(), form_filter=None):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
@@ -37,9 +37,13 @@ class BaseForm(object):
         self._prefix = prefix
         self._errors = None
         self._fields = OrderedDict()
+        self.form_filter = form_filter
 
         if hasattr(fields, 'items'):
             fields = fields.items()
+
+        for field in fields:
+            self._apply_form_filter(field[1].kwargs)
 
         translations = self._get_translations()
         extra_fields = []
@@ -66,11 +70,19 @@ class BaseForm(object):
 
     def __setitem__(self, name, value):
         """ Bind a field to this form. """
+        value.kwargs = self._apply_form_filter(value.kwargs)
         self._fields[name] = value.bind(form=self, name=name, prefix=self._prefix)
 
     def __delitem__(self, name):
         """ Remove a field from this form. """
         del self._fields[name]
+
+    def _apply_form_filter(self, field_kwargs):
+        if self.form_filter and hasattr(self.form_filter, '__call__'):
+            if 'filters' not in field_kwargs:
+                field_kwargs['filters'] = []
+            field_kwargs['filters'].append(self.form_filter)
+        return field_kwargs
 
     def _get_translations(self):
         """
@@ -241,7 +253,8 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     """
     Meta = DefaultMeta
 
-    def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None, **kwargs):
+    def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None,
+                 form_filter=None, **kwargs):
         """
         :param formdata:
             Used to pass data coming from the enduser, usually `request.POST` or
@@ -269,7 +282,8 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         meta_obj = self._wtforms_meta()
         if meta is not None and isinstance(meta, dict):
             meta_obj.update_values(meta)
-        super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
+        super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix,
+                                   form_filter=form_filter)
 
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class
