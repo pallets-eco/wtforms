@@ -11,9 +11,10 @@ from tests.common import DummyPostData
 
 class BaseFormTest(TestCase):
     def strip_ws(self, s):
-        if isinstance(s, basestring):
-            s = s.strip()
-        return s
+        try:
+            return s.strip()
+        except AttributeError:
+            return s
 
     def get_form(self, **kwargs):
         def validate_test(form, field):
@@ -94,8 +95,9 @@ class BaseFormTest(TestCase):
     def test_form_filter_field_add(self):
         form = self.get_form(form_filter=self.strip_ws)
         form['test2'] = TextField()
-        form.process(test='  foo  ', test2=' gappy text  ')
-        self.assertEqual(form.data, {'test': 'foo', 'test2': 'gappy text'})
+        form['test3'] = IntegerField()
+        form.process(test='  foo  ', test2=' gappy text  ', test3=3)
+        self.assertEqual(form.data, {'test': 'foo', 'test2': 'gappy text', 'test3': 3})
 
 
 class FormMetaTest(TestCase):
