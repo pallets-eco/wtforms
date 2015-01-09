@@ -173,6 +173,8 @@ class ValidatorsTest(TestCase):
         self.assertEqual(url()(self.form, DummyField('http://foobar.museum/foobar')), None)
         self.assertEqual(url()(self.form, DummyField('http://127.0.0.1/foobar')), None)
         self.assertEqual(url()(self.form, DummyField('http://127.0.0.1:9000/fake')), None)
+        self.assertEqual(url(allow_auth=True)(self.form, DummyField('https://foo:password@example.com')), None)
+        self.assertEqual(url(allow_auth=True)(self.form, DummyField('https://foo:password%21@example.com')), None)
         self.assertEqual(url(require_tld=False)(self.form, DummyField('http://localhost/foobar')), None)
         self.assertEqual(url(require_tld=False)(self.form, DummyField('http://foobar')), None)
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar'))
@@ -181,6 +183,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.d'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.12'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://localhost:abc/a'))
+        self.assertRaises(ValidationError, url(allow_auth=True), self.form, DummyField('https://foo:password!@example.com'))
         # Test IDNA
         IDNA_TESTS = (
             u'http://\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631/foo.com',  # Arabic test
