@@ -1,6 +1,15 @@
 WTForms Changelog
 =================
 
+Version 2.0.2
+-------------
+Released January 18, 2015
+
+- Added more localizations and updated some.
+- Validators for email and URL can validate IDNA-encoded domain names and new TLDs
+- Better DeprecationWarnings
+- Support localization files in /usr/share/locale (for distro packaging)
+
 Version 2.0.1
 -------------
 Released July 1, 2014
