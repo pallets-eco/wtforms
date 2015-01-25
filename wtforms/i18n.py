@@ -6,7 +6,10 @@ def messages_path():
     Determine the path to the 'messages' directory as best possible.
     """
     module_path = os.path.abspath(__file__)
-    return os.path.join(os.path.dirname(module_path), 'locale')
+    locale_path = os.path.join(os.path.dirname(module_path), 'locale')
+    if not os.path.exists(locale_path):
+        locale_path = '/usr/share/locale'
+    return locale_path
 
 
 def get_builtin_gnu_translations(languages=None):

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from unittest import TestCase
 from wtforms.compat import text_type
 from wtforms.validators import (
@@ -33,6 +34,9 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar.ab12'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
+
+        # Test IDNA domains
+        self.assertEqual(email()(self.form, DummyField(u'foo@bücher.中国')), None)
 
     def test_equal_to(self):
         self.form['foo'] = DummyField('test')
@@ -150,13 +154,13 @@ class ValidatorsTest(TestCase):
     def test_regexp(self):
         import re
         # String regexp
-        self.assertEqual(regexp('^a')(self.form, DummyField('abcd')), None)
-        self.assertEqual(regexp('^a', re.I)(self.form, DummyField('ABcd')), None)
+        self.assertEqual(regexp('^a')(self.form, DummyField('abcd')).group(0), 'a')
+        self.assertEqual(regexp('^a', re.I)(self.form, DummyField('ABcd')).group(0), 'A')
         self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField('foo'))
         self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField(None))
         # Compiled regexp
-        self.assertEqual(regexp(re.compile('^a'))(self.form, DummyField('abcd')), None)
-        self.assertEqual(regexp(re.compile('^a', re.I))(self.form, DummyField('ABcd')), None)
+        self.assertEqual(regexp(re.compile('^a'))(self.form, DummyField('abcd')).group(0), 'a')
+        self.assertEqual(regexp(re.compile('^a', re.I))(self.form, DummyField('ABcd')).group(0), 'A')
         self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField('foo'))
         self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField(None))
 
@@ -177,6 +181,14 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.d'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.12'))
         self.assertRaises(ValidationError, url(), self.form, DummyField('http://localhost:abc/a'))
+        # Test IDNA
+        IDNA_TESTS = (
+            u'http://\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631/foo.com',  # Arabic test
+            u'http://उदाहरण.परीक्षा/',  # Hindi test
+            u'http://실례.테스트',  # Hangul test
+        )
+        for s in IDNA_TESTS:
+            self.assertEqual(url()(self.form, DummyField(s)), None)
 
     def test_number_range(self):
         v = NumberRange(min=5, max=10)
