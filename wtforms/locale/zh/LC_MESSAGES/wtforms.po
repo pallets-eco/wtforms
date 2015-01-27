@@ -164,7 +164,7 @@ msgstr "不是有效的浮点数"
 #: wtforms/fields/core.py:632
 #, fuzzy
 msgid "Not a valid datetime value"
-msgstr "不是有效的小数"
+msgstr "不是有效的时间"
 
 #: wtforms/fields/core.py:649
 #, fuzzy
