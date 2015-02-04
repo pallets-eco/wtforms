@@ -96,9 +96,11 @@ class BaseForm(object):
         """
         if ignore_fields is None:
             ignore_fields = []
+
         for name, field in iteritems(self._fields):
             if name in ignore_fields:
                 continue
+
             field.populate_obj(obj, name)
 
     def process(self, formdata=None, obj=None, data=None, **kwargs):
