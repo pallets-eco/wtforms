@@ -5,6 +5,7 @@ import sys
 from datetime import date, datetime
 from decimal import Decimal, ROUND_UP, ROUND_DOWN
 from unittest import TestCase
+from werkzeug.datastructures import MultiDict
 
 from wtforms import validators, widgets, meta
 from wtforms.fields import *
@@ -354,6 +355,14 @@ class TextFieldTest(TestCase):
         self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="hello">""")
         form = self.F(DummyPostData(b=['hello']))
         self.assertEqual(form.a.data, '')
+
+    def test_kwargs(self):
+        form = self.F(a='test')
+        self.assertEqual(form.a.data, 'test')
+
+    def test_formdata_and_kwargs(self):
+        form = self.F(MultiDict({'otherField': 1}), a='test')
+        self.assertEqual(form.a.data, 'test')
 
 
 class HiddenFieldTest(TestCase):
