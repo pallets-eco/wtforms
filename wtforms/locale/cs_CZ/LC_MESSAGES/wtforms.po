@@ -19,7 +19,7 @@ msgstr ""
 #: validators.py:56
 #, python-format
 msgid "Invalid field name '%s'."
-msgstr "Špatný název pole '%s'."
+msgstr "Neplatný název pole '%s'."
 
 #: validators.py:64
 #, python-format
@@ -66,41 +66,41 @@ msgstr "Toto pole je povinné."
 
 #: validators.py:275
 msgid "Invalid input."
-msgstr "Špatně zadaný vstup."
+msgstr "Neplatný vstup."
 
 #: validators.py:301
 msgid "Invalid email address."
-msgstr "Špatně zadaná emailová adresa."
+msgstr "Neplatná emailová adresa."
 
 #: validators.py:335
 msgid "Invalid IP address."
-msgstr "Špatně zadaná IP adresa."
+msgstr "Neplatná IP adresa."
 
 #: validators.py:386
 msgid "Invalid Mac address."
-msgstr "Špatně zadaná MAC adresa."
+msgstr "Neplatná MAC adresa."
 
 #: validators.py:415
 msgid "Invalid URL."
-msgstr "Špatně zadané URL."
+msgstr "Neplatné URL."
 
 #: validators.py:436
 msgid "Invalid UUID."
-msgstr "Špatně zadané UUID."
+msgstr "Neplatné UUID."
 
 #: validators.py:464
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr "Špatně zadaná hodnota, povolené hodnoty jsou: %(values)s."
+msgstr "Neplatná hodnota, povolené hodnoty jsou: %(values)s."
 
 #: validators.py:496
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr "Špatně zadaná hodnota, nesmí být nic z: %(values)s."
+msgstr "Neplatná hodnota, nesmí být mezi: %(values)s."
 
 #: csrf/core.py:98 ext/csrf/form.py:47
 msgid "Invalid CSRF Token"
-msgstr "Špatný CSRF token."
+msgstr "Neplatný CSRF token."
 
 #: csrf/session.py:61 ext/csrf/session.py:58
 msgid "CSRF token missing"
@@ -119,15 +119,15 @@ msgstr "Hodnota CSRF tokenu."
 #: ext/sqlalchemy/fields.py:125 ext/sqlalchemy/fields.py:127
 #: ext/sqlalchemy/fields.py:180 ext/sqlalchemy/fields.py:185 fields/core.py:468
 msgid "Not a valid choice"
-msgstr "Špatná volba."
+msgstr "Neplatná volba."
 
 #: ext/appengine/fields.py:185
 msgid "Not a valid list"
-msgstr "Špatný seznam."
+msgstr "Neplatná hodnota pro seznam"
 
 #: ext/appengine/fields.py:204
 msgid "Not a valid integer list"
-msgstr "Špatný seznam celých čísel."
+msgstr "Neplatná hodnota pro seznam celých čísel."
 
 #: ext/dateutil/fields.py:63
 msgid "Please input a date/time value"
@@ -135,38 +135,37 @@ msgstr "Uveďte, prosím, datum/čas."
 
 #: ext/dateutil/fields.py:75 ext/dateutil/fields.py:83
 msgid "Invalid date/time input"
-msgstr "Špatně zadaný datum/čas."
+msgstr "Neplatná hodnota pro datum/čas."
 
 #: fields/core.py:461
 msgid "Invalid Choice: could not coerce"
-msgstr "Špatná volba: nelze převedeny."
+msgstr "Neplatná volba: nelze převést."
 
 #: fields/core.py:494
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "Špatná volba(y): jeden nebo více datových vstupů nemohou být převedeny."
+msgstr "Neplatná volba: jeden nebo více datových vstupů nemohou být převedeny."
 
 #: fields/core.py:501
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
-msgstr "'%(value)s' není správnou volbou pro dané pole."
+msgstr "'%(value)s' není platnou volbou pro dané pole."
 
 #: fields/core.py:584
 msgid "Not a valid integer value"
-msgstr "Špatné celé číslo."
+msgstr "Neplatná hodnota pro celé číslo."
 
 #: fields/core.py:650
 msgid "Not a valid decimal value"
-msgstr "Špatné desetinné číslo."
+msgstr "Neplatná hodnota pro desetinné číslo."
 
 #: fields/core.py:677
 msgid "Not a valid float value"
-msgstr "Špatné číslo s plovoucí řadovou čárou."
+msgstr "Neplatná hodnota pro desetinné číslo."
 
 #: fields/core.py:736
 msgid "Not a valid datetime value"
-msgstr "Špatná datetime hodnota."
+msgstr "Neplatná hodnota pro datum a čas."
 
 #: fields/core.py:753
 msgid "Not a valid date value"
-msgstr "Špatný datum."
-
+msgstr "Neplatná hodnota pro datum."
