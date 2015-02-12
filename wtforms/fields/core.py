@@ -946,7 +946,8 @@ class FieldList(Field):
         self.last_index = index
         name = '%s-%d' % (self.short_name, index)
         id = '%s-%d' % (self.id, index)
-        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self.meta)
+        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self.meta,
+                                        translations=self._translations)
         field.process(formdata, data)
         self.entries.append(field)
         return field
