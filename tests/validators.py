@@ -23,6 +23,7 @@ class ValidatorsTest(TestCase):
         self.assertEqual(email()(self.form, DummyField('foo@bar.dk')), None)
         self.assertEqual(email()(self.form, DummyField('123@bar.dk')), None)
         self.assertEqual(email()(self.form, DummyField('foo@456.dk')), None)
+        self.assertEqual(email()(self.form, DummyField('foo@456.dk   ')), None)
         self.assertEqual(email()(self.form, DummyField('foo@bar456.info')), None)
         self.assertRaises(ValidationError, email(), self.form, DummyField(None))
         self.assertRaises(ValidationError, email(), self.form, DummyField(''))
@@ -34,6 +35,9 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar.ab12'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('fo o@.bar.ab'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('fo@o@.bar.ab'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar abc.ab'))
 
         # Test IDNA domains
         self.assertEqual(email()(self.form, DummyField(u'foo@bücher.中国')), None)

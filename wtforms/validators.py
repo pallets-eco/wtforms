@@ -293,12 +293,15 @@ class Email(Regexp):
         self.validate_hostname = HostnameValidation(
             require_tld=True,
         )
-        super(Email, self).__init__(r'^.+@([^.@][^@]+)$', re.IGNORECASE, message)
+        super(Email, self).__init__(r'^[-0-9a-zA-Z.+_]+@([^.@][^@]+)$', re.IGNORECASE, message)
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext('Invalid email address.')
+
+        if field.data:
+            field.data = field.data.strip()
 
         match = super(Email, self).__call__(form, field, message)
         if not self.validate_hostname(match.group(1)):
