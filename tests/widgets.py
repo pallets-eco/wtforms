@@ -94,16 +94,16 @@ class BasicWidgetsTest(TestCase):
         self.assertTrue('type="hidden"' in HiddenInput()(self.field))
 
     def test_checkbox_input(self):
-        self.assertEqual(CheckboxInput()(self.field, value='v'), '<input checked id="id" name="bar" type="checkbox" value="v" />')
+        self.assertEqual(CheckboxInput()(self.field, value='v'), '<input checked="checked" id="id" name="bar" type="checkbox" value="v" />')
         field2 = DummyField(False)
         self.assertTrue('checked' not in CheckboxInput()(field2))
 
     def test_radio_input(self):
         self.field.checked = True
-        expected = '<input checked id="id" name="bar" type="radio" value="foo" />'
+        expected = '<input checked="checked" id="id" name="bar" type="radio" value="foo" />'
         self.assertEqual(RadioInput()(self.field), expected)
         self.field.checked = False
-        self.assertEqual(RadioInput()(self.field), expected.replace(' checked', ''))
+        self.assertEqual(RadioInput()(self.field), expected.replace(' checked="checked"', ''))
 
     def test_textarea(self):
         # Make sure textareas escape properly and render properly
@@ -117,11 +117,11 @@ class SelectTest(TestCase):
     def test(self):
         self.assertEqual(
             Select()(self.field),
-            '<select id="" name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>'
+            '<select id="" name="f"><option selected="selected" value="foo">lfoo</option><option value="bar">lbar</option></select>'
         )
         self.assertEqual(
             Select(multiple=True)(self.field),
-            '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>'
+            '<select id="" multiple="multiple" name="f"><option selected="selected" value="foo">lfoo</option><option value="bar">lbar</option></select>'
         )
 
     def test_render_option(self):
@@ -132,7 +132,7 @@ class SelectTest(TestCase):
         )
         self.assertEqual(
             Select.render_option(True, 'foo', True),
-            '<option selected value="True">foo</option>'
+            '<option selected="selected" value="True">foo</option>'
         )
 
 

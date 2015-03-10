@@ -225,13 +225,13 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.a.data, 'a')
         self.assertEqual(form.b.data, None)
         self.assertEqual(form.validate(), False)
-        self.assertEqual(form.a(), """<select id="a" name="a"><option selected value="a">hello</option><option value="btest">bye</option></select>""")
+        self.assertEqual(form.a(), """<select id="a" name="a"><option selected="selected" value="a">hello</option><option value="btest">bye</option></select>""")
         self.assertEqual(form.b(), """<select id="b" name="b"><option value="1">Item 1</option><option value="2">Item 2</option></select>""")
 
     def test_with_data(self):
         form = self.F(DummyPostData(a=['btest']))
         self.assertEqual(form.a.data, 'btest')
-        self.assertEqual(form.a(), """<select id="a" name="a"><option value="a">hello</option><option selected value="btest">bye</option></select>""")
+        self.assertEqual(form.a(), """<select id="a" name="a"><option value="a">hello</option><option selected="selected" value="btest">bye</option></select>""")
 
     def test_value_coercion(self):
         form = self.F(DummyPostData(b=['2']))
@@ -247,11 +247,11 @@ class SelectFieldTest(TestCase):
         self.assertTrue(isinstance(first_option, form.a._Option))
         self.assertEqual(
             list(text_type(x) for x in form.a),
-            ['<option selected value="a">hello</option>', '<option value="btest">bye</option>']
+            ['<option selected="selected" value="a">hello</option>', '<option value="btest">bye</option>']
         )
         self.assertTrue(isinstance(first_option.widget, widgets.Option))
         self.assertTrue(isinstance(list(form.b)[0].widget, widgets.TextInput))
-        self.assertEqual(first_option(disabled=True), '<option disabled selected value="a">hello</option>')
+        self.assertEqual(first_option(disabled=True), '<option disabled="disabled" selected="selected" value="a">hello</option>')
 
     def test_default_coerce(self):
         F = make_form(a=SelectField(choices=[('a', 'Foo')]))
@@ -311,7 +311,7 @@ class RadioFieldTest(TestCase):
             form.a(),
             (
                 """<ul id="a">"""
-                """<li><input checked id="a-0" name="a" type="radio" value="a" /> <label for="a-0">hello</label></li>"""
+                """<li><input checked="checked" id="a-0" name="a" type="radio" value="a" /> <label for="a-0">hello</label></li>"""
                 """<li><input id="a-1" name="a" type="radio" value="b" /> <label for="a-1">bye</label></li></ul>"""
             )
         )
@@ -325,7 +325,7 @@ class RadioFieldTest(TestCase):
         )
         self.assertEqual(
             [text_type(x) for x in form.a],
-            ['<input checked id="a-0" name="a" type="radio" value="a" />', '<input id="a-1" name="a" type="radio" value="b" />']
+            ['<input checked="checked" id="a-0" name="a" type="radio" value="a" />', '<input id="a-1" name="a" type="radio" value="b" />']
         )
 
     def test_text_coercion(self):
@@ -337,7 +337,7 @@ class RadioFieldTest(TestCase):
             form.a(),
             '''<ul id="a">'''
             '''<li><input id="a-0" name="a" type="radio" value="True" /> <label for="a-0">yes</label></li>'''
-            '''<li><input checked id="a-1" name="a" type="radio" value="False" /> <label for="a-1">no</label></li></ul>'''
+            '''<li><input checked="checked" id="a-1" name="a" type="radio" value="False" /> <label for="a-1">no</label></li></ul>'''
         )
 
 
@@ -496,7 +496,7 @@ class BooleanFieldTest(TestCase):
     def test_rendering(self):
         form = self.BoringForm(DummyPostData(bool2="x"))
         self.assertEqual(form.bool1(), '<input id="bool1" name="bool1" type="checkbox" value="y" />')
-        self.assertEqual(form.bool2(), '<input checked id="bool2" name="bool2" type="checkbox" value="x" />')
+        self.assertEqual(form.bool2(), '<input checked="checked" id="bool2" name="bool2" type="checkbox" value="x" />')
         self.assertEqual(form.bool2.raw_data, ['x'])
 
     def test_with_postdata(self):

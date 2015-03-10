@@ -24,8 +24,8 @@ def html_params(**kwargs):
     these with an underscore will allow them to be used.
 
     In addition, the values ``True`` and ``False`` are special:
-      * ``attr=True`` generates the HTML compact output of a boolean attribute,
-        e.g. ``checked=True`` will generate simply ``checked``
+      * ``attr=True`` generates the HTML output of a boolean attribute,
+        e.g. ``checked=True`` will generate simply ``checked="checked"``
       * ``attr=`False`` will be ignored and generate no output.
 
     >>> html_params(name='text1', id='f', class_='text')
@@ -40,7 +40,7 @@ def html_params(**kwargs):
         elif k.startswith('data_'):
             k = k.replace('_', '-', 1)
         if v is True:
-            params.append(k)
+            params.append('%s="%s"' % (text_type(k), escape(text_type(k), quote=True)))
         elif v is False:
             pass
         else:
