@@ -155,7 +155,7 @@ class Input(object):
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
-        return HTMLString('<input %s>' % self.html_params(name=field.name, **kwargs))
+        return HTMLString('<input %s />' % self.html_params(name=field.name, **kwargs))
 
 
 class TextInput(Input):
@@ -227,7 +227,7 @@ class FileInput(object):
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
-        return HTMLString('<input %s>' % html_params(name=field.name, type='file', **kwargs))
+        return HTMLString('<input %s />' % html_params(name=field.name, type='file', **kwargs))
 
 
 class SubmitInput(Input):
