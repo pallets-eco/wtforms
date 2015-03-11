@@ -10,7 +10,7 @@ development.
 """
 from wtforms import validators, widgets
 from wtforms.fields import *
-from wtforms.form import Form
+from wtforms.form import Form, PolyglotForm
 from wtforms.validators import ValidationError
 
 __version__ = '2.0.3dev'
