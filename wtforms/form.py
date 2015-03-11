@@ -5,7 +5,7 @@ except ImportError:
     from ordereddict import OrderedDict
 
 from wtforms.compat import with_metaclass, iteritems, itervalues
-from wtforms.meta import DefaultMeta
+from wtforms.meta import DefaultMeta, PolyglotMeta
 
 __all__ = (
     'BaseForm',
@@ -308,3 +308,11 @@ class Form(with_metaclass(FormMeta, BaseForm)):
                 extra[name] = [inline]
 
         return super(Form, self).validate(extra)
+
+
+class PolyglotForm(Form):
+    """
+    Base form class which renders its fields using polyglot HTML5 output.
+    """
+
+    Meta = PolyglotMeta

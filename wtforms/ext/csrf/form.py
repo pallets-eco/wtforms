@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from wtforms.form import Form
+from wtforms.meta import PolyglotMeta
 from wtforms.validators import ValidationError
 
 from .fields import CSRFTokenField
@@ -51,3 +52,11 @@ class SecureForm(Form):
         d = super(SecureForm, self).data
         d.pop('csrf_token')
         return d
+
+
+class SecurePolyglotForm(SecureForm):
+    """
+    CSRF-enabled form which renders its fields using polyglot HTML5 output.
+    """
+
+    Meta = PolyglotMeta
