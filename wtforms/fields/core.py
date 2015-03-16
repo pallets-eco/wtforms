@@ -169,6 +169,17 @@ class Field(object):
         """
         return self._translations.ngettext(singular, plural, n)
 
+    def _get_default(self):
+        """
+        Get suitable default value for field.
+
+        :return: Default value of field
+        """
+        try:
+            return self.default()
+        except TypeError:
+            return self.default
+
     def validate(self, form, extra_validators=tuple()):
         """
         Validates the field and returns True or False. `self.errors` will
@@ -262,10 +273,7 @@ class Field(object):
         """
         self.process_errors = []
         if data is unset_value:
-            try:
-                data = self.default()
-            except TypeError:
-                data = self.default
+            data = self._get_default()
 
         self.object_data = data
 
@@ -777,10 +785,7 @@ class FormField(Field):
 
     def process(self, formdata, data=unset_value):
         if data is unset_value:
-            try:
-                data = self.default()
-            except TypeError:
-                data = self.default
+            data = self._get_default()
             self._obj = data
 
         self.object_data = data
