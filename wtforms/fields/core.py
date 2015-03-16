@@ -399,14 +399,14 @@ class Label(object):
 
 
 class SelectFieldBase(Field):
-    option_widget = widgets.Option()
-
     """
     Base class for fields which can be iterated to produce options.
 
     This isn't a field, but an abstract base class for fields which want to
     provide this functionality.
     """
+    option_widget = widgets.Option()
+
     def __init__(self, label=None, validators=None, option_widget=None, **kwargs):
         super(SelectFieldBase, self).__init__(label, validators, **kwargs)
 
