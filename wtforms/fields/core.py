@@ -679,7 +679,9 @@ class FloatField(Field):
 
 class BooleanField(Field):
     """
-    Represents an ``<input type="checkbox">``.
+    Represents an ``<input type="checkbox">``. Set the ``checked``-status by using the
+    ``default``-option. Any value for ``default``, e.g. ``default="checked"`` puts
+    ``checked`` into the html-element and sets the ``data`` to ``True``
 
     :param false_values:
         If provided, a sequence of strings each of which is an exact match
