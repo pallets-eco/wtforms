@@ -293,7 +293,7 @@ available without passing it all the time:
 
 .. code-block:: python
 
-    from flask import request
+    from flask import session
     from wtforms.csrf.session import SessionCSRF
 
     class MyBaseForm(Form):
@@ -304,7 +304,7 @@ available without passing it all the time:
 
             @property
             def csrf_context(self):
-                return request.session
+                return session
 
 Now with any subclasses of MyBaseForm, you don't need to pass in the csrf 
 context, and on top of that, we grab the secret key out of your normal app
