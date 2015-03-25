@@ -60,7 +60,7 @@ def main():
             max_line_length=130,
         )
         guide_tests = pep8.StyleGuide(
-            ignore=['E221'],
+            ignore=['E221', 'E731', 'E402'],
             paths=['tests/'],
             max_line_length=150,
         )

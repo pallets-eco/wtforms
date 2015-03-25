@@ -486,7 +486,7 @@ class NoneOf(object):
         self.values = values
         self.message = message
         if values_formatter is None:
-            values_formatter = lambda v: ', '.join(text_type(x) for x in v)
+            values_formatter = self.default_values_formatter
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
@@ -496,6 +496,10 @@ class NoneOf(object):
                 message = field.gettext('Invalid value, can\'t be any of: %(values)s.')
 
             raise ValidationError(message % dict(values=self.values_formatter(self.values)))
+
+    @staticmethod
+    def default_values_formatter(v):
+        return ', '.join(text_type(x) for x in v)
 
 
 class HostnameValidation(object):

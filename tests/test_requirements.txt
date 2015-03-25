@@ -1,5 +1,5 @@
 coverage
 Babel>=1.3
 SQLAlchemy
-pep8
+pep8==1.6.2
 python-dateutil
