@@ -4,6 +4,7 @@ python:
   - 2.6
   - 2.7
   - 3.3
+  - 3.4
   - pypy
 
 env:
@@ -15,6 +16,8 @@ env:
 matrix:
   exclude:
     - python: 3.3
+      env: DJANGO="Django<1.5"
+    - python: 3.4
       env: DJANGO="Django<1.5"
 
 install:
