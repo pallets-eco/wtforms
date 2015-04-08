@@ -37,8 +37,8 @@ msgstr[1] "El camp ha de contenir almenys %(min)d caràcters."
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "El camp no pot contenir més d'%(min)d caràcter."
-msgstr[1] "El camp no pot contenir més de %(min)d caràcters."
+msgstr[0] "El camp no pot contenir més d'%(max)d caràcter."
+msgstr[1] "El camp no pot contenir més de %(max)d caràcters."
 
 #: wtforms/validators.py:102
 #, python-format
