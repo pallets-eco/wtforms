@@ -23,6 +23,12 @@ def html_params(**kwargs):
     frequent use of the normally reserved keywords `class` and `for`, suffixing
     these with an underscore will allow them to be used.
 
+    In order to facilitate the use of ``data-`` attributes, the first underscore
+    behind the ``data``-element is replaced with a hyphen.
+
+    >>> html_params(data_any_attribute='something')
+    'data-any_attribute="something"'    
+
     In addition, the values ``True`` and ``False`` are special:
       * ``attr=True`` generates the HTML compact output of a boolean attribute,
         e.g. ``checked=True`` will generate simply ``checked``
