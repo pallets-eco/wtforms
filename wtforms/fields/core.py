@@ -274,7 +274,7 @@ class Field(object):
         except ValueError as e:
             self.process_errors.append(e.args[0])
 
-        if formdata:
+        if formdata is not None:
             try:
                 if self.name in formdata:
                     self.raw_data = formdata.getlist(self.name)
