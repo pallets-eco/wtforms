@@ -579,7 +579,7 @@ class IntegerField(Field):
         if valuelist:
             try:
                 self.data = int(valuelist[0])
-            except ValueError:
+            except (ValueError, TypeError):
                 self.data = None
                 raise ValueError(self.gettext('Not a valid integer value'))
 
