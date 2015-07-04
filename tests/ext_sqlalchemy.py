@@ -95,6 +95,20 @@ class QuerySelectFieldTest(TestBase):
         assert not form.validate()
         self.assertEqual(form.a.errors, ['Not a valid choice'])
 
+        form = F(a=sess.query(self.Test).filter_by(name='banana').first())
+        another_sess = self.Session()
+        form.a.query = another_sess.query(self.Test)
+        #this is the problem. not same pointer.
+        self.assertEqual(form.a(), [('1', 'apple', False), ('2', 'banana', False)])
+
+        #So, use coerce and get_pk for test
+        class F2(Form):
+            a = QuerySelectField(get_label='name', widget=LazySelect(), get_pk=lambda x: x.id, coerce=int)
+        form = F2(a=sess.query(self.Test).filter_by(name='banana').first())
+        another_sess = self.Session()
+        form.a.query = another_sess.query(self.Test)
+        self.assertEqual(form.a(), [('1', 'apple', False), ('2', 'banana', True)])
+
     def test_with_query_factory(self):
         sess = self.Session()
         self._fill(sess)
