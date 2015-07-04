@@ -51,14 +51,19 @@ class QuerySelectField(SelectFieldBase):
     top of the list. Selecting this choice will result in the `data` property
     being `None`. The label for this blank choice can be set by specifying the
     `blank_text` parameter.
+
+    If `coerce` and `get_pk` callables are specified, these two callables are 
+    used for equality test. `coerce` should get pk and return value casted that
+    same type returned by `get_pk`. And selected is True when test passed.
     """
     widget = widgets.Select()
 
     def __init__(self, label=None, validators=None, query_factory=None,
                  get_pk=None, get_label=None, allow_blank=False,
-                 blank_text='', **kwargs):
+                 blank_text='', coerce=None, **kwargs):
         super(QuerySelectField, self).__init__(label, validators, **kwargs)
         self.query_factory = query_factory
+        self.coerce = coerce
 
         if get_pk is None:
             if not has_identity_key:
@@ -105,7 +110,9 @@ class QuerySelectField(SelectFieldBase):
             yield ('__None', self.blank_text, self.data is None)
 
         for pk, obj in self._get_object_list():
-            yield (pk, self.get_label(obj), obj == self.data)
+            yield (pk, self.get_label(obj), obj == self.data or
+                   (self.coerce is not None  and self.get_pk is not None
+                    and self.coerce(pk) == self.get_pk(self.data)))
 
     def process_formdata(self, valuelist):
         if valuelist:
