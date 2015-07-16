@@ -8,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: wolanskim@gmail.com\n"
 "POT-Creation-Date: 2012-09-02 14:13-0600\n"
 "PO-Revision-Date: 2012-05-05 23:20+0200\n"
-"Last-Translator: Marcin Wolański <wolanskim@gmail.com>\n"
+"Last-Translator: Aleksander Nitecki <ixendr@itogi.re>\n"
 "Language-Team: pl <wolanskim@gmail.com>\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
 "(n%100<10 || n%100>=20) ? 1 : 2)\n"
@@ -46,17 +46,17 @@ msgstr[2] "Wartość w polu nie może mieć więcej niż %(max)d znaków."
 #: wtforms/validators.py:100
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr "Wartość musi mieć od %(min)d do %(max)d znaków."
+msgstr "Wartość musi być długa na od %(min)d do %(max)d znaków."
 
 #: wtforms/validators.py:135
 #, python-format
 msgid "Number must be at least %(min)s."
-msgstr "Liczba musi być większa niż %(min)s."
+msgstr "Liczba musi być większa lub równa %(min)s."
 
 #: wtforms/validators.py:137
 #, python-format
 msgid "Number must be at most %(max)s."
-msgstr "Liczba musi być mniejsza niż %(max)s."
+msgstr "Liczba musi być mniejsza lub równa %(max)s."
 
 #: wtforms/validators.py:139
 #, python-format
@@ -121,7 +121,7 @@ msgstr "Brak tokena CSRF"
 
 #: wtforms/ext/csrf/session.py:65
 msgid "CSRF failed"
-msgstr "CSRF nie powiódł się"
+msgstr "błąd CSRF"
 
 #: wtforms/ext/csrf/session.py:70
 msgid "CSRF token expired"
@@ -137,7 +137,7 @@ msgstr "Nieprawidłowa data/czas"
 
 #: wtforms/ext/sqlalchemy/validators.py:33
 msgid "Already exists."
-msgstr ""
+msgstr "Już istnieje."
 
 #: wtforms/fields/core.py:412
 msgid "Invalid Choice: could not coerce"
@@ -158,19 +158,17 @@ msgstr "Nieprawidłowa liczba całkowita"
 
 #: wtforms/fields/core.py:554
 msgid "Not a valid decimal value"
-msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
+msgstr "Nieprawidłowa liczba dziesiętna"
 
 #: wtforms/fields/core.py:581
 msgid "Not a valid float value"
 msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
 
 #: wtforms/fields/core.py:632
-#, fuzzy
 msgid "Not a valid datetime value"
-msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
+msgstr "Nieprawidłowa data i czas"
 
 #: wtforms/fields/core.py:649
-#, fuzzy
 msgid "Not a valid date value"
-msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
+msgstr "Nieprawidłowa data"
 
