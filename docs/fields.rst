@@ -294,7 +294,23 @@ refer to a single input from the form.
     constructor, but rather created the list in the view function. Also, the 
     `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
     use :func:`int()` to coerce form data.  The default coerce is 
-    :func:`unicode()`. 
+    :func:`unicode()`.
+    
+    When using a custom coerce function you should ensure that you raise a `ValueError` if you want the validation to fail::
+    
+        def yes_no_none_coercer(val):
+            try:
+                return {'': None, 'yes': True, 'no': False}[val]
+            except KeyError:
+                raise ValueError(val)
+        
+        class ProductDetails(Form):
+            has_image = SelectField(
+                'Has image',
+                choices=[('yes', 'Yes'), ('no', 'No'), ('', 'Yes/No')],
+                default='',
+                coerce=yes_no_none_coercer
+            )
 
     **Advanced functionality**
 
