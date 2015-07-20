@@ -17,6 +17,20 @@ from tests.common import DummyPostData
 PYTHON_VERSION = sys.version_info
 
 
+def yes_no_coercer(val):
+    try:
+        return {'yes': True, 'no': False}[val]
+    except KeyError:
+        raise ValueError(val)
+
+
+def yes_no_none_coercer(val):
+    try:
+        return {'': None, 'yes': True, 'no': False}[val]
+    except KeyError:
+        raise ValueError(val)
+
+
 class AttrDict(object):
     def __init__(self, *args, **kw):
         self.__dict__.update(*args, **kw)
@@ -218,7 +232,8 @@ class PrePostValidationTest(TestCase):
 class SelectFieldTest(TestCase):
     class F(Form):
         a = SelectField(choices=[('a', 'hello'), ('btest', 'bye')], default='a')
-        b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int, option_widget=widgets.TextInput())
+        b = SelectField(choices=[('1', 'Item 1'), ('2', 'Item 2')], coerce=int, option_widget=widgets.TextInput())
+        c = SelectField(coerce=yes_no_none_coercer, choices=[('yes', 'Yes'), ('no', 'No'), ('', 'Yes/No')], default=('', ))
 
     def test_defaults(self):
         form = self.F()
@@ -240,6 +255,17 @@ class SelectFieldTest(TestCase):
         form = self.F(DummyPostData(b=['b']))
         self.assertEqual(form.b.data, None)
         self.assertFalse(form.b.validate(form))
+
+        for input_val, val in (('yes', True), ('no', False), ('', None)):
+            form = self.F(DummyPostData(c=[input_val]))
+            self.assertTrue('value="%s"' % input_val in str(form.c))
+            self.assertFalse('value="%s"' % val in str(form.c))
+            self.assertEqual(form.c.data, val)
+            self.assertTrue(form.c.validate(form))
+
+        form = self.F(DummyPostData(c=['x']))
+        self.assertEqual(form.c.data, None)
+        self.assertFalse(form.c.validate(form))
 
     def test_iterable_options(self):
         form = self.F()
@@ -266,6 +292,7 @@ class SelectMultipleFieldTest(TestCase):
     class F(Form):
         a = SelectMultipleField(choices=[('a', 'hello'), ('b', 'bye'), ('c', 'something')], default=('a', ))
         b = SelectMultipleField(coerce=int, choices=[(1, 'A'), (2, 'B'), (3, 'C')], default=("1", "3"))
+        c = SelectMultipleField(coerce=yes_no_coercer, choices=[('yes', 'Yes'), ('no', 'No')], default=('yes', 'no'))
 
     def test_defaults(self):
         form = self.F()
@@ -288,6 +315,19 @@ class SelectMultipleFieldTest(TestCase):
         self.assertEqual(form.b.data, [1, 2, 4])
         self.assertFalse(form.validate())
 
+        for input_vals, vals in (
+            (['yes'], [True]),
+            (['no'], [False]),
+            (['yes', 'no'], [True, False]),
+        ):
+            form = self.F(DummyPostData(c=input_vals))
+            self.assertEqual(form.c.data, vals)
+            self.assertTrue(form.validate())
+            for input_val in input_vals:
+                self.assertTrue('value="%s"' % input_val in str(form.c))
+            for val in vals:
+                self.assertFalse('value="%s"' % val in str(form.c))
+
     def test_coerce_fail(self):
         form = self.F(b=['a'])
         assert form.validate()
@@ -295,6 +335,13 @@ class SelectMultipleFieldTest(TestCase):
         form = self.F(DummyPostData(b=['fake']))
         assert not form.validate()
         self.assertEqual(form.b.data, [1, 3])
+
+        form = self.F(c=['a'])
+        assert form.validate()
+        self.assertEqual(form.c.data, None)
+        form = self.F(DummyPostData(c=['x']))
+        assert not form.validate()
+        self.assertEqual(form.c.data, [True, False])
 
 
 class RadioFieldTest(TestCase):

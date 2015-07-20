@@ -296,6 +296,22 @@ refer to a single input from the form.
     use :func:`int()` to coerce form data.  The default coerce is 
     :func:`unicode()`. 
 
+    When using a custom coerce function you should ensure that you raise a `ValueError` if you want the validation to fail::
+
+        def yes_no_none_coercer(val):
+            try:
+                return {'yes': True, 'no': False, '': None}[val]
+            except KeyError:
+                raise ValueError(val)
+
+        class ProductDetails(Form):
+            has_image = SelectField(
+                'Has image',
+                choices=[('yes', 'Yes'), ('no', 'No'), ('', 'Yes/No')],
+                default='',
+                coerce=yes_no_none_coercer
+            )
+
     **Advanced functionality**
 
     SelectField and its descendants are iterable, and iterating it will produce
