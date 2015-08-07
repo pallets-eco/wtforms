@@ -441,11 +441,12 @@ class SelectField(SelectFieldBase):
     def __init__(self, label=None, validators=None, coerce=text_type, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
-        self.choices = choices
+        self.choices = choices or []
 
     def iter_choices(self):
         for value, label in self.choices:
-            yield (value, label, self.coerce(value) == self.data)
+            yield (value, label, self.coerce(value) == self.data if hasattr(self, 'data') else False)
+        return
 
     def process_data(self, value):
         try:
@@ -467,6 +468,9 @@ class SelectField(SelectFieldBase):
         else:
             raise ValueError(self.gettext('Not a valid choice'))
 
+    def _value(self):
+        return [x for x in self.iter_choices()]
+
 
 class SelectMultipleField(SelectField):
     """
@@ -478,7 +482,7 @@ class SelectMultipleField(SelectField):
 
     def iter_choices(self):
         for value, label in self.choices:
-            selected = self.data is not None and self.coerce(value) in self.data
+            selected = hasattr(self, 'data') and self.data is not None and self.coerce(value) in self.data
             yield (value, label, selected)
 
     def process_data(self, value):
@@ -500,6 +504,8 @@ class SelectMultipleField(SelectField):
                 if d not in values:
                     raise ValueError(self.gettext("'%(value)s' is not a valid choice for this field") % dict(value=d))
 
+    def _value(self):
+        return [x for x in self.iter_choices()]
 
 class RadioField(SelectField):
     """
@@ -508,8 +514,11 @@ class RadioField(SelectField):
     Iterating the field will produce subfields (each containing a label as
     well) in order to allow custom rendering of the individual radio fields.
     """
-    widget = widgets.ListWidget(prefix_label=False)
+    widget = widgets.ListWidget(prefix_label=False, input_type='radio')
     option_widget = widgets.RadioInput()
+
+    def _value(self):
+        return [x for x in self.iter_choices()]
 
 
 class StringField(Field):
@@ -526,7 +535,7 @@ class StringField(Field):
             self.data = ''
 
     def _value(self):
-        return text_type(self.data) if self.data is not None else ''
+        return text_type(self.data) if hasattr(self, 'data') and self.data is not None else ''
 
 
 class LocaleAwareNumberField(Field):
@@ -570,7 +579,7 @@ class IntegerField(Field):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
-        elif self.data is not None:
+        elif hasattr(self, 'data') and self.data is not None:
             return text_type(self.data)
         else:
             return ''
@@ -617,7 +626,7 @@ class DecimalField(LocaleAwareNumberField):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
-        elif self.data is not None:
+        elif hasattr(self, 'data') and self.data is not None:
             if self.use_locale:
                 return text_type(self._format_decimal(self.data))
             elif self.places is not None:
@@ -663,7 +672,7 @@ class FloatField(Field):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
-        elif self.data is not None:
+        elif hasattr(self, 'data') and self.data is not None:
             return text_type(self.data)
         else:
             return ''
@@ -726,7 +735,7 @@ class DateTimeField(Field):
         if self.raw_data:
             return ' '.join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.format) or ''
+            return hasattr(self, 'data') and self.data and self.data.strftime(self.format) or ''
 
     def process_formdata(self, valuelist):
         if valuelist:
