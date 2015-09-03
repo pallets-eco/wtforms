@@ -158,19 +158,17 @@ msgstr "Nieprawidłowa liczba całkowita"
 
 #: wtforms/fields/core.py:554
 msgid "Not a valid decimal value"
-msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
+msgstr ""
 
 #: wtforms/fields/core.py:581
 msgid "Not a valid float value"
 msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
 
 #: wtforms/fields/core.py:632
-#, fuzzy
 msgid "Not a valid datetime value"
-msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
+msgstr ""
 
 #: wtforms/fields/core.py:649
-#, fuzzy
 msgid "Not a valid date value"
-msgstr "Nieprawidłowa liczba zmiennoprzecinkowa"
+msgstr ""
 
