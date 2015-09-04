@@ -39,8 +39,8 @@ class Field(object):
 
     def __init__(self, label=None, validators=None, filters=tuple(),
                  description='', id=None, default=None, widget=None,
-                 _form=None, _name=None, _prefix='', _translations=None,
-                 _meta=None):
+                 render_kw=None, _form=None, _name=None, _prefix='',
+                 _translations=None, _meta=None):
         """
         Construct a new field.
 
@@ -60,6 +60,9 @@ class Field(object):
             input is provided. May be a callable.
         :param widget:
             If provided, overrides the widget used to render the field.
+        :param dict render_kw:
+            If provided, a dictionary which provides default keywords that
+            will be given to the widget at render time.
         :param _form:
             The form holding this field. It is passed by the form itself during
             construction. You should never pass this value yourself.
@@ -93,6 +96,7 @@ class Field(object):
 
         self.default = default
         self.description = description
+        self.render_kw = render_kw
         self.filters = filters
         self.flags = Flags()
         self.name = _prefix + _name

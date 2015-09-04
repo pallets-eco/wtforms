@@ -1,6 +1,14 @@
 WTForms Changelog
 =================
 
+Version 2.1
+-----------
+Not Yet Released
+
+- Added `render_kw` to allow default rendering time options.
+- Updated / added a number of localizations
+- Updated docs
+
 Version 2.0.2
 -------------
 Released January 18, 2015
@@ -21,7 +29,7 @@ Version 2.0
 -----------
 Released May 20, 2014
 
-- Add new `class Meta` paradigm for much more powerful customization 
+- Add new `class Meta` paradigm for much more powerful customization
   of WTForms.
 - Move i18n into core. Deprecate `wtforms.ext.i18n`.
 - Move CSRF into core. Deprecate `wtforms.ext.csrf`.

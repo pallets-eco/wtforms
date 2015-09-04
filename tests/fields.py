@@ -134,7 +134,7 @@ class FiltersTest(TestCase):
 
 class FieldTest(TestCase):
     class F(Form):
-        a = TextField(default='hello')
+        a = TextField(default='hello', render_kw={'readonly': True, 'foo': u'bar'})
 
     def setUp(self):
         self.field = self.F().a
@@ -144,7 +144,7 @@ class FieldTest(TestCase):
         assert unbound.creation_counter != 0
         assert unbound.field_class is TextField
         self.assertEqual(unbound.args, ())
-        self.assertEqual(unbound.kwargs, {'default': 'hello'})
+        self.assertEqual(unbound.kwargs, {'default': 'hello', 'render_kw': {'readonly': True, 'foo': u'bar'}})
         assert repr(unbound).startswith('<UnboundField(TextField')
 
     def test_htmlstring(self):
@@ -173,6 +173,15 @@ class FieldTest(TestCase):
 
         # Do we fail if both _meta and _form are None?
         self.assertRaises(TypeError, TextField, _name='foo', _form=None)
+
+    def test_render_kw(self):
+        form = self.F()
+        self.assertEqual(form.a(), u'<input foo="bar" id="a" name="a" readonly type="text" value="hello">')
+        self.assertEqual(form.a(foo=u'baz'), u'<input foo="baz" id="a" name="a" readonly type="text" value="hello">')
+        self.assertEqual(
+            form.a(foo=u'baz', readonly=False, other='hello'),
+            u'<input foo="baz" id="a" name="a" other="hello" type="text" value="hello">'
+        )
 
 
 class PrePostTestField(TextField):

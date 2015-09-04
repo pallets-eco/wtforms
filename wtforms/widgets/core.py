@@ -27,7 +27,7 @@ def html_params(**kwargs):
     behind the ``data``-element is replaced with a hyphen.
 
     >>> html_params(data_any_attribute='something')
-    'data-any_attribute="something"'    
+    'data-any_attribute="something"'
 
     In addition, the values ``True`` and ``False`` are special:
       * ``attr=True`` generates the HTML compact output of a boolean attribute,

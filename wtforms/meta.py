@@ -50,6 +50,9 @@ class DefaultMeta(object):
 
         The default implementation calls ``field.widget(field, **render_kw)``
         """
+        other_kw = getattr(field, 'render_kw', None)
+        if other_kw is not None:
+            render_kw = dict(other_kw, **render_kw)
         return field.widget(field, **render_kw)
 
     # -- CSRF
