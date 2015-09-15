@@ -109,6 +109,9 @@ class Field(object):
 
         if widget is not None:
             self.widget = widget
+            flags = getattr(widget, 'field_flags', ())
+            for f in flags:
+                setattr(self.flags, f, True)
 
         for v in self.validators:
             flags = getattr(v, 'field_flags', ())

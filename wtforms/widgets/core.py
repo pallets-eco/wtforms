@@ -194,6 +194,7 @@ class HiddenInput(Input):
     """
     Render a hidden input.
     """
+    field_flags = ('hidden', )
     input_type = 'hidden'
 
 
