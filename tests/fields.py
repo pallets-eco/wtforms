@@ -228,6 +228,47 @@ class SelectFieldTest(TestCase):
     class F(Form):
         a = SelectField(choices=[('a', 'hello'), ('btest', 'bye')], default='a')
         b = SelectField(choices=[(1, 'Item 1'), (2, 'Item 2')], coerce=int, option_widget=widgets.TextInput())
+        c = SelectField(choices=[('a', 'hello', {'data-image': 'hello-icon'}, False), ('b', 'bye', {'data-image': 'bye-icon'}, False)], default='a')
+        d = SelectField(
+            choices=[
+                ('a', 'hello', {'data-image': 'hello-icon'}, False),
+                ('b', 'bye', {'data-image': 'bye-icon'}, False),
+                ('b1', 'bye', {'data-image': 'bye-icon'}, False),
+                ('b2', 'bye', {'data-image': 'bye-icon'}, False),
+            ],
+            default='a',
+            render_kw = {
+                'optgroup_key': lambda x: x.value[0],
+                'optgroup_label': lambda n, k, g: k[0],
+            }
+        )
+        e = SelectField(
+            choices=[
+                ('a', 'hello', {'data-image': 'hello-icon'}, False),
+                ('b', 'bye', {'data-image': 'bye-icon'}, False),
+                ('b1', 'bye', {'data-image': 'bye-icon', 'disabled': True}, False),
+                ('b2', 'bye', {'data-image': 'bye-icon'}, False),
+            ],
+            default='a',
+            render_kw = {
+                'optgroup_key': lambda x: x.value[0],
+                'optgroup_label': lambda n, k, g: k[0],
+            }
+        )
+        f = SelectField(
+            choices=[
+                ('a', 'hello', {'data-image': 'hello-icon', 'data-important-fact': '1'}, False),
+                ('b', 'bye', {'data-image': 'bye-icon', 'data-important-fact': '1'}, False),
+                ('b1', 'bye', {'data-image': 'bye-icon', 'data-important-fact': '2'}, False),
+                ('b2', 'bye', {'data-image': 'bye-icon', 'data-important-fact': '3'}, False),
+            ],
+            default='a',
+            render_kw = {
+                'optgroup_key': lambda x: x.extra['data-important-fact'],
+                'optgroup_label': lambda n, k, g: k[0],
+            }
+        )
+
 
     def test_defaults(self):
         form = self.F()
@@ -236,6 +277,10 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.validate(), False)
         self.assertEqual(form.a(), """<select id="a" name="a"><option selected value="a">hello</option><option value="btest">bye</option></select>""")
         self.assertEqual(form.b(), """<select id="b" name="b"><option value="1">Item 1</option><option value="2">Item 2</option></select>""")
+        self.assertEqual(form.c(), """<select id="c" name="c"><option data-image="hello-icon" selected value="a">hello</option><option data-image="bye-icon" value="b">bye</option></select>""")
+        self.assertEqual(form.d(), """<select id="d" name="d"><optgroup label="a"><option data-image="hello-icon" selected value="a">hello</option></optgroup><optgroup label="b"><option data-image="bye-icon" value="b">bye</option><option data-image="bye-icon" value="b1">bye</option><option data-image="bye-icon" value="b2">bye</option></optgroup></select>""")
+        self.assertEqual(form.e(), """<select id="e" name="e"><optgroup label="a"><option data-image="hello-icon" selected value="a">hello</option></optgroup><optgroup label="b"><option data-image="bye-icon" value="b">bye</option><option data-image="bye-icon" disabled value="b1">bye</option><option data-image="bye-icon" value="b2">bye</option></optgroup></select>""")
+        self.assertEqual(form.f(), """<select id="f" name="f"><optgroup label="1"><option data-image="hello-icon" data-important-fact="1" selected value="a">hello</option><option data-image="bye-icon" data-important-fact="1" value="b">bye</option></optgroup><optgroup label="2"><option data-image="bye-icon" data-important-fact="2" value="b1">bye</option></optgroup><optgroup label="3"><option data-image="bye-icon" data-important-fact="3" value="b2">bye</option></optgroup></select>""")
 
     def test_with_data(self):
         form = self.F(DummyPostData(a=['btest']))
@@ -283,12 +328,12 @@ class SelectMultipleFieldTest(TestCase):
         # Test for possible regression with null data
         form.a.data = None
         self.assertTrue(form.validate())
-        self.assertEqual(list(form.a.iter_choices()), [(v, l, False) for v, l in form.a.choices])
+        self.assertEqual(list(form.a.iter_choices()), [(oc.value, oc.label, {}, False) for oc in form.a.choices])
 
     def test_with_data(self):
         form = self.F(DummyPostData(a=['a', 'c']))
         self.assertEqual(form.a.data, ['a', 'c'])
-        self.assertEqual(list(form.a.iter_choices()), [('a', 'hello', True), ('b', 'bye', False), ('c', 'something', True)])
+        self.assertEqual(list(form.a.iter_choices()), [('a', 'hello', {}, True), ('b', 'bye', {}, False), ('c', 'something', {}, True)])
         self.assertEqual(form.b.data, [])
         form = self.F(DummyPostData(b=['1', '2']))
         self.assertEqual(form.b.data, [1, 2])

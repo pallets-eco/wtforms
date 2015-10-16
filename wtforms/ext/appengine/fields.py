@@ -63,12 +63,12 @@ class ReferencePropertyField(fields.SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield ('__None', self.blank_text, self.data is None)
+            yield fields.OptionChoice('__None', self.blank_text, {}, self.data is None)
 
         for obj in self.query:
             key = str(obj.key())
             label = self.get_label(obj)
-            yield (key, label, (self.data.key() == obj.key()) if self.data else False)
+            yield fields.OptionChoice(key, label, {}, (self.data.key() == obj.key()) if self.data else False)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -140,12 +140,12 @@ class KeyPropertyField(fields.SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield ('__None', self.blank_text, self.data is None)
+            yield fields.OptionChoice('__None', self.blank_text, {}, self.data is None)
 
         for obj in self.query:
             key = str(obj.key.id())
             label = self.get_label(obj)
-            yield (key, label, (self.data.key == obj.key) if self.data else False)
+            yield fields.OptionChoice(key, label, {}, (self.data.key == obj.key) if self.data else False)
 
     def process_formdata(self, valuelist):
         if valuelist:

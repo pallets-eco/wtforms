@@ -4,6 +4,7 @@ from unittest import TestCase
 from wtforms.widgets import html_params, Input
 from wtforms.widgets import *
 from wtforms.widgets import html5
+from wtforms.fields import OptionChoice
 
 
 class DummyField(object):
@@ -19,7 +20,7 @@ class DummyField(object):
     __str__ = lambda x: x.data
     __call__ = lambda x, **k: x.data
     __iter__ = lambda x: iter(x.data)
-    iter_choices = lambda x: iter(x.data)
+    iter_choices = lambda x: (OptionChoice(*c) for c in x.data)
 
 
 class HTMLParamsTest(TestCase):
@@ -112,7 +113,12 @@ class BasicWidgetsTest(TestCase):
 
 
 class SelectTest(TestCase):
-    field = DummyField([('foo', 'lfoo', True), ('bar', 'lbar', False)])
+    field = DummyField([('foo', 'lfoo', {}, True), ('bar', 'lbar', {}, False)])
+    field_optgroup = DummyField([
+        ('foo', 'lfoo', {}, True),
+        ('bar', 'lbar', {}, False),
+        ('far', 'lfar', {}, False),
+    ])
 
     def test(self):
         self.assertEqual(
@@ -122,6 +128,14 @@ class SelectTest(TestCase):
         self.assertEqual(
             Select(multiple=True)(self.field),
             '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>'
+        )
+        self.assertEqual(
+            Select()(self.field_optgroup, optgroup_key=lambda oc: oc.value[-1]),
+            '<select id="" name="f"><optgroup label="0"><option selected value="foo">lfoo</option></optgroup><optgroup label="1"><option value="bar">lbar</option><option value="far">lfar</option></optgroup></select>'
+        )
+        self.assertEqual(
+            Select()(self.field_optgroup, optgroup_key=lambda oc: oc.value[-1], optgroup_label=lambda n, k, g: 'ending with '+k[-1]),
+            '<select id="" name="f"><optgroup label="ending with o"><option selected value="foo">lfoo</option></optgroup><optgroup label="ending with r"><option value="bar">lbar</option><option value="far">lfar</option></optgroup></select>'
         )
 
     def test_render_option(self):
