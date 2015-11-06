@@ -31,7 +31,13 @@ settings.configure(
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': ':memory:'
         }
-    }
+    },
+    # this fixes warnings in django 1.7
+    MIDDLEWARE_CLASSES = [
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
+    ]
 )
 
 from django.db import connection
