@@ -29,17 +29,17 @@ msgstr "Rhaid i'r maes fod yr un fath â/ag %(other_name)s."
 
 #: wtforms/validators.py:96
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Mae'n rhaid i Maes fod o leiaf %(min)d cymeriad hir."
-msgstr[1] "Mae'n rhaid i Maes fod o leiaf %(min)d nod o hyd."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "Mae'n rhaid i Maes fod o leiaf %(num)d cymeriad hir."
+msgstr[1] "Mae'n rhaid i Maes fod o leiaf %(num)d nod o hyd."
 
 #: wtforms/validators.py:99
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Ni all Maes fod yn hirach na %(max)d cymeriad."
-msgstr[1] "Ni all Maes fod yn fwy na %(max)d cymeriadau."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "Ni all Maes fod yn hirach na %(num)d cymeriad."
+msgstr[1] "Ni all Maes fod yn fwy na %(num)d cymeriadau."
 
 #: wtforms/validators.py:102
 #, python-format

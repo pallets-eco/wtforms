@@ -28,17 +28,17 @@ msgstr "Hodnota pole má být stejná jako u %(other_name)s."
 
 #: validators.py:97
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Počet znaků daného pole má být minimálně %(min)d."
-msgstr[1] "Počet znaků daného pole má být minimálně %(min)d."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "Počet znaků daného pole má být minimálně %(num)d."
+msgstr[1] "Počet znaků daného pole má být minimálně %(num)d."
 
 #: validators.py:100
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Počet znaků daného pole má byt maximálně %(max)d."
-msgstr[1] "Počet znaků daného pole má byt maximálně %(max)d."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "Počet znaků daného pole má byt maximálně %(num)d."
+msgstr[1] "Počet znaků daného pole má byt maximálně %(num)d."
 
 #: validators.py:103
 #, python-format

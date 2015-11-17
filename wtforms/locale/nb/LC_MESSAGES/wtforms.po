@@ -31,17 +31,17 @@ msgstr "Feltet må være lik som %(other_name)s."
 
 #: wtforms/validators.py:96
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Feltet må være minst %(min)d tegn langt."
-msgstr[1] "Feltet må være minst %(min)d tegn langt."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "Feltet må være minst %(num)d tegn langt."
+msgstr[1] "Feltet må være minst %(num)d tegn langt."
 
 #: wtforms/validators.py:99
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Feltet kan ikke være lenger enn %(max)d tegn."
-msgstr[1] "Feltet kan ikke være lenger enn %(max)d tegn."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "Feltet kan ikke være lenger enn %(num)d tegn."
+msgstr[1] "Feltet kan ikke være lenger enn %(num)d tegn."
 
 #: wtforms/validators.py:102
 #, python-format
@@ -177,3 +177,4 @@ msgstr "Ikke en gyldig dato- og tidsverdi"
 #: wtforms/fields/core.py:741
 msgid "Not a valid date value"
 msgstr "Ikke en gyldig datoverdi"
+

@@ -32,17 +32,17 @@ msgstr "Väli peab võrduma %(other_name)s -ga."
 
 #: wtforms/validators.py:96
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Väli peab olema vähemalt %(min)d tähemärgi pikkune."
-msgstr[1] "Väli peab olema vähemalt %(min)d tähemärgi pikkune."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "Väli peab olema vähemalt %(num)d tähemärgi pikkune."
+msgstr[1] "Väli peab olema vähemalt %(num)d tähemärgi pikkune."
 
 #: wtforms/validators.py:99
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Väli ei tohi olla üle %(max)d tähemärgi pikk."
-msgstr[1] "Väli ei tohi olla üle %(max)d tähemärgi pikk."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "Väli ei tohi olla üle %(num)d tähemärgi pikk."
+msgstr[1] "Väli ei tohi olla üle %(num)d tähemärgi pikk."
 
 #: wtforms/validators.py:102
 #, python-format

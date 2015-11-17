@@ -29,17 +29,17 @@ msgstr "Το πεδίο πρέπει να είναι το ίδιο με το %(o
 
 #: wtforms/validators.py:96
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Το πεδίο πρέπει να έχει τουλάχιστον %(min)d χαρακτήρα."
-msgstr[1] "Το πεδίο πρέπει να έχει τουλάχιστόν %(min)d χαρακτήρες."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "Το πεδίο πρέπει να έχει τουλάχιστον %(num)d χαρακτήρα."
+msgstr[1] "Το πεδίο πρέπει να έχει τουλάχιστόν %(num)d χαρακτήρες."
 
 #: wtforms/validators.py:99
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Το πεδίο δεν μπορεί να έχει πάνω απο %(max)d χαρακτήρα."
-msgstr[1] "Το πεδίο δεν μπορεί να έχει πάνω απο %(max)d χαρακτήρες."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "Το πεδίο δεν μπορεί να έχει πάνω απο %(num)d χαρακτήρα."
+msgstr[1] "Το πεδίο δεν μπορεί να έχει πάνω απο %(num)d χαρακτήρες."
 
 #: wtforms/validators.py:102
 #, python-format

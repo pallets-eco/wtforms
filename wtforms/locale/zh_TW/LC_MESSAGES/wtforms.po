@@ -28,15 +28,15 @@ msgstr "欄位必須與 %(other_name)s 相同。"
 
 #: wtforms/validators.py:94
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "欄位必須超過 %(min)d 個字元。"
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "欄位必須超過 %(num)d 個字元。"
 
 #: wtforms/validators.py:97
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "欄位必須少於 %(max)d 個字元。"
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "欄位必須少於 %(num)d 個字元。"
 
 #: wtforms/validators.py:100
 #, python-format
