@@ -297,6 +297,11 @@ class SelectMultipleFieldTest(TestCase):
         self.assertEqual(form.b.data, [1, 2, 4])
         self.assertFalse(form.validate())
 
+    def test_empty_choice(self):
+        form = self.F(DummyPostData())
+        self.assertEqual(form.a.data, [])
+        self.assertEqual(form.b.data, [])
+
     def test_coerce_fail(self):
         form = self.F(b=['a'])
         assert form.validate()
