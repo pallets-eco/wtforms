@@ -144,6 +144,12 @@ class HTML5Test(TestCase):
         self.assertEqual(i1(self.field), '<input id="id" name="bar" step="any" type="number" value="42">')
         i2 = html5.NumberInput(step=2)
         self.assertEqual(i2(self.field, step=3), '<input id="id" name="bar" step="3" type="number" value="42">')
+        i3 = html5.NumberInput(min=10)
+        self.assertEqual(i3(self.field), '<input id="id" min="10" name="bar" type="number" value="42">')
+        self.assertEqual(i3(self.field, min=5), '<input id="id" min="5" name="bar" type="number" value="42">')
+        i4 = html5.NumberInput(max=100)
+        self.assertEqual(i4(self.field), '<input id="id" max="100" name="bar" type="number" value="42">')
+        self.assertEqual(i4(self.field, max=50), '<input id="id" max="50" name="bar" type="number" value="42">')
 
     def test_range(self):
         i1 = html5.RangeInput(step='any')
