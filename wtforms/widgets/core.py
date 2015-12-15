@@ -32,7 +32,7 @@ def html_params(**kwargs):
     In addition, the values ``True`` and ``False`` are special:
       * ``attr=True`` generates the HTML compact output of a boolean attribute,
         e.g. ``checked=True`` will generate simply ``checked``
-      * ``attr=`False`` will be ignored and generate no output.
+      * ``attr=False`` will be ignored and generate no output.
 
     >>> html_params(name='text1', id='f', class_='text')
     'class="text" id="f" name="text1"'
