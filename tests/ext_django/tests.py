@@ -33,12 +33,18 @@ settings.configure(
         }
     },
     # this fixes warnings in django 1.7
-    MIDDLEWARE_CLASSES = [
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.messages.middleware.MessageMiddleware',
-    ]
+    MIDDLEWARE_CLASSES=[
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+    ],
 )
+
+try:
+    import django
+    django.setup()
+except (ImportError, AttributeError):
+    pass
 
 from django.db import connection
 connection.creation.create_test_db(verbosity=0)
