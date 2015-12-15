@@ -353,6 +353,7 @@ class RadioFieldTest(TestCase):
 class TextFieldTest(TestCase):
     class F(Form):
         a = TextField()
+        d = TextField(default="hello")
 
     def test(self):
         form = self.F()
@@ -363,6 +364,9 @@ class TextFieldTest(TestCase):
         self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="hello">""")
         form = self.F(DummyPostData(b=['hello']))
         self.assertEqual(form.a.data, '')
+        self.assertEqual(form.d(), """<input id="d" name="d" type="text" value="hello">""")
+        form = self.F(DummyPostData(b=['hello']))
+        self.assertEqual(form.d.data, 'hello')
 
 
 class HiddenFieldTest(TestCase):

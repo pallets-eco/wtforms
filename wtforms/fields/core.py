@@ -173,6 +173,17 @@ class Field(object):
         """
         return self._translations.ngettext(singular, plural, n)
 
+    def _get_default(self):
+        """
+        Get suitable default value for field.
+
+        :return: Default value of field
+        """
+        try:
+            return self.default()
+        except TypeError:
+            return self.default
+
     def validate(self, form, extra_validators=tuple()):
         """
         Validates the field and returns True or False. `self.errors` will
@@ -266,10 +277,7 @@ class Field(object):
         """
         self.process_errors = []
         if data is unset_value:
-            try:
-                data = self.default()
-            except TypeError:
-                data = self.default
+            data = self._get_default()
 
         self.object_data = data
 
@@ -403,14 +411,14 @@ class Label(object):
 
 
 class SelectFieldBase(Field):
-    option_widget = widgets.Option()
-
     """
     Base class for fields which can be iterated to produce options.
 
     This isn't a field, but an abstract base class for fields which want to
     provide this functionality.
     """
+    option_widget = widgets.Option()
+
     def __init__(self, label=None, validators=None, option_widget=None, **kwargs):
         super(SelectFieldBase, self).__init__(label, validators, **kwargs)
 
@@ -526,7 +534,7 @@ class StringField(Field):
     def process_formdata(self, valuelist):
         if valuelist:
             self.data = valuelist[0]
-        else:
+        elif self.data is None:
             self.data = ''
 
     def _value(self):
@@ -783,10 +791,7 @@ class FormField(Field):
 
     def process(self, formdata, data=unset_value):
         if data is unset_value:
-            try:
-                data = self.default()
-            except TypeError:
-                data = self.default
+            data = self._get_default()
             self._obj = data
 
         self.object_data = data
