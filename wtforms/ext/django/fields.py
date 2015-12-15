@@ -73,10 +73,10 @@ class QuerySetSelectField(fields.SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield ('__None', self.blank_text, self.data is None)
+            yield fields.OptionChoice('__None', self.blank_text, {}, self.data is None)
 
         for obj in self.queryset:
-            yield (obj.pk, self.get_label(obj), obj == self.data)
+            yield fields.OptionChoice(obj.pk, self.get_label(obj), {}, obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:

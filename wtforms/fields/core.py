@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import decimal
 import itertools
+import collections
 
 from wtforms import widgets
 from wtforms.compat import text_type, izip
@@ -17,6 +18,14 @@ __all__ = (
     'SelectMultipleField', 'StringField',
 )
 
+class OptionChoice(collections.namedtuple(
+    'OptionChoice', ('value', 'label', 'extra', 'selected')
+)):
+    def __new__(cls, value, label, extra = None, selected = False):
+        if extra is None:
+            extra = {}
+
+        return super(OptionChoice, cls).__new__(cls, value, label, extra, selected)
 
 class Field(object):
     """
@@ -426,10 +435,10 @@ class SelectFieldBase(Field):
 
     def __iter__(self):
         opts = dict(widget=self.option_widget, _name=self.name, _form=None, _meta=self.meta)
-        for i, (value, label, checked) in enumerate(self.iter_choices()):
-            opt = self._Option(label=label, id='%s-%d' % (self.id, i), **opts)
-            opt.process(None, value)
-            opt.checked = checked
+        for i, oc in enumerate(self.iter_choices()):
+            opt = self._Option(label=oc.label, id='%s-%d' % (self.id, i), **opts)
+            opt.process(None, oc.value)
+            opt.checked = oc.selected
             yield opt
 
     class _Option(Field):
@@ -445,11 +454,14 @@ class SelectField(SelectFieldBase):
     def __init__(self, label=None, validators=None, coerce=text_type, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
-        self.choices = choices
+        if callable(choices):
+            self.choices = [OptionChoice(*c) for c in choices()]
+        else:
+            self.choices = [OptionChoice(*c) for c in choices]
 
     def iter_choices(self):
-        for value, label in self.choices:
-            yield (value, label, self.coerce(value) == self.data)
+        for oc in self.choices:
+            yield OptionChoice(oc.value, oc.label, oc.extra, self.coerce(oc.value) == self.data)
 
     def process_data(self, value):
         try:
@@ -465,8 +477,8 @@ class SelectField(SelectFieldBase):
                 raise ValueError(self.gettext('Invalid Choice: could not coerce'))
 
     def pre_validate(self, form):
-        for v, _ in self.choices:
-            if self.data == v:
+        for oc in self.choices:
+            if self.data == self.coerce(oc.value):
                 break
         else:
             raise ValueError(self.gettext('Not a valid choice'))
@@ -481,9 +493,9 @@ class SelectMultipleField(SelectField):
     widget = widgets.Select(multiple=True)
 
     def iter_choices(self):
-        for value, label in self.choices:
-            selected = self.data is not None and self.coerce(value) in self.data
-            yield (value, label, selected)
+        for oc in self.choices:
+            selected = self.data is not None and self.coerce(oc.value) in self.data
+            yield OptionChoice(oc.value, oc.label, oc.extra, selected)
 
     def process_data(self, value):
         try:
@@ -499,7 +511,7 @@ class SelectMultipleField(SelectField):
 
     def pre_validate(self, form):
         if self.data:
-            values = list(c[0] for c in self.choices)
+            values = list(self.coerce(c.value) for c in self.choices)
             for d in self.data:
                 if d not in values:
                     raise ValueError(self.gettext("'%(value)s' is not a valid choice for this field") % dict(value=d))

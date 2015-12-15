@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from itertools import groupby
 
 try:
     from html import escape
@@ -283,9 +284,28 @@ class Select(object):
         kwargs.setdefault('id', field.id)
         if self.multiple:
             kwargs['multiple'] = True
+
+        kwargs_keys = kwargs.keys()
+        optgroup_params = {k.replace('optgroup_', ''): kwargs.pop(k) for k in kwargs_keys if k.startswith('optgroup_')}
+            
         html = ['<select %s>' % html_params(name=field.name, **kwargs)]
-        for val, label, selected in field.iter_choices():
-            html.append(self.render_option(val, label, selected))
+
+        if 'key' in optgroup_params:
+            key = optgroup_params.pop('key')
+            label = optgroup_params.pop('label', None)
+            for n, (k, g) in enumerate(groupby(field.iter_choices(), key)):
+                # g is a sequence of OptionChoice
+                _g = list(g)
+                html.append('<optgroup %s>' % html_params(
+                    label = label(n, k, _g) if label else text_type(n),
+                    **optgroup_params
+                ))
+                for oc in _g:
+                    html.append(self.render_option(oc.value, oc.label, oc.selected, **oc.extra))
+                html.append('</optgroup>')
+        else:
+            for oc in field.iter_choices():
+                html.append(self.render_option(oc.value, oc.label, oc.selected, **oc.extra))
         html.append('</select>')
         return HTMLString(''.join(html))
 

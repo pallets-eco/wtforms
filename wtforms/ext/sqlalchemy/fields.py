@@ -7,7 +7,7 @@ import operator
 
 from wtforms import widgets
 from wtforms.compat import text_type, string_types
-from wtforms.fields import SelectFieldBase
+from wtforms.fields import SelectFieldBase, OptionChoice
 from wtforms.validators import ValidationError
 
 try:
@@ -102,10 +102,10 @@ class QuerySelectField(SelectFieldBase):
 
     def iter_choices(self):
         if self.allow_blank:
-            yield ('__None', self.blank_text, self.data is None)
+            yield OptionChoice('__None', self.blank_text, {}, self.data is None)
 
         for pk, obj in self._get_object_list():
-            yield (pk, self.get_label(obj), obj == self.data)
+            yield OptionChoice(pk, self.get_label(obj), {}, obj == self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
