@@ -54,9 +54,9 @@ copyright = '2010-2014 by Thomas Johansson, James Crasta'
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '2.1'
+version = '2.1.1'
 # The full version, including alpha/beta/rc tags.
-release = '2.1'
+release = '2.1.1dev'
 
 
 # There are two options for replacing |today|: either, you set today to some
