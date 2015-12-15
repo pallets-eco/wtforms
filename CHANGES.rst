@@ -3,11 +3,12 @@ WTForms Changelog
 
 Version 2.1
 -----------
-Not Yet Released
+Released December 15, 2015
 
 - Added `render_kw` to allow default rendering time options.
 - Updated / added a number of localizations
 - Updated docs
+- Allow widgets to set flags
 
 Version 2.0.2
 -------------
