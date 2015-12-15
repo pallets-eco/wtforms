@@ -264,7 +264,7 @@ def model_form(model, db_session=None, base_class=Form, only=None,
     """
     Create a wtforms Form for a given SQLAlchemy model class::
 
-        from wtalchemy.orm import model_form
+        from wtforms.ext.sqlalchemy.orm import model_form
         from myapp.models import User
         UserForm = model_form(User)
 
