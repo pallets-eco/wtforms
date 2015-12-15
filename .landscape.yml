@@ -1,0 +1,11 @@
+doc-warnings: yes
+test-warnings: no
+strictness: medium
+max-line-length: 170
+autodetect: yes
+requirements:
+    - tests/test_requirements.txt
+    - deps/test.txt
+ignore-paths:
+    - docs
+    - wtforms/ext
