@@ -372,6 +372,7 @@ class HiddenFieldTest(TestCase):
     def test(self):
         form = self.F()
         self.assertEqual(form.a(), """<input id="a" name="a" type="hidden" value="LE DEFAULT">""")
+        self.assertTrue(form.a.flags.hidden)
 
 
 class TextAreaFieldTest(TestCase):

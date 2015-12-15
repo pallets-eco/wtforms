@@ -92,6 +92,7 @@ class BasicWidgetsTest(TestCase):
 
     def test_hidden_input(self):
         self.assertTrue('type="hidden"' in HiddenInput()(self.field))
+        self.assertTrue('hidden' in HiddenInput().field_flags)
 
     def test_checkbox_input(self):
         self.assertEqual(CheckboxInput()(self.field, value='v'), '<input checked id="id" name="bar" type="checkbox" value="v">')
