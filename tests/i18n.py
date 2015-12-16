@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from unittest import TestCase
 from wtforms import form, TextField, validators
 from wtforms.i18n import get_translations
-from wtforms.ext.i18n import form as i18n_form
 
 
 def gettext_lower(self, s):
@@ -57,28 +56,6 @@ class I18NTest(TestCase):
         translator = Lower_Translator()
         translations = self._test_converter(translator)
         assert translations is translator
-
-
-class ClassicI18nFormTest(TestCase):
-    class F(i18n_form.Form):
-        LANGUAGES = ['en_US', 'en']
-        a = TextField(validators=[validators.Required()])
-
-    def test_form(self):
-        tcache = i18n_form.translations_cache
-        tcache.clear()
-        form = self.F()
-
-        assert ('en_US', 'en') in tcache
-        assert form._get_translations() is tcache[('en_US', 'en')]
-        assert not form.validate()
-        self.assertEqual(form.a.errors[0], 'This field is required.')
-
-        form = self.F(LANGUAGES=['es'])
-        assert ('es', ) in tcache
-        self.assertEqual(len(tcache), 2)
-        assert not form.validate()
-        self.assertEqual(form.a.errors[0], 'Este campo es obligatorio.')
 
 
 class CoreFormTest(TestCase):

@@ -3,9 +3,9 @@ import os
 import sys
 from unittest import defaultTestLoader, TextTestRunner, TestSuite
 
-TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'csrf', 'ext_csrf', 'i18n')
+TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'csrf', 'i18n')
 
-OPTIONAL_TESTS = ('ext_django.tests', 'ext_sqlalchemy', 'ext_dateutil', 'locale_babel')
+OPTIONAL_TESTS = ('locale_babel', )
 
 
 def make_suite(prefix='', extra=(), force_all=False):
