@@ -1,6 +1,9 @@
 What is WTForms?
 ================
 
+[![Build Status](https://travis-ci.org/wtforms/wtforms.svg?branch=master)](https://travis-ci.org/wtforms/wtforms) [![Coverage Status](https://coveralls.io/repos/wtforms/wtforms/badge.svg?branch=master&service=github)](https://coveralls.io/github/wtforms/wtforms?branch=master) [![Documentation Status](https://readthedocs.org/projects/wtforms/badge/?version=latest)](http://wtforms.readthedocs.org/en/latest/?badge=latest)
+
+
 WTForms is a flexible forms validation and rendering library for python web development.
 
 To get started using WTForms, we recommend reading the crash course on the website: http://wtforms.simplecodes.com/.
