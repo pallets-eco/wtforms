@@ -259,16 +259,22 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             Accept a dictionary of data. This is only used if `formdata` and
             `obj` are not present.
         :param meta:
-            If provided, this is a dictionary of values to override attributes
-            on this form's meta instance.
+            If provided, this is either
+            a dictionary of values to override attributes on this 
+            form's meta instance, or
+            a meta object to replace this form's meta instance.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
         """
         meta_obj = self._wtforms_meta()
-        if meta is not None and isinstance(meta, dict):
-            meta_obj.update_values(meta)
+        if meta is not None:
+            if isinstance(meta, dict):
+                meta_obj.update_values(meta)
+            else:
+                meta_obj = meta
+
         super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
 
         for name, field in iteritems(self._fields):
