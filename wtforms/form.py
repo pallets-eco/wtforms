@@ -260,7 +260,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             `obj` are not present.
         :param meta:
             If provided, this is either
-            a dictionary of values to override attributes on this 
+            a dictionary of values to override attributes on this
             form's meta instance, or
             a meta object to replace this form's meta instance.
         :param `**kwargs`:

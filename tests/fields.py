@@ -131,6 +131,7 @@ class FiltersTest(TestCase):
         self.assertEqual(len(form.b.process_errors), 1)
         assert not form.validate()
 
+
 class FieldTest(TestCase):
     class F(Form):
         a = TextField(default='hello', render_kw={'readonly': True, 'foo': u'bar'})
