@@ -6,6 +6,7 @@ from tempfile import TemporaryFile
 from wtforms.i18n import get_translations, messages_path
 from wtforms import i18n
 
+
 def gettext_lower(self, s):
     return s.lower()
 
