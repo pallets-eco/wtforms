@@ -2,8 +2,9 @@ from __future__ import unicode_literals
 
 from unittest import TestCase
 from wtforms import form, TextField, validators
-from wtforms.i18n import get_translations
-
+from tempfile import TemporaryFile
+from wtforms.i18n import get_translations, messages_path
+from wtforms import i18n
 
 def gettext_lower(self, s):
     return s.lower()
@@ -56,6 +57,13 @@ class I18NTest(TestCase):
         translator = Lower_Translator()
         translations = self._test_converter(translator)
         assert translations is translator
+
+    def test_messages_path_fallback(self):
+        with TemporaryFile() as fn:
+            original = i18n.__file__
+            i18n.__file__ = fn.name
+            self.assertEqual('/usr/share/locale', messages_path())
+            i18n.__file__ = original
 
 
 class CoreFormTest(TestCase):
