@@ -78,6 +78,10 @@ class ValidatorsTest(TestCase):
             UUID()(self.form, DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f8')),
             None
         )
+        self.assertEqual(
+            UUID()(self.form, DummyField('2bc1c94f0deb43e992a14775189ec9f8')),
+            None
+        )
         self.assertRaises(ValidationError, UUID(), self.form,
                           DummyField('2bc1c94f-deb-43e9-92a1-4775189ec9f8'))
         self.assertRaises(ValidationError, UUID(), self.form,
