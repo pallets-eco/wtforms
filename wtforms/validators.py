@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import re
+import uuid
 import warnings
 
 from wtforms.compat import string_types, text_type
@@ -419,7 +420,7 @@ class URL(Regexp):
             raise ValidationError(message)
 
 
-class UUID(Regexp):
+class UUID(object):
     """
     Validates a UUID.
 
@@ -427,15 +428,16 @@ class UUID(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-        pattern = r'^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$'
-        super(UUID, self).__init__(pattern, message=message)
+        self.message = message
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext('Invalid UUID.')
-
-        super(UUID, self).__call__(form, field, message)
+        try:
+            uuid.UUID(field.data)
+        except ValueError:
+            raise ValidationError(message)
 
 
 class AnyOf(object):
