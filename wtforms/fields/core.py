@@ -215,7 +215,7 @@ class Field(object):
         """
         Run a validation chain, stopping if any validator raises StopValidation.
 
-        :param form: The Form instance this field beongs to.
+        :param form: The Form instance this field belongs to.
         :param validators: a sequence or iterable of validator callables.
         :return: True if validation was stopped, False otherwise.
         """
