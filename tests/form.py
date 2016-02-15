@@ -67,6 +67,17 @@ class BaseFormTest(TestCase):
         self.assertEqual(m.test, 'foobar')
         self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['test'])
 
+    def test_populate_obj_ignore_fields(self):
+        m = type(str('Model'), (object, ), {})
+        form = self.get_form()
+        self.assertEqual(len(list(form)), 1)
+        form['foo'] = TextField()
+        self.assertEqual(len(list(form)), 2)
+        form.process(DummyPostData(foo=['hello']))
+        form.populate_obj(m, ignore_fields=['test'])
+        self.assertEqual(form['foo'].data, 'hello')
+        self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['foo'])
+
     def test_prefixes(self):
         form = self.get_form(prefix='foo')
         self.assertEqual(form['test'].name, 'foo-test')
