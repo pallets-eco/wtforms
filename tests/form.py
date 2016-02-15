@@ -67,6 +67,28 @@ class BaseFormTest(TestCase):
         self.assertEqual(m.test, 'foobar')
         self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['test'])
 
+    def test_populate_obj_partial(self):
+        m = type(str('Model'), (object, ), {})
+        m.test = 'cat'
+        m.test_b = 'dog'
+        form = self.get_form()
+        form.process(test='foobar')
+        form.populate_obj(m, partial=True)
+        self.assertEqual(m.test, 'foobar')
+        self.assertEqual(m.test_b, 'dog')
+        self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['test', 'test_b'])
+
+    def test_populate_obj_partial_with_formdata(self):
+        m = type(str('Model'), (object, ), {})
+        m.test = 'cat'
+        m.test_b = 'dog'
+        form = self.get_form()
+        form.process(DummyPostData({'test': 'foobar'}))
+        form.populate_obj(m, partial=True)
+        self.assertEqual(m.test, 'foobar')
+        self.assertEqual(m.test_b, 'dog')
+        self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['test', 'test_b'])
+
     def test_prefixes(self):
         form = self.get_form(prefix='foo')
         self.assertEqual(form['test'].name, 'foo-test')
