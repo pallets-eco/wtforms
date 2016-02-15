@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from wtforms.form import BaseForm, Form
 from wtforms.meta import DefaultMeta
-from wtforms.fields import TextField, IntegerField
+from wtforms.fields import *
 from wtforms.validators import ValidationError
 from tests.common import DummyPostData
 
@@ -21,6 +21,79 @@ class BaseFormTest(TestCase):
         form = self.get_form()
         form.process(test='foo')
         self.assertEqual(form.data, {'test': 'foo'})
+
+    def test_dict_proxy(self):
+        form = BaseForm(fields=[
+            ('boolean', BooleanField()),
+            ('date', DateField()),
+            ('date_time', DateTimeField()),
+            ('decimal', DecimalField()),
+            ('file', FileField()),
+            ('float', FloatField()),
+            ('integer', IntegerField()),
+            ('radio', RadioField(choices=[('foo', 'bar')])),
+            ('select', SelectField(choices=[('foo', 'bar')])),
+            ('select_multiple', SelectMultipleField(choices=[('foo', 'bar')])),
+            ('submit', SubmitField()),
+            ('string', StringField()),
+            ('hidden', HiddenField()),
+            ('password', PasswordField()),
+            ('text_area', TextAreaField()),
+        ])
+        dict_form = form.dict
+        expected = {'errors': None,
+                    'inputs': [{'id': u'boolean',
+                                'name': u'boolean',
+                                'type': u'checkbox',
+                                'value': u'y'},
+                               {'id': u'date', 'name': u'date', 'type': u'text', 'value': u''},
+                               {'id': u'date_time',
+                                'name': u'date_time',
+                                'type': u'text',
+                                'value': u''},
+                               {'id': u'decimal',
+                                'name': u'decimal',
+                                'type': u'text',
+                                'value': u''},
+                               {'id': u'file', 'name': u'file', 'type': u'file', 'value': u''},
+                               {'id': u'float', 'name': u'float', 'type': u'text', 'value': u''},
+                               {'id': u'integer',
+                                'name': u'integer',
+                                'type': u'text',
+                                'value': u''},
+                               {'id': u'radio',
+                                'name': u'radio',
+                                'type': u'radio',
+                                'value': [(u'foo', u'bar', False)]},
+                               {'id': u'select',
+                                'name': u'select',
+                                'type': u'select',
+                                'value': [(u'foo', u'bar', False)]},
+                               {'id': u'select_multiple',
+                                'name': u'select_multiple',
+                                'type': u'select',
+                                'value': [(u'foo', u'bar', False)]},
+                               {'id': u'submit',
+                                'name': u'submit',
+                                'type': u'submit',
+                                'value': u'y'},
+                               {'id': u'string',
+                                'name': u'string',
+                                'type': u'text',
+                                'value': u''},
+                               {'id': u'hidden',
+                                'name': u'hidden',
+                                'type': u'hidden',
+                                'value': u''},
+                               {'id': u'password',
+                                'name': u'password',
+                                'type': u'password',
+                                'value': u''},
+                               {'id': u'text_area',
+                                'name': u'text_area',
+                                'type': u'textarea',
+                                'value': u''}]}
+        self.assertEqual(dict_form, expected)
 
     def test_errors_proxy(self):
         form = self.get_form()
@@ -60,7 +133,7 @@ class BaseFormTest(TestCase):
         self.assertEqual(form['foo'].data, '')
 
     def test_populate_obj(self):
-        m = type(str('Model'), (object, ), {})
+        m = type(str('Model'), (object,), {})
         form = self.get_form()
         form.process(test='foobar')
         form.populate_obj(m)
@@ -109,6 +182,7 @@ class FormMetaTest(TestCase):
         class B(A):
             b = TextField()
             c = TextField()
+
         A()
         B()
 

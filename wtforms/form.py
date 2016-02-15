@@ -1,4 +1,5 @@
 import itertools
+
 try:
     from collections import OrderedDict
 except ImportError:
@@ -151,6 +152,23 @@ class BaseForm(object):
             self._errors = dict((name, f.errors) for name, f in iteritems(self._fields) if f.errors)
         return self._errors
 
+    @property
+    def dict(self):
+        """
+        Return a dictionary suitable for easy serialization for use with an API
+        instead of rendered HTML.
+        """
+        return {
+            'inputs': [
+                {
+                    'id': value.id,
+                    'name': value.name,
+                    'type': value.widget.input_type,
+                    'value': value._value()
+                } for (key, value) in self._fields.items()],
+            'errors': self.errors or None
+        }
+
 
 class FormMeta(type):
     """
@@ -165,6 +183,7 @@ class FormMeta(type):
     Any properties which begin with an underscore or are not `UnboundField`
     instances are ignored by the metaclass.
     """
+
     def __init__(cls, name, bases, attrs):
         type.__init__(cls, name, bases, attrs)
         cls._unbound_fields = None

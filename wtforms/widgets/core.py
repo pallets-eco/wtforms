@@ -91,10 +91,11 @@ class ListWidget(object):
     otherwise afterwards. The latter is useful for iterating radios or
     checkboxes.
     """
-    def __init__(self, html_tag='ul', prefix_label=True):
+    def __init__(self, html_tag='ul', prefix_label=True, input_type=None):
         assert html_tag in ('ol', 'ul')
         self.html_tag = html_tag
         self.prefix_label = prefix_label
+        self.input_type = input_type
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
@@ -232,6 +233,8 @@ class FileInput(object):
     Renders a file input chooser field.
     """
 
+    input_type = 'file'
+
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         return HTMLString('<input %s>' % html_params(name=field.name, type='file', **kwargs))
@@ -257,6 +260,9 @@ class TextArea(object):
 
     `rows` and `cols` ought to be passed as keyword args when rendering.
     """
+
+    input_type = 'textarea'
+
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         return HTMLString('<textarea %s>%s</textarea>' % (
@@ -276,6 +282,9 @@ class Select(object):
     call on rendering; this method must yield tuples of
     `(value, label, selected)`.
     """
+
+    input_type = 'select'
+
     def __init__(self, multiple=False):
         self.multiple = multiple
 
