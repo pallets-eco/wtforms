@@ -85,7 +85,7 @@ class CoreFormTest(TestCase):
         self.assertNotEqual(form.a.gettext(''), '')
 
         form = self._common_test('This field is required.', {}, self.F2)
-        assert form._get_translations() is None
+        assert form.meta.get_translations(form) is None
         assert form.meta.locales is False
         self.assertEqual(form.a.gettext(''), '')
 
@@ -123,8 +123,9 @@ class TranslationsTest(TestCase):
         a = TextField(validators=[validators.Length(max=5)])
 
     class F2(form.Form):
-        def _get_translations(self):
-            return Lower_Translator()
+        class Meta:
+            def get_translations(self, form):
+                return Lower_Translator()
 
         a = TextField('', [validators.Length(max=5)])
 

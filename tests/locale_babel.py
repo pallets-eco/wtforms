@@ -29,7 +29,7 @@ class TestLocaleDecimal(TestCase):
                 use_locale=True,
                 _form=form,
                 _name='a',
-                _translations=form._get_translations(),
+                _translations=form.meta.get_translations(form),
                 **kw
             )
 
