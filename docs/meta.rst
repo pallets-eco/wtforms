@@ -22,12 +22,12 @@ customizing options used by the default behaviors, however for completeness
 the entire API of the `Meta` interface is shown here.
 
 .. autoclass:: DefaultMeta
-    
+
     **Configuration**
-    
+
     .. autoattribute:: csrf
 
-        Setting ``csrf`` to `True` will enable CSRF for the form. The value can 
+        Setting ``csrf`` to `True` will enable CSRF for the form. The value can
         also be overridden per-instance via instantiation-time customization
         (for example, if csrf needs to be turned off only in a special case)
 
@@ -38,7 +38,7 @@ the entire API of the `Meta` interface is shown here.
     .. autoattribute:: csrf_class
 
         If set, this is a class which is used to implement CSRF protection.
-        Read the :doc:`CSRF Documentation <csrf>` to get more information on 
+        Read the :doc:`CSRF Documentation <csrf>` to get more information on
         how to use.
 
     .. autoattribute:: csrf_field_name
@@ -48,13 +48,21 @@ the entire API of the `Meta` interface is shown here.
     .. autoattribute:: locales
 
         Setting to a sequence of strings specifies the priority order
-        of locales to try to find translations for built-in messages of 
-        WTForms. If the value `False`, then strings are not translated 
-        (the translations provider is a dummy provider)
+        of locales to try to find translations for built-in messages of
+        WTForms.
+
+        If the value is `False`, then strings are not translated
+        (the translations provider is replaced with a dummy provider)
+
+        example::
+
+            locales = ('fr_FR', 'fr')
+
+        Also see :doc:`i18n` for more information.
 
     .. autoattribute:: cache_translations
 
-        If `True` (the default) then cache translation objects. The default 
+        If `True` (the default) then cache translation objects. The default
         cache is done at class-level so it's shared with all class Meta.
 
     **Advanced Customization**
