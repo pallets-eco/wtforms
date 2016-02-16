@@ -135,6 +135,7 @@ class FiltersTest(TestCase):
 class FieldTest(TestCase):
     class F(Form):
         a = TextField(default='hello', render_kw={'readonly': True, 'foo': u'bar'})
+        formfield = FormField(Form)
 
     def setUp(self):
         self.field = self.F().a
@@ -165,6 +166,10 @@ class FieldTest(TestCase):
         # Can we pass in meta via _form?
         form = self.F()
         assert form.a.meta is form.meta
+
+        # Does meta propagate to a) FormField b) the form in a FormField?
+        assert form.formfield.meta is form.meta
+        assert form.formfield.form.meta is form.meta
 
         # Can we pass in meta via _meta?
         form_meta = meta.DefaultMeta()
