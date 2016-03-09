@@ -1,8 +1,6 @@
 [run]
 include =
     wtforms/*
-omit =
-    wtforms/ext/appengine/*
 
 [report]
 exclude_lines =

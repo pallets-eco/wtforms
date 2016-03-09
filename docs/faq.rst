@@ -25,8 +25,8 @@ but if it's not listed, it doesn't mean it won't work.
 
   * Jinja2
   * Mako
-  * Django Templates (To get the full power of WTForms in your templates, you
-    will need to use the Django :mod:`extension <wtforms.ext.django>`.)
+  * Django Templates (To get the full power of WTForms in your templates, use
+    `WTForms-Django`_.)
   * Genshi
 
 * **Database Objects**
@@ -34,9 +34,13 @@ but if it's not listed, it doesn't mean it won't work.
   * Pretty much any ORM or object-DB should work, as long as data objects allow
     attribute access to their members.
 
-    Special support is there for SQLAlchemy, Google App Engine, and Django
-    collections via :mod:`extensions <wtforms.ext>`.
+    Special support is there for `SQLAlchemy`_, `Google App Engine`_, and `Django`_
+    collections via companion packages.
 
+.. _SQLAlchemy: https://github.com/wtforms/wtforms-sqlalchemy
+.. _Google App Engine: https://github.com/wtforms/wtforms-appengine
+.. _WTForms-Django: https://github.com/wtforms/wtforms-django
+.. _Django: https://github.com/wtforms/wtforms-django
 
 Does WTForms support unicode?
 -----------------------------
@@ -125,12 +129,12 @@ This is for a number of reasons:
 3. Consistency.
 
 See the following mailing list posts for more discussion on the topic:
- - http://groups.google.com/group/wtforms/browse_frm/thread/6755a45a13878e9 
- - http://groups.google.com/group/wtforms/msg/fa409c8c89b6f62d 
+ - http://groups.google.com/group/wtforms/browse_frm/thread/6755a45a13878e9
+ - http://groups.google.com/group/wtforms/msg/fa409c8c89b6f62d
 
 
 How do I... [convoluted combination of libraries]
 -------------------------------------------------
 
-You'll probably want to check out our 
+You'll probably want to check out our
 :ref:`Solving Specific Problems <specific_problems>` doc.

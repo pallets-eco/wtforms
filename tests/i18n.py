@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from unittest import TestCase
 from wtforms import form, TextField, validators
 from wtforms.i18n import get_translations
-from wtforms.ext.i18n import form as i18n_form
 
 
 def gettext_lower(self, s):
@@ -59,28 +58,6 @@ class I18NTest(TestCase):
         assert translations is translator
 
 
-class ClassicI18nFormTest(TestCase):
-    class F(i18n_form.Form):
-        LANGUAGES = ['en_US', 'en']
-        a = TextField(validators=[validators.Required()])
-
-    def test_form(self):
-        tcache = i18n_form.translations_cache
-        tcache.clear()
-        form = self.F()
-
-        assert ('en_US', 'en') in tcache
-        assert form._get_translations() is tcache[('en_US', 'en')]
-        assert not form.validate()
-        self.assertEqual(form.a.errors[0], 'This field is required.')
-
-        form = self.F(LANGUAGES=['es'])
-        assert ('es', ) in tcache
-        self.assertEqual(len(tcache), 2)
-        assert not form.validate()
-        self.assertEqual(form.a.errors[0], 'Este campo es obligatorio.')
-
-
 class CoreFormTest(TestCase):
     class F(form.Form):
         class Meta:
@@ -108,7 +85,7 @@ class CoreFormTest(TestCase):
         self.assertNotEqual(form.a.gettext(''), '')
 
         form = self._common_test('This field is required.', {}, self.F2)
-        assert form._get_translations() is None
+        assert form.meta.get_translations(form) is None
         assert form.meta.locales is False
         self.assertEqual(form.a.gettext(''), '')
 
@@ -146,8 +123,9 @@ class TranslationsTest(TestCase):
         a = TextField(validators=[validators.Length(max=5)])
 
     class F2(form.Form):
-        def _get_translations(self):
-            return Lower_Translator()
+        class Meta:
+            def get_translations(self, form):
+                return Lower_Translator()
 
         a = TextField('', [validators.Length(max=5)])
 

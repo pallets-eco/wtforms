@@ -41,7 +41,7 @@ class BaseForm(object):
         if hasattr(fields, 'items'):
             fields = fields.items()
 
-        translations = self._get_translations()
+        translations = self.meta.get_translations(self)
         extra_fields = []
         if meta.csrf:
             self._csrf = meta.build_csrf(self)
@@ -71,18 +71,6 @@ class BaseForm(object):
     def __delitem__(self, name):
         """ Remove a field from this form. """
         del self._fields[name]
-
-    def _get_translations(self):
-        """
-        .. deprecated:: 2.0
-            `_get_translations` is being removed in WTForms 3.0, use
-            `Meta.get_translations` instead.
-
-        Override in subclasses to provide alternate translations factory.
-
-        Must return an object that provides gettext() and ngettext() methods.
-        """
-        return self.meta.get_translations(self)
 
     def populate_obj(self, obj):
         """

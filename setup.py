@@ -9,7 +9,7 @@ if sys.version_info < (2, 7):
 
 setup(
     name='WTForms',
-    version='2.1.1dev',
+    version='3.0dev',
     url='http://wtforms.simplecodes.com/',
     license='BSD',
     author='Thomas Johansson, James Crasta',
@@ -34,14 +34,6 @@ setup(
         'wtforms.csrf',
         'wtforms.fields',
         'wtforms.widgets',
-        'wtforms.ext',
-        'wtforms.ext.appengine',
-        'wtforms.ext.csrf',
-        'wtforms.ext.dateutil',
-        'wtforms.ext.django',
-        'wtforms.ext.django.templatetags',
-        'wtforms.ext.i18n',
-        'wtforms.ext.sqlalchemy',
     ],
     package_data={
         'wtforms': ['locale/wtforms.pot', 'locale/*/*/*'],
