@@ -60,6 +60,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValueError, ip_address, ipv4=False, ipv6=False)
 
     def test_mac_address(self):
+        # Unix-style MAC address
         self.assertEqual(mac_address()(self.form,
                                        DummyField('01:23:45:67:ab:CD')), None)
 
@@ -72,6 +73,19 @@ class ValidatorsTest(TestCase):
         check_fail(DummyField('01:23:45:67:89:'))
         check_fail(DummyField('01:23:45:67:89:gh'))
         check_fail(DummyField('123:23:45:67:89:00'))
+
+        # Windows-style MAC address
+        self.assertEqual(mac_address()(self.form,
+                                       DummyField('01-23-45-67-ab-CD')), None)
+        check_fail = partial(
+            self.assertRaises, ValidationError,
+            mac_address(), self.form
+        )
+
+        check_fail(DummyField('00-00-00-00-00'))
+        check_fail(DummyField('01-23-45-67-89-'))
+        check_fail(DummyField('01-23-45-67-89-gh'))
+        check_fail(DummyField('123-23-45-67-89-00'))
 
     def test_uuid(self):
         self.assertEqual(
