@@ -100,6 +100,9 @@ class Length(object):
                 elif self.min == -1:
                     message = field.ngettext('Field cannot be longer than %(max)d character.',
                                              'Field cannot be longer than %(max)d characters.', self.max)
+                elif self.min == self.max:
+                    message = field.ngettext('Field must be exactly %(max)d character long.',
+                                             'Field must be exactly %(max)d characters long.', self.max)
                 else:
                     message = field.gettext('Field must be between %(min)d and %(max)d characters long.')
 

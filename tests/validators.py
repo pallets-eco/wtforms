@@ -98,6 +98,7 @@ class ValidatorsTest(TestCase):
         self.assertEqual(length(min=6)(self.form, field), None)
         self.assertRaises(ValidationError, length(max=5), self.form, field)
         self.assertEqual(length(max=6)(self.form, field), None)
+        self.assertEqual(length(min=6,max=6)(self.form, field), None)
 
         self.assertRaises(AssertionError, length)
         self.assertRaises(AssertionError, length, min=5, max=2)
@@ -108,6 +109,7 @@ class ValidatorsTest(TestCase):
         self.assertTrue('at least 8' in grab(min=8))
         self.assertTrue('longer than 5' in grab(max=5))
         self.assertTrue('between 2 and 5' in grab(min=2, max=5))
+        self.assertTrue('exactly 5' in grab(min=5, max=5))
 
     def test_required(self):
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
