@@ -59,6 +59,18 @@ class LabelTest(TestCase):
             self.assertEqual(repr(label), "Label('test', 'Caption')")
             self.assertEqual(label.__unicode__(), expected)
 
+    def test_placeholder_label(self):
+        class F(Form):
+            t1 = TextField('foo bar')
+        form = F()
+        self.assertEqual(form.t1(placeholder_label=True), """<input id="t1" name="t1" placeholder="foo bar" type="text" value="">""")
+
+    def test_placeholder_label_override(self):
+        class F(Form):
+            t1 = TextField('foo bar')
+        form = F()
+        self.assertEqual(form.t1(placeholder_label=True, placeholder='foo baz'), """<input id="t1" name="t1" placeholder="foo baz" type="text" value="">""")
+
     def test_auto_label(self):
         t1 = TextField().bind(Form(), 'foo_bar')
         self.assertEqual(t1.label.text, 'Foo Bar')

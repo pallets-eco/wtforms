@@ -159,6 +159,11 @@ class Input(object):
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         kwargs.setdefault('type', self.input_type)
+        
+        if 'placeholder_label' in kwargs and kwargs['placeholder_label']:
+            kwargs.setdefault('placeholder', field.label.text)
+            del kwargs['placeholder_label']
+
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
         return HTMLString('<input %s>' % self.html_params(name=field.name, **kwargs))
