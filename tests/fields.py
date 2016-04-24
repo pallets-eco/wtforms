@@ -68,8 +68,9 @@ class LabelTest(TestCase):
     def test_placeholder_label_override(self):
         class F(Form):
             t1 = TextField('foo bar')
+        expected = """<input id="t1" name="t1" placeholder="foo baz" type="text" value="">"""
         form = F()
-        self.assertEqual(form.t1(placeholder_label=True, placeholder='foo baz'), """<input id="t1" name="t1" placeholder="foo baz" type="text" value="">""")
+        self.assertEqual(form.t1(placeholder_label=True, placeholder='foo baz'), expected)
 
     def test_auto_label(self):
         t1 = TextField().bind(Form(), 'foo_bar')
