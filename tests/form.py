@@ -144,6 +144,14 @@ class FormTest(TestCase):
             if field.data != 'foobar':
                 raise ValidationError('error')
 
+    class P(object):
+        def __init__(self, *args, **kwargs):
+            self.custom_value = True
+            super(FormTest.P, self).__init__()
+
+    class C(Form, P):
+        pass
+
     def test_validate(self):
         form = self.F(test='foobar')
         self.assertEqual(form.validate(), True)
@@ -208,6 +216,10 @@ class FormTest(TestCase):
 
         self.assertEqual(self.F(DummyPostData({'other': 'other'})).test.data, '')
         self.assertEqual(self.F(DummyPostData()).test.data, '')
+
+    def test_inheritance(self):
+        form = self.C()
+        assert form.custom_value is True
 
 
 class MetaTest(TestCase):
