@@ -67,7 +67,7 @@ the new API's unless it needs to work across both WTForms 1.x and 2.x
     (`docs <WTForms-Alchemy-docs>`_)
 
 .. _WTForms-Alchemy: https://pypi.python.org/pypi/WTForms-Alchemy
-.. _WTForms-Alchemy-docs: http://wtforms-alchemy.readthedocs.org/en/latest/
+.. _WTForms-Alchemy-docs: https://wtforms-alchemy.readthedocs.io/en/latest/
 .. _WTForms-Appengine: https://github.com/wtforms/wtforms-appengine
 .. _WTForms-Django: https://github.com/wtforms/wtforms-django
 
