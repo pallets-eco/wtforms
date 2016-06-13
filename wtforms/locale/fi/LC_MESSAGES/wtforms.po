@@ -1,7 +1,7 @@
 # Finnish translations for WTForms.
 # Copyright (C) 2013 WTForms Team
 # This file is distributed under the same license as the WTForms project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# Teijo Mursu <zcmander+wtforms@gmail.com>, 2016.
 #
 msgid ""
 msgstr ""
@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: wtforms+i18n@jamescrasta.com\n"
 "POT-Creation-Date: 2013-11-08 15:21-0700\n"
 "PO-Revision-Date: 2016-06-13 15:16+0300\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Last-Translator: Teijo Mursu <zcmander+wtforms@gmail.com>\n"
 "Language: fi\n"
 "Language-Team: fi <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -64,7 +64,7 @@ msgstr "Täytyy olla välillä %(min)s - %(max)s."
 
 #: wtforms/validators.py:198 wtforms/validators.py:233
 msgid "This field is required."
-msgstr "Pakollinen"
+msgstr "Pakollinen."
 
 #: wtforms/validators.py:264
 msgid "Invalid input."
@@ -163,7 +163,7 @@ msgstr "Ei ole kelvollinen kokonaisluku"
 
 #: wtforms/fields/core.py:638
 msgid "Not a valid decimal value"
-msgstr "Ei ole kelvollinen desimaaluku"
+msgstr "Ei ole kelvollinen desimaaliluku"
 
 #: wtforms/fields/core.py:665
 msgid "Not a valid float value"
