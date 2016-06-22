@@ -3,7 +3,7 @@ from unittest import TestCase
 from wtforms.compat import text_type
 from wtforms.validators import (
     StopValidation, ValidationError, email, equal_to,
-    ip_address, length, required, optional, regexp,
+    ip_address, length, optional, regexp,
     url, NumberRange, AnyOf, NoneOf, mac_address, UUID,
     input_required, data_required
 )
@@ -110,8 +110,8 @@ class ValidatorsTest(TestCase):
         self.assertTrue('between 2 and 5' in grab(min=2, max=5))
 
     def test_required(self):
-        self.assertEqual(required()(self.form, DummyField('foobar')), None)
-        self.assertRaises(StopValidation, required(), self.form, DummyField(''))
+        self.assertEqual(data_required()(self.form, DummyField('foobar')), None)
+        self.assertRaises(StopValidation, data_required(), self.form, DummyField(''))
 
     def test_data_required(self):
         # Make sure we stop the validation chain
@@ -224,7 +224,7 @@ class ValidatorsTest(TestCase):
         self.assertTrue(equal_to('fieldname', message=message))
         self.assertTrue(length(min=1, message=message))
         self.assertTrue(NumberRange(1, 5, message=message))
-        self.assertTrue(required(message=message))
+        self.assertTrue(data_required(message=message))
         self.assertTrue(regexp('.+', message=message))
         self.assertTrue(email(message=message))
         self.assertTrue(ip_address(message=message))

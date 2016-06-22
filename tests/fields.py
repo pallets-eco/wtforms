@@ -33,11 +33,11 @@ class DefaultsTest(TestCase):
         def default_callable():
             return expected
 
-        test_value = TextField(default=expected).bind(Form(), 'a')
+        test_value = StringField(default=expected).bind(Form(), 'a')
         test_value.process(None)
         self.assertEqual(test_value.data, expected)
 
-        test_callable = TextField(default=default_callable).bind(Form(), 'a')
+        test_callable = StringField(default=default_callable).bind(Form(), 'a')
         test_callable.process(None)
         self.assertEqual(test_callable.data, expected)
 
@@ -52,7 +52,7 @@ class LabelTest(TestCase):
         self.assertEqual(label.__html__(), expected)
         self.assertEqual(label().__html__(), expected)
         self.assertEqual(label('hello'), """<label for="test">hello</label>""")
-        self.assertEqual(TextField('hi').bind(Form(), 'a').label.text, 'hi')
+        self.assertEqual(StringField('hi').bind(Form(), 'a').label.text, 'hi')
         if PYTHON_VERSION < (3,):
             self.assertEqual(repr(label), "Label(u'test', u'Caption')")
         else:
@@ -60,10 +60,10 @@ class LabelTest(TestCase):
             self.assertEqual(label.__unicode__(), expected)
 
     def test_auto_label(self):
-        t1 = TextField().bind(Form(), 'foo_bar')
+        t1 = StringField().bind(Form(), 'foo_bar')
         self.assertEqual(t1.label.text, 'Foo Bar')
 
-        t2 = TextField('').bind(Form(), 'foo_bar')
+        t2 = StringField('').bind(Form(), 'foo_bar')
         self.assertEqual(t2.label.text, '')
 
     def test_override_for(self):
@@ -74,7 +74,7 @@ class LabelTest(TestCase):
 
 class FlagsTest(TestCase):
     def setUp(self):
-        t = TextField(validators=[validators.Required()]).bind(Form(), 'a')
+        t = StringField(validators=[validators.DataRequired()]).bind(Form(), 'a')
         self.flags = t.flags
 
     def test_existing_values(self):
@@ -115,8 +115,8 @@ class UnsetValueTest(TestCase):
 
 class FiltersTest(TestCase):
     class F(Form):
-        a = TextField(default=' hello', filters=[lambda x: x.strip()])
-        b = TextField(default='42', filters=[int, lambda x: -x])
+        a = StringField(default=' hello', filters=[lambda x: x.strip()])
+        b = StringField(default='42', filters=[int, lambda x: -x])
 
     def test_working(self):
         form = self.F()
@@ -134,7 +134,7 @@ class FiltersTest(TestCase):
 
 class FieldTest(TestCase):
     class F(Form):
-        a = TextField(default='hello', render_kw={'readonly': True, 'foo': u'bar'})
+        a = StringField(default='hello', render_kw={'readonly': True, 'foo': u'bar'})
 
     def setUp(self):
         self.field = self.F().a
@@ -142,10 +142,10 @@ class FieldTest(TestCase):
     def test_unbound_field(self):
         unbound = self.F.a
         assert unbound.creation_counter != 0
-        assert unbound.field_class is TextField
+        assert unbound.field_class is StringField
         self.assertEqual(unbound.args, ())
         self.assertEqual(unbound.kwargs, {'default': 'hello', 'render_kw': {'readonly': True, 'foo': u'bar'}})
-        assert repr(unbound).startswith('<UnboundField(TextField')
+        assert repr(unbound).startswith('<UnboundField(StringField')
 
     def test_htmlstring(self):
         self.assertTrue(isinstance(self.field.__html__(), widgets.HTMLString))
@@ -168,11 +168,11 @@ class FieldTest(TestCase):
 
         # Can we pass in meta via _meta?
         form_meta = meta.DefaultMeta()
-        field = TextField(_name='Foo', _form=None, _meta=form_meta)
+        field = StringField(_name='Foo', _form=None, _meta=form_meta)
         assert field.meta is form_meta
 
         # Do we fail if both _meta and _form are None?
-        self.assertRaises(TypeError, TextField, _name='foo', _form=None)
+        self.assertRaises(TypeError, StringField, _name='foo', _form=None)
 
     def test_render_kw(self):
         form = self.F()
@@ -184,7 +184,7 @@ class FieldTest(TestCase):
         )
 
 
-class PrePostTestField(TextField):
+class PrePostTestField(StringField):
     def pre_validate(self, form):
         if self.data == "stoponly":
             raise validators.StopValidation()
@@ -350,9 +350,9 @@ class RadioFieldTest(TestCase):
         )
 
 
-class TextFieldTest(TestCase):
+class StringFieldTest(TestCase):
     class F(Form):
-        a = TextField()
+        a = StringField()
 
     def test(self):
         form = self.F()
@@ -593,8 +593,8 @@ class SubmitFieldTest(TestCase):
 class FormFieldTest(TestCase):
     def setUp(self):
         F = make_form(
-            a=TextField(validators=[validators.required()]),
-            b=TextField(),
+            a=StringField(validators=[validators.DataRequired()]),
+            b=StringField(),
         )
         self.F1 = make_form('F1', a=FormField(F))
         self.F2 = make_form('F2', a=FormField(F, separator='::'))
@@ -638,7 +638,7 @@ class FormFieldTest(TestCase):
 
     def test_no_validators_or_filters(self):
         class A(Form):
-            a = FormField(self.F1, validators=[validators.required()])
+            a = FormField(self.F1, validators=[validators.DataRequired()])
         self.assertRaises(TypeError, A)
 
         class B(Form):
@@ -662,7 +662,7 @@ class FormFieldTest(TestCase):
 
 
 class FieldListTest(TestCase):
-    t = TextField(validators=[validators.Required()])
+    t = StringField(validators=[validators.DataRequired()])
 
     def test_form(self):
         F = make_form(a=FieldList(self.t))
@@ -797,7 +797,7 @@ class FieldListTest(TestCase):
         self.assertEqual(form.a.data, data)
 
 
-class MyCustomField(TextField):
+class MyCustomField(StringField):
     def process_data(self, data):
         if data == 'fail':
             raise ValueError('Contrived Failure')

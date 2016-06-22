@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from unittest import TestCase
-from wtforms import form, TextField, validators
+from wtforms import form, StringField, validators
 from wtforms.i18n import get_translations
 
 
@@ -62,13 +62,13 @@ class CoreFormTest(TestCase):
     class F(form.Form):
         class Meta:
             locales = ['en_US', 'en']
-        a = TextField(validators=[validators.Required()])
+        a = StringField(validators=[validators.DataRequired()])
 
     class F2(form.Form):
-        a = TextField(validators=[validators.Required(), validators.Length(max=3)])
+        a = StringField(validators=[validators.DataRequired(), validators.Length(max=3)])
 
     class F3(form.Form):
-        a = TextField(validators=[validators.Length(max=1)])
+        a = StringField(validators=[validators.Length(max=1)])
 
     def _common_test(self, expected_error, form_kwargs, form_class=None):
         if not form_class:
@@ -120,14 +120,14 @@ class CoreFormTest(TestCase):
 
 class TranslationsTest(TestCase):
     class F(form.Form):
-        a = TextField(validators=[validators.Length(max=5)])
+        a = StringField(validators=[validators.Length(max=5)])
 
     class F2(form.Form):
         class Meta:
             def get_translations(self, form):
                 return Lower_Translator()
 
-        a = TextField('', [validators.Length(max=5)])
+        a = StringField('', [validators.Length(max=5)])
 
     def setUp(self):
         self.a = self.F().a

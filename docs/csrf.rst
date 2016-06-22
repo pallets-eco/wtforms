@@ -18,9 +18,9 @@ frameworks for session-based hash secure keying,
 Using CSRF
 ----------
 
-CSRF in WTForms 2.0 is now driven through a number of variables on 
+CSRF in WTForms 2.0 is now driven through a number of variables on
 :mod:`class Meta <wtforms.meta>`. After choosing a CSRF implementation,
-import it and configure it on the class Meta of a subclass of Form 
+import it and configure it on the class Meta of a subclass of Form
 like such::
 
     from somemodule import SomeCSRF
@@ -38,7 +38,7 @@ of `MyBaseForm`:
 .. code-block:: python
 
     class UserForm(MyBaseForm):
-        name = TextField()
+        name = StringField()
         age = IntegerField()
 
     def view():
@@ -86,7 +86,7 @@ a cryptographic hash function against some data which would be hard to forge.
 .. module:: wtforms.csrf.core
 
 .. autoclass:: CSRFTokenField
-    
+
     .. automethod:: __init__
 
     .. autoattribute:: current_token
@@ -109,7 +109,7 @@ a cryptographic hash function against some data which would be hard to forge.
 
     .. autoattribute:: field_class
 
-        The class of the token field we're going to construct. Can be 
+        The class of the token field we're going to construct. Can be
         overridden in subclasses if need be.
 
 
@@ -161,7 +161,7 @@ Now that we have this taken care of, let's write a simple form and view which wo
 
     def register(request):
         form = RegistrationForm(
-            request.POST, 
+            request.POST,
             meta={'csrf_context': request.ip}
         )
 
@@ -241,15 +241,15 @@ Session-based CSRF implementation
     **Meta Values**
 
     * ``csrf_secret`` A byte string which is the master key by which we encode
-      all values. Set to a sufficiently long string of characters that is 
-      difficult to guess or bruteforce (recommended at least 16 characters) 
+      all values. Set to a sufficiently long string of characters that is
+      difficult to guess or bruteforce (recommended at least 16 characters)
       for example the output of ``os.urandom(16)``.
 
-    * ``csrf_time_limit`` if `None`, tokens last forever (not recommended.) 
-      Otherwise, set to a ``datetime.timedelta`` that will define how long 
+    * ``csrf_time_limit`` if `None`, tokens last forever (not recommended.)
+      Otherwise, set to a ``datetime.timedelta`` that will define how long
       CSRF tokens are valid for. Defaults to 30 minutes.
 
-    * ``csrf_context`` This should be a ``request.session``-style object. 
+    * ``csrf_context`` This should be a ``request.session``-style object.
       Usually given in the Form constructor.
 
 
@@ -275,8 +275,8 @@ Example
         form = Registration(request.POST, meta={'csrf_context': request.session})
         # rest of view here
 
-Note that request.session is passed as the ``csrf_context`` override to the 
-meta info, this is so that the CSRF token can be stored in your session for 
+Note that request.session is passed as the ``csrf_context`` override to the
+meta info, this is so that the CSRF token can be stored in your session for
 comparison on a later request.
 
 
@@ -288,7 +288,7 @@ as such sometimes things seem like they are more work to use, but with some
 smart integration, you can actually clean up your code substantially.
 
 For example, if you were going to integrate with `Flask`_, and wanted to use
-the SessionCSRF implementation, here's one way to get the CSRF context to be 
+the SessionCSRF implementation, here's one way to get the CSRF context to be
 available without passing it all the time:
 
 .. code-block:: python
@@ -306,7 +306,7 @@ available without passing it all the time:
             def csrf_context(self):
                 return session
 
-Now with any subclasses of MyBaseForm, you don't need to pass in the csrf 
+Now with any subclasses of MyBaseForm, you don't need to pass in the csrf
 context, and on top of that, we grab the secret key out of your normal app
 configuration.
 

@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
 
 from unittest import TestCase
-from wtforms.widgets import html_params, Input
 from wtforms.widgets import *
 from wtforms.widgets import html5
 
 
 class DummyField(object):
-    def __init__(self, data, name='f', label='', id='', type='TextField'):
+    def __init__(self, data, name='f', label='', id='', type='StringField'):
         self.data = data
         self.name = name
         self.label = label

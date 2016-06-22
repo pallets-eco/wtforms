@@ -14,7 +14,7 @@ Typical usage looks something like::
             csrf = True
             locales = ('en_US', 'en')
 
-        name = TextField(...)
+        name = StringField(...)
         # and so on...
 
 For the majority of users, using a class Meta is mostly going to be done for

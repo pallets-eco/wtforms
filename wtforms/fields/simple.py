@@ -1,27 +1,10 @@
-import warnings
-
 from .. import widgets
 from .core import StringField, BooleanField
 
-
 __all__ = (
     'BooleanField', 'TextAreaField', 'PasswordField', 'FileField',
-    'HiddenField', 'SubmitField', 'TextField'
+    'HiddenField', 'SubmitField'
 )
-
-
-class TextField(StringField):
-    """
-    Legacy alias for StringField
-
-    .. deprecated:: 2.0
-    """
-    def __init__(self, *args, **kw):
-        super(TextField, self).__init__(*args, **kw)
-        warnings.warn(
-            'The TextField alias for StringField has been deprecated and will be removed in WTForms 3.0',
-            DeprecationWarning, stacklevel=2
-        )
 
 
 class TextAreaField(StringField):
