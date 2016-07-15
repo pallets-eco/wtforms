@@ -1,11 +1,11 @@
 import warnings
 
 from .. import widgets
-from .core import StringField, BooleanField
+from .core import Field, StringField, BooleanField
 
 
 __all__ = (
-    'BooleanField', 'TextAreaField', 'PasswordField', 'FileField',
+    'BooleanField', 'TextAreaField', 'PasswordField', 'FileField', 'MultipleFileField',
     'HiddenField', 'SubmitField', 'TextField'
 )
 
@@ -42,14 +42,29 @@ class PasswordField(StringField):
     widget = widgets.PasswordInput()
 
 
-class FileField(StringField):
+class FileField(Field):
+    """Renders a file upload field.
+
+    By default, the value will be the filename sent in the form data.
+    WTForms **does not** deal with frameworks' file handling capabilities.
+    A WTForms extension for a framework may replace the filename value
+    with an object representing the uploaded data.
     """
-    Can render a file-upload field.  Will take any passed filename value, if
-    any is sent by the browser in the post params.  This field will NOT
-    actually handle the file upload portion, as wtforms does not deal with
-    individual frameworks' file handling capabilities.
-    """
+
     widget = widgets.FileInput()
+
+    def _value(self):
+        # browser ignores value of file input for security
+        return False
+
+
+class MultipleFileField(FileField):
+    """A :class:`FileField` that allows choosing multiple files."""
+
+    widget = widgets.FileInput(multiple=True)
+
+    def process_formdata(self, valuelist):
+        self.data = valuelist
 
 
 class HiddenField(StringField):

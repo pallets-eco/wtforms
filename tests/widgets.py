@@ -111,6 +111,10 @@ class BasicWidgetsTest(TestCase):
         f = DummyField('hi<>bye')
         self.assertEqual(TextArea()(f), '<textarea id="" name="f">hi&lt;&gt;bye</textarea>')
 
+    def test_file(self):
+        self.assertEqual(FileInput()(self.field), '<input id="id" name="bar" type="file">')
+        self.assertEqual(FileInput(multiple=True)(self.field), '<input id="id" multiple name="bar" type="file">')
+
 
 class SelectTest(TestCase):
     field = DummyField([('foo', 'lfoo', True), ('bar', 'lbar', False)])

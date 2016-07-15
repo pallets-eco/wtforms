@@ -13,6 +13,7 @@ from wtforms.form import Form
 from wtforms.compat import text_type
 from wtforms.utils import unset_value
 from tests.common import DummyPostData
+from wtforms.widgets import TextInput
 
 PYTHON_VERSION = sys.version_info
 
@@ -416,12 +417,29 @@ class PasswordFieldTest(TestCase):
 
 
 class FileFieldTest(TestCase):
-    class F(Form):
-        a = FileField(default="LE DEFAULT")
+    def test_file_field(self):
+        class F(Form):
+            file = FileField()
 
-    def test(self):
-        form = self.F()
-        self.assertEqual(form.a(), """<input id="a" name="a" type="file">""")
+        self.assertEqual(F(DummyPostData(file=['test.txt'])).file.data, 'test.txt')
+        self.assertEqual(F(DummyPostData()).file.data, None)
+        self.assertEqual(F(DummyPostData(file=['test.txt', 'multiple.txt'])).file.data, 'test.txt')
+
+    def test_multiple_file_field(self):
+        class F(Form):
+            files = MultipleFileField()
+
+        self.assertEqual(F(DummyPostData(files=['test.txt'])).files.data, ['test.txt'])
+        self.assertEqual(F(DummyPostData()).files.data, [])
+        self.assertEqual(F(DummyPostData(files=['test.txt', 'multiple.txt'])).files.data, ['test.txt', 'multiple.txt'])
+
+    def test_file_field_without_file_input(self):
+        class F(Form):
+            file = FileField(widget=TextInput())
+
+        f = F(DummyPostData(file=['test.txt']))
+        self.assertEqual(f.file.data, 'test.txt')
+        self.assertEqual(f.file(), '<input id="file" name="file" type="text">')
 
 
 class IntegerFieldTest(TestCase):

@@ -227,14 +227,26 @@ class RadioInput(Input):
         return super(RadioInput, self).__call__(field, **kwargs)
 
 
-class FileInput(object):
-    """
-    Renders a file input chooser field.
+class FileInput(Input):
+    """Render a file chooser input.
+
+    :param multiple: allow choosing multiple files
     """
 
+    input_type = 'file'
+
+    def __init__(self, multiple=False):
+        super(FileInput, self).__init__()
+        self.multiple = multiple
+
     def __call__(self, field, **kwargs):
-        kwargs.setdefault('id', field.id)
-        return HTMLString('<input %s>' % html_params(name=field.name, type='file', **kwargs))
+        # browser ignores value of file input for security
+        kwargs['value'] = False
+
+        if self.multiple:
+            kwargs['multiple'] = True
+
+        return super(FileInput, self).__call__(field, **kwargs)
 
 
 class SubmitInput(Input):
