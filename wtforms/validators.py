@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 import re
 import uuid
-import warnings
 
 from wtforms.compat import string_types, text_type
 
@@ -10,7 +9,7 @@ __all__ = (
     'DataRequired', 'data_required', 'Email', 'email', 'EqualTo', 'equal_to',
     'IPAddress', 'ip_address', 'InputRequired', 'input_required', 'Length',
     'length', 'NumberRange', 'number_range', 'Optional', 'optional',
-    'Required', 'required', 'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
+    'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
     'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID'
 )
 
@@ -207,22 +206,6 @@ class DataRequired(object):
 
             field.errors[:] = []
             raise StopValidation(message)
-
-
-class Required(DataRequired):
-    """
-    Legacy alias for DataRequired.
-
-    This is needed over simple aliasing for those who require that the
-    class-name of required be 'Required.'
-
-    """
-    def __init__(self, *args, **kwargs):
-        super(Required, self).__init__(*args, **kwargs)
-        warnings.warn(
-            'Required is going away in WTForms 3.0, use DataRequired',
-            DeprecationWarning, stacklevel=2
-        )
 
 
 class InputRequired(object):
@@ -554,7 +537,6 @@ mac_address = MacAddress
 length = Length
 number_range = NumberRange
 optional = Optional
-required = Required
 input_required = InputRequired
 data_required = DataRequired
 regexp = Regexp

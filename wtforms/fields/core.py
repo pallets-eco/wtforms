@@ -837,7 +837,7 @@ class FieldList(Field):
     Encapsulate an ordered list of multiple instances of the same field type,
     keeping data as a list.
 
-    >>> authors = FieldList(StringField('Name', [validators.required()]))
+    >>> authors = FieldList(StringField('Name', [validators.DataRequired()]))
 
     :param unbound_field:
         A partially-instantiated field definition, just like that would be

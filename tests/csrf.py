@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from functools import partial
 from unittest import TestCase
 
-from wtforms.fields import TextField
+from wtforms.fields import StringField
 from wtforms.form import Form
 from wtforms.csrf.core import CSRF
 from wtforms.csrf.session import SessionCSRF
@@ -54,7 +54,7 @@ class DummyCSRFTest(TestCase):
         class Meta:
             csrf = True
             csrf_class = DummyCSRF
-        a = TextField()
+        a = StringField()
 
     def test_base_class(self):
         self.assertRaises(NotImplementedError, self.F, meta={'csrf_class': CSRF})
@@ -90,7 +90,7 @@ class SessionCSRFTest(TestCase):
             csrf = True
             csrf_secret = b'foobar'
 
-        a = TextField()
+        a = StringField()
 
     class NoTimeLimit(F):
         class Meta:

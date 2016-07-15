@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from wtforms.form import BaseForm, Form
 from wtforms.meta import DefaultMeta
-from wtforms.fields import TextField, IntegerField
+from wtforms.fields import StringField, IntegerField
 from wtforms.validators import ValidationError
 from tests.common import DummyPostData
 
@@ -15,7 +15,7 @@ class BaseFormTest(TestCase):
             if field.data != 'foobar':
                 raise ValidationError('error')
 
-        return BaseForm({'test': TextField(validators=[validate_test])}, **kwargs)
+        return BaseForm({'test': StringField(validators=[validate_test])}, **kwargs)
 
     def test_data_proxy(self):
         form = self.get_form()
@@ -47,7 +47,7 @@ class BaseFormTest(TestCase):
     def test_field_adding(self):
         form = self.get_form()
         self.assertEqual(len(list(form)), 1)
-        form['foo'] = TextField()
+        form['foo'] = StringField()
         self.assertEqual(len(list(form)), 2)
         form.process(DummyPostData(foo=['hello']))
         self.assertEqual(form['foo'].data, 'hello')
@@ -85,12 +85,12 @@ class BaseFormTest(TestCase):
 class FormMetaTest(TestCase):
     def test_monkeypatch(self):
         class F(Form):
-            a = TextField()
+            a = StringField()
 
         self.assertEqual(F._unbound_fields, None)
         F()
         self.assertEqual(F._unbound_fields, [('a', F.a)])
-        F.b = TextField()
+        F.b = StringField()
         self.assertEqual(F._unbound_fields, None)
         F()
         self.assertEqual(F._unbound_fields, [('a', F.a), ('b', F.b)])
@@ -98,17 +98,17 @@ class FormMetaTest(TestCase):
         self.assertRaises(AttributeError, lambda: F.a)
         F()
         self.assertEqual(F._unbound_fields, [('b', F.b)])
-        F._m = TextField()
+        F._m = StringField()
         self.assertEqual(F._unbound_fields, [('b', F.b)])
 
     def test_subclassing(self):
         class A(Form):
-            a = TextField()
-            c = TextField()
+            a = StringField()
+            c = StringField()
 
         class B(A):
-            b = TextField()
-            c = TextField()
+            b = StringField()
+            c = StringField()
         A()
         B()
 
@@ -138,7 +138,7 @@ class FormMetaTest(TestCase):
 
 class FormTest(TestCase):
     class F(Form):
-        test = TextField()
+        test = StringField()
 
         def validate_test(form, field):
             if field.data != 'foobar':
@@ -153,7 +153,7 @@ class FormTest(TestCase):
 
     def test_field_adding_disabled(self):
         form = self.F()
-        self.assertRaises(TypeError, form.__setitem__, 'foo', TextField())
+        self.assertRaises(TypeError, form.__setitem__, 'foo', StringField())
 
     def test_field_removal(self):
         form = self.F()
@@ -180,16 +180,16 @@ class FormTest(TestCase):
 
     def test_ordered_fields(self):
         class MyForm(Form):
-            strawberry = TextField()
-            banana = TextField()
-            kiwi = TextField()
+            strawberry = StringField()
+            banana = StringField()
+            kiwi = StringField()
 
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi'])
-        MyForm.apple = TextField()
+        MyForm.apple = StringField()
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi', 'apple'])
         del MyForm.banana
         self.assertEqual([x.name for x in MyForm()], ['strawberry', 'kiwi', 'apple'])
-        MyForm.strawberry = TextField()
+        MyForm.strawberry = StringField()
         self.assertEqual([x.name for x in MyForm()], ['kiwi', 'apple', 'strawberry'])
         # Ensure sort is stable: two fields with the same creation counter
         # should be subsequently sorted by name.
@@ -209,7 +209,7 @@ class MetaTest(TestCase):
         class Meta:
             foo = 9
 
-        test = TextField()
+        test = StringField()
 
     class G(Form):
         class Meta:
