@@ -29,19 +29,19 @@ msgstr "Wartość pola musi być równa %(other_name)s."
 
 #: wtforms/validators.py:94
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Pole musi mieć przynajmniej %(min)d znak."
-msgstr[1] "Pole musi mieć przynajmniej %(min)d znaki."
-msgstr[2] "Pole musi mieć przynajmniej %(min)d znaków."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "Pole musi mieć przynajmniej %(num)d znak."
+msgstr[1] "Pole musi mieć przynajmniej %(num)d znaki."
+msgstr[2] "Pole musi mieć przynajmniej %(num)d znaków."
 
 #: wtforms/validators.py:97
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Wartość w polu nie może mieć więcej niż %(max)d znak."
-msgstr[1] "Wartość w polu nie może mieć więcej niż %(max)d znaki."
-msgstr[2] "Wartość w polu nie może mieć więcej niż %(max)d znaków."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "Wartość w polu nie może mieć więcej niż %(num)d znak."
+msgstr[1] "Wartość w polu nie może mieć więcej niż %(num)d znaki."
+msgstr[2] "Wartość w polu nie może mieć więcej niż %(num)d znaków."
 
 #: wtforms/validators.py:100
 #, python-format

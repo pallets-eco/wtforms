@@ -30,17 +30,17 @@ msgstr "Le champ doit être égal à %(other_name)s."
 
 #: wtforms/validators.py:96
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Le champ doit être d'au moins %(min)d caractère."
-msgstr[1] "Le champ doit être d'au moins %(min)d characters long."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "Le champ doit être d'au moins %(num)d caractère."
+msgstr[1] "Le champ doit être d'au moins %(num)d characters long."
 
 #: wtforms/validators.py:99
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Le champ ne peut pas faire plus de %(max)d caractère."
-msgstr[1] "Le champ ne peut pas faire plus de %(max)d caractères."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "Le champ ne peut pas faire plus de %(num)d caractère."
+msgstr[1] "Le champ ne peut pas faire plus de %(num)d caractères."
 
 #: wtforms/validators.py:102
 #, python-format

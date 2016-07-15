@@ -30,18 +30,18 @@ msgstr "يجب على الحقل ان يساوي %(other_name)s ."
 
 #: wtforms/validators.py:96
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "لا يمكن للحقل ان يحتوي على اقل من %(min)d حرف."
-msgstr[1] "لا يمكن للحقل ان يحتوي على اقل من %(min)d حروف."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "لا يمكن للحقل ان يحتوي على اقل من %(num)d حرف."
+msgstr[1] "لا يمكن للحقل ان يحتوي على اقل من %(num)d حروف."
 
 
 #: wtforms/validators.py:99
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "لا يمكن للحقل ان يحتوي على اكثر من %(max)d حرف."
-msgstr[1] "لا يمكن للحقل ان يحتوي على اكثر من %(max)d حروف."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "لا يمكن للحقل ان يحتوي على اكثر من %(num)d حرف."
+msgstr[1] "لا يمكن للحقل ان يحتوي على اكثر من %(num)d حروف."
 
 
 #: wtforms/validators.py:102

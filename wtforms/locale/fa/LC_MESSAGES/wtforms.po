@@ -29,17 +29,17 @@ msgstr "مقدار فیلد باید برابر %(other_name)s باشد."
 
 #: wtforms/validators.py:94
 #, python-format
-msgid "Field must be at least %(min)d character long."
-msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "طول فیلد حداقل باید %(min)d حرف باشد."
-msgstr[1] "طول فیلد حداقل باید %(min)d حرف باشد."
+msgid "Field must be at least %(num)d character long."
+msgid_plural "Field must be at least %(num)d characters long."
+msgstr[0] "طول فیلد حداقل باید %(num)d حرف باشد."
+msgstr[1] "طول فیلد حداقل باید %(num)d حرف باشد."
 
 #: wtforms/validators.py:97
 #, python-format
-msgid "Field cannot be longer than %(max)d character."
-msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "طول فیلد حداکثر باید %(max)d حرف باشد."
-msgstr[1] "طول فیلد حداکثر باید %(max)d حرف باشد."
+msgid "Field cannot be longer than %(num)d character."
+msgid_plural "Field cannot be longer than %(num)d characters."
+msgstr[0] "طول فیلد حداکثر باید %(num)d حرف باشد."
+msgstr[1] "طول فیلد حداکثر باید %(num)d حرف باشد."
 
 #: wtforms/validators.py:100
 #, python-format
