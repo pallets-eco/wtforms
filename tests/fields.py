@@ -183,6 +183,26 @@ class FieldTest(TestCase):
             u'<input foo="baz" id="a" name="a" other="hello" type="text" value="hello">'
         )
 
+    def test_select_field_copies_choices(self):
+        class F(Form):
+            items = SelectField(choices=[])
+
+            def __init__(self, *args, **kwargs):
+                super(F, self).__init__(*args, **kwargs)
+
+            def add_choice(self, choice):
+                self.items.choices.append((choice, choice))
+
+        f1 = F()
+        f2 = F()
+
+        f1.add_choice('a')
+        f2.add_choice('b')
+
+        self.assertEqual(f1.items.choices, [('a', 'a')])
+        self.assertEqual(f2.items.choices, [('b', 'b')])
+        self.assertTrue(f1.items.choices is not f2.items.choices)
+
 
 class PrePostTestField(TextField):
     def pre_validate(self, form):
