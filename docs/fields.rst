@@ -16,7 +16,7 @@ Fields are defined as members on a form in a declarative fashion::
         address = TextAreaField(u'Mailing Address', [validators.optional(), validators.length(max=200)])
 
 When a field is defined on a form, the construction parameters are saved until
-the form is instantiated. At form instantiation time, a copy of the field is 
+the form is instantiated. At form instantiation time, a copy of the field is
 made with all the parameters specified in the definition. Each instance of the
 field keeps its own field data and errors list.
 
@@ -63,7 +63,7 @@ The Field base class
 
     .. automethod:: process(formdata [, data])
     .. automethod:: process_data
-    .. automethod:: process_formdata 
+    .. automethod:: process_formdata
     .. attribute:: data
 
         Contains the resulting (sanitized) value of calling either of the
@@ -120,7 +120,7 @@ The Field base class
 
     .. attribute:: name
 
-        The HTML form name of this field. This is the name as defined in your 
+        The HTML form name of this field. This is the name as defined in your
         Form prefixed with the `prefix` passed to the Form constructor.
 
     .. attribute:: short_name
@@ -241,6 +241,8 @@ refer to a single input from the form.
                 image_data = request.FILES[form.image.name].read()
                 open(os.path.join(UPLOAD_PATH, form.image.data), 'w').write(image_data)
 
+.. autoclass:: MultipleFileField(default field arguments)
+
 .. autoclass:: FloatField(default field arguments)
 
    For the majority of uses, :class:`DecimalField` is preferable to FloatField,
@@ -290,11 +292,11 @@ refer to a single input from the form.
             form = UserDetails(request.POST, obj=user)
             form.group_id.choices = [(g.id, g.name) for g in Group.query.order_by('name')]
 
-    Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField` 
-    constructor, but rather created the list in the view function. Also, the 
-    `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we 
-    use :func:`int()` to coerce form data.  The default coerce is 
-    :func:`unicode()`. 
+    Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField`
+    constructor, but rather created the list in the view function. Also, the
+    `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we
+    use :func:`int()` to coerce form data.  The default coerce is
+    :func:`unicode()`.
 
     **Advanced functionality**
 
@@ -325,7 +327,7 @@ Convenience Fields
 
     HiddenField is useful for providing data from a model or the application to
     be used on the form handler side for making choices or finding records.
-    Very frequently, CRUD forms will use the hidden field for an object's id.   
+    Very frequently, CRUD forms will use the hidden field for an object's id.
 
     Hidden fields are like any other field in that they can take validators and
     values and be accessed on the form object.   You should consider validating
@@ -373,7 +375,7 @@ complex data structures such as lists and nested objects can be represented.
     In the example, we reused the TelephoneForm to encapsulate the common
     telephone entry instead of writing a custom field to handle the 3
     sub-fields. The `data` property of the mobile_phone field will return the
-    :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the 
+    :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the
     `errors` property encapsulate the forms' errors.
 
 .. autoclass:: FieldList(unbound_field, default field arguments, min_entries=0, max_entries=None)
