@@ -280,12 +280,13 @@ class Field(object):
         except ValueError as e:
             self.process_errors.append(e.args[0])
 
-        if formdata:
+        if formdata is not None:
+            if self.name in formdata:
+                self.raw_data = formdata.getlist(self.name)
+            else:
+                self.raw_data = []
+
             try:
-                if self.name in formdata:
-                    self.raw_data = formdata.getlist(self.name)
-                else:
-                    self.raw_data = []
                 self.process_formdata(self.raw_data)
             except ValueError as e:
                 self.process_errors.append(e.args[0])

@@ -203,6 +203,12 @@ class FormTest(TestCase):
         form = self.F(data=data, test='bar')
         self.assertEqual(form.test.data, 'bar')
 
+    def test_empty_formdata(self):
+        """"If formdata is empty, field.process_formdata should still run to handle empty data."""
+
+        self.assertEqual(self.F(DummyPostData({'other': 'other'})).test.data, '')
+        self.assertEqual(self.F(DummyPostData()).test.data, '')
+
 
 class MetaTest(TestCase):
     class F(Form):
