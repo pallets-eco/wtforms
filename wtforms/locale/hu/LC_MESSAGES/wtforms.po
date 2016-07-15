@@ -1,0 +1,177 @@
+# Hungarian translations for WTForms.
+# Copyright (C) 2012 WTForms Team
+# This file is distributed under the same license as the WTForms project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WTForms 1.0\n"
+"Report-Msgid-Bugs-To: wolanskim@gmail.com\n"
+"POT-Creation-Date: 2016-03-14 14:13-0600\n"
+"PO-Revision-Date: 2016-03-14 23:20+0200\n"
+"Last-Translator: Károly Szabó <krosza@gmail.com>\n"
+"Language-Team: Informatikusok Az e-Demokráciáért <info@adatom.hu>\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
+"(n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: wtforms/validators.py:55
+#, python-format
+msgid "Invalid field name '%s'."
+msgstr "Hibás mező név '%s'."
+
+#: wtforms/validators.py:63
+#, python-format
+msgid "Field must be equal to %(other_name)s."
+msgstr "A mezőnek egyenlőnek kell lenni ezzel: %(other_name)s."
+
+#: wtforms/validators.py:96
+#, python-format
+msgid "Field must be at least %(min)d character long."
+msgid_plural "Field must be at least %(min)d characters long."
+msgstr[0] "A mezőnek legalább  %(min)d karakterből kell állnia."
+msgstr[1] "A mezőnek legalább  %(min)d karakterből kell állnia."
+
+#: wtforms/validators.py:99
+#, python-format
+msgid "Field cannot be longer than %(max)d character."
+msgid_plural "Field cannot be longer than %(max)d characters."
+msgstr[0] "A mező nem lehet hosszabb mint %(max)d karakter."
+msgstr[1] "A mező nem lehet hosszabb mint %(max)d karakter."
+
+#: wtforms/validators.py:102
+#, python-format
+msgid "Field must be between %(min)d and %(max)d characters long."
+msgstr "A mező minimum  %(min)d, maximum %(max)d karakter hosszú lehet"
+
+#: wtforms/validators.py:138
+#, python-format
+msgid "Number must be at least %(min)s."
+msgstr "A szám legalább %(min)s legyen"
+
+#: wtforms/validators.py:140
+#, python-format
+msgid "Number must be at most %(max)s."
+msgstr "A szám maximum %(max)s lehet. "
+
+#: wtforms/validators.py:142
+#, python-format
+msgid "Number must be between %(min)s and %(max)s."
+msgstr "A szám %(min)s és %(max)s között legyen"
+
+#: wtforms/validators.py:198 wtforms/validators.py:233
+msgid "This field is required."
+msgstr "Ezt a mezőt kötelező kitölteni"
+
+#: wtforms/validators.py:264
+msgid "Invalid input."
+msgstr "Érvénytelen bemenet"
+
+#: wtforms/validators.py:286
+msgid "Invalid email address."
+msgstr "Érvénytelen email-cím"
+
+#: wtforms/validators.py:318
+msgid "Invalid IP address."
+msgstr "Érvénytelen IP cím"
+
+#: wtforms/validators.py:367
+msgid "Invalid Mac address."
+msgstr "Érvénytelen Mac cím"
+
+#: wtforms/validators.py:393
+msgid "Invalid URL."
+msgstr "Érvénytelen URL hivatkozás"
+
+#: wtforms/validators.py:412
+msgid "Invalid UUID."
+msgstr "Érvénytelen UUID"
+
+#: wtforms/validators.py:440
+#, python-format
+msgid "Invalid value, must be one of: %(values)s."
+msgstr "Hibás érték, ezek egyike legyen: %(values)s"
+
+#: wtforms/validators.py:472
+#, python-format
+msgid "Invalid value, can't be any of: %(values)s."
+msgstr "Hibás érték, nem lehet ezek egyike sem: %(values)s."
+
+#: wtforms/csrf/core.py:83 wtforms/ext/csrf/form.py:47
+msgid "Invalid CSRF Token"
+msgstr "Érvénytelen CSRF Token"
+
+#: wtforms/csrf/session.py:61 wtforms/ext/csrf/session.py:58
+msgid "CSRF token missing"
+msgstr "Hiányzó CSRF Token"
+
+#: wtforms/csrf/session.py:69 wtforms/ext/csrf/session.py:66
+msgid "CSRF failed"
+msgstr "CSRF hiba "
+
+#: wtforms/csrf/session.py:74 wtforms/ext/csrf/session.py:71
+msgid "CSRF token expired"
+msgstr "A CSRF Token lejárt"
+
+#: wtforms/ext/appengine/fields.py:87 wtforms/ext/appengine/fields.py:164
+#: wtforms/ext/appengine/fields.py:166 wtforms/ext/django/fields.py:96
+#: wtforms/ext/sqlalchemy/fields.py:125 wtforms/ext/sqlalchemy/fields.py:127
+#: wtforms/ext/sqlalchemy/fields.py:177 wtforms/ext/sqlalchemy/fields.py:182
+#: wtforms/fields/core.py:456
+msgid "Not a valid choice"
+msgstr "Nem választható"
+
+#: wtforms/ext/appengine/fields.py:185
+msgid "Not a valid list"
+msgstr "Érvénytelen lista"
+
+#: wtforms/ext/appengine/fields.py:204
+msgid "Not a valid integer list"
+msgstr "Érvénytelen integer lista"
+
+#: wtforms/ext/dateutil/fields.py:63
+msgid "Please input a date/time value"
+msgstr "Adj meg dátum/idő értéket"
+
+#: wtforms/ext/dateutil/fields.py:75 wtforms/ext/dateutil/fields.py:83
+msgid "Invalid date/time input"
+msgstr "Érvénytelen dátum/idő"
+
+#: wtforms/ext/sqlalchemy/validators.py:34
+msgid "Already exists."
+msgstr "Már létezik"
+
+#: wtforms/fields/core.py:449
+msgid "Invalid Choice: could not coerce"
+msgstr "Érvénytelen választás"
+
+#: wtforms/fields/core.py:482
+msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgstr "Érvénytelen választás: egy vagy több bevitel nem értelmezhető"
+
+#: wtforms/fields/core.py:489
+#, python-format
+msgid "'%(value)s' is not a valid choice for this field"
+msgstr "Érvénytelen választás, egy vagy több adat hibás"
+
+#: wtforms/fields/core.py:572
+msgid "Not a valid integer value"
+msgstr "Érvénytelen integer érték"
+
+#: wtforms/fields/core.py:638
+msgid "Not a valid decimal value"
+msgstr "Nem érvényes decimális szám"
+
+#: wtforms/fields/core.py:665
+msgid "Not a valid float value"
+msgstr "Nem érvényes lebegőpontos szám"
+
+#: wtforms/fields/core.py:724
+msgid "Not a valid datetime value"
+msgstr "Nem érvényes időpont"
+
+#: wtforms/fields/core.py:741
+msgid "Not a valid date value"
+msgstr "Nem érvényes dátum"
