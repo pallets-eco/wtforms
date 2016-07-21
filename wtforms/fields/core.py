@@ -456,6 +456,10 @@ class SelectField(SelectFieldBase):
 
     def process_data(self, value):
         try:
+            # protect against coercing None,
+            # such as in text_type(None) -> "None"
+            if value is None:
+                raise ValueError()
             self.data = self.coerce(value)
         except (ValueError, TypeError):
             self.data = None
