@@ -161,7 +161,7 @@ class Field(object):
             for validator in list(validators):
                 if not isinstance(validator, type(validator)) or not hasattr(validator, '__call__'):
                     raise TypeError("All validators must be callable instances"
-                        "(functions/methods or instances with a __call__ method)")
+                                    "(functions/methods or instances with a __call__ method)")
 
     def gettext(self, string):
         """

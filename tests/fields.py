@@ -207,7 +207,7 @@ class FieldTest(TestCase):
     def test_checkValidators(self):
         Field(validators=[validators.DataRequired])
         self.assertRaisesRegex(TypeError, "All validators must be callable instances"
-                        "(functions/methods or instances with a __call__ method)")
+                               "(functions/methods or instances with a __call__ method)")
 
 
 class PrePostTestField(StringField):
