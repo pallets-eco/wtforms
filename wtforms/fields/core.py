@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import decimal
 import itertools
+import inspect
 
 from copy import copy
 
@@ -104,6 +105,8 @@ class Field(object):
         self.name = _prefix + _name
         self.short_name = _name
         self.type = type(self).__name__
+
+        self.checkValidators(validators)
         self.validators = validators or list(self.validators)
 
         self.id = id or self.name
@@ -154,6 +157,14 @@ class Field(object):
         """
         return self.meta.render_field(self, kwargs)
 
+    @classmethod
+    def checkValidators(cls, validators):
+        if validators is not None:
+            for validator in list(validators):
+                if inspect.isclass(validator) or not hasattr(validator, '__call__'):
+                    raise TypeError("All validators must be callable instances"
+                                    "(functions/methods or instances with a __call__ method)")
+
     def gettext(self, string):
         """
         Get a translation for the given message.
@@ -189,6 +200,9 @@ class Field(object):
         """
         self.errors = list(self.process_errors)
         stop_validation = False
+
+        # Check the type of extra_validators
+        self.checkValidators(extra_validators)
 
         # Call pre_validate
         try:
@@ -340,6 +354,9 @@ class UnboundField(object):
         self.args = args
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
+        validators = kwargs.get('validators')
+        if validators:
+            self.field_class.checkValidators(validators)
 
     def bind(self, form, name, prefix='', translations=None, **kwargs):
         kw = dict(

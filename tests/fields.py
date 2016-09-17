@@ -12,7 +12,7 @@ from wtforms.fields import Label, Field, SelectFieldBase, html5
 from wtforms.form import Form
 from wtforms.compat import text_type
 from wtforms.utils import unset_value
-from tests.common import DummyPostData
+from tests.common import DummyPostData, assert_raises_text
 from wtforms.widgets import TextInput
 
 PYTHON_VERSION = sys.version_info
@@ -203,6 +203,11 @@ class FieldTest(TestCase):
         self.assertEqual(f1.items.choices, [('a', 'a')])
         self.assertEqual(f2.items.choices, [('b', 'b')])
         self.assertTrue(f1.items.choices is not f2.items.choices)
+
+    def test_checkValidators(self):
+        with assert_raises_text(TypeError, "All validators must be callable instances"
+                                "\(functions/methods or instances with a __call__ method\)"):
+            Field(validators=[validators.DataRequired])
 
 
 class PrePostTestField(StringField):
