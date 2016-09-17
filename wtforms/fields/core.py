@@ -104,6 +104,8 @@ class Field(object):
         self.name = _prefix + _name
         self.short_name = _name
         self.type = type(self).__name__
+
+        self.checkValidators(validators)
         self.validators = validators or list(self.validators)
 
         self.id = id or self.name
@@ -154,6 +156,13 @@ class Field(object):
         """
         return self.meta.render_field(self, kwargs)
 
+    def checkValidators(self, validators):
+        if validators is not None:
+            for validator in list(validators):
+                if not isinstance(validator, type(validator)) or not hasattr(validator, '__call__'):
+                    raise TypeError("All validators must be callable instances"
+                        "(functions/methods or instances with a __call__ method)")
+
     def gettext(self, string):
         """
         Get a translation for the given message.
@@ -189,6 +198,9 @@ class Field(object):
         """
         self.errors = list(self.process_errors)
         stop_validation = False
+
+        # Check the type of extra_validators
+        self.checkValidators(extra_validators)
 
         # Call pre_validate
         try:

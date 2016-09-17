@@ -204,6 +204,11 @@ class FieldTest(TestCase):
         self.assertEqual(f2.items.choices, [('b', 'b')])
         self.assertTrue(f1.items.choices is not f2.items.choices)
 
+    def test_checkValidators(self):
+        Field(validators=[validators.DataRequired])
+        self.assertRaisesRegex(TypeError, "All validators must be callable instances"
+                        "(functions/methods or instances with a __call__ method)")
+
 
 class PrePostTestField(StringField):
     def pre_validate(self, form):
