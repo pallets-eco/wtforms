@@ -2,8 +2,6 @@
 # Copyright (C) 2013 WTForms Team
 # This file is distributed under the same license as the WTForms project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
-# ilagi <zoltan.0.fedor@gmail.com>, 2016.
-# Zoltan Fedor <zoltan.0.fedor@gmail.com>, 2016.
 #
 msgid ""
 msgstr ""
@@ -18,7 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
 "Generated-By: Babel 2.2.0\n"
 
 #: wtforms/validators.py:55
