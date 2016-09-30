@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: WTForms 1.0.3\n"
 "Report-Msgid-Bugs-To: wtforms@simplecodes.com\n"
 "POT-Creation-Date: 2013-11-08 15:21-0700\n"
-"PO-Revision-Date: 2015-02-15 13:58+0100\n"
+"PO-Revision-Date: 2016-07-13 14:03+0100\n"
 "Last-Translator: Stéphane Blondon <stephane.blondon@gmail.com>\n"
 "Language-Team: fr_FR <j.pigeot@gmail.com>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -32,8 +32,8 @@ msgstr "Le champ doit être égal à %(other_name)s."
 #, python-format
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "Le champ doit être d'au moins %(min)d caractère."
-msgstr[1] "Le champ doit être d'au moins %(min)d characters long."
+msgstr[0] "Le champ doit faire au moins %(min)d caractère."
+msgstr[1] "Le champ doit faire au moins %(min)d caractères."
 
 #: wtforms/validators.py:99
 #, python-format
