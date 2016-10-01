@@ -13,6 +13,15 @@ __all__ = (
     'TextInput', 'Option'
 )
 
+def _escape_wrapper(s, quote=False):
+    """
+    Make sure calling escape() does not crash script.
+    html.escape only takes one arg (as of 30 September 2016), but cgi.escape takes two args.
+    """
+    try:
+        return escape(s, quote)
+    except TypeError:
+        return escape(s)
 
 def html_params(**kwargs):
     """
@@ -50,7 +59,7 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append('%s="%s"' % (text_type(k), escape(text_type(v), quote=True)))
+            params.append('%s="%s"' % (text_type(k), _escape_wrapper(text_type(v), quote=True)))
     return ' '.join(params)
 
 
@@ -273,7 +282,7 @@ class TextArea(object):
         kwargs.setdefault('id', field.id)
         return HTMLString('<textarea %s>%s</textarea>' % (
             html_params(name=field.name, **kwargs),
-            escape(text_type(field._value()), quote=False)
+            _escape_wrapper(text_type(field._value()), quote=False)
         ))
 
 
@@ -310,7 +319,7 @@ class Select(object):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape(text_type(label), quote=False)))
+        return HTMLString('<option %s>%s</option>' % (html_params(**options), _escape_wrapper(text_type(label), quote=False)))
 
 
 class Option(object):
