@@ -13,6 +13,7 @@ __all__ = (
     'TextInput', 'Option'
 )
 
+
 def _escape_wrapper(s, quote=False):
     """
     Make sure calling escape() does not crash script.
@@ -23,6 +24,7 @@ def _escape_wrapper(s, quote=False):
     except TypeError:
         return escape(s)
 
+    
 def html_params(**kwargs):
     """
     Generate HTML attribute syntax from inputted keyword arguments.
