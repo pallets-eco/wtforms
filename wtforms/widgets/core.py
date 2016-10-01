@@ -24,7 +24,7 @@ def _escape_wrapper(s, quote=False):
     except TypeError:
         return escape(s)
 
-    
+
 def html_params(**kwargs):
     """
     Generate HTML attribute syntax from inputted keyword arguments.
