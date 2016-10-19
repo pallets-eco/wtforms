@@ -22,6 +22,14 @@ class DummyField(object):
     iter_choices = lambda x: iter(x.data)
 
 
+class EscapeHtmlTest(TestCase):
+    def test(self):
+        self.assertEqual(core.escape_html('<i class="bar">foo</i>'), '&lt;i class=&quot;bar&quot;&gt;foo&lt;/i&gt;')
+        self.assertEqual(core.escape_html('<i class="bar">foo</i>', quote=False), '&lt;i class="bar"&gt;foo&lt;/i&gt;')
+        self.assertEqual(core.escape_html(HTMLString('<i class="bar">foo</i>')), '<i class="bar">foo</i>')
+        self.assertEqual(core.escape_html(HTMLString('<i class="bar">foo</i>'), quote=False), '<i class="bar">foo</i>')
+
+
 class HTMLParamsTest(TestCase):
     def test_basic(self):
         self.assertEqual(html_params(foo=9, k='wuuu'), 'foo="9" k="wuuu"')
@@ -138,6 +146,14 @@ class SelectTest(TestCase):
         self.assertEqual(
             Select.render_option(True, 'foo', True),
             '<option selected value="True">foo</option>'
+        )
+        self.assertEqual(
+            Select.render_option('bar', '<i class="bar"></i>foo', False),
+            '<option value="bar">&lt;i class="bar"&gt;&lt;/i&gt;foo</option>'
+        )
+        self.assertEqual(
+            Select.render_option('bar', HTMLString('<i class="bar"></i>foo'), False),
+            '<option value="bar"><i class="bar"></i>foo</option>'
         )
 
 
