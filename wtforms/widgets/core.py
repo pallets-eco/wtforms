@@ -26,7 +26,7 @@ def escape_html(s, quote=True):
     escape_html is a string with any unsafe values already escaped.
     """
     if hasattr(s, '__html__'):
-        s = text_type(s.__html__())
+        s = s.__html__()
     else:
         s = escape(text_type(s), quote=quote)
     return s
