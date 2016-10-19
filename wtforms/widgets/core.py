@@ -14,9 +14,13 @@ __all__ = (
 )
 
 
-def escape_html(s, **kwargs):
+def escape_html(s, quote=True):
     """
     Replace special characters "&", "<" and ">" to HTML-safe sequences.
+
+    If the optional flag quote is true (the default), the quotation mark
+    characters, both double quote (") and single quote (') characters are also
+    translated.
 
     If a `HTMLString` is provied, it's assumed that whatever you give to
     escape_html is a string with any unsafe values already escaped.
@@ -24,7 +28,7 @@ def escape_html(s, **kwargs):
     if hasattr(s, '__html__'):
         s = text_type(s.__html__())
     else:
-        s = escape(text_type(s), **kwargs)
+        s = escape(text_type(s), quote=quote)
     return s
 
 
