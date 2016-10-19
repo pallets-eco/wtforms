@@ -139,12 +139,12 @@ class SelectTest(TestCase):
             '<option selected value="True">foo</option>'
         )
         self.assertEqual(
-            Select.render_option(True, '<i class="bar"></i>foo', True),
-            '<option selected value="True">&lt;i class=&quot;bar&quot;&gt;&lt;/i&gt;foo</option>'
+            Select.render_option('bar', '<i class="bar"></i>foo', False),
+            '<option value="bar">&lt;i class="bar"&gt;&lt;/i&gt;foo</option>'
         )
         self.assertEqual(
-            Select.render_option(True, HTMLString('<i class="bar"></i>foo'), True),
-            '<option selected value="True"><i class="bar"></i>foo</option>'
+            Select.render_option('bar', HTMLString('<i class="bar"></i>foo'), False),
+            '<option value="bar"><i class="bar"></i>foo</option>'
         )
 
 
