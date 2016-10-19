@@ -14,6 +14,24 @@ __all__ = (
 )
 
 
+def escape_html(s, quote=True):
+    """
+    Replace special characters "&", "<" and ">" to HTML-safe sequences.
+
+    If the optional flag quote is true (the default), the quotation mark
+    characters, both double quote (") and single quote (') characters are also
+    translated.
+
+    If a `HTMLString` is provied, it's assumed that whatever you give to
+    escape_html is a string with any unsafe values already escaped.
+    """
+    if hasattr(s, '__html__'):
+        s = s.__html__()
+    else:
+        s = escape(text_type(s), quote=quote)
+    return s
+
+
 def html_params(**kwargs):
     """
     Generate HTML attribute syntax from inputted keyword arguments.
@@ -310,7 +328,7 @@ class Select(object):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape(text_type(label), quote=False)))
+        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape_html(label, quote=False)))
 
 
 class Option(object):
