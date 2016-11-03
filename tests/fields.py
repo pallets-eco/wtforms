@@ -589,6 +589,27 @@ class DateFieldTest(TestCase):
         self.assertEqual(form.a.process_errors[0], 'Not a valid date value')
 
 
+class TimeFieldTest(TestCase):
+    class F(Form):
+        a = TimeField()
+        b = TimeField(format='%H:%M')
+
+    def test_basic(self):
+        d = datetime(2008, 5, 5, 4, 30, 0, 0).time()
+        # Basic test with both inputs
+        form = self.F(DummyPostData(a=['4:30'], b=['04:30']))
+        self.assertEqual(form.a.data, d)
+        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="4:30">""")
+        self.assertEqual(form.b.data, d)
+        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="04:30">""")
+        self.assertTrue(form.validate())
+
+        # Test with a missing input
+        form = self.F(DummyPostData(a=['04']))
+        self.assertFalse(form.validate())
+        self.assertEqual(form.a.errors[0], 'Not a valid time value')
+
+
 class DateTimeFieldTest(TestCase):
     class F(Form):
         a = DateTimeField()

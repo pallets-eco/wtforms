@@ -16,7 +16,7 @@ from wtforms.utils import unset_value
 __all__ = (
     'BooleanField', 'DecimalField', 'DateField', 'DateTimeField', 'FieldList',
     'FloatField', 'FormField', 'IntegerField', 'RadioField', 'SelectField',
-    'SelectMultipleField', 'StringField',
+    'SelectMultipleField', 'StringField', 'TimeField',
 )
 
 
@@ -760,6 +760,23 @@ class DateField(DateTimeField):
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext('Not a valid date value'))
+
+
+class TimeField(DateTimeField):
+    """
+    Same as DateTimeField, except stores a `time`.
+    """
+    def __init__(self, label=None, validators=None, format='%H:%M', **kwargs):
+        super(TimeField, self).__init__(label, validators, format, **kwargs)
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            time_str = ' '.join(valuelist)
+            try:
+                self.data = datetime.datetime.strptime(time_str, self.format).time()
+            except ValueError:
+                self.data = None
+                raise ValueError(self.gettext('Not a valid time value'))
 
 
 class FormField(Field):
