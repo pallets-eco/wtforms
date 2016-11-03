@@ -7,7 +7,7 @@ from . import core
 __all__ = (
     'DateField', 'DateTimeField', 'DateTimeLocalField', 'DecimalField',
     'DecimalRangeField', 'EmailField', 'IntegerField', 'IntegerRangeField',
-    'SearchField', 'TelField', 'URLField',
+    'SearchField', 'TelField', 'TimeField', 'URLField',
 )
 
 
@@ -51,6 +51,13 @@ class DateField(core.DateField):
     Represents an ``<input type="date">``.
     """
     widget = widgets.DateInput()
+
+
+class TimeField(core.TimeField):
+    """
+    Represents an ``<input type="time">``.
+    """
+    widget = widgets.TimeInput()
 
 
 class DateTimeLocalField(core.DateTimeField):
