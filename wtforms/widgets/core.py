@@ -150,7 +150,9 @@ class TableWidget(object):
             if subfield.type in ('HiddenField', 'CSRFTokenField'):
                 hidden += text_type(subfield)
             else:
-                html.append('<tr><th>%s</th><td>%s%s</td></tr>' % (text_type(subfield.label), hidden, text_type(subfield)))
+                html.append('<tr class="%s %s"><th>%s</th><td>%s%s</td></tr>' %
+                            (text_type(subfield.type), text_type(subfield.short_name),
+                             text_type(subfield.label), hidden, text_type(subfield)))
                 hidden = ''
         if self.with_table_tag:
             html.append('</table>')
