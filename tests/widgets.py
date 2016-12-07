@@ -69,7 +69,8 @@ class TableWidgetTest(TestCase):
         field = DummyField(inner_fields, id='hai')
         self.assertEqual(
             TableWidget()(field),
-            '<table id="hai"><tr class="StringField f"><th>lfoo</th><td>hidden1foo</td></tr><tr class="StringField f"><th>lbar</th><td>bar</td></tr></table>hidden2'
+            '<table id="hai"><tr class="StringField f"><th>lfoo</th><td>hidden1foo</td></tr>'
+                            '<tr class="StringField f"><th>lbar</th><td>bar</td></tr></table>hidden2'
         )
 
 
