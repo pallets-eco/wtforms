@@ -9,6 +9,7 @@ class DummyField(object):
     def __init__(self, data, name='f', label='', id='', type='StringField'):
         self.data = data
         self.name = name
+        self.short_name = name
         self.label = label
         self.id = id
         self.type = type
