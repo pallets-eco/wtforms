@@ -225,6 +225,13 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     and passed to `process()`.
     """
     Meta = DefaultMeta
+    _restricted_attributes = [
+        'data',
+        'errors',
+        'meta',
+        'validate',
+        'populate_obj',
+    ]
 
     def __init__(self, formdata=None, obj=None, prefix='', data=None, meta=None, **kwargs):
         """
@@ -259,7 +266,10 @@ class Form(with_metaclass(FormMeta, BaseForm)):
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
-            setattr(self, name, field)
+            if name not in self._restricted_attributes:
+                setattr(self, name, field)
+            else:
+                raise RuntimeError('Form properties and methods may not be used as field names: {0}'.format(name))
         self.process(formdata, obj, data=data, **kwargs)
 
     def __setitem__(self, name, value):
