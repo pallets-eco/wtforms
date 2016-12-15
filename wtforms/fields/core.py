@@ -9,7 +9,7 @@ from copy import copy
 from wtforms import widgets
 from wtforms.compat import text_type, izip
 from wtforms.i18n import DummyTranslations
-from wtforms.validators import StopValidation
+from wtforms.validators import StopValidation, Length
 from wtforms.utils import unset_value
 
 
@@ -525,6 +525,12 @@ class StringField(Field):
     represents an ``<input type="text">``.
     """
     widget = widgets.TextInput()
+ 
+    def __init__(self, label=None, validators=None, **kwargs):
+        super(StringField, self).__init__(label, validators, **kwargs)
+        for validator in self.validators:
+            if isinstance(validator, Length) and validator.max > 0:
+                self.render_kw = {"maxlength": validator.max}
 
     def process_formdata(self, valuelist):
         if valuelist:
