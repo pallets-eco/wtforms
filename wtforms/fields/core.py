@@ -529,8 +529,13 @@ class StringField(Field):
     def __init__(self, label=None, validators=None, **kwargs):
         super(StringField, self).__init__(label, validators, **kwargs)
         for validator in self.validators:
-            if isinstance(validator, Length) and validator.max > 0:
-                self.render_kw = {"maxlength": validator.max}
+            if isinstance(validator, Length):
+                if not self.render_kw:
+                    self.render_kw = {}
+                if validator.max > 0:
+                    self.render_kw["maxlength"] = validator.max
+                if validator.min > 0:
+                    self.render_kw["minlength"] = validator.min
 
     def process_formdata(self, valuelist):
         if valuelist:
