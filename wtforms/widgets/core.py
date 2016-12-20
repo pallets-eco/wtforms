@@ -68,7 +68,7 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append('%s="%s"' % (text_type(k), escape(text_type(v), quote=True)))
+            params.append('%s="%s"' % (text_type(k), escape_html(v)))
     return ' '.join(params)
 
 
