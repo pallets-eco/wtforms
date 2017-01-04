@@ -139,7 +139,7 @@ method with the convention `validate_fieldname`::
     class SignupForm(Form):
         age = IntegerField(u'Age')
 
-        def validate_age(form, field):
+        def validate_age(self, form, field):
             if field.data < 13:
                 raise ValidationError("We're sorry, you must be 13 or older to register")
 
