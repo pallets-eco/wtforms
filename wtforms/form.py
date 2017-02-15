@@ -112,7 +112,9 @@ class BaseForm(object):
             kwargs = dict(data, **kwargs)
 
         for name, field, in iteritems(self._fields):
-            if obj is not None and hasattr(obj, name):
+            if obj is not None and isinstance(obj, dict) and name in obj:
+                field.process(formdata, obj[name])
+            elif obj is not None and hasattr(obj, name):
                 field.process(formdata, getattr(obj, name))
             elif name in kwargs:
                 field.process(formdata, kwargs[name])
