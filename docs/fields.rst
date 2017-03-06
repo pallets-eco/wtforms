@@ -319,6 +319,50 @@ refer to a single input from the form.
 
         {{ form.username(size=30, maxlength=50) }}
 
+HTML5 Fields
+------------
+
+In addition to basic HTML fields, WTForms also supplies fields for the HTML5
+standard. These fields can be accessed under the `wtforms.fields.html5` namespace.
+In reality, these fields are just convenience fields that extend basic fields
+and implement HTML5 specific widgets. These widgets are located in the `wtforms.widgets.html5`
+namespace and can be overridden or modified just like any other widget.
+
+.. autoclass:: SearchField(default field arguments)
+    Represents an `<input type="search">` field
+
+.. autoclass:: TelField(default field arguments)
+    Represents an `<input type="tel">` field
+
+.. autoclass:: URLField(default field arguments)
+    Represents an `<input type="url">` field
+
+.. autoclass:: EmailField(default field arguments)
+    Represents an `<input type="email">` field
+
+.. autoclass:: DateTimeField(default field arguments,  format='%Y-%m-%d %H:%M:%S')
+    Represents an `<input type="datetime">` field
+
+.. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
+    Represents an `<input type="date">` field
+
+.. autoclass:: TimeField(default field arguments, format='%H:%M')
+    Represents an `<input type="time">` field
+
+.. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
+    Represents an `<input type="datetime-local">` field
+
+.. autoclass:: IntegerField(default field arguments)
+    Represents an `<input type="number">` field with the `step="1"` attribute
+
+.. autoclass:: DecimalField(default field arguments)
+    Represents an `<input type="number">` field with the `step="any"` attribute
+
+.. autoclass:: IntegerRangeField(default field arguments)
+    Represents an `<input type="range">` field with the `step="1"` attribute
+
+.. autoclass:: DecimalRangeField(default field arguments)
+    Represents an `<input type="range">` field with the `step="any"` attribute
 
 Convenience Fields
 ------------------
