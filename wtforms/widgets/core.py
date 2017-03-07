@@ -170,11 +170,13 @@ class Input(object):
     """
     html_params = staticmethod(html_params)
 
-    def __init__(self, input_type=None):
+    def __init__(self, input_type=None, default_html_params=dict()):
+        self.default_html_params = default_html_params
         if input_type is not None:
             self.input_type = input_type
 
     def __call__(self, field, **kwargs):
+        kwargs = self.default_html_params.copy().update(kwargs)
         kwargs.setdefault('id', field.id)
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
@@ -306,10 +308,12 @@ class Select(object):
     call on rendering; this method must yield tuples of
     `(value, label, selected)`.
     """
-    def __init__(self, multiple=False):
+    def __init__(self, multiple=False, default_html_params=dict()):
+        self.default_html_params = default_html_params
         self.multiple = multiple
 
     def __call__(self, field, **kwargs):
+        kwargs = self.default_html_params.copy().update(kwargs)
         kwargs.setdefault('id', field.id)
         if self.multiple:
             kwargs['multiple'] = True
