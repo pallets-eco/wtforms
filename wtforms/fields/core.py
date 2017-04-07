@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import sys
 import datetime
 import decimal
 import itertools
@@ -127,9 +128,9 @@ class Field(object):
     def __str__(self):
         """
         Returns a HTML representation of the field. For more powerful rendering,
-        see the `__call__` method.
+        see the `__call__` method. Return a unicode string in case of UnicodeEncodeError.
         """
-        return self()
+        return self().encode(sys.stdout.encoding)
 
     def __html__(self):
         """
