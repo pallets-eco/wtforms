@@ -283,6 +283,8 @@ class Email(Regexp):
         message = self.message
         if message is None:
             message = field.gettext('Invalid email address.')
+            
+        form.data = form.data.strip()
 
         match = super(Email, self).__call__(form, field, message)
         if not self.validate_hostname(match.group(1)):
