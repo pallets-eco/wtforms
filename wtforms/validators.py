@@ -534,6 +534,8 @@ class Unique(object):
     """
     Validates a fields uniqueness.
 
+    :param model:
+        Model class the field belongs to
     :param message:
         Error message to raise in case of a validation error.
     """
