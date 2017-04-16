@@ -385,6 +385,14 @@ class StringFieldTest(TestCase):
         form = self.F(DummyPostData(b=['hello']))
         self.assertEqual(form.a.data, '')
 
+    def test_kwargs(self):
+        form = self.F(a='test')
+        self.assertEqual(form.a.data, 'test')
+
+    def test_formdata_and_kwargs(self):
+        form = self.F(DummyPostData({'otherField': 1}), a='test')
+        self.assertEqual(form.a.data, 'test')
+
 
 class HiddenFieldTest(TestCase):
     class F(Form):
