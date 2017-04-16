@@ -133,11 +133,11 @@ class ValidatorsTest(TestCase):
 
     def test_input_required(self):
         self.assertEqual(input_required()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
-        self.assertRaises(StopValidation, input_required(), self.form, DummyField('', raw_data=['']))
+        self.assertRaises(StopValidation, input_required(), self.form, DummyField('', raw_data=[None]))
         self.assertEqual(input_required().field_flags, ('required', ))
 
         # Check message and custom message
-        grab = lambda **k: grab_stop_message(input_required(**k), self.form, DummyField('', raw_data=['']))
+        grab = lambda **k: grab_stop_message(input_required(**k), self.form, DummyField('', raw_data=[None]))
         self.assertEqual(grab(), 'This field is required.')
         self.assertEqual(grab(message='foo'), 'foo')
 
