@@ -382,11 +382,15 @@ class URL(Regexp):
         If true, then the domain-name portion of the URL must contain a .tld
         suffix.  Set this to false if you want to allow domains like
         `localhost`.
+    :param allow_auth:
+        If true, then URLs with basic http authentication credentials (like
+        `https://foo:password@example.com`) are allowed.
     :param message:
         Error message to raise in case of a validation error.
     """
-    def __init__(self, require_tld=True, message=None):
-        regex = r'^[a-z]+://(?P<host>[^/:]+)(?P<port>:[0-9]+)?(?P<path>\/.*)?$'
+    def __init__(self, require_tld=True, allow_auth=False, message=None):
+        auth = "(?P<auth>(?P<username>[^:]+):(?P<password>[%\d\w]+)@)?" if allow_auth else ""
+        regex = r'^[a-z]+://%s(?P<host>[^/:]+)(?P<port>:[0-9]+)?(?P<path>\/.*)?$' % auth
         super(URL, self).__init__(regex, re.IGNORECASE, message)
         self.validate_hostname = HostnameValidation(
             require_tld=require_tld,
