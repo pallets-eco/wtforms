@@ -577,6 +577,7 @@ class DateFieldTest(TestCase):
         form = self.F(DummyPostData(a=['2008-05-07'], b=['05/07', '2008']))
         self.assertEqual(form.a.data, d)
         self.assertEqual(form.a._value(), '2008-05-07')
+        self.assertEqual(form.a(), """<input id="a" name="a" type="date" value="2008-05-07">""")
         self.assertEqual(form.b.data, d)
         self.assertEqual(form.b._value(), '05/07 2008')
 
@@ -620,9 +621,9 @@ class DateTimeFieldTest(TestCase):
         # Basic test with both inputs
         form = self.F(DummyPostData(a=['2008-05-05', '04:30:00'], b=['2008-05-05 04:30']))
         self.assertEqual(form.a.data, d)
-        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="2008-05-05 04:30:00">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="datetime" value="2008-05-05 04:30:00">""")
         self.assertEqual(form.b.data, d)
-        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="2008-05-05 04:30">""")
+        self.assertEqual(form.b(), """<input id="b" name="b" type="datetime" value="2008-05-05 04:30">""")
         self.assertTrue(form.validate())
 
         # Test with a missing input

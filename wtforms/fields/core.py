@@ -721,9 +721,9 @@ class BooleanField(Field):
 
 class DateTimeField(Field):
     """
-    A text field which stores a `datetime.datetime` matching a format.
+    A datetime field which stores a `datetime.datetime` matching a format.
     """
-    widget = widgets.TextInput()
+    widget = widgets.DateTimeInput()
 
     def __init__(self, label=None, validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
@@ -747,8 +747,10 @@ class DateTimeField(Field):
 
 class DateField(DateTimeField):
     """
-    Same as DateTimeField, except stores a `datetime.date`.
+    A date field which stores a `datetime.date` matching a format.
     """
+    widget = widgets.DateInput()
+
     def __init__(self, label=None, validators=None, format='%Y-%m-%d', **kwargs):
         super(DateField, self).__init__(label, validators, format, **kwargs)
 
