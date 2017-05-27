@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: WTForms 1.0.4\n"
 "Report-Msgid-Bugs-To: wtforms@simplecodes.com\n"
 "POT-Creation-Date: 2013-11-08 15:21-0700\n"
-"PO-Revision-Date: 2017-05-28 02:18+0300\n"
+"PO-Revision-Date: 2017-05-28 02:23+0300\n"
 "Last-Translator: Melih Uçar <melihucar@gmail.com>\n"
 "Language-Team: en_US <melihucar@gmail.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -171,7 +171,7 @@ msgstr "Geçerli bir ondalık sayı değil"
 
 #: wtforms/fields/core.py:724
 msgid "Not a valid datetime value"
-msgstr "Geçerli bi zaman değil"
+msgstr "Geçerli bir zaman değil"
 
 #: wtforms/fields/core.py:741
 msgid "Not a valid date value"
