@@ -136,6 +136,9 @@ class FiltersTest(TestCase):
 class FieldTest(TestCase):
     class F(Form):
         a = StringField(default='hello', render_kw={'readonly': True, 'foo': u'bar'})
+        b = StringField(default='world', validators=[validators.Length(max=42)])
+        c = StringField(default='world', validators=[validators.Length(min=11)])
+        d = StringField(default='world', validators=[validators.Length(min=11, max=42)])
 
     def setUp(self):
         self.field = self.F().a
@@ -183,6 +186,11 @@ class FieldTest(TestCase):
             form.a(foo=u'baz', readonly=False, other='hello'),
             u'<input foo="baz" id="a" name="a" other="hello" type="text" value="hello">'
         )
+        self.assertEqual(form.b(), u'<input id="b" maxlength="42" name="b" type="text" value="world">')
+        self.assertEqual(form.b(maxlength=23), u'<input id="b" maxlength="23" name="b" type="text" value="world">')
+        self.assertEqual(form.c(), u'<input id="c" minlength="11" name="c" type="text" value="world">')
+        self.assertEqual(form.c(minlength=55), u'<input id="c" minlength="55" name="c" type="text" value="world">')
+        self.assertEqual(form.d(), u'<input id="d" maxlength="42" minlength="11" name="d" type="text" value="world">')
 
     def test_select_field_copies_choices(self):
         class F(Form):
