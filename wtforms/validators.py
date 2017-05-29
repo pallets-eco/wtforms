@@ -530,6 +530,32 @@ class HostnameValidation(object):
         return True
 
 
+class Unique(object):
+    """
+    Validates a fields uniqueness.
+
+    :param model:
+        Model class the field belongs to
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, model, message=None):
+        self.model = model
+        if not message:
+            message = "Field must be unique. A record with this value already exists."
+        self.message = message
+
+    def __call__(self, form, field):
+        record = self.model.query.filter(getattr(self.model, field.name) == field.data).first()
+        try:
+            pk = self.model.__table__.primary_key._autoincrement_column.name
+        except:
+            #do we need to handle tables without primary_key?
+            return
+        if record and (not form._obj or getattr(record, pk) != getattr(form._obj, pk)):
+            raise ValidationError(message=self.message)
+
+
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
@@ -543,3 +569,4 @@ regexp = Regexp
 url = URL
 any_of = AnyOf
 none_of = NoneOf
+unique = Unique
