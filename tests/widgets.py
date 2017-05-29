@@ -9,6 +9,7 @@ class DummyField(object):
     def __init__(self, data, name='f', label='', id='', type='StringField'):
         self.data = data
         self.name = name
+        self.short_name = name
         self.label = label
         self.id = id
         self.type = type
@@ -68,7 +69,8 @@ class TableWidgetTest(TestCase):
         field = DummyField(inner_fields, id='hai')
         self.assertEqual(
             TableWidget()(field),
-            '<table id="hai"><tr><th>lfoo</th><td>hidden1foo</td></tr><tr><th>lbar</th><td>bar</td></tr></table>hidden2'
+            '<table id="hai"><tr class="StringField f"><th>lfoo</th><td>hidden1foo</td></tr>'
+            '<tr class="StringField f"><th>lbar</th><td>bar</td></tr></table>hidden2'
         )
 
 
