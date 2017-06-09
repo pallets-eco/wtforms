@@ -929,7 +929,7 @@ class FieldList(Field):
         chain = itertools.chain(self.validators, extra_validators)
         self._run_validation_chain(form, chain)
 
-        return all(e is not None for e in self.errors)
+        return all(e is None for e in self.errors)
 
     def populate_obj(self, obj, name):
         values = getattr(obj, name, None)
