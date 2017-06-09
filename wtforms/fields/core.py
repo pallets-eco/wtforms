@@ -915,13 +915,11 @@ class FieldList(Field):
         of its own validators.
         """
         self.errors = []
-        error_occured = False
 
         # Run validators on all entries within
         for subfield in self.entries:
             if not subfield.validate(form):
                 self.errors.append(subfield.errors)
-                error_occured = True
             else:
                 self.errors.append(None)
 
@@ -931,7 +929,7 @@ class FieldList(Field):
         chain = itertools.chain(self.validators, extra_validators)
         self._run_validation_chain(form, chain)
 
-        return not error_occured
+        return any(e is not None for e in self.errors)
 
     def populate_obj(self, obj, name):
         values = getattr(obj, name, None)
