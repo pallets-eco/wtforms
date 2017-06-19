@@ -81,6 +81,12 @@ class BaseFormTest(TestCase):
         form = self.get_form()
         self.assertRaises(TypeError, form.process, [])
 
+    def test_has_erro_in_fields(self):
+        form = self.get_form()
+        form.process(test='foo')
+        form.validate()
+        self.assertTrue(form.has_error())
+
 
 class FormMetaTest(TestCase):
     def test_monkeypatch(self):

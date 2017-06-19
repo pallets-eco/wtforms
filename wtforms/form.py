@@ -151,6 +151,9 @@ class BaseForm(object):
             self._errors = dict((name, f.errors) for name, f in iteritems(self._fields) if f.errors)
         return self._errors
 
+    def has_error(self):
+        return any(f for f in itervalues(self._fields) if f.errors)
+
 
 class FormMeta(type):
     """
