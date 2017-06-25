@@ -71,7 +71,7 @@ class IntegerField(core.IntegerField):
     """
     Represents an ``<input type="number">``.
     """
-    widget = widgets.NumberInput(step='1')
+    widget = widgets.NumberInput()
 
 
 class DecimalField(core.DecimalField):
@@ -85,7 +85,7 @@ class IntegerRangeField(core.IntegerField):
     """
     Represents an ``<input type="range">``.
     """
-    widget = widgets.RangeInput(step='1')
+    widget = widgets.RangeInput()
 
 
 class DecimalRangeField(core.DecimalField):
