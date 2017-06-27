@@ -277,7 +277,7 @@ class Email(Regexp):
         self.validate_hostname = HostnameValidation(
             require_tld=True,
         )
-        super(Email, self).__init__(r'^.+@([^.@][^@]+)$', re.IGNORECASE, message)
+        super(Email, self).__init__(r'\A[^@\s]+@([^.][^@\s]+)\Z', re.IGNORECASE, message)
 
     def __call__(self, form, field):
         message = self.message
