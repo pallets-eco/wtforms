@@ -20,7 +20,7 @@ msgstr ""
 #: wtforms/validators.py:55
 #, python-format
 msgid "Invalid field name '%s'."
-msgstr "Λάθος ονομα πεδίου '%s'."
+msgstr "Λάθος όνομα πεδίου '%s'."
 
 #: wtforms/validators.py:63
 #, python-format
@@ -32,19 +32,19 @@ msgstr "Το πεδίο πρέπει να είναι το ίδιο με το %(o
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
 msgstr[0] "Το πεδίο πρέπει να έχει τουλάχιστον %(min)d χαρακτήρα."
-msgstr[1] "Το πεδίο πρέπει να έχει τουλάχιστόν %(min)d χαρακτήρες."
+msgstr[1] "Το πεδίο πρέπει να έχει τουλάχιστον %(min)d χαρακτήρες."
 
 #: wtforms/validators.py:99
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "Το πεδίο δεν μπορεί να έχει πάνω απο %(max)d χαρακτήρα."
-msgstr[1] "Το πεδίο δεν μπορεί να έχει πάνω απο %(max)d χαρακτήρες."
+msgstr[0] "Το πεδίο δεν μπορεί να έχει πάνω από %(max)d χαρακτήρα."
+msgstr[1] "Το πεδίο δεν μπορεί να έχει πάνω από %(max)d χαρακτήρες."
 
 #: wtforms/validators.py:102
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr "Το πεδίο πρέπει να είναι ανάμεσα απο %(min)d και %(max)d χαρακτήρες."
+msgstr "Το πεδίο πρέπει να είναι ανάμεσα από %(min)d και %(max)d χαρακτήρες."
 
 #: wtforms/validators.py:138
 #, python-format
@@ -67,7 +67,7 @@ msgstr "Αυτό το πεδίο είναι υποχρεωτικό"
 
 #: wtforms/validators.py:264
 msgid "Invalid input."
-msgstr "Λανθασμένα δεδωμένα"
+msgstr "Λανθασμένα δεδομένα"
 
 #: wtforms/validators.py:286
 msgid "Invalid email address."
@@ -75,7 +75,7 @@ msgstr "Λανθασμένο email."
 
 #: wtforms/validators.py:318
 msgid "Invalid IP address."
-msgstr "Λανθασμένο διεύθυνση IP."
+msgstr "Λανθασμένη διεύθυνση IP."
 
 #: wtforms/validators.py:367
 msgid "Invalid Mac address."
@@ -92,12 +92,12 @@ msgstr "Λανθασμένο UUID."
 #: wtforms/validators.py:440
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr "Λάθος επιλογή, πρέπει να είναι ένα απο: %(values)s."
+msgstr "Λάθος επιλογή, πρέπει να είναι ένα από: %(values)s."
 
 #: wtforms/validators.py:472
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr "Λάθος επιλογή, δεν μπορεί να είναι ένα απο: %(values)s."
+msgstr "Λάθος επιλογή, δεν μπορεί να είναι ένα από: %(values)s."
 
 #: wtforms/csrf/core.py:83 wtforms/ext/csrf/form.py:47
 msgid "Invalid CSRF Token"
@@ -109,11 +109,11 @@ msgstr "To CSRF δεν υπάρχει"
 
 #: wtforms/csrf/session.py:69 wtforms/ext/csrf/session.py:66
 msgid "CSRF failed"
-msgstr "CSRF αποτυχία"
+msgstr "Αποτυχία CSRF"
 
 #: wtforms/csrf/session.py:74 wtforms/ext/csrf/session.py:71
 msgid "CSRF token expired"
-msgstr "CSRF έχει λήξει"
+msgstr "Έχει λήξει το διακριτικό CSRF"
 
 #: wtforms/ext/appengine/fields.py:87 wtforms/ext/appengine/fields.py:164
 #: wtforms/ext/appengine/fields.py:166 wtforms/ext/django/fields.py:96
@@ -121,7 +121,7 @@ msgstr "CSRF έχει λήξει"
 #: wtforms/ext/sqlalchemy/fields.py:177 wtforms/ext/sqlalchemy/fields.py:182
 #: wtforms/fields/core.py:456
 msgid "Not a valid choice"
-msgstr "Αγνωστη επιλογή"
+msgstr "Άγνωστη επιλογή"
 
 #: wtforms/ext/appengine/fields.py:185
 msgid "Not a valid list"
@@ -149,30 +149,30 @@ msgstr "Λανθασμένη Επιλογή: δεν μετατρέπεται"
 
 #: wtforms/fields/core.py:482
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "Λανθασμένη επιλογή(ες): κάποιες τιμές δέν μπορουσαν να μετατραπούν"
+msgstr "Λανθασμένη επιλογή(ές): κάποιες τιμές δεν μπορούσαν να μετατραπούν"
 
 #: wtforms/fields/core.py:489
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
-msgstr "'%(value)s' δέν είναι έγκυρη επιλογή για αυτο το πεδίο"
+msgstr "'%(value)s' δεν είναι έγκυρη επιλογή για αυτό το πεδίο"
 
 #: wtforms/fields/core.py:572
 msgid "Not a valid integer value"
-msgstr "Δέν είναι ακέραιο νούμερο"
+msgstr "Δεν είναι ακέραιο νούμερο"
 
 #: wtforms/fields/core.py:638
 msgid "Not a valid decimal value"
-msgstr "Δέν είναι δεκαδικό"
+msgstr "Δεν είναι δεκαδικό"
 
 #: wtforms/fields/core.py:665
 msgid "Not a valid float value"
-msgstr "Δέν είναι δεκαδικό"
+msgstr "Δεν είναι δεκαδικό"
 
 #: wtforms/fields/core.py:724
 msgid "Not a valid datetime value"
-msgstr "Δέν είναι σώστη ημερομηνία/ώρα"
+msgstr "Δεν είναι σωστή ημερομηνία/ώρα"
 
 #: wtforms/fields/core.py:741
 msgid "Not a valid date value"
-msgstr "Δέν είναι σωστή ημερομηνία"
+msgstr "Δεν είναι σωστή ημερομηνία"
 
