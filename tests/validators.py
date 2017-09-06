@@ -31,12 +31,17 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, email(), self.form, DummyField('bar.dk'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('@bar.dk'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar.ab12'))
         self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar@baz.com'))
 
         # Test IDNA domains
         self.assertEqual(email()(self.form, DummyField(u'foo@bücher.中国')), None)
+
+        # Test email address with invalid user part
+        self.assertRaises(ValidationError, email(), self.form, DummyField('蛤@baz.com'))
+
+        # Test too long domains
+        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@' + 'b.ar' * 64))
 
     def test_equal_to(self):
         self.form['foo'] = DummyField('test')
