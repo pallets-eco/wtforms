@@ -277,16 +277,34 @@ class Email(Regexp):
         self.validate_hostname = HostnameValidation(
             require_tld=True,
         )
-        super(Email, self).__init__(r'^.+@([^.@][^@]+)$', re.IGNORECASE, message)
+        email_regex = r"""^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9]
+                           (?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?
+                           (?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*
+                           $"""
+        # The above regex comes from
+        # https://www.w3.org/TR/html5/forms.html#e-mail-state-(type=email) .
+        super(Email, self).__init__(email_regex, re.IGNORECASE | re.VERBOSE,
+                                    message)
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext('Invalid email address.')
-
-        match = super(Email, self).__call__(form, field, message)
-        if not self.validate_hostname(match.group(1)):
+        if field.data:
+            try:
+                user, domain = field.data.split('@')
+            except ValueError:
+                raise ValidationError(message)
+            try:
+                domain = domain.encode('idna')
+            except UnicodeError:
+                raise ValidationError(message)
+            if not isinstance(domain, string_types):
+                domain = domain.decode('ascii')
+            field.data = '%s@%s' % (user, domain)
+        if len(field.data or '') > 255:
             raise ValidationError(message)
+        super(Email, self).__call__(form, field, message)
 
 
 class IPAddress(object):
