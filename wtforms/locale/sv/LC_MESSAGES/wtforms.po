@@ -20,100 +20,100 @@ msgstr ""
 #: wtforms/validators.py:55
 #, python-format
 msgid "Invalid field name '%s'."
-msgstr ""
+msgstr "Felaktigt fältnamn '%s'."
 
 #: wtforms/validators.py:63
 #, python-format
 msgid "Field must be equal to %(other_name)s."
-msgstr ""
+msgstr "Fältvärdet måste matcha %(other_name)s."
 
 #: wtforms/validators.py:96
 #, python-format
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fältet måste vara minst %(min)d tecken långt."
+msgstr[1] "Fältet måste vara minst %(min)d tecken långt."
 
 #: wtforms/validators.py:99
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fältet får inte vara längre än %(max)d tecken."
+msgstr[1] "Fältet får inte vara längre än %(max)d tecken."
 
 #: wtforms/validators.py:102
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr ""
+msgstr "Fältet måste vara mellan %(min)d och %(max)d tecken långt."
 
 #: wtforms/validators.py:138
 #, python-format
 msgid "Number must be at least %(min)s."
-msgstr ""
+msgstr "Numret får inte vara mindre än %(min)s."
 
 #: wtforms/validators.py:140
 #, python-format
 msgid "Number must be at most %(max)s."
-msgstr ""
+msgstr "Numret får inte vara högre än %(max)s."
 
 #: wtforms/validators.py:142
 #, python-format
 msgid "Number must be between %(min)s and %(max)s."
-msgstr ""
+msgstr "Numret måste vara mellan %(min)s och %(max)s."
 
 #: wtforms/validators.py:198 wtforms/validators.py:233
 msgid "This field is required."
-msgstr ""
+msgstr "Det här fältet är obligatoriskt."
 
 #: wtforms/validators.py:264
 msgid "Invalid input."
-msgstr ""
+msgstr "Felaktig indata."
 
 #: wtforms/validators.py:286
 msgid "Invalid email address."
-msgstr ""
+msgstr "Felaktig epost-adress."
 
 #: wtforms/validators.py:318
 msgid "Invalid IP address."
-msgstr ""
+msgstr "Felaktig IP-adress."
 
 #: wtforms/validators.py:367
 msgid "Invalid Mac address."
-msgstr ""
+msgstr "Felaktig MAC-adress."
 
 #: wtforms/validators.py:393
 msgid "Invalid URL."
-msgstr ""
+msgstr "Felaktig URL."
 
 #: wtforms/validators.py:412
 msgid "Invalid UUID."
-msgstr ""
+msgstr "Felaktig UUID."
 
 #: wtforms/validators.py:440
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr ""
+msgstr "Felaktigt värde, måste vara ett av: %(values)s."
 
 #: wtforms/validators.py:472
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr ""
+msgstr "Felaktigt värde, får inte vara något av: %(values)s."
 
 #: wtforms/csrf/core.py:83 wtforms/ext/csrf/form.py:47
 msgid "Invalid CSRF Token"
-msgstr ""
+msgstr "Felaktigt CSRF-token"
 
 #: wtforms/csrf/session.py:61 wtforms/ext/csrf/session.py:58
 msgid "CSRF token missing"
-msgstr ""
+msgstr "CSRF-token saknas"
 
 #: wtforms/csrf/session.py:69 wtforms/ext/csrf/session.py:66
 msgid "CSRF failed"
-msgstr ""
+msgstr "CSRF misslyckades"
 
 #: wtforms/csrf/session.py:74 wtforms/ext/csrf/session.py:71
 msgid "CSRF token expired"
-msgstr ""
+msgstr "CSRF-token utdaterat"
 
 #: wtforms/ext/appengine/fields.py:87 wtforms/ext/appengine/fields.py:164
 #: wtforms/ext/appengine/fields.py:166 wtforms/ext/django/fields.py:96
@@ -121,58 +121,58 @@ msgstr ""
 #: wtforms/ext/sqlalchemy/fields.py:177 wtforms/ext/sqlalchemy/fields.py:182
 #: wtforms/fields/core.py:456
 msgid "Not a valid choice"
-msgstr ""
+msgstr "Inte ett giltigt val"
 
 #: wtforms/ext/appengine/fields.py:185
 msgid "Not a valid list"
-msgstr ""
+msgstr "Inte en giltig lista"
 
 #: wtforms/ext/appengine/fields.py:204
 msgid "Not a valid integer list"
-msgstr ""
+msgstr "Inte en giltig heltalslista"
 
 #: wtforms/ext/dateutil/fields.py:63
 msgid "Please input a date/time value"
-msgstr ""
+msgstr "Ange datum- och tidsvärde"
 
 #: wtforms/ext/dateutil/fields.py:75 wtforms/ext/dateutil/fields.py:83
 msgid "Invalid date/time input"
-msgstr ""
+msgstr "Felaktigt datum/tid"
 
 #: wtforms/ext/sqlalchemy/validators.py:34
 msgid "Already exists."
-msgstr ""
+msgstr "Existerar redan."
 
 #: wtforms/fields/core.py:449
 msgid "Invalid Choice: could not coerce"
-msgstr ""
+msgstr "Felaktigt val; kunde inte ceorce:a"
 
 #: wtforms/fields/core.py:482
 msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr ""
+msgstr "Felaktigt val; ett eller flera inputfält kunde inte coerca:s"
 
 #: wtforms/fields/core.py:489
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
-msgstr ""
+msgstr "'%(value)s' är inte ett giltigt värde för det här fältet"
 
 #: wtforms/fields/core.py:572
 msgid "Not a valid integer value"
-msgstr ""
+msgstr "Inte ett giltigt heltal"
 
 #: wtforms/fields/core.py:638
 msgid "Not a valid decimal value"
-msgstr ""
+msgstr "Inte ett giltigt decimaltal"
 
 #: wtforms/fields/core.py:665
 msgid "Not a valid float value"
-msgstr ""
+msgstr "Inte ett giltigt flyttal"
 
 #: wtforms/fields/core.py:724
 msgid "Not a valid datetime value"
-msgstr ""
+msgstr "Inte ett giltigt datum-/tidsvärde"
 
 #: wtforms/fields/core.py:741
 msgid "Not a valid date value"
-msgstr ""
+msgstr "Inte ett giltigt datum"
 
