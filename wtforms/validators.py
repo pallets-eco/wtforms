@@ -264,7 +264,7 @@ class Regexp(object):
         return match
 
 
-class Email(Regexp):
+class Email(object):
     """
     Validates an email address. Note that this uses a very primitive regular
     expression and should only be used in instances where you later verify by
@@ -273,19 +273,34 @@ class Email(Regexp):
     :param message:
         Error message to raise in case of a validation error.
     """
+
+    user_regex = re.compile(
+        r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*\Z"  # dot-atom
+        r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"\Z)',  # quoted-string
+        re.IGNORECASE)
+
     def __init__(self, message=None):
+        self.message = message
         self.validate_hostname = HostnameValidation(
             require_tld=True,
         )
-        super(Email, self).__init__(r'^.+@([^.@][^@]+)$', re.IGNORECASE, message)
 
     def __call__(self, form, field):
+        value = field.data
+
         message = self.message
         if message is None:
             message = field.gettext('Invalid email address.')
 
-        match = super(Email, self).__call__(form, field, message)
-        if not self.validate_hostname(match.group(1)):
+        if not value or '@' not in value:
+            raise ValidationError(message)
+
+        user_part, domain_part = value.rsplit('@', 1)
+
+        if not self.user_regex.match(user_part):
+            raise ValidationError(message)
+
+        if not self.validate_hostname(domain_part):
             raise ValidationError(message)
 
 
@@ -506,7 +521,10 @@ class HostnameValidation(object):
                 return True
 
         # Encode out IDNA hostnames. This makes further validation easier.
-        hostname = hostname.encode('idna')
+        try:
+            hostname = hostname.encode('idna')
+        except UnicodeError:
+            pass
 
         # Turn back into a string in Python 3x
         if not isinstance(hostname, string_types):
