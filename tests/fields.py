@@ -136,6 +136,7 @@ class FiltersTest(TestCase):
 class FieldTest(TestCase):
     class F(Form):
         a = StringField(default='hello', render_kw={'readonly': True, 'foo': u'bar'})
+        b = StringField(validators=[validators.InputRequired()])
 
     def setUp(self):
         self.field = self.F().a
@@ -203,6 +204,10 @@ class FieldTest(TestCase):
         self.assertEqual(f1.items.choices, [('a', 'a')])
         self.assertEqual(f2.items.choices, [('b', 'b')])
         self.assertTrue(f1.items.choices is not f2.items.choices)
+
+    def test_required_flag(self):
+        form = self.F()
+        self.assertEqual(form.b(), u'<input id="b" name="b" required type="text" value="">')
 
 
 class PrePostTestField(StringField):
@@ -684,7 +689,7 @@ class FormFieldTest(TestCase):
         self.assertEqual(
             self.F1().a(),
             '''<table id="a">'''
-            '''<tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" type="text" value=""></td></tr>'''
+            '''<tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" required type="text" value=""></td></tr>'''
             '''<tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value=""></td></tr>'''
             '''</table>'''
         )
