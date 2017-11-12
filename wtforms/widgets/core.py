@@ -179,6 +179,8 @@ class Input(object):
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
+        if 'required' not in kwargs and 'required' in getattr(field, 'flags', []):
+            kwargs['required'] = True
         return HTMLString('<input %s>' % self.html_params(name=field.name, **kwargs))
 
 
@@ -289,6 +291,8 @@ class TextArea(object):
     """
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
+        if 'required' not in kwargs and 'required' in getattr(field, 'flags', []):
+            kwargs['required'] = True
         return HTMLString('<textarea %s>%s</textarea>' % (
             html_params(name=field.name, **kwargs),
             escape(text_type(field._value()), quote=False)
@@ -313,6 +317,8 @@ class Select(object):
         kwargs.setdefault('id', field.id)
         if self.multiple:
             kwargs['multiple'] = True
+        if 'required' not in kwargs and 'required' in getattr(field, 'flags', []):
+            kwargs['required'] = True
         html = ['<select %s>' % html_params(name=field.name, **kwargs)]
         for val, label, selected in field.iter_choices():
             html.append(self.render_option(val, label, selected))
