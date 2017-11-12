@@ -179,6 +179,8 @@ class Input(object):
         kwargs.setdefault('type', self.input_type)
         if 'value' not in kwargs:
             kwargs['value'] = field._value()
+        if 'required' not in kwargs and 'required' in getattr(field, 'flags', []):
+            kwargs['required'] = True
         return HTMLString('<input %s>' % self.html_params(name=field.name, **kwargs))
 
 
