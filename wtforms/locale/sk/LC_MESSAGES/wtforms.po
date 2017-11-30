@@ -101,7 +101,7 @@ msgstr "Neplatná hodnota, povolené hodnoty sú: %(values)s."
 #: wtforms/validators.py:472
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr "Neplatná hodnota, nesmie byť je z: %(values)s."
+msgstr "Neplatná hodnota, nesmie byť jedna z: %(values)s."
 
 #: wtforms/csrf/core.py:83 wtforms/ext/csrf/form.py:47
 msgid "Invalid CSRF Token"
