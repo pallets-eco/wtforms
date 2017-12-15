@@ -10,7 +10,8 @@ __all__ = (
     'IPAddress', 'ip_address', 'InputRequired', 'input_required', 'Length',
     'length', 'NumberRange', 'number_range', 'Optional', 'optional',
     'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
-    'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID'
+    'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID',
+    'ValidationError', 'StopValidation'
 )
 
 
