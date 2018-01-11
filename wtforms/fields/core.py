@@ -696,7 +696,7 @@ class BooleanField(Field):
         ``('false', '')``
     """
     widget = widgets.CheckboxInput()
-    false_values = ('false', '')
+    false_values = (False, 'false', '')
 
     def __init__(self, label=None, validators=None, false_values=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
