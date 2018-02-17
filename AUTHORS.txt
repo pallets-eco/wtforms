@@ -1,6 +1,6 @@
 WTForms was originally created in 2008 by James Crasta and Thomas Johansson. It
 is maintained by an ever growing list of contributors, colloquially referred to
-as the the WTForms team.
+as the WTForms team.
 
     Adam Lowry
     Ali Aafshar
