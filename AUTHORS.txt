@@ -20,5 +20,5 @@ as the WTForms team.
     Thomas Johansson
     Vinay Sajip
 
-If you wish to added to the list, be sure to update this file in your pull
+If you wish to be added to the list, be sure to update this file in your pull
 request.
