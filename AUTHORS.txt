@@ -1,25 +1,21 @@
-WTForms is written and maintained by the WTForms Team and various contributors.
+WTForms was originally created in 2008 by James Crasta and Thomas Johansson. It is maintained by an ever growing list of contributors, colloquially referred to as the the WTForms team.
 
-Lead Developers:
+    Adam Lowry
+    Ali Aafshar
+    Andreas Madsack
+    Arni Birgisson
+    Christopher Grebs
+    Dima Moroz
+    Eduardo Schettino
+    Emil Vladev
+    Harro van der Klauw
+    Jakob Holmelund
+    James Crasta
+    Jean-Philippe Serafin
+    Ricardo Bánffy
+    Rodrigo Moraes
+    Sebastian Wiesner
+    Thomas Johansson
+    Vinay Sajip
 
-- Thomas Johansson <prencher@prencher.dk>
-- James Crasta <james@crasta.com>
-
-Contributors:
-
-- Adam Lowry
-- Ali Aafshar
-- Andreas Madsack
-- Arni Birgisson
-- Christopher Grebs
-- Dima Moroz
-- Eduardo Schettino
-- Emil Vladev
-- Harro van der Klauw
-- Jakob Holmelund
-- Jean-Philippe Serafin
-- Ricardo Bánffy
-- Rodrigo Moraes
-- Sebastian Wiesner
-- Vinay Sajip
-
+If you wish to added to the list, be sure to update this file in your pull request.
