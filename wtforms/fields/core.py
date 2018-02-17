@@ -383,7 +383,7 @@ class Label(object):
     """
     def __init__(self, field_id, text):
         self.field_id = field_id
-        self.text = text
+        self.text = widgets.escape_html(text)
 
     def __str__(self):
         return self()
@@ -401,7 +401,12 @@ class Label(object):
             kwargs.setdefault('for', self.field_id)
 
         attributes = widgets.html_params(**kwargs)
-        return Markup('<label %s>%s</label>' % (attributes, text or self.text))
+        if text:
+            text = widgets.escape_html(text)
+
+        return widgets.HTMLString(
+            '<label %s>%s</label>' % (attributes, text or self.text)
+        )
 
     def __repr__(self):
         return 'Label(%r, %r)' % (self.field_id, self.text)

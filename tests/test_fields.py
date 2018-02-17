@@ -74,6 +74,17 @@ class LabelTest(TestCase):
         self.assertEqual(label(for_='foo'), """<label for="foo">Caption</label>""")
         self.assertEqual(label(**{'for': 'bar'}), """<label for="bar">Caption</label>""")
 
+    def test_escaped_label_text(self):
+        label = Label('test', '<script>alert("test");</script>')
+        self.assertEqual(
+            label(for_='foo'),
+            """<label for="foo">&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;</label>"""
+        )
+        self.assertEqual(
+            label(**{'for': 'bar'}),
+            """<label for="bar">&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;</label>"""
+        )
+
 
 class FlagsTest(TestCase):
     def setUp(self):
