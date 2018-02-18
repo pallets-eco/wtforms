@@ -51,6 +51,7 @@ class BaseForm(object):
             options = dict(name=name, prefix=prefix, translations=translations)
             field = meta.bind_field(self, unbound_field, options)
             self._fields[name] = field
+        super(BaseForm, self).__init__()
 
     def __iter__(self):
         """Iterate form fields in creation order."""
