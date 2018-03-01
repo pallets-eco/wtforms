@@ -175,7 +175,7 @@ The Field base class
                 {% else %}
                     <td>{{ field.label }}</td>
                     <td>{{ field }}</td>
-                {% end %}
+                {% endif %}
                 </tr>
             {% endfor %}
 
