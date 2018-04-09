@@ -693,10 +693,13 @@ class BooleanField(Field):
     :param false_values:
         If provided, a sequence of strings each of which is an exact match
         string of what is considered a "false" value. Defaults to the tuple
-        ``('false', '')``
+        ``('false', '', 'False', False, 0, '0')``
+        This default is important if you want a POST request (e.g., using
+        the python requests module) to work correctly as most POST requests
+        will send JSON with something like that.
     """
     widget = widgets.CheckboxInput()
-    false_values = (False, 'false', '')
+    false_values = (False, 'false', '', 'False', 0, '0')
 
     def __init__(self, label=None, validators=None, false_values=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
