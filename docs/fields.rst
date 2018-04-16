@@ -413,6 +413,36 @@ complex data structures such as lists and nested objects can be represented.
             first_name  = StringField()
             last_name   = StringField()
             im_accounts = FieldList(FormField(IMForm))
+    
+    
+    Populate a Fieldlist with enclosed Formfields
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    To populate a :class:`FieldList` with an enclosed :class:`Formfield`
+    you should use an instance of the form used in the :class:`Fieldlist`
+    writing directly on the form attributes rather than on their data
+    property.
+    
+        #  Forms
+        class ImgForm(Form):
+            href = StringField()
+            alt = StringField()
+            
+        
+        class CarouselForm(Form):
+            img_list = FieldList(FormField(ImgForm), min_entries=5)
+            
+        
+        def populated_carousel(img_data):
+            carousel = CarouselForm()
+            while len(carousel.img_list.entries) > 0: #  Removes empty fields
+            for img in img_data:
+                img_form = ImgForm()
+                img_form.href = img.href  # Put the data directly on the href attribute and 
+                img_form.alt = img.alt  #   not the href.data on the subForm instance.
+                carousel.img_list.append_entry(img_form)
+            return carousel
+                
+    
 
 
 Custom Fields
