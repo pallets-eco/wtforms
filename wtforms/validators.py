@@ -1,17 +1,16 @@
 from __future__ import unicode_literals
 
 import re
-import uuid
+import warnings
 
 from wtforms.compat import string_types, text_type
 
 __all__ = (
     'DataRequired', 'data_required', 'Email', 'email', 'EqualTo', 'equal_to',
-    'IPAddress', 'ip_address', 'InputRequired', 'input_required', 'Length',
+    'IPAddress', 'IPList', 'ip_address', 'InputRequired', 'input_required', 'Length',
     'length', 'NumberRange', 'number_range', 'Optional', 'optional',
-    'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
-    'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID',
-    'ValidationError', 'StopValidation'
+    'Required', 'required', 'Regexp', 'regexp', 'URL', 'url', 'AnyOf',
+    'any_of', 'NoneOf', 'none_of', 'MacAddress', 'mac_address', 'UUID'
 )
 
 
@@ -209,6 +208,22 @@ class DataRequired(object):
             raise StopValidation(message)
 
 
+class Required(DataRequired):
+    """
+    Legacy alias for DataRequired.
+
+    This is needed over simple aliasing for those who require that the
+    class-name of required be 'Required.'
+
+    """
+    def __init__(self, *args, **kwargs):
+        super(Required, self).__init__(*args, **kwargs)
+        warnings.warn(
+            'Required is going away in WTForms 3.0, use DataRequired',
+            DeprecationWarning, stacklevel=2
+        )
+
+
 class InputRequired(object):
     """
     Validates that input was provided for this field.
@@ -265,7 +280,7 @@ class Regexp(object):
         return match
 
 
-class Email(object):
+class Email(Regexp):
     """
     Validates an email address. Note that this uses a very primitive regular
     expression and should only be used in instances where you later verify by
@@ -274,36 +289,89 @@ class Email(object):
     :param message:
         Error message to raise in case of a validation error.
     """
-
-    user_regex = re.compile(
-        r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*\Z"  # dot-atom
-        r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"\Z)',  # quoted-string
-        re.IGNORECASE)
-
     def __init__(self, message=None):
-        self.message = message
         self.validate_hostname = HostnameValidation(
             require_tld=True,
         )
+        super(Email, self).__init__(r'^.+@([^.@][^@]+)$', re.IGNORECASE, message)
 
     def __call__(self, form, field):
-        value = field.data
-
         message = self.message
         if message is None:
             message = field.gettext('Invalid email address.')
 
-        if not value or '@' not in value:
+            
+        match = super(Email, self).__call__(form, field, message)
+        if not self.validate_hostname(match.group(1)):
             raise ValidationError(message)
 
-        user_part, domain_part = value.rsplit('@', 1)
+class IPList(object):
+    """
+    Validates an IP address list.
+    Input must be of Type list.
 
-        if not self.user_regex.match(user_part):
+    :param ipv4:
+        If True, accept IPv4 addresses as valid (default True)
+    :param ipv6:
+        If True, accept IPv6 addresses as valid (default False)
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, ipv4=True, ipv6=False, message=None):
+        if not ipv4 and not ipv6:
+            raise ValueError('IP Address Validator must have at least one of ipv4 or ipv6 enabled.')
+        self.ipv4 = ipv4
+        self.ipv6 = ipv6
+        self.message = message
+
+    def __call__(self, form, field):
+        value = field.data
+        valid = False
+        if type(value) is list:
+            for ip in value:
+                valid = (self.ipv4 and self.check_ipv4(ip)) or (self.ipv6 and self.check_ipv6(ip))
+
+                if not valid:
+                    message = self.message
+                    if message is None:
+                        message = field.gettext('Invalid IP address.')
+                        raise ValidationError(message)
+        else:
+            message = field.gettext('Invalid Input.. Object Type must be list.')
             raise ValidationError(message)
 
-        if not self.validate_hostname(domain_part):
-            raise ValidationError(message)
+    @classmethod
+    def check_ipv4(cls, value):
+        parts = value.split('.')
+        if len(parts) == 4 and all(x.isdigit() for x in parts):
+            numbers = list(int(x) for x in parts)
+            return all(num >= 0 and num < 256 for num in numbers)
+        return False
 
+    @classmethod
+    def check_ipv6(cls, value):
+        parts = value.split(':')
+        if len(parts) > 8:
+            return False
+
+        num_blank = 0
+        for part in parts:
+            if not part:
+                num_blank += 1
+            else:
+                try:
+                    value = int(part, 16)
+                except ValueError:
+                    return False
+                else:
+                    if value < 0 or value >= 65536:
+                        return False
+
+        if num_blank < 2:
+            return True
+        elif num_blank == 2 and not parts[0] and not parts[1]:
+            return True
+        return False    
 
 class IPAddress(object):
     """
@@ -419,7 +487,7 @@ class URL(Regexp):
             raise ValidationError(message)
 
 
-class UUID(object):
+class UUID(Regexp):
     """
     Validates a UUID.
 
@@ -427,16 +495,15 @@ class UUID(object):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-        self.message = message
+        pattern = r'^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$'
+        super(UUID, self).__init__(pattern, message=message)
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext('Invalid UUID.')
-        try:
-            uuid.UUID(field.data)
-        except ValueError:
-            raise ValidationError(message)
+
+        super(UUID, self).__call__(form, field, message)
 
 
 class AnyOf(object):
@@ -522,10 +589,7 @@ class HostnameValidation(object):
                 return True
 
         # Encode out IDNA hostnames. This makes further validation easier.
-        try:
-            hostname = hostname.encode('idna')
-        except UnicodeError:
-            pass
+        hostname = hostname.encode('idna')
 
         # Turn back into a string in Python 3x
         if not isinstance(hostname, string_types):
@@ -556,6 +620,7 @@ mac_address = MacAddress
 length = Length
 number_range = NumberRange
 optional = Optional
+required = Required
 input_required = InputRequired
 data_required = DataRequired
 regexp = Regexp
