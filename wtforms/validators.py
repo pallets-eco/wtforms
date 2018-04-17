@@ -26,7 +26,6 @@ class ValidationError(ValueError):
 class StopValidation(Exception):
     """
     Causes the validation chain to stop.
-
     If StopValidation is raised, no more validators in the validation chain are
     called. If raised with a message, the message will be added to the errors
     list.
@@ -38,7 +37,6 @@ class StopValidation(Exception):
 class EqualTo(object):
     """
     Compares the values of two fields.
-
     :param fieldname:
         The name of the other field to compare to.
     :param message:
@@ -70,7 +68,6 @@ class EqualTo(object):
 class Length(object):
     """
     Validates the length of a string.
-
     :param min:
         The minimum required length of the string. If not provided, minimum
         length will not be checked.
@@ -111,7 +108,6 @@ class NumberRange(object):
     Validates that a number is of a minimum and/or maximum value, inclusive.
     This will work with any comparable number type, such as floats and
     decimals, not just integers.
-
     :param min:
         The minimum required value of the number. If not provided, minimum
         value will not be checked.
@@ -149,10 +145,8 @@ class NumberRange(object):
 class Optional(object):
     """
     Allows empty input and stops the validation chain from continuing.
-
     If input is empty, also removes prior errors (such as processing errors)
     from the field.
-
     :param strip_whitespace:
         If True (the default) also stop the validation chain on input which
         consists of only whitespace.
@@ -174,22 +168,18 @@ class Optional(object):
 class DataRequired(object):
     """
     Checks the field's data is 'truthy' otherwise stops the validation chain.
-
     This validator checks that the ``data`` attribute on the field is a 'true'
     value (effectively, it does ``if field.data``.) Furthermore, if the data
     is a string type, a string containing only whitespace characters is
     considered false.
-
     If the data is empty, also removes prior errors (such as processing errors)
     from the field.
-
     **NOTE** this validator used to be called `Required` but the way it behaved
     (requiring coerced data, not input data) meant it functioned in a way
     which was not symmetric to the `Optional` validator and furthermore caused
     confusion with certain fields which coerced data to 'falsey' values like
     ``0``, ``Decimal(0)``, ``time(0)`` etc. Unless a very specific reason
     exists, we recommend using the :class:`InputRequired` instead.
-
     :param message:
         Error message to raise in case of a validation error.
     """
@@ -212,7 +202,6 @@ class DataRequired(object):
 class InputRequired(object):
     """
     Validates that input was provided for this field.
-
     Note there is a distinction between this and DataRequired in that
     InputRequired looks that form-input data was provided, and DataRequired
     looks at the post-coercion data.
@@ -236,7 +225,6 @@ class InputRequired(object):
 class Regexp(object):
     """
     Validates the field against a user provided regexp.
-
     :param regex:
         The regular expression string to use. Can also be a compiled regular
         expression pattern.
@@ -270,7 +258,6 @@ class Email(object):
     Validates an email address. Note that this uses a very primitive regular
     expression and should only be used in instances where you later verify by
     other means, such as email activation or lookups.
-
     :param message:
         Error message to raise in case of a validation error.
     """
@@ -303,11 +290,11 @@ class Email(object):
 
         if not self.validate_hostname(domain_part):
             raise ValidationError(message)
-            
+         
+         
 class IPList(object):
     """
     Validates an IP address string delimitted list.
-
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
     :param ipv6:
@@ -368,10 +355,10 @@ class IPList(object):
             return True
         return False    
 
+
 class IPAddress(object):
     """
     Validates an IP address.
-
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
     :param ipv6:
@@ -435,7 +422,6 @@ class IPAddress(object):
 class MacAddress(Regexp):
     """
     Validates a MAC address.
-
     :param message:
         Error message to raise in case of a validation error.
     """
@@ -456,7 +442,6 @@ class URL(Regexp):
     Simple regexp based url validation. Much like the email validator, you
     probably want to validate the url later by other means if the url must
     resolve.
-
     :param require_tld:
         If true, then the domain-name portion of the URL must contain a .tld
         suffix.  Set this to false if you want to allow domains like
@@ -485,7 +470,6 @@ class URL(Regexp):
 class UUID(object):
     """
     Validates a UUID.
-
     :param message:
         Error message to raise in case of a validation error.
     """
@@ -505,7 +489,6 @@ class UUID(object):
 class AnyOf(object):
     """
     Compares the incoming data to a sequence of valid inputs.
-
     :param values:
         A sequence of valid inputs.
     :param message:
@@ -537,7 +520,6 @@ class AnyOf(object):
 class NoneOf(object):
     """
     Compares the incoming data to a sequence of invalid inputs.
-
     :param values:
         A sequence of invalid inputs.
     :param message:
@@ -569,7 +551,6 @@ class NoneOf(object):
 class HostnameValidation(object):
     """
     Helper class for checking hostnames for validation.
-
     This is not a validator in and of itself, and as such is not exported.
     """
     hostname_part = re.compile(r'^(xn-|[a-z0-9]+)(-[a-z0-9]+)*$', re.IGNORECASE)
