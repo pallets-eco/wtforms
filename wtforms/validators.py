@@ -377,7 +377,7 @@ class MacAddress(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, message=None):
-        pattern = r'^(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$'
+        pattern = r'^(?:[0-9a-fA-F]{2}(:|-)){5}[0-9a-fA-F]{2}$'
         super(MacAddress, self).__init__(pattern, message=message)
 
     def __call__(self, form, field):
