@@ -469,7 +469,7 @@ class SelectField(SelectFieldBase):
 
     def pre_validate(self, form):
         for v, _ in self.choices:
-            if self.data == v:
+            if self.data == self.coerce(v):
                 break
         else:
             raise ValueError(self.gettext('Not a valid choice'))
@@ -502,7 +502,7 @@ class SelectMultipleField(SelectField):
 
     def pre_validate(self, form):
         if self.data:
-            values = list(c[0] for c in self.choices)
+            values = list(self.coerce(c[0]) for c in self.choices)
             for d in self.data:
                 if d not in values:
                     raise ValueError(self.gettext("'%(value)s' is not a valid choice for this field") % dict(value=d))
