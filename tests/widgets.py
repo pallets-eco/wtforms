@@ -43,6 +43,7 @@ class HTMLParamsTest(TestCase):
 
     def test_aria_prefix(self):
         self.assertEqual(html_params(aria_foo='bar'), 'aria-foo="bar"')
+        self.assertEqual(html_params(aria_foo_bar='foobar'), 'aria-foo-bar="foobar"')
 
     def test_quoting(self):
         self.assertEqual(html_params(foo='hi&bye"quot'), 'foo="hi&amp;bye&quot;quot"')
