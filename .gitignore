@@ -16,3 +16,4 @@ dist/
 docs/_build
 docs/html
 env/
+.pytest_cache/
