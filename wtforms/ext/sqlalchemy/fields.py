@@ -186,5 +186,5 @@ class QuerySelectMultipleField(QuerySelectField):
 
 
 def get_pk_from_identity(obj):
-    cls, key = identity_key(instance=obj)
+    key = identity_key(instance=obj)[1]
     return ':'.join(text_type(x) for x in key)
