@@ -6,7 +6,9 @@ python:
   - 3.3
   - 3.4
   - 3.5
-  - pypy
+  - 3.6
+  - nightly
+  - pypy3
 
 env:
   - DJANGO="Django<1.5"
@@ -20,6 +22,12 @@ matrix:
       env: DJANGO="Django<1.5"
     - python: 3.4
       env: DJANGO="Django<1.5"
+  allow_failures:
+    - python: 2.6
+    - python: 3.3
+    - python: nightly
+    - python: pypy3
+  fast_finish: true
 
 install:
   - "pip install $DJANGO $LOCALFLAVOR $SQLALCHEMY"
@@ -30,3 +38,12 @@ script: "coverage run tests/runtests.py --with-pep8 --force-all"
 after_success:
   - pip install coveralls
   - coveralls
+
+cache:
+  - pip
+
+branches:
+  only:
+    - master
+    - /^.*-maintenance$/
+    - /^.*-release$/
