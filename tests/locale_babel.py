@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
-import babel
 
 from decimal import Decimal, ROUND_UP
 from unittest import TestCase
+
+from tests.common import DummyPostData
 from wtforms import Form
 from wtforms.fields import DecimalField
 from wtforms.utils import unset_value
-from tests.common import DummyPostData
 
 
 class TestLocaleDecimal(TestCase):
@@ -46,7 +46,7 @@ class TestLocaleDecimal(TestCase):
         self._format_test('123.456,789', val, ['es_ES'])
         self._format_test('123.456,789', val, ['de_DE'])
         self._format_test('-5,2', neg, ['de_DE'])
-        self._format_test("-12'345.2", '-12345.2', ['de_CH'])
+        self._format_test("-12’345.2", '-12345.2', ['de_CH'])
 
     def _parse_test(self, raw_val, expected, locales=unset_value):
         meta = None
@@ -74,7 +74,7 @@ class TestLocaleDecimal(TestCase):
         self._parse_test('1,23,456.789', expected)
         self._parse_test('1,23,456.789', expected, ['en_US'])
         self._parse_test('1.23.456,789', expected, ['de_DE'])
-        self._parse_test("1'23'456.789", expected, ['de_CH'])
+        self._parse_test("1’23’456.789", expected, ['de_CH'])
 
         self._fail_parse('1,23,456.5', 'Keine g\xfcltige Dezimalzahl', ['de_DE'])
         self._fail_parse('1.234.567,5', 'Not a valid decimal value', ['en_US'])
