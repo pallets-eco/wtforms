@@ -1,5 +1,57 @@
+.. currentmodule:: wtforms
+
 WTForms Changelog
 =================
+
+
+Version 2.2
+-----------
+
+Unreleased
+
+-   Merged new and updated translations from the community.
+-   Passing ``data_`` args to render a field converts all the
+    underscores to hyphens when rendering the HTML attribute, not just
+    the first one. ``data_foo_bar`` becomes ``data-foo-bar``. (`#248`_)
+-   The :class:`~validators.UUID` validator uses the :class:`uuid.UUID`
+    class instead of a regex. (`#251`_)
+-   :class:`~fields.SelectField` copies the list of ``choices`` passed
+    to it so modifying an instance's choices will not modify the global
+    form definition. (`#286`_)
+-   Fields call :meth:`~fields.Field.process_formdata` even if the raw
+    data is empty. This makes :class:`~fields.StringField` default to an
+    empty string instead of ``None``. (`#280`_)
+-   Added a :class:`~fields.MultipleFileField` to handle a multi-file
+    input. :class:`~fields.FileField` continues to handle only one
+    value. The underlying :class:`~widgets.FileInput` widget gained a
+    ``multiple`` argument. (`#281`_)
+-   :class:`~fields.SelectField` choices can contain HTML (MarkupSafe
+    ``Markup`` object or equivalent API) and will be rendered properly.
+    (`#302`_)
+-   :class:`~fields.TimeField` and
+    :class:`html5.TimeField <fields.html5.TimeField>` were added.
+    (`#254`_)
+-   Improved :class:`~validators.Email`. Note that it is still
+    unreasonable to validate all emails with a regex and you should
+    prefer validating by actually sending an email. (`#294`_)
+-   Widgets render the ``required`` attribute when using a validator
+    that provides the ``'required'`` flag, such as
+    :class:`~validators.DataRequired`. (`#361`_)
+-   Fix a compatibility issue with SQLAlchemy 2.1 that caused
+    :class:`~ext.sqlalchemy.fields.QuerySelectField` to fail with
+    ``ValueError: too many values to unpack``. (`#391`_)
+
+.. _#248: https://github.com/wtforms/wtforms/pulls/248
+.. _#251: https://github.com/wtforms/wtforms/pulls/251
+.. _#254: https://github.com/wtforms/wtforms/pulls/254
+.. _#280: https://github.com/wtforms/wtforms/pulls/280
+.. _#281: https://github.com/wtforms/wtforms/pulls/281
+.. _#286: https://github.com/wtforms/wtforms/pulls/286
+.. _#294: https://github.com/wtforms/wtforms/pulls/294
+.. _#302: https://github.com/wtforms/wtforms/pulls/302
+.. _#361: https://github.com/wtforms/wtforms/pulls/361
+.. _#391: https://github.com/wtforms/wtforms/pulls/391
+
 
 Version 2.1
 -----------
