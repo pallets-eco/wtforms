@@ -176,3 +176,4 @@ msgstr "Not a valid date value"
 #: wtforms/fields/core.py:779
 msgid "Not a valid time value"
 msgstr "Not a valid time value"
+
