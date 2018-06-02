@@ -167,12 +167,10 @@ msgid "Not a valid float value"
 msgstr "Неверное десятичное число"
 
 #: wtforms/fields/core.py:632
-#, fuzzy
 msgid "Not a valid datetime value"
-msgstr "Неверное десятичное число"
+msgstr ""
 
 #: wtforms/fields/core.py:649
-#, fuzzy
 msgid "Not a valid date value"
-msgstr "Неверное десятичное число"
+msgstr ""
 

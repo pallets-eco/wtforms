@@ -162,12 +162,10 @@ msgid "Not a valid float value"
 msgstr "不是有效的浮点数"
 
 #: wtforms/fields/core.py:632
-#, fuzzy
 msgid "Not a valid datetime value"
 msgstr "不是有效的日期与时间值"
 
 #: wtforms/fields/core.py:649
-#, fuzzy
 msgid "Not a valid date value"
 msgstr "不是有效的日期值"
 
