@@ -18,7 +18,7 @@ generation from models.
     see `WTForms-Appengine`_
 
 
-.. _WTForms-Appengine: http://github.com/wtforms/wtforms-appengine
+.. _WTForms-Appengine: https://github.com/wtforms/wtforms-appengine
 
 Model Forms
 ~~~~~~~~~~~
@@ -41,7 +41,7 @@ Datastore-backed Fields
 NDB
 ~~~
 
-WTForms includes support for NDB models and can support mapping the 
+WTForms includes support for NDB models and can support mapping the
 relationship fields as well as generating forms from models.
 
 .. autoclass:: KeyPropertyField(default field arguments, reference_class=None, get_label=None, allow_blank=False, blank_text='')
@@ -59,9 +59,9 @@ Dateutil
 
 For better date-time parsing using the `python-dateutil`_  package,
 :mod:`wtforms.ext.dateutil` provides a set of fields to use to accept a wider
-range of date input. 
+range of date input.
 
-.. _python-dateutil: https://dateutil.readthedocs.org/
+.. _python-dateutil: https://dateutil.readthedocs.io/
 
 .. autoclass:: DateTimeField(default field arguments, parse_kwargs=None, display_format='%Y-%m-%d %H:%M')
 
@@ -75,12 +75,12 @@ This extension provides templatetags to make it easier to work with Django
 templates and WTForms' html attribute rendering. It also provides a generator
 for automatically creating forms based on Django ORM models.
 
-.. deprecated:: 2.0 
+.. deprecated:: 2.0
     ``wtforms.ext.django`` is now deprecated, and will be removed in
     WTForms 3.0. For Django support that will continue to be updated,
     see `WTForms-Django`_
 
-.. _WTForms-Django: http://github.com/wtforms/wtforms-django
+.. _WTForms-Django: https://github.com/wtforms/wtforms-django
 
 Templatetags
 ~~~~~~~~~~~~
@@ -90,8 +90,8 @@ Django templates do not allow arbitrarily calling functions with parameters,
 making it impossible to use the html attribute rendering feature of WTForms. To
 alleviate this, we provide a templatetag.
 
-Adding :mod:`wtforms.ext.django` to your INSTALLED_APPS will make the wtforms 
-template library available to your application.  With this you can pass extra 
+Adding :mod:`wtforms.ext.django` to your INSTALLED_APPS will make the wtforms
+template library available to your application.  With this you can pass extra
 attributes to form fields similar to the usage in jinja:
 
 .. code-block:: django
@@ -285,7 +285,7 @@ request.
 
     .. attribute:: SECRET_KEY
 
-        Must be set by subclasses to a random byte string that will be used to generate HMAC digests. 
+        Must be set by subclasses to a random byte string that will be used to generate HMAC digests.
 
     .. attribute:: TIME_LIMIT
 
@@ -299,7 +299,7 @@ I18n
 .. module:: wtforms.ext.i18n
 
 .. deprecated:: 2.0
-    I18n extension is now deprecated in favor of using the built-in locales 
+    I18n extension is now deprecated in favor of using the built-in locales
     support on the form.
 
 .. module:: wtforms.ext.i18n.form

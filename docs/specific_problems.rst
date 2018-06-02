@@ -75,14 +75,14 @@ subclasses:
 
         F.username = StringField('username')
         for name in iterate_some_model_dynamically():
-            setattr(F, name, StringField(name.title())) 
+            setattr(F, name, StringField(name.title()))
 
         form = F(request.POST, ...)
         # do view stuff
 
 For more form composition tricks, refer to `this mailing list post`_
 
-.. _this mailing list post: http://groups.google.com/group/wtforms/browse_thread/thread/7099776aacd989e0/772807dfb4b9635b?#772807dfb4b9635b
+.. _this mailing list post: https://groups.google.com/forum/#!topic/wtforms/cJl3aqzZieA
 
 
 .. _jinja-macros-example:
@@ -109,7 +109,7 @@ of rendering errors for a form field. Here's a Jinja2_ macro that may save you t
 
     Usage: {{ with_errors(form.field, style='font-weight: bold') }}
 
-.. _Jinja2: http://jinja.pocoo.org/2/
+.. _Jinja2: http://jinja.pocoo.org/
 
 
 Specialty Field Tricks

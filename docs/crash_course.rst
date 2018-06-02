@@ -27,30 +27,18 @@ templating engine you like, as well.
 Download / Installation
 -----------------------
 
-The easiest way to install WTForms is by using easy_install or pip:
+WTForms is available through `PyPI`_. Install it using pip::
 
-.. code-block:: ruby
-
-    easy_install WTForms
     pip install WTForms
 
-You can also `download`_ WTForms manually
-from PyPI and then run ``python setup.py install``.
-
-If you're the sort that likes to risk it all and run the latest version from
-Git, you can grab a `packaged up version`_ of the tip, or head over 
-to the `project page`_ and clone the repository.
-
-.. _download: http://pypi.python.org/pypi/WTForms 
-.. _packaged up version: https://github.com/wtforms/wtforms/archive/develop.zip
-.. _project page: http://github.com/wtforms/wtforms
+.. _PyPI: https://pypi.org/project/WTForms/
 
 
 Key Concepts
 ------------
 
  - :class:`Forms <wtforms.form.Form>` are the core container of WTForms. Forms
-   represent a collection of fields, which can be accessed on the form 
+   represent a collection of fields, which can be accessed on the form
    dictionary-style or attribute style.
  - :mod:`Fields <wtforms.fields>` do most of the heavy lifting. Each field represents a *data type*
    and the field handles coercing form input to that datatype. For example,
@@ -59,12 +47,12 @@ Key Concepts
    list of validation errors, in addition to the data the field contains.
  - Every field has a :mod:`Widget <wtforms.widgets>` instance. The widget's job
    is rendering an HTML representation of that field. Widget instances can be
-   specified for each field but every field has one by default which makes 
-   sense. Some fields are simply conveniences, for example 
-   :class:`~wtforms.fields.TextAreaField` is simply a 
+   specified for each field but every field has one by default which makes
+   sense. Some fields are simply conveniences, for example
+   :class:`~wtforms.fields.TextAreaField` is simply a
    :class:`~wtforms.fields.StringField` with the default widget being a
    :class:`~wtforms.widgets.TextArea`.
- - In order to specify validation rules, fields contain a list of 
+ - In order to specify validation rules, fields contain a list of
    :mod:`Validators <wtforms.validators>`.
 
 Getting Started
@@ -117,8 +105,8 @@ django-like view, using the `RegistrationForm` we defined earlier::
         return render_response('register.html', form=form)
 
 First, we instantiate the form, providing it with any data available in
-``request.POST``. We then check if the request is made using POST, and if it is, 
-we validate the form, and check that the user accepted the rules. If successful, 
+``request.POST``. We then check if the request is made using POST, and if it is,
+we validate the form, and check that the user accepted the rules. If successful,
 we create a new User and assign the data from the validated form to it, and save
 it.
 
@@ -139,7 +127,7 @@ new entries, but what if we want to edit an existing object? Easy::
         return render_response('edit_profile.html', form=form)
 
 Here, we instantiate the form by providing both request.POST and the user object
-to the form. By doing this, the form will get any data that isn't present in the 
+to the form. By doing this, the form will get any data that isn't present in the
 post data from the `user` object.
 
 We're also using the form's `populate_obj` method to re-populate the user
@@ -176,7 +164,7 @@ instances of all the fields, which can be accessed via either dictionary-style
 or attribute-style. These fields have their own properties, as does the enclosing form.
 
 When we validate the form, it returns False, meaning at least one validator was
-not satisfied. :attr:`form.errors <wtforms.form.Form.errors>` will give you a 
+not satisfied. :attr:`form.errors <wtforms.form.Form.errors>` will give you a
 summary of all the errors.
 
 .. code-block:: python
@@ -391,7 +379,7 @@ Or by providing an in-form field-specific validator::
             if field.data != 42:
                 raise ValidationError(u'Must be 42')
 
-For more complex validators that take parameters, check the :ref:`custom-validators` section. 
+For more complex validators that take parameters, check the :ref:`custom-validators` section.
 
 Next Steps
 ----------
@@ -403,8 +391,3 @@ information, you'll want to check the following:
  - The :ref:`WTForms documentation <doc-index>` has API documentation for the entire library.
  - :ref:`specific_problems` can help you tackle specific
    integration issues with WTForms and other frameworks.
- - The `mailing list`_ is where you can get help, discuss bugs in WTForms, and
-   propose new features.
-
-.. _mailing list: http://groups.google.com/group/wtforms/
-

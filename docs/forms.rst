@@ -10,7 +10,7 @@ The Form class
 --------------
 
 .. class:: Form
-    
+
     Declarative Form base class.
 
     **Construction**
@@ -170,10 +170,10 @@ parameter, is used to populate form defaults on the initial view.
     used if there is no POST data. If there is any POST data at all, then the
     object data is ignored. This is done for security and consistency reasons.
 
-    This pattern is mostly a convenience since most application controllers 
+    This pattern is mostly a convenience since most application controllers
     don't separate GET and POST requests into separate view methods.
 
-The constructed form can then validate any input data and generate errors if 
+The constructed form can then validate any input data and generate errors if
 invalid. Typically, the validation pattern in the view looks like::
 
     if request.POST and form.validate():
@@ -181,26 +181,26 @@ invalid. Typically, the validation pattern in the view looks like::
         article.save()
         return redirect('/articles')
 
-Note that we have it so :meth:`~Form.validate` is only called if there is 
-POST data. The reason we gate the validation check this way is that when 
-there is no POST data (such as in a typical CRUD form) we don't want to 
+Note that we have it so :meth:`~Form.validate` is only called if there is
+POST data. The reason we gate the validation check this way is that when
+there is no POST data (such as in a typical CRUD form) we don't want to
 cause validation errors.
 
 Inside the gated block, we call :meth:`~Form.populate_obj` to copy the data
 onto fields on the 'article' object. We also then redirect after a successful
 completion. The reason we redirect after the post is a best-practice associated
-with the `Post/Redirect/Get <http://en.wikipedia.org/wiki/Post/Redirect/Get>`_
+with the `Post/Redirect/Get <https://en.wikipedia.org/wiki/Post/Redirect/Get>`_
 design pattern.
 
 If there is no POST data, or the data fails to validate, then the view "falls
-through" to the rendering portion. The Form object can be passed into the 
-template and its attributes can be used to render the fields and also for 
+through" to the rendering portion. The Form object can be passed into the
+template and its attributes can be used to render the fields and also for
 displaying errors::
 
         return render('edit.html', form=form, article=article)
 
-So there we have a full simple "edit object" page setup which 
-illustrates a best-practice way of using WTForms. This is by no means the only 
+So there we have a full simple "edit object" page setup which
+illustrates a best-practice way of using WTForms. This is by no means the only
 way to use WTForms, but just an illustration of how the various features work.
 
 Here is the full code for the view we just made::

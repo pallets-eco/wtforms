@@ -1,27 +1,21 @@
+os: linux
+sudo: false
 language: python
 
 python:
-  - 2.6
-  - 2.7
-  - 3.3
-  - 3.4
-  - 3.5
   - 3.6
+  - 3.5
+  - 3.4
+  - 3.3
+  - 2.7
+  - 2.6
   - nightly
   - pypy3
 
 env:
-  - DJANGO="Django<1.5"
-  - DJANGO="Django<1.6" SQLALCHEMY="SQLAlchemy<0.10"
-  - DJANGO="Django<1.6" LOCALFLAVOR=django-localflavor SQLALCHEMY="SQLAlchemy<0.8"
-  - DJANGO="Django<1.7" LOCALFLAVOR=django-localflavor SQLALCHEMY="SQLAlchemy<0.9"
+  - TOXENV=py
 
 matrix:
-  exclude:
-    - python: 3.3
-      env: DJANGO="Django<1.5"
-    - python: 3.4
-      env: DJANGO="Django<1.5"
   allow_failures:
     - python: 2.6
     - python: 3.3
@@ -30,13 +24,15 @@ matrix:
   fast_finish: true
 
 install:
-  - "pip install $DJANGO $LOCALFLAVOR $SQLALCHEMY"
-  - "pip install -r tests/test_requirements.txt ."
+  - pip install tox
 
-script: "coverage run tests/runtests.py --with-pep8 --force-all"
+script:
+  - tox
 
 after_success:
   - pip install coveralls
+  - coverage combine
+  - coverage report
   - coveralls
 
 cache:
@@ -47,3 +43,6 @@ branches:
     - master
     - /^.*-maintenance$/
     - /^.*-release$/
+
+notifications:
+  email: false

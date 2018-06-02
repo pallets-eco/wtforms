@@ -136,7 +136,7 @@ Released January 24, 2013
 - ``ext.sqlalchemy`` model_form:
 
   * Fix issue with ``QuerySelectField``
-  * Fix issue in ``ColumnDefaul``t conversion
+  * Fix issue in ``ColumnDefault`` conversion
   * Support ``Enum`` type
 
 - Field class now allows traversal in Django 1.4 templates.
@@ -218,7 +218,7 @@ Released April 24, 2011
 
 - ``ext.appengine``
 
-  * model_form fixes: ``FloatField`` (#50), ``TimeField``, ``DateTimeField``(#55)
+  * model_form fixes: ``FloatField`` (#50), ``TimeField``, ``DateTimeField`` (#55)
   * ``ReferencePropertyField``: now properly stores model object, not key. (#48)
 
 

@@ -4,7 +4,7 @@ FAQ
 This contains the most commonly asked questions about WTForms. The most current
 version of this document can always be found on the `WTForms Website`_.
 
-.. _WTForms Website: http://wtforms.simplecodes.com
+.. _WTForms Website: https://wtforms.readthedocs.io/
 
 
 Does WTForms work with [library here]?
@@ -59,13 +59,11 @@ WTForms supports Python 2.6-2.7 and 3.2+ with a single codebase. Without 2to3 to
 How can I contribute to WTForms?
 --------------------------------
 
-WTForms is not that scary. Really. We try to keep it as succint and readable as
-possible. If you feel like you have something to contribute to WTForms, let us
-know on the `mailing list`_. For bugs and feature requests, you can file a
+WTForms is not that scary. Really. We try to keep it as succinct and readable as
+possible. For bugs and feature requests, you can file a
 ticket on the `project page`_.
 
-.. _mailing list: http://groups.google.com/group/wtforms
-.. _project page: http://github.com/wtforms/wtforms
+.. _project page: https://github.com/wtforms/wtforms
 
 
 How do I mark in a template when a field is required?
@@ -125,12 +123,13 @@ This is for a number of reasons:
 3. Consistency.
 
 See the following mailing list posts for more discussion on the topic:
- - http://groups.google.com/group/wtforms/browse_frm/thread/6755a45a13878e9 
- - http://groups.google.com/group/wtforms/msg/fa409c8c89b6f62d 
+
+-   https://groups.google.com/forum/#!topic/wtforms/BnVaRaE4eOk
+-   https://groups.google.com/forum/#!msg/wtforms/nF-TVnfxft4/Lfa2iYycQPoJ
 
 
 How do I... [convoluted combination of libraries]
 -------------------------------------------------
 
-You'll probably want to check out our 
+You'll probably want to check out our
 :ref:`Solving Specific Problems <specific_problems>` doc.

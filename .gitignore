@@ -17,3 +17,5 @@ docs/_build
 docs/html
 env/
 .pytest_cache/
+.tox/
+htmlcov/
