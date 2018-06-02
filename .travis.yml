@@ -1,24 +1,19 @@
 os: linux
 sudo: false
 language: python
-
 python:
   - 3.6
   - 3.5
   - 3.4
-  - 3.3
   - 2.7
-  - 2.6
   - nightly
   - pypy3
-
-env:
-  - TOXENV=py
+env: TOXENV=py,coveralls
 
 matrix:
+  include:
+    - env: TOXENV=docs-html
   allow_failures:
-    - python: 2.6
-    - python: 3.3
     - python: nightly
     - python: pypy3
   fast_finish: true
@@ -29,12 +24,6 @@ install:
 script:
   - tox
 
-after_success:
-  - pip install coveralls
-  - coverage combine
-  - coverage report
-  - coveralls
-
 cache:
   - pip
 
@@ -42,7 +31,6 @@ branches:
   only:
     - master
     - /^.*-maintenance$/
-    - /^.*-release$/
 
 notifications:
   email: false
