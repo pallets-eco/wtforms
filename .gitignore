@@ -19,3 +19,5 @@ env/
 .pytest_cache/
 .tox/
 htmlcov/
+wtforms/locale/**/wtforms.mo
+
