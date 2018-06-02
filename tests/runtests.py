@@ -16,6 +16,7 @@ def make_suite(prefix='', extra=(), force_all=False):
     for name in OPTIONAL_TESTS:
         test_name = prefix + name
         try:
+            __import__(test_name)
             suite.addTest(defaultTestLoader.loadTestsFromName(test_name))
         except (ImportError, AttributeError):
             if force_all:

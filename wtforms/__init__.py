@@ -5,8 +5,8 @@ WTForms
 WTForms is a flexible forms validation and rendering library for python web
 development.
 
-:copyright: Copyright (c) 2010 by Thomas Johansson, James Crasta and others.
-:license: BSD, see LICENSE.txt for details.
+:copyright: Copyright (c) 2008 by the WTForms team.
+:license: BSD, see LICENSE.rst for details.
 """
 from wtforms import validators, widgets
 from wtforms.fields import *

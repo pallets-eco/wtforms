@@ -64,10 +64,10 @@ the new API's unless it needs to work across both WTForms 1.x and 2.x
   * ``wtforms.ext.django`` Is deprecated. See `WTForms-Django`_
   * ``wtforms.ext.i18n`` i18n is now :doc:`built in <i18n>`
   * ``wtforms.ext.sqlalchemy`` Is deprecated, look at `WTForms-Alchemy`_
-    (`docs <WTForms-Alchemy-docs>`_)
+    (`docs <WTForms-Alchemy-docs_>`_)
 
-.. _WTForms-Alchemy: https://pypi.python.org/pypi/WTForms-Alchemy
-.. _WTForms-Alchemy-docs: https://wtforms-alchemy.readthedocs.io/en/latest/
+.. _WTForms-Alchemy: https://pypi.org/project/WTForms-Alchemy/
+.. _WTForms-Alchemy-docs: https://wtforms-alchemy.readthedocs.io/
 .. _WTForms-Appengine: https://github.com/wtforms/wtforms-appengine
 .. _WTForms-Django: https://github.com/wtforms/wtforms-django
 

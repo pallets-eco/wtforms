@@ -1,10 +1,9 @@
-include AUTHORS.txt
+include AUTHORS.rst
 include CHANGES.rst
-include LICENSE.txt
-include MANIFEST.in
-include README.md
-recursive-include docs *
-recursive-include tests *
-recursive-exclude docs/_build *
-recursive-exclude tests *.pyc
-recursive-include wtforms/locale *
+include LICENSE.rst
+include README.rst
+graft docs
+prune docs/_build
+graft tests
+graft wtforms/locale
+global-exclude *.py[co]

@@ -27,20 +27,11 @@ templating engine you like, as well.
 Download / Installation
 -----------------------
 
-The easiest way to install WTForms is by using  pip:
-
-.. code-block:: ruby
+WTForms is available through `PyPI`_. Install it using pip::
 
     pip install WTForms
 
-You can also `download`_ WTForms manually
-from PyPI and then run ``python setup.py install``.
-
-If you're the sort that likes to risk it all and run the latest version from
-Git, you can  head over to the `project page`_ and clone the repository.
-
-.. _download: http://pypi.python.org/pypi/WTForms
-.. _project page: http://github.com/wtforms/wtforms
+.. _PyPI: https://pypi.org/project/WTForms/
 
 
 Key Concepts
@@ -400,8 +391,3 @@ information, you'll want to check the following:
  - The :ref:`WTForms documentation <doc-index>` has API documentation for the entire library.
  - :ref:`specific_problems` can help you tackle specific
    integration issues with WTForms and other frameworks.
- - The `mailing list`_ is where you can get help, discuss bugs in WTForms, and
-   propose new features.
-
-.. _mailing list: http://groups.google.com/group/wtforms/
-
