@@ -19,6 +19,7 @@ matrix:
   fast_finish: true
 
 install:
+  - python setup.py compile_catalog
   - pip install tox
 
 script:
