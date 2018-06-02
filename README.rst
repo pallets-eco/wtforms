@@ -8,7 +8,7 @@ community libraries that provide closer integration with popular
 frameworks.
 
 To get started using WTForms, we recommend reading the `crash course`_
-in the docs
+in the docs.
 
 .. _crash course: https://wtforms.readthedocs.io/en/stable/crash_course.html
 .. _framework agnostic: https://wtforms.readthedocs.io/en/stable/faq.html#does-wtforms-work-with-library-here
@@ -17,7 +17,7 @@ in the docs
 Installation
 ------------
 
-Install and update using pip:
+Install and update using pip::
 
     pip install -U WTForms
 

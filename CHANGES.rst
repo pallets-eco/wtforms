@@ -7,7 +7,7 @@ WTForms Changelog
 Version 2.2
 -----------
 
-Released June 1st, 2018
+Released June 2nd, 2018
 
 -   Merged new and updated translations from the community.
 -   Passing ``data_`` args to render a field converts all the
