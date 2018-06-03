@@ -41,16 +41,16 @@ Released June 2nd, 2018
     :class:`~ext.sqlalchemy.fields.QuerySelectField` to fail with
     ``ValueError: too many values to unpack``. (`#391`_)
 
-.. _#248: https://github.com/wtforms/wtforms/pulls/248
-.. _#251: https://github.com/wtforms/wtforms/pulls/251
-.. _#254: https://github.com/wtforms/wtforms/pulls/254
-.. _#280: https://github.com/wtforms/wtforms/pulls/280
-.. _#281: https://github.com/wtforms/wtforms/pulls/281
-.. _#286: https://github.com/wtforms/wtforms/pulls/286
-.. _#294: https://github.com/wtforms/wtforms/pulls/294
-.. _#302: https://github.com/wtforms/wtforms/pulls/302
-.. _#361: https://github.com/wtforms/wtforms/pulls/361
-.. _#391: https://github.com/wtforms/wtforms/pulls/391
+.. _#248: https://github.com/wtforms/wtforms/pull/248
+.. _#251: https://github.com/wtforms/wtforms/pull/251
+.. _#254: https://github.com/wtforms/wtforms/pull/254
+.. _#280: https://github.com/wtforms/wtforms/pull/280
+.. _#281: https://github.com/wtforms/wtforms/pull/281
+.. _#286: https://github.com/wtforms/wtforms/pull/286
+.. _#294: https://github.com/wtforms/wtforms/pull/294
+.. _#302: https://github.com/wtforms/wtforms/pull/302
+.. _#361: https://github.com/wtforms/wtforms/pull/361
+.. _#391: https://github.com/wtforms/wtforms/pull/391
 
 
 Version 2.1
