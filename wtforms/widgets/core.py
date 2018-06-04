@@ -45,8 +45,8 @@ def html_params(**kwargs):
     name of the attribute begins with ``data_`` or ``aria_``, then every
     underscore will be replaced with a hyphen in the generated attribute.
 
-    >>> html_params(data_any_attribute='something', aria_another_attribute='something else')
-    'data-any-attribute="something" aria-another-attribute="something else"'
+    >>> html_params(data_attr='user.name', aria_labeledby='name')
+    'data-attr="user.name" aria-labeledby="name"'
 
     In addition, the values ``True`` and ``False`` are special:
       * ``attr=True`` generates the HTML compact output of a boolean attribute,
@@ -57,6 +57,14 @@ def html_params(**kwargs):
     'class="text" id="f" name="text1"'
     >>> html_params(checked=True, readonly=False, name="text1", abc="hello")
     'abc="hello" checked name="text1"'
+
+    .. versionchanged:: 3.0
+        ``aria_`` args convert underscores to hyphens like ``data_``
+        args.
+
+    .. versionchanged:: 2.2
+        ``data_`` args convert all underscores to hyphens, instead of
+        only the first one.
     """
     params = []
     for k, v in sorted(iteritems(kwargs)):
