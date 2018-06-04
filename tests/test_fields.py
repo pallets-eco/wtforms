@@ -921,9 +921,9 @@ class HTML5FieldsTest(TestCase):
             b('datetime', '2013-09-05 00:23:42', 'type="datetime"', datetime(2013, 9, 5, 0, 23, 42)),
             b('date', '2013-09-05', 'type="date"', date(2013, 9, 5)),
             b('dt_local', '2013-09-05 00:23:42', 'type="datetime-local"', datetime(2013, 9, 5, 0, 23, 42)),
-            b('integer', '42', '<input id="integer" name="integer" step="1" type="number" value="42">', 42),
+            b('integer', '42', '<input id="integer" name="integer" type="number" value="42">', 42),
             b('decimal', '43.5', '<input id="decimal" name="decimal" step="any" type="number" value="43.5">', Decimal('43.5')),
-            b('int_range', '4', '<input id="int_range" name="int_range" step="1" type="range" value="4">', 4),
+            b('int_range', '4', '<input id="int_range" name="int_range" type="range" value="4">', 4),
             b('decimal_range', '58', '<input id="decimal_range" name="decimal_range" step="any" type="range" value="58">', 58),
         )
         formdata = DummyPostData()

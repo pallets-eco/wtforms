@@ -4,6 +4,18 @@ WTForms Changelog
 =================
 
 
+Version 3.0
+-----------
+
+Unreleased
+
+-   HTML5 :class:`~fields.html5.IntegerField` and
+    :class:`~fields.html5.RangeInput` don't render the ``step="1"``
+    attribute by default. (`#343`_)
+
+.. _#343: https://github.com/wtforms/wtforms/pull/343
+
+
 Version 2.2
 -----------
 
