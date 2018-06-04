@@ -302,7 +302,7 @@ class TextArea(object):
         kwargs.setdefault('id', field.id)
         if 'required' not in kwargs and 'required' in getattr(field, 'flags', []):
             kwargs['required'] = True
-        return HTMLString('<textarea %s>%s</textarea>' % (
+        return HTMLString('<textarea %s>\r\n%s</textarea>' % (
             html_params(name=field.name, **kwargs),
             escape(text_type(field._value()), quote=False)
         ))

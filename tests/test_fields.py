@@ -407,7 +407,7 @@ class TextAreaFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), """<textarea id="a" name="a">LE DEFAULT</textarea>""")
+        self.assertEqual(form.a(), """<textarea id="a" name="a">\r\nLE DEFAULT</textarea>""")
 
 
 class PasswordFieldTest(TestCase):
