@@ -9,6 +9,11 @@ Version 3.0
 
 Unreleased
 
+-   HTML is escaped using MarkupSafe instead of the previous internal
+    implementation. :func:`~widgets.core.escape_html` is removed,
+    replaced by :func:`markupsafe.escape`.
+    :class:`~widgets.core.HTMLString` is removed, replaced by
+    :class:`markupsafe.Markup`. (`#400`_)
 -   ``aria_`` args are rendered the same way as ``data_`` args, by
     converting underscores to hyphens. ``aria_describedby="name-help"``
     becomes ``aria-describedby="name-help"``. (`#239`_, `#389`_)
@@ -24,6 +29,7 @@ Unreleased
 .. _#343: https://github.com/wtforms/wtforms/pull/343
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
+.. _#400: https://github.com/wtforms/wtforms/pull/400
 
 
 Version 2.2

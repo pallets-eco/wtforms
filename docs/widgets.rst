@@ -36,8 +36,12 @@ use in building custom widgets as well.
 
 .. autofunction:: html_params
 
-.. autoclass:: HTMLString
-    :members: __html__
+WTForms uses `MarkupSafe`_ to escape unsafe HTML characters before
+rendering. You can mark a string using :class:`markupsafe.Markup` to
+indicate that it should not be escaped.
+
+.. _MarkupSafe: https://github.com/pallets/markupsafe
+
 
 Custom widgets
 --------------
