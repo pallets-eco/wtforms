@@ -1,10 +1,7 @@
+from collections import OrderedDict
 import itertools
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
 
-from wtforms.compat import with_metaclass, iteritems, itervalues
+from wtforms.compat import iteritems, itervalues, with_metaclass
 from wtforms.meta import DefaultMeta
 
 __all__ = (
