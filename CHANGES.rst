@@ -23,10 +23,14 @@ Unreleased
 -   The :class:`~widgets.TextArea` widget prepends a ``\r\n`` newline
     when rendering to account for browsers stripping an initial line for
     display. This does not affect the value. (`#238`_, `#395`_)
+-   :class:`~fields.core.Label` text is escaped before rendering.
+    (`#315`_, `#375`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
+.. _#315: https://github.com/wtforms/wtforms/pull/315
 .. _#343: https://github.com/wtforms/wtforms/pull/343
+.. _#375: https://github.com/wtforms/wtforms/pull/375
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#400: https://github.com/wtforms/wtforms/pull/400

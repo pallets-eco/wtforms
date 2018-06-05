@@ -78,11 +78,11 @@ class LabelTest(TestCase):
         label = Label('test', '<script>alert("test");</script>')
         self.assertEqual(
             label(for_='foo'),
-            """<label for="foo">&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;</label>"""
+            """<label for="foo">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>"""
         )
         self.assertEqual(
             label(**{'for': 'bar'}),
-            """<label for="bar">&lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;</label>"""
+            """<label for="bar">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>"""
         )
 
 
