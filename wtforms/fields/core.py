@@ -1,19 +1,17 @@
 from __future__ import unicode_literals
 
+from copy import copy
 import datetime
 import decimal
 import itertools
 
-from copy import copy
-
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 from wtforms import widgets
-from wtforms.compat import text_type, izip
+from wtforms.compat import izip, text_type
 from wtforms.i18n import DummyTranslations
-from wtforms.validators import StopValidation
 from wtforms.utils import unset_value
-
+from wtforms.validators import StopValidation
 
 __all__ = (
     'BooleanField', 'DecimalField', 'DateField', 'DateTimeField', 'FieldList',
@@ -401,7 +399,8 @@ class Label(object):
             kwargs.setdefault('for', self.field_id)
 
         attributes = widgets.html_params(**kwargs)
-        return Markup('<label %s>%s</label>' % (attributes, text or self.text))
+        text = escape(text or self.text)
+        return Markup('<label %s>%s</label>' % (attributes, text))
 
     def __repr__(self):
         return 'Label(%r, %r)' % (self.field_id, self.text)
