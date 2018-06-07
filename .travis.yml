@@ -42,7 +42,6 @@ branches:
   only:
     - master
     - /^.*-maintenance$/
-    - /^.*-release$/
 
 notifications:
   email: false
