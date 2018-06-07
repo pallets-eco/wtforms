@@ -208,6 +208,8 @@ class FormTest(TestCase):
 
         self.assertEqual(self.F(DummyPostData({'other': 'other'})).test.data, '')
         self.assertEqual(self.F(DummyPostData()).test.data, '')
+        self.assertEqual(self.F(DummyPostData(), test='test').test.data, 'test')
+        self.assertEqual(self.F(DummyPostData({'test': 'foo'}), test='test').test.data, 'foo')
 
 
 class MetaTest(TestCase):

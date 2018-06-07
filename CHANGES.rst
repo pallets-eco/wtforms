@@ -36,10 +36,25 @@ Unreleased
 .. _#400: https://github.com/wtforms/wtforms/pull/400
 
 
+Version 2.2.1
+-------------
+
+Released on June 7th, 2018
+
+-   :class:`~fields.StringField` only sets ``data = ''` when form data
+    is empty and an initial value was not provided. This fixes an issue
+    where the default value wasn't rendered with the initial form.
+    (`#291`_, `#355`_, `#401`_)
+
+.. _#291: https://github.com/wtforms/wtforms/issues/291
+.. _#355: https://github.com/wtforms/wtforms/pull/355
+.. _#401: https://github.com/wtforms/wtforms/issues/401
+
+
 Version 2.2
 -----------
 
-Released June 2nd, 2018
+Released on June 2nd, 2018
 
 -   Merged new and updated translations from the community.
 -   Passing ``data_`` args to render a field converts all the
@@ -51,8 +66,7 @@ Released June 2nd, 2018
     to it so modifying an instance's choices will not modify the global
     form definition. (`#286`_)
 -   Fields call :meth:`~fields.Field.process_formdata` even if the raw
-    data is empty. This makes :class:`~fields.StringField` default to an
-    empty string instead of ``None``. (`#280`_)
+    data is empty. (`#280`_)
 -   Added a :class:`~fields.MultipleFileField` to handle a multi-file
     input. :class:`~fields.FileField` continues to handle only one
     value. The underlying :class:`~widgets.FileInput` widget gained a
