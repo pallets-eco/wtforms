@@ -401,7 +401,7 @@ class StringFieldTest(TestCase):
         self.assertEqual(form.a.data, 'hello')
         self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="hello">""")
         form = self.F(DummyPostData(b=['hello']))
-        self.assertEqual(form.a.data, '')
+        self.assertEqual(form.a.data, None)
 
 
 class HiddenFieldTest(TestCase):
@@ -680,7 +680,7 @@ class FormFieldTest(TestCase):
         form = self.F1(DummyPostData({'a-a': ['moo']}))
         self.assertEqual(form.a.form.a.name, 'a-a')
         self.assertEqual(form.a['a'].data, 'moo')
-        self.assertEqual(form.a['b'].data, '')
+        self.assertEqual(form.a['b'].data, None)
         self.assertTrue(form.validate())
 
     def test_iteration(self):

@@ -57,7 +57,7 @@ class BaseFormTest(TestCase):
         self.assertRaises(AttributeError, getattr, form['test'], 'data')
         form.process(DummyPostData(test=['1']))
         self.assertEqual(form['test'].data, 1)
-        self.assertEqual(form['foo'].data, '')
+        self.assertEqual(form['foo'].data, None)
 
     def test_populate_obj(self):
         m = type(str('Model'), (object, ), {})
@@ -206,10 +206,19 @@ class FormTest(TestCase):
     def test_empty_formdata(self):
         """"If formdata is empty, field.process_formdata should still run to handle empty data."""
 
-        self.assertEqual(self.F(DummyPostData({'other': 'other'})).test.data, '')
-        self.assertEqual(self.F(DummyPostData()).test.data, '')
-        self.assertEqual(self.F(DummyPostData(), test='test').test.data, 'test')
-        self.assertEqual(self.F(DummyPostData({'test': 'foo'}), test='test').test.data, 'foo')
+        class EmptyStringField(StringField):
+            def process_formdata(self, valuelist):
+                self.data = valuelist[0] if valuelist else 'processed'
+
+        class F(Form):
+            test = EmptyStringField()
+
+        self.assertEqual(F().test.data, None)
+        self.assertEqual(F(test='test').test.data, 'test')
+        self.assertEqual(F(DummyPostData({'other': 'other'})).test.data, 'processed')
+        self.assertEqual(F(DummyPostData()).test.data, 'processed')
+        self.assertEqual(F(DummyPostData(), test='test').test.data, 'processed')
+        self.assertEqual(F(DummyPostData({'test': 'foo'}), test='test').test.data, 'foo')
 
 
 class MetaTest(TestCase):

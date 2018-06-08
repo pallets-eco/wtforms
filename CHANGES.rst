@@ -25,11 +25,16 @@ Unreleased
     display. This does not affect the value. (`#238`_, `#395`_)
 -   :class:`~fields.core.Label` text is escaped before rendering.
     (`#315`_, `#375`_)
+-   :class:`~fields.StringField` sets ``data`` to ``None`` when form
+    data is empty and an initial value was not provided. Although it
+    previously set an empty string, ``None`` is consistent with the
+    behavior of other fields. (`#355`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
 .. _#315: https://github.com/wtforms/wtforms/pull/315
 .. _#343: https://github.com/wtforms/wtforms/pull/343
+.. _#355: https://github.com/wtforms/wtforms/pull/355
 .. _#375: https://github.com/wtforms/wtforms/pull/375
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
@@ -44,10 +49,9 @@ Released on June 7th, 2018
 -   :class:`~fields.StringField` only sets ``data = ''` when form data
     is empty and an initial value was not provided. This fixes an issue
     where the default value wasn't rendered with the initial form.
-    (`#291`_, `#355`_, `#401`_)
+    (`#291`_, `#401`_)
 
 .. _#291: https://github.com/wtforms/wtforms/issues/291
-.. _#355: https://github.com/wtforms/wtforms/pull/355
 .. _#401: https://github.com/wtforms/wtforms/issues/401
 
 
