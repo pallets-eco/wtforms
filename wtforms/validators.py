@@ -3,6 +3,11 @@ from __future__ import unicode_literals
 import re
 import uuid
 
+try:
+    import ipaddress
+except ImportError:
+    ipaddress = None
+
 from wtforms.compat import string_types, text_type
 
 __all__ = (
@@ -307,7 +312,7 @@ class Email(object):
 
 class IPAddress(object):
     """
-    Validates an IP address.
+    Validates an IP address. Requires ipaddress package to be instaled for Python 2 support.
 
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
@@ -317,6 +322,8 @@ class IPAddress(object):
         Error message to raise in case of a validation error.
     """
     def __init__(self, ipv4=True, ipv6=False, message=None):
+        if ipaddress is None:
+            raise Exception("Install 'ipaddress' for Python 2 support.")
         if not ipv4 and not ipv6:
             raise ValueError('IP Address Validator must have at least one of ipv4 or ipv6 enabled.')
         self.ipv4 = ipv4
@@ -337,36 +344,27 @@ class IPAddress(object):
 
     @classmethod
     def check_ipv4(cls, value):
-        parts = value.split('.')
-        if len(parts) == 4 and all(x.isdigit() for x in parts):
-            numbers = list(int(x) for x in parts)
-            return all(num >= 0 and num < 256 for num in numbers)
-        return False
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError:
+            return False
+
+        if not isinstance(address, ipaddress.IPv4Address):
+            return False
+
+        return True
 
     @classmethod
     def check_ipv6(cls, value):
-        parts = value.split(':')
-        if len(parts) > 8:
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError:
             return False
 
-        num_blank = 0
-        for part in parts:
-            if not part:
-                num_blank += 1
-            else:
-                try:
-                    value = int(part, 16)
-                except ValueError:
-                    return False
-                else:
-                    if value < 0 or value >= 65536:
-                        return False
+        if not isinstance(address, ipaddress.IPv6Address):
+            return False
 
-        if num_blank < 2:
-            return True
-        elif num_blank == 2 and not parts[0] and not parts[1]:
-            return True
-        return False
+        return True
 
 
 class MacAddress(Regexp):

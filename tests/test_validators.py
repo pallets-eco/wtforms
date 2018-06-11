@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pytest
 from unittest import TestCase
 from wtforms.compat import text_type
 from wtforms.validators import (
@@ -250,3 +251,45 @@ class ValidatorsTest(TestCase):
     def test_none_of(self):
         self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)
         self.assertRaises(ValueError, NoneOf(['a', 'b', 'c']), self.form, DummyField('a'))
+
+
+@pytest.mark.parametrize("address", [
+    u"147.230.23.25",
+    u"147.230.23.0"
+])
+def test_ip4address_passes(address):
+    adr = ip_address()
+    field = DummyField(address)
+    adr(None, field)
+
+
+@pytest.mark.parametrize("address", [
+    u"2001:718:1C01:1111::1111",
+    u"2001:718:1C01:1111::",
+])
+def test_ip6address_passes(address):
+    adr = ip_address(ipv6=True)
+    field = DummyField(address)
+    adr(None, field)
+
+
+@pytest.mark.parametrize("address", [
+    u"2001:718:1C01:1111::1111",
+    u"2001:718:1C01:1111::",
+])
+def test_ip6address_raises(address):
+    adr = ip_address()
+    field = DummyField(address)
+    with pytest.raises(ValidationError):
+        adr(None, field)
+
+
+@pytest.mark.parametrize("address", [
+    u"147.230.1000.25",
+    u"2001:718::::",
+])
+def test_ip4address_raises(address):
+    adr = ip_address(ipv6=True)
+    field = DummyField(address)
+    with pytest.raises(ValidationError):
+        adr(None, field)
