@@ -6,9 +6,9 @@ def messages_path():
     Determine the path to the 'messages' directory as best possible.
     """
     module_path = os.path.abspath(__file__)
-    locale_path = os.path.join(os.path.dirname(module_path), 'locale')
+    locale_path = os.path.join(os.path.dirname(module_path), "locale")
     if not os.path.exists(locale_path):
-        locale_path = '/usr/share/locale'
+        locale_path = "/usr/share/locale"
     return locale_path
 
 
@@ -22,7 +22,8 @@ def get_builtin_gnu_translations(languages=None):
         gettext will try to use locale information from the environment.
     """
     import gettext
-    return gettext.translation('wtforms', messages_path(), languages)
+
+    return gettext.translation("wtforms", messages_path(), languages)
 
 
 def get_translations(languages=None, getter=get_builtin_gnu_translations):
@@ -36,7 +37,7 @@ def get_translations(languages=None, getter=get_builtin_gnu_translations):
     """
     translations = getter(languages)
 
-    if hasattr(translations, 'ugettext'):
+    if hasattr(translations, "ugettext"):
         return DefaultTranslations(translations)
     else:
         # Python 3 has no ugettext/ungettext, so just return the translations object.
@@ -48,6 +49,7 @@ class DefaultTranslations(object):
     A WTForms translations object to wrap translations objects which use
     ugettext/ungettext.
     """
+
     def __init__(self, translations):
         self.translations = translations
 
@@ -65,6 +67,7 @@ class DummyTranslations(object):
     This is typically used when translations are disabled or if no valid
     translations provider can be found.
     """
+
     def gettext(self, string):
         return string
 

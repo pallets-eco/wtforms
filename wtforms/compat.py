@@ -1,13 +1,17 @@
 import sys
 
 __all__ = (
-    'text_type', 'string_types', 'izip', 'iteritems', 'itervalues',
-    'with_metaclass',
+    "text_type",
+    "string_types",
+    "izip",
+    "iteritems",
+    "itervalues",
+    "with_metaclass",
 )
 
 if sys.version_info[0] >= 3:
     text_type = str
-    string_types = (str, )
+    string_types = (str,)
     izip = zip
 
     def iteritems(o):
@@ -16,9 +20,10 @@ if sys.version_info[0] >= 3:
     def itervalues(o):
         return o.values()
 
+
 else:
     text_type = unicode
-    string_types = (basestring, )
+    string_types = (basestring,)
     from itertools import izip
 
     def iteritems(o):

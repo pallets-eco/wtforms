@@ -37,11 +37,13 @@ class DefaultMeta(object):
         :param formdata: Form data.
         :return: A form-input wrapper compatible with WTForms.
         """
-        if formdata is not None and not hasattr(formdata, 'getlist'):
-            if hasattr(formdata, 'getall'):
+        if formdata is not None and not hasattr(formdata, "getlist"):
+            if hasattr(formdata, "getall"):
                 return WebobInputWrapper(formdata)
             else:
-                raise TypeError("formdata should be a multidict-type wrapper that supports the 'getlist' method")
+                raise TypeError(
+                    "formdata should be a multidict-type wrapper that supports the 'getlist' method"
+                )
         return formdata
 
     def render_field(self, field, render_kw):
@@ -50,7 +52,7 @@ class DefaultMeta(object):
 
         The default implementation calls ``field.widget(field, **render_kw)``
         """
-        other_kw = getattr(field, 'render_kw', None)
+        other_kw = getattr(field, "render_kw", None)
         if other_kw is not None:
             render_kw = dict(other_kw, **render_kw)
         return field.widget(field, **render_kw)
@@ -58,7 +60,7 @@ class DefaultMeta(object):
     # -- CSRF
 
     csrf = False
-    csrf_field_name = 'csrf_token'
+    csrf_field_name = "csrf_token"
     csrf_secret = None
     csrf_context = None
     csrf_class = None
@@ -79,6 +81,7 @@ class DefaultMeta(object):
             return self.csrf_class()
 
         from wtforms.csrf.session import SessionCSRF
+
         return SessionCSRF()
 
     # -- i18n
@@ -105,7 +108,9 @@ class DefaultMeta(object):
 
             translations = self.translations_cache.get(locales)
             if translations is None:
-                translations = self.translations_cache[locales] = i18n.get_translations(locales)
+                translations = self.translations_cache[locales] = i18n.get_translations(
+                    locales
+                )
 
             return translations
 

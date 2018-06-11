@@ -1,7 +1,7 @@
 from wtforms.validators import ValidationError
 from wtforms.fields import HiddenField
 
-__all__ = ('CSRFTokenField', 'CSRF')
+__all__ = ("CSRFTokenField", "CSRF")
 
 
 class CSRFTokenField(HiddenField):
@@ -13,10 +13,11 @@ class CSRFTokenField(HiddenField):
     current token regardless of the submitted value, and also will not be
     populated over to object data via populate_obj
     """
+
     current_token = None
 
     def __init__(self, *args, **kw):
-        self.csrf_impl = kw.pop('csrf_impl')
+        self.csrf_impl = kw.pop("csrf_impl")
         super(CSRFTokenField, self).__init__(*args, **kw)
 
     def _value(self):
@@ -62,10 +63,7 @@ class CSRF(object):
         """
         meta = form.meta
         field_name = meta.csrf_field_name
-        unbound_field = self.field_class(
-            label='CSRF Token',
-            csrf_impl=self
-        )
+        unbound_field = self.field_class(label="CSRF Token", csrf_impl=self)
         return [(field_name, unbound_field)]
 
     def generate_csrf_token(self, csrf_token_field):
@@ -95,4 +93,4 @@ class CSRF(object):
         :param field: The CSRF token field.
         """
         if field.current_token != field.data:
-            raise ValidationError(field.gettext('Invalid CSRF Token'))
+            raise ValidationError(field.gettext("Invalid CSRF Token"))

@@ -51,6 +51,7 @@ class SDist(CompileCatalogMixin, BaseSDist):
 command_classes = {"develop": Develop, "sdist": SDist}
 
 if BaseBDistWheel:
+
     class BDistWheel(CompileCatalogMixin, BaseBDistWheel):
         pass
 

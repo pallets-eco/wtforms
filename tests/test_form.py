@@ -12,70 +12,70 @@ from tests.common import DummyPostData
 class BaseFormTest(TestCase):
     def get_form(self, **kwargs):
         def validate_test(form, field):
-            if field.data != 'foobar':
-                raise ValidationError('error')
+            if field.data != "foobar":
+                raise ValidationError("error")
 
-        return BaseForm({'test': StringField(validators=[validate_test])}, **kwargs)
+        return BaseForm({"test": StringField(validators=[validate_test])}, **kwargs)
 
     def test_data_proxy(self):
         form = self.get_form()
-        form.process(test='foo')
-        self.assertEqual(form.data, {'test': 'foo'})
+        form.process(test="foo")
+        self.assertEqual(form.data, {"test": "foo"})
 
     def test_errors_proxy(self):
         form = self.get_form()
-        form.process(test='foobar')
+        form.process(test="foobar")
         form.validate()
         self.assertEqual(form.errors, {})
 
         form = self.get_form()
         form.process()
         form.validate()
-        self.assertEqual(form.errors, {'test': ['error']})
+        self.assertEqual(form.errors, {"test": ["error"]})
 
     def test_contains(self):
         form = self.get_form()
-        self.assertTrue('test' in form)
-        self.assertTrue('abcd' not in form)
+        self.assertTrue("test" in form)
+        self.assertTrue("abcd" not in form)
 
     def test_field_removal(self):
         form = self.get_form()
-        del form['test']
-        self.assertRaises(AttributeError, getattr, form, 'test')
-        self.assertTrue('test' not in form)
+        del form["test"]
+        self.assertRaises(AttributeError, getattr, form, "test")
+        self.assertTrue("test" not in form)
 
     def test_field_adding(self):
         form = self.get_form()
         self.assertEqual(len(list(form)), 1)
-        form['foo'] = StringField()
+        form["foo"] = StringField()
         self.assertEqual(len(list(form)), 2)
-        form.process(DummyPostData(foo=['hello']))
-        self.assertEqual(form['foo'].data, 'hello')
-        form['test'] = IntegerField()
-        self.assertTrue(isinstance(form['test'], IntegerField))
+        form.process(DummyPostData(foo=["hello"]))
+        self.assertEqual(form["foo"].data, "hello")
+        form["test"] = IntegerField()
+        self.assertTrue(isinstance(form["test"], IntegerField))
         self.assertEqual(len(list(form)), 2)
-        self.assertRaises(AttributeError, getattr, form['test'], 'data')
-        form.process(DummyPostData(test=['1']))
-        self.assertEqual(form['test'].data, 1)
-        self.assertEqual(form['foo'].data, None)
+        self.assertRaises(AttributeError, getattr, form["test"], "data")
+        form.process(DummyPostData(test=["1"]))
+        self.assertEqual(form["test"].data, 1)
+        self.assertEqual(form["foo"].data, None)
 
     def test_populate_obj(self):
-        m = type(str('Model'), (object, ), {})
+        m = type(str("Model"), (object,), {})
         form = self.get_form()
-        form.process(test='foobar')
+        form.process(test="foobar")
         form.populate_obj(m)
-        self.assertEqual(m.test, 'foobar')
-        self.assertEqual([k for k in dir(m) if not k.startswith('_')], ['test'])
+        self.assertEqual(m.test, "foobar")
+        self.assertEqual([k for k in dir(m) if not k.startswith("_")], ["test"])
 
     def test_prefixes(self):
-        form = self.get_form(prefix='foo')
-        self.assertEqual(form['test'].name, 'foo-test')
-        self.assertEqual(form['test'].short_name, 'test')
-        self.assertEqual(form['test'].id, 'foo-test')
-        form = self.get_form(prefix='foo.')
-        form.process(DummyPostData({'foo.test': ['hello'], 'test': ['bye']}))
-        self.assertEqual(form['test'].data, 'hello')
-        self.assertEqual(self.get_form(prefix='foo[')['test'].name, 'foo[-test')
+        form = self.get_form(prefix="foo")
+        self.assertEqual(form["test"].name, "foo-test")
+        self.assertEqual(form["test"].short_name, "test")
+        self.assertEqual(form["test"].id, "foo-test")
+        form = self.get_form(prefix="foo.")
+        form.process(DummyPostData({"foo.test": ["hello"], "test": ["bye"]}))
+        self.assertEqual(form["test"].data, "hello")
+        self.assertEqual(self.get_form(prefix="foo[")["test"].name, "foo[-test")
 
     def test_formdata_wrapper_error(self):
         form = self.get_form()
@@ -89,17 +89,17 @@ class FormMetaTest(TestCase):
 
         self.assertEqual(F._unbound_fields, None)
         F()
-        self.assertEqual(F._unbound_fields, [('a', F.a)])
+        self.assertEqual(F._unbound_fields, [("a", F.a)])
         F.b = StringField()
         self.assertEqual(F._unbound_fields, None)
         F()
-        self.assertEqual(F._unbound_fields, [('a', F.a), ('b', F.b)])
+        self.assertEqual(F._unbound_fields, [("a", F.a), ("b", F.b)])
         del F.a
         self.assertRaises(AttributeError, lambda: F.a)
         F()
-        self.assertEqual(F._unbound_fields, [('b', F.b)])
+        self.assertEqual(F._unbound_fields, [("b", F.b)])
         F._m = StringField()
-        self.assertEqual(F._unbound_fields, [('b', F.b)])
+        self.assertEqual(F._unbound_fields, [("b", F.b)])
 
     def test_subclassing(self):
         class A(Form):
@@ -109,13 +109,14 @@ class FormMetaTest(TestCase):
         class B(A):
             b = StringField()
             c = StringField()
+
         A()
         B()
 
         self.assertTrue(A.a is B.a)
         self.assertTrue(A.c is not B.c)
-        self.assertEqual(A._unbound_fields, [('a', A.a), ('c', A.c)])
-        self.assertEqual(B._unbound_fields, [('a', B.a), ('b', B.b), ('c', B.c)])
+        self.assertEqual(A._unbound_fields, [("a", A.a), ("c", A.c)])
+        self.assertEqual(B._unbound_fields, [("a", B.a), ("b", B.b), ("c", B.c)])
 
     def test_class_meta_reassign(self):
         class MetaA:
@@ -141,11 +142,11 @@ class FormTest(TestCase):
         test = StringField()
 
         def validate_test(form, field):
-            if field.data != 'foobar':
-                raise ValidationError('error')
+            if field.data != "foobar":
+                raise ValidationError("error")
 
     def test_validate(self):
-        form = self.F(test='foobar')
+        form = self.F(test="foobar")
         self.assertEqual(form.validate(), True)
 
         form = self.F()
@@ -153,16 +154,16 @@ class FormTest(TestCase):
 
     def test_field_adding_disabled(self):
         form = self.F()
-        self.assertRaises(TypeError, form.__setitem__, 'foo', StringField())
+        self.assertRaises(TypeError, form.__setitem__, "foo", StringField())
 
     def test_field_removal(self):
         form = self.F()
         del form.test
-        self.assertTrue('test' not in form)
+        self.assertTrue("test" not in form)
         self.assertEqual(form.test, None)
         self.assertEqual(len(list(form)), 0)
         # Try deleting a nonexistent field
-        self.assertRaises(AttributeError, form.__delattr__, 'fake')
+        self.assertRaises(AttributeError, form.__delattr__, "fake")
 
     def test_delattr_idempotency(self):
         form = self.F()
@@ -172,7 +173,7 @@ class FormTest(TestCase):
         # Make sure deleting a normal attribute works
         form.foo = 9
         del form.foo
-        self.assertRaises(AttributeError, form.__delattr__, 'foo')
+        self.assertRaises(AttributeError, form.__delattr__, "foo")
 
         # Check idempotency
         del form.test
@@ -184,41 +185,47 @@ class FormTest(TestCase):
             banana = StringField()
             kiwi = StringField()
 
-        self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi'])
+        self.assertEqual([x.name for x in MyForm()], ["strawberry", "banana", "kiwi"])
         MyForm.apple = StringField()
-        self.assertEqual([x.name for x in MyForm()], ['strawberry', 'banana', 'kiwi', 'apple'])
+        self.assertEqual(
+            [x.name for x in MyForm()], ["strawberry", "banana", "kiwi", "apple"]
+        )
         del MyForm.banana
-        self.assertEqual([x.name for x in MyForm()], ['strawberry', 'kiwi', 'apple'])
+        self.assertEqual([x.name for x in MyForm()], ["strawberry", "kiwi", "apple"])
         MyForm.strawberry = StringField()
-        self.assertEqual([x.name for x in MyForm()], ['kiwi', 'apple', 'strawberry'])
+        self.assertEqual([x.name for x in MyForm()], ["kiwi", "apple", "strawberry"])
         # Ensure sort is stable: two fields with the same creation counter
         # should be subsequently sorted by name.
         MyForm.cherry = MyForm.kiwi
-        self.assertEqual([x.name for x in MyForm()], ['cherry', 'kiwi', 'apple', 'strawberry'])
+        self.assertEqual(
+            [x.name for x in MyForm()], ["cherry", "kiwi", "apple", "strawberry"]
+        )
 
     def test_data_arg(self):
-        data = {'test': 'foo'}
+        data = {"test": "foo"}
         form = self.F(data=data)
-        self.assertEqual(form.test.data, 'foo')
-        form = self.F(data=data, test='bar')
-        self.assertEqual(form.test.data, 'bar')
+        self.assertEqual(form.test.data, "foo")
+        form = self.F(data=data, test="bar")
+        self.assertEqual(form.test.data, "bar")
 
     def test_empty_formdata(self):
         """"If formdata is empty, field.process_formdata should still run to handle empty data."""
 
         class EmptyStringField(StringField):
             def process_formdata(self, valuelist):
-                self.data = valuelist[0] if valuelist else 'processed'
+                self.data = valuelist[0] if valuelist else "processed"
 
         class F(Form):
             test = EmptyStringField()
 
         self.assertEqual(F().test.data, None)
-        self.assertEqual(F(test='test').test.data, 'test')
-        self.assertEqual(F(DummyPostData({'other': 'other'})).test.data, 'processed')
-        self.assertEqual(F(DummyPostData()).test.data, 'processed')
-        self.assertEqual(F(DummyPostData(), test='test').test.data, 'processed')
-        self.assertEqual(F(DummyPostData({'test': 'foo'}), test='test').test.data, 'foo')
+        self.assertEqual(F(test="test").test.data, "test")
+        self.assertEqual(F(DummyPostData({"other": "other"})).test.data, "processed")
+        self.assertEqual(F(DummyPostData()).test.data, "processed")
+        self.assertEqual(F(DummyPostData(), test="test").test.data, "processed")
+        self.assertEqual(
+            F(DummyPostData({"test": "foo"}), test="test").test.data, "foo"
+        )
 
 
 class MetaTest(TestCase):
@@ -248,17 +255,10 @@ class MetaTest(TestCase):
         self.assertEqual(meta.csrf, False)
         assert isinstance(meta, self.F.Meta)
         assert isinstance(meta, self.G.Meta)
-        self.assertEqual(type(meta).__bases__, (
-            self.H.Meta,
-            self.F.Meta,
-            self.G.Meta,
-            DefaultMeta
-        ))
+        self.assertEqual(
+            type(meta).__bases__, (self.H.Meta, self.F.Meta, self.G.Meta, DefaultMeta)
+        )
 
     def test_missing_diamond(self):
         meta = self.I().meta
-        self.assertEqual(type(meta).__bases__, (
-            self.F.Meta,
-            self.G.Meta,
-            DefaultMeta
-        ))
+        self.assertEqual(type(meta).__bases__, (self.F.Meta, self.G.Meta, DefaultMeta))

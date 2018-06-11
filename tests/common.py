@@ -60,10 +60,14 @@ class DummyPostData(dict):
 @contextmanager
 def assert_raises_text(e_type, text):
     import re
+
     try:
         yield
     except e_type as e:
         if not re.match(text, e.args[0]):
-            raise AssertionError('Exception raised: %r but text %r did not match pattern %r' % (e, e.args[0], text))
+            raise AssertionError(
+                "Exception raised: %r but text %r did not match pattern %r"
+                % (e, e.args[0], text)
+            )
     else:
-        raise AssertionError('Expected Exception %r, did not get it' % (e_type, ))
+        raise AssertionError("Expected Exception %r, did not get it" % (e_type,))
