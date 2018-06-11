@@ -137,13 +137,14 @@ class NumberRange(object):
                 # we use %(min)s interpolation to support floats, None, and
                 # Decimals without throwing a formatting exception.
                 if self.max is None:
-                    message = field.gettext('Number must be at least %(min)s.')
+                    message = field.gettext('Number must be at least %(min)s.' % dict(min=self.min))
                 elif self.min is None:
-                    message = field.gettext('Number must be at most %(max)s.')
+                    message = field.gettext('Number must be at most %(max)s.' % dict(max=self.max))
                 else:
-                    message = field.gettext('Number must be between %(min)s and %(max)s.')
+                    message = field.gettext('Number must be between %(min)s and %(max)s.' % dict(min=self.min,
+                                                                                                 max=self.max))
 
-            raise ValidationError(message % dict(min=self.min, max=self.max))
+            raise ValidationError(message)
 
 
 class Optional(object):
