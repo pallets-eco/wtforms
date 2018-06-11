@@ -19,6 +19,7 @@ matrix:
   fast_finish: true
 
 install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install ipaddress; fi
   - pip install tox
 
 script:
