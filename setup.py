@@ -14,8 +14,7 @@ except ImportError:
 with io.open("README.rst", "rt", encoding="utf8") as f:
     readme = f.read()
 
-with io.open("wtforms/__init__.py", "rt", encoding="utf8") as f:
-    version = re.search(r"__version__ = \'(.*?)\'", f.read()).group(1)
+version = "3.0.0-dev"
 
 
 class CompileCatalogMixin(object):
