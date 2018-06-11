@@ -2,8 +2,13 @@ from .. import widgets
 from .core import Field, StringField, BooleanField
 
 __all__ = (
-    'BooleanField', 'TextAreaField', 'PasswordField', 'FileField', 'MultipleFileField',
-    'HiddenField', 'SubmitField'
+    "BooleanField",
+    "TextAreaField",
+    "PasswordField",
+    "FileField",
+    "MultipleFileField",
+    "HiddenField",
+    "SubmitField",
 )
 
 
@@ -12,6 +17,7 @@ class TextAreaField(StringField):
     This field represents an HTML ``<textarea>`` and can be used to take
     multi-line input.
     """
+
     widget = widgets.TextArea()
 
 
@@ -22,6 +28,7 @@ class PasswordField(StringField):
     Also, whatever value is accepted by this field is not rendered back
     to the browser like normal fields.
     """
+
     widget = widgets.PasswordInput()
 
 
@@ -56,6 +63,7 @@ class HiddenField(StringField):
 
     It will render as an ``<input type="hidden">`` but otherwise coerce to a string.
     """
+
     widget = widgets.HiddenInput()
 
 
@@ -64,4 +72,5 @@ class SubmitField(BooleanField):
     Represents an ``<input type="submit">``.  This allows checking if a given
     submit button has been pressed.
     """
+
     widget = widgets.SubmitInput()

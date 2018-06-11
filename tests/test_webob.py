@@ -6,6 +6,7 @@ from wtforms.fields import Field
 
 try:
     from webob.multidict import MultiDict
+
     has_webob = True
 except ImportError:
     has_webob = False
@@ -49,7 +50,7 @@ class WebobWrapperTest(TestCase):
     def setUp(self):
         w_cls = MultiDict if has_webob else MockMultiDict
 
-        self.test_values = [('a', 'Apple'), ('b', 'Banana'), ('a', 'Cherry')]
+        self.test_values = [("a", "Apple"), ("b", "Banana"), ("a", "Cherry")]
         self.empty_mdict = w_cls([])
         self.filled_mdict = w_cls(self.test_values)
 
@@ -57,7 +58,7 @@ class WebobWrapperTest(TestCase):
         def _check(formdata):
             self.assertTrue(isinstance(formdata, WebobInputWrapper))
 
-        form = BaseForm({'a': SneakyField(_check)})
+        form = BaseForm({"a": SneakyField(_check)})
         form.process(self.filled_mdict)
 
     def test_empty(self):
@@ -65,15 +66,15 @@ class WebobWrapperTest(TestCase):
         self.assertFalse(formdata)
         self.assertEqual(len(formdata), 0)
         self.assertEqual(list(formdata), [])
-        self.assertEqual(formdata.getlist('fake'), [])
+        self.assertEqual(formdata.getlist("fake"), [])
 
     def test_filled(self):
         formdata = WebobInputWrapper(self.filled_mdict)
         self.assertTrue(formdata)
         self.assertEqual(len(formdata), 3)
-        self.assertEqual(list(formdata), ['a', 'b', 'a'])
-        self.assertTrue('b' in formdata)
-        self.assertTrue('fake' not in formdata)
-        self.assertEqual(formdata.getlist('a'), ['Apple', 'Cherry'])
-        self.assertEqual(formdata.getlist('b'), ['Banana'])
-        self.assertEqual(formdata.getlist('fake'), [])
+        self.assertEqual(list(formdata), ["a", "b", "a"])
+        self.assertTrue("b" in formdata)
+        self.assertTrue("fake" not in formdata)
+        self.assertEqual(formdata.getlist("a"), ["Apple", "Cherry"])
+        self.assertEqual(formdata.getlist("b"), ["Banana"])
+        self.assertEqual(formdata.getlist("fake"), [])
