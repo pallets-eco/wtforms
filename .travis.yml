@@ -12,7 +12,7 @@ env: TOXENV=py,coveralls
 
 matrix:
   include:
-    - env: TOXENV=docs-html
+    - env: TOXENV=stylecheck,docs-html
   allow_failures:
     - python: nightly
     - python: pypy3
