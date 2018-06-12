@@ -30,14 +30,13 @@ Unreleased
     previously set an empty string, ``None`` is consistent with the
     behavior of other fields. (`#355`_)
 -   :class:`~fields.SelectField` no longer coerces ``None`` to ``"None"``
-    allowing use of ``"None"`` as an option (`#289`_, `#288`_)
+    allowing use of ``"None"`` as an option (`#288`_, `#289`_)
 -   :class:`~validators.Length` gives a more helpful error message when
     ``min`` and ``max`` are the same value (`#266`_)
 -   Added more documentation on HTML5 fields and corrected related tests
     (`#326`_, `#409`_)
 -   Added a ``check_validators`` method to :class:`~fields.Field` which checks
-    if the given validators are both callable, and not classes (`#298`_,
-    `#410`_)
+    if the given validators are both callable, and not classes (`#298`_, `#410`_)
 
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
