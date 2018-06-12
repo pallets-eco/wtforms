@@ -940,11 +940,16 @@ class FieldList(Field):
         for subfield in self.entries:
             if not subfield.validate(form):
                 self.errors.append(subfield.errors)
+            else:
+                self.errors.append(None)
+
+        if all(x is None for x in self.errors):
+            self.errors = []
 
         chain = itertools.chain(self.validators, extra_validators)
         self._run_validation_chain(form, chain)
 
-        return len(self.errors) == 0
+        return all(e is None for e in self.errors)
 
     def populate_obj(self, obj, name):
         values = getattr(obj, name, None)
