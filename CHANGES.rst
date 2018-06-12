@@ -29,16 +29,33 @@ Unreleased
     data is empty and an initial value was not provided. Although it
     previously set an empty string, ``None`` is consistent with the
     behavior of other fields. (`#355`_)
+-   :class:`~fields.SelectField` no longer coerces ``None`` to ``"None"``
+    allowing use of ``"None"`` as an option (`#289`_, `#288`_)
+-   :class:`~validators.Length` gives a more helpful error message when
+    ``min`` and ``max`` are the same value (`#266`_)
+-   Added more documentation on HTML5 fields and corrected related tests
+    (`#326`_, `#409`_)
+-   Added a ``check_validators`` method to :class:`~fields.Field` which checks
+    if the given validators are both callable, and not classes (`#298`_,
+    `#410`_)
+
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
+.. _#266: https://github.com/wtforms/wtforms/pull/266
+.. _#288: https://github.com/wtforms/wtforms/pull/288
+.. _#289: https://github.com/wtforms/wtforms/issues/289
+.. _#298: https://github.com/wtforms/wtforms/pull/298
 .. _#315: https://github.com/wtforms/wtforms/pull/315
+.. _#326: https://github.com/wtforms/wtforms/pull/326
 .. _#343: https://github.com/wtforms/wtforms/pull/343
 .. _#355: https://github.com/wtforms/wtforms/pull/355
 .. _#375: https://github.com/wtforms/wtforms/pull/375
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#400: https://github.com/wtforms/wtforms/pull/400
+.. _#409: https://github.com/wtforms/wtforms/pull/409
+.. _#410: https://github.com/wtforms/wtforms/pull/410
 
 
 Version 2.2.1
