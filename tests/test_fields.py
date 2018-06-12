@@ -222,6 +222,20 @@ class FieldTest(TestCase):
         form = self.F()
         self.assertEqual(form.b(), u'<input id="b" name="b" required type="text" value="">')
 
+    def test_check_validators(self):
+        v1 = "Not callable"
+        v2 = validators.DataRequired
+
+        with self.assertRaisesRegexp(TypeError, "{} is not a valid validator because "
+                                                "it is not callable".format(v1)):
+            Field(validators=[v1])
+
+
+        with self.assertRaisesRegexp(TypeError, "{} is not a valid validator because "
+                                                "it is a class, it should be an "
+                                                "instance".format(v2)):
+            Field(validators=[v2])
+
 
 class PrePostTestField(StringField):
     def pre_validate(self, form):
