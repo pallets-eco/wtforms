@@ -10,7 +10,7 @@ from markupsafe import Markup
 
 from wtforms import validators, widgets, meta
 from wtforms.fields import *
-from wtforms.fields import Label, Field, SelectFieldBase, html5
+from wtforms.fields import Label, Field, SelectFieldBase
 from wtforms.form import Form
 from wtforms.compat import text_type
 from wtforms.utils import unset_value
@@ -469,9 +469,9 @@ class IntegerFieldTest(TestCase):
         form = self.F(DummyPostData(a=['v'], b=['-15']))
         self.assertEqual(form.a.data, None)
         self.assertEqual(form.a.raw_data, ['v'])
-        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="v">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="number" value="v">""")
         self.assertEqual(form.b.data, -15)
-        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="-15">""")
+        self.assertEqual(form.b(), """<input id="b" name="b" type="number" value="-15">""")
         self.assertTrue(not form.a.validate(form))
         self.assertTrue(form.b.validate(form))
         form = self.F(DummyPostData(a=[], b=['']))
@@ -617,9 +617,9 @@ class TimeFieldTest(TestCase):
         # Basic test with both inputs
         form = self.F(DummyPostData(a=['4:30'], b=['04:30']))
         self.assertEqual(form.a.data, d)
-        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="4:30">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="time" value="4:30">""")
         self.assertEqual(form.b.data, d)
-        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="04:30">""")
+        self.assertEqual(form.b(), """<input id="b" name="b" type="time" value="04:30">""")
         self.assertTrue(form.validate())
 
         # Test with a missing input
@@ -638,9 +638,9 @@ class DateTimeFieldTest(TestCase):
         # Basic test with both inputs
         form = self.F(DummyPostData(a=['2008-05-05', '04:30:00'], b=['2008-05-05 04:30']))
         self.assertEqual(form.a.data, d)
-        self.assertEqual(form.a(), """<input id="a" name="a" type="text" value="2008-05-05 04:30:00">""")
+        self.assertEqual(form.a(), """<input id="a" name="a" type="datetime" value="2008-05-05 04:30:00">""")
         self.assertEqual(form.b.data, d)
-        self.assertEqual(form.b(), """<input id="b" name="b" type="text" value="2008-05-05 04:30">""")
+        self.assertEqual(form.b(), """<input id="b" name="b" type="datetime" value="2008-05-05 04:30">""")
         self.assertTrue(form.validate())
 
         # Test with a missing input
@@ -900,17 +900,17 @@ class CustomFieldQuirksTest(TestCase):
 
 class HTML5FieldsTest(TestCase):
     class F(Form):
-        search = html5.SearchField()
-        telephone = html5.TelField()
-        url = html5.URLField()
-        email = html5.EmailField()
-        datetime = html5.DateTimeField()
-        date = html5.DateField()
-        dt_local = html5.DateTimeLocalField()
-        integer = html5.IntegerField()
-        decimal = html5.DecimalField()
-        int_range = html5.IntegerRangeField()
-        decimal_range = html5.DecimalRangeField()
+        search = SearchField()
+        telephone = TelField()
+        url = URLField()
+        email = EmailField()
+        datetime = DateTimeField()
+        date = DateField()
+        dt_local = DateTimeLocalField()
+        integer = IntegerField()
+        decimal = DecimalField()
+        int_range = IntegerRangeField()
+        decimal_range = DecimalRangeField()
 
     def _build_value(self, key, form_input, expected_html, data=unset_value):
         if data is unset_value:
