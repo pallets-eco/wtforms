@@ -319,6 +319,38 @@ refer to a single input from the form.
 
         {{ form.username(size=30, maxlength=50) }}
 
+HTML5 Fields
+------------
+
+In addition to basic HTML fields, WTForms also supplies fields for the HTML5
+standard. These fields can be accessed under the :mod:`wtforms.fields.html5` namespace.
+In reality, these fields are just convenience fields that extend basic fields
+and implement HTML5 specific widgets. These widgets are located in the :mod:`wtforms.widgets.html5`
+namespace and can be overridden or modified just like any other widget.
+
+.. autoclass:: SearchField(default field arguments)
+
+.. autoclass:: TelField(default field arguments)
+
+.. autoclass:: URLField(default field arguments)
+
+.. autoclass:: EmailField(default field arguments)
+
+.. autoclass:: DateTimeField(default field arguments,  format='%Y-%m-%d %H:%M:%S')
+
+.. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
+
+.. autoclass:: TimeField(default field arguments, format='%H:%M')
+
+.. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
+
+.. autoclass:: IntegerField(default field arguments)
+
+.. autoclass:: DecimalField(default field arguments)
+
+.. autoclass:: IntegerRangeField(default field arguments)
+
+.. autoclass:: DecimalRangeField(default field arguments)
 
 Convenience Fields
 ------------------
