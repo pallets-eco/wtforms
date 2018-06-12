@@ -877,7 +877,7 @@ class FieldListTest(TestCase):
         F = make_form(a=FieldList(self.t))
         form = F(DummyPostData({'a-0': ['a'], 'a-1': ''}))
         assert not form.validate()
-        self.assertEqual(form.a.errors, [None, ['This field is required.']])
+        self.assertEqual(form.a.errors, [[], ['This field is required.']])
 
 class MyCustomField(StringField):
     def process_data(self, data):
