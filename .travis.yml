@@ -5,7 +5,6 @@ python:
   - 3.6
   - 3.5
   - 3.4
-  - 2.7
   - nightly
   - pypy3
 env: TOXENV=py,coveralls
@@ -13,6 +12,8 @@ env: TOXENV=py,coveralls
 matrix:
   include:
     - env: TOXENV=docs-html
+    - python: "2.7"
+      env: TOXENV=py27,coveralls
   allow_failures:
     - python: nightly
     - python: pypy3
