@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
+import re
 from unittest import TestCase
 from wtforms.compat import text_type
 from wtforms.validators import (
@@ -8,250 +9,130 @@ from wtforms.validators import (
     url, NumberRange, AnyOf, NoneOf, mac_address, UUID,
     input_required, data_required
 )
-from functools import partial
-from tests.common import DummyField, grab_error_message, grab_stop_message
+from tests.common import DummyField, DummyForm, dummy_field, dummy_form, grab_error_message, grab_stop_message, really_lazy_proxy
 
 
-class DummyForm(dict):
-    pass
+def test_data_required(dummy_form, dummy_field):
+    """
+    Should pass if the required data are present
+    """
+    validator = data_required()
+    dummy_field.data = 'foobar'
+    validator(dummy_form, dummy_field)
+    assert validator.field_flags == ('required',)
 
 
-class ValidatorsTest(TestCase):
-    def setUp(self):
-        self.form = DummyForm()
+@pytest.mark.parametrize("bad_val", [
+    None,
+    '',
+    ' ',
+    '\t\t'
+])
+def test_data_required_raises(bad_val, dummy_form, dummy_field):
+    """
+    data_required should stop the validation chain if data are not present
+    """
+    validator = data_required()
+    dummy_field.data = bad_val
+    with pytest.raises(StopValidation):
+        validator(dummy_form, dummy_field)
 
-    def test_email(self):
-        self.assertEqual(email()(self.form, DummyField('foo@bar.dk')), None)
-        self.assertEqual(email()(self.form, DummyField('123@bar.dk')), None)
-        self.assertEqual(email()(self.form, DummyField('foo@456.dk')), None)
-        self.assertEqual(email()(self.form, DummyField('foo@bar456.info')), None)
-        self.assertRaises(ValidationError, email(), self.form, DummyField(None))
-        self.assertRaises(ValidationError, email(), self.form, DummyField(''))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('  '))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('bar.dk'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('@bar.dk'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@bar.ab12'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@.bar.ab'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo.@bar.co'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('foo@foo@bar.co'))
-        self.assertRaises(ValidationError, email(), self.form, DummyField('fo o@bar.co'))
 
-        # Test IDNA domains
-        self.assertEqual(email()(self.form, DummyField(u'foo@bücher.中国')), None)
+def test_data_required_clobber(dummy_form, dummy_field):
+    """
+    Data required should clobber the errors
+    """
+    validator = data_required()
+    dummy_field.data = ''
+    dummy_field.errors = ['Invalid Integer Value']
+    assert len(dummy_field.errors) == 1
+    with pytest.raises(StopValidation):
+        validator(dummy_form, dummy_field)
+        assert len(dummy_field.errors) == 0
 
-    def test_equal_to(self):
-        self.form['foo'] = DummyField('test')
-        self.assertEqual(equal_to('foo')(self.form, self.form['foo']), None)
-        self.assertRaises(ValidationError, equal_to('invalid_field_name'), self.form, DummyField('test'))
-        self.assertRaises(ValidationError, equal_to('foo'), self.form, DummyField('different_value'))
 
-    def test_ip_address(self):
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'abc.0.0.1'))
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'1278.0.0.1'))
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'127.0.0.abc'))
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'900.200.100.75'))
-        for bad_address in (u'abc.0.0.1', u'abcd:1234::123::1', u'1:2:3:4:5:6:7:8:9', u'abcd::1ffff'):
-            self.assertRaises(ValidationError, ip_address(ipv6=True), self.form, DummyField(bad_address))
+def test_data_required_messages(dummy_form, dummy_field):
+    """
+    Check data_requred message and custom message
+    """
+    dummy_field.data = ''
+    grab = lambda **k: grab_stop_message(data_required(**k),
+                                         dummy_form, dummy_field)
+    assert grab() == 'This field is required.'
+    assert grab(message='foo') == 'foo'
 
-        for good_address in (u'::1', u'dead:beef:0:0:0:0:42:1', u'abcd:ef::42:1'):
-            self.assertEqual(ip_address(ipv6=True)(self.form, DummyField(good_address)), None)
 
-        # Test ValueError on ipv6=False and ipv4=False
-        self.assertRaises(ValueError, ip_address, ipv4=False, ipv6=False)
+def test_input_required(dummy_form, dummy_field):
+    """
+    it should pass if the required value is present
+    """
+    validator = input_required()
+    dummy_field.data = 'foobar'
+    dummy_field.raw_data = ['foobar']
 
-    def test_mac_address(self):
-        self.assertEqual(mac_address()(self.form,
-                                       DummyField('01:23:45:67:ab:CD')), None)
+    validator(dummy_form, dummy_field)
+    assert validator.field_flags == ('required',)
 
-        check_fail = partial(
-            self.assertRaises, ValidationError,
-            mac_address(), self.form
-        )
 
-        check_fail(DummyField('00:00:00:00:00'))
-        check_fail(DummyField('01:23:45:67:89:'))
-        check_fail(DummyField('01:23:45:67:89:gh'))
-        check_fail(DummyField('123:23:45:67:89:00'))
+def test_input_required_raises(dummy_form, dummy_field):
+    """
+    It should stop the validation chain if the required value is not present
+    """
+    validator = input_required()
+    dummy_field.data = ''
+    dummy_field.raw_data = ['']
+    with pytest.raises(StopValidation):
+        validator(dummy_form, dummy_field)
 
-    def test_uuid(self):
-        self.assertEqual(
-            UUID()(self.form, DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f8')),
-            None
-        )
-        self.assertEqual(
-            UUID()(self.form, DummyField('2bc1c94f0deb43e992a14775189ec9f8')),
-            None
-        )
-        self.assertRaises(ValidationError, UUID(), self.form,
-                          DummyField('2bc1c94f-deb-43e9-92a1-4775189ec9f8'))
-        self.assertRaises(ValidationError, UUID(), self.form,
-                          DummyField('2bc1c94f-0deb-43e9-92a1-4775189ec9f'))
-        self.assertRaises(ValidationError, UUID(), self.form,
-                          DummyField('gbc1c94f-0deb-43e9-92a1-4775189ec9f8'))
-        self.assertRaises(ValidationError, UUID(), self.form,
-                          DummyField('2bc1c94f 0deb-43e9-92a1-4775189ec9f8'))
 
-    def test_length(self):
-        field = DummyField('foobar')
-        self.assertEqual(length(min=2, max=6)(self.form, field), None)
-        self.assertRaises(ValidationError, length(min=7), self.form, field)
-        self.assertEqual(length(min=6)(self.form, field), None)
-        self.assertRaises(ValidationError, length(max=5), self.form, field)
-        self.assertEqual(length(max=6)(self.form, field), None)
-        self.assertEqual(length(min=6,max=6)(self.form, field), None)
+def test_input_required_error_message(dummy_form, dummy_field):
+    """
+    It should return error message when the required value is not present
+    """
+    dummy_field.data = ''
+    dummy_field.raw_data = ['']
+    grab = lambda **k: grab_stop_message(input_required(**k),
+                                         dummy_form, dummy_field)
 
-        self.assertRaises(AssertionError, length)
-        self.assertRaises(AssertionError, length, min=5, max=2)
+    assert grab() == 'This field is required.'
+    assert grab(message='foo') == 'foo'
 
-        # Test new formatting features
-        grab = lambda **k: grab_error_message(length(**k), self.form, field)
-        self.assertEqual(grab(min=2, max=5, message='%(min)d and %(max)d'), '2 and 5')
-        self.assertTrue('at least 8' in grab(min=8))
-        self.assertTrue('longer than 5' in grab(max=5))
-        self.assertTrue('between 2 and 5' in grab(min=2, max=5))
-        self.assertTrue('exactly 5' in grab(min=5, max=5))
 
-    def test_required(self):
-        self.assertEqual(data_required()(self.form, DummyField('foobar')), None)
-        self.assertRaises(StopValidation, data_required(), self.form, DummyField(''))
+def test_input_optional_passes(dummy_form, dummy_field):
+    """
+    optional should pause with given values
+    """
+    validator = optional()
+    dummy_field.data = 'foobar'
+    dummy_field.raw_data = ['foobar']
+    validator(dummy_form, dummy_field)
 
-    def test_data_required(self):
-        # Make sure we stop the validation chain
-        self.assertEqual(data_required()(self.form, DummyField('foobar')), None)
-        self.assertRaises(StopValidation, data_required(), self.form, DummyField(''))
-        self.assertRaises(StopValidation, data_required(), self.form, DummyField(' '))
-        self.assertEqual(data_required().field_flags, ('required', ))
 
-        # Make sure we clobber errors
-        f = DummyField('', ['Invalid Integer Value'])
-        self.assertEqual(len(f.errors), 1)
-        self.assertRaises(StopValidation, data_required(), self.form, f)
-        self.assertEqual(len(f.errors), 0)
+@pytest.mark.parametrize("data_v, raw_data_v", [
+    ('', ''),
+    ('   ', '   '),
+    ('\t', '\t')
+])
+def test_input_optional_raises(data_v, raw_data_v, dummy_form, dummy_field):
+    """
+    optional should stop the validation chain if the data are not given
+    errors should be erased because the value is optional
+    white space should be considered as empty string too
+    """
+    validator = optional()
+    dummy_field.data = data_v
+    dummy_field.raw_data = raw_data_v
 
-        # Check message and custom message
-        grab = lambda **k: grab_stop_message(data_required(**k), self.form, DummyField(''))
-        self.assertEqual(grab(), 'This field is required.')
-        self.assertEqual(grab(message='foo'), 'foo')
+    with pytest.raises(StopValidation):
+        validator(dummy_form, dummy_field)
+        assert validator.field_flags == ('optional', )
 
-    def test_input_required(self):
-        self.assertEqual(input_required()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
-        self.assertRaises(StopValidation, input_required(), self.form, DummyField('', raw_data=['']))
-        self.assertEqual(input_required().field_flags, ('required', ))
+    dummy_field.errors = ['Invalid Integer Value']
+    assert len(dummy_field.errors) == 1
 
-        # Check message and custom message
-        grab = lambda **k: grab_stop_message(input_required(**k), self.form, DummyField('', raw_data=['']))
-        self.assertEqual(grab(), 'This field is required.')
-        self.assertEqual(grab(message='foo'), 'foo')
-
-    def test_optional(self):
-        self.assertEqual(optional()(self.form, DummyField('foobar', raw_data=['foobar'])), None)
-        self.assertRaises(StopValidation, optional(), self.form, DummyField('', raw_data=['']))
-        self.assertEqual(optional().field_flags, ('optional', ))
-        f = DummyField('', ['Invalid Integer Value'], raw_data=[''])
-        self.assertEqual(len(f.errors), 1)
-        self.assertRaises(StopValidation, optional(), self.form, f)
-        self.assertEqual(len(f.errors), 0)
-
-        # Test for whitespace behavior.
-        whitespace_field = DummyField(' ', raw_data=[' '])
-        self.assertRaises(StopValidation, optional(), self.form, whitespace_field)
-        self.assertEqual(optional(strip_whitespace=False)(self.form, whitespace_field), None)
-
-    def test_regexp(self):
-        import re
-        # String regexp
-        self.assertEqual(regexp('^a')(self.form, DummyField('abcd')).group(0), 'a')
-        self.assertEqual(regexp('^a', re.I)(self.form, DummyField('ABcd')).group(0), 'A')
-        self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField('foo'))
-        self.assertRaises(ValidationError, regexp('^a'), self.form, DummyField(None))
-        # Compiled regexp
-        self.assertEqual(regexp(re.compile('^a'))(self.form, DummyField('abcd')).group(0), 'a')
-        self.assertEqual(regexp(re.compile('^a', re.I))(self.form, DummyField('ABcd')).group(0), 'A')
-        self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField('foo'))
-        self.assertRaises(ValidationError, regexp(re.compile('^a')), self.form, DummyField(None))
-
-        # Check custom message
-        self.assertEqual(grab_error_message(regexp('^a', message='foo'), self.form, DummyField('f')), 'foo')
-
-    def test_url(self):
-        self.assertEqual(url()(self.form, DummyField(u'http://foobar.dk')), None)
-        self.assertEqual(url()(self.form, DummyField(u'http://foobar.dk/')), None)
-        self.assertEqual(url()(self.form, DummyField(u'http://foobar.museum/foobar')), None)
-        self.assertEqual(url()(self.form, DummyField(u'http://192.168.0.1/foobar')), None)
-        self.assertEqual(url()(self.form, DummyField(u'http://192.168.0.1:9000/fake')), None)
-        self.assertEqual(url(require_tld=False)(self.form, DummyField(u'http://localhost/foobar')), None)
-        self.assertEqual(url(require_tld=False)(self.form, DummyField(u'http://foobar')), None)
-        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField(u'foobar.dk'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://127.0.0/asdf'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar.d'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar.12'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://localhost:abc/a'))
-        # Test IDNA
-        IDNA_TESTS = (
-            u'http://\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631/foo.com',  # Arabic test
-            u'http://उदाहरण.परीक्षा/',  # Hindi test
-            u'http://실례.테스트',  # Hangul test
-        )
-        for s in IDNA_TESTS:
-            self.assertEqual(url()(self.form, DummyField(s)), None)
-
-    def test_number_range(self):
-        v = NumberRange(min=5, max=10)
-        self.assertEqual(v(self.form, DummyField(7)), None)
-        self.assertRaises(ValidationError, v, self.form, DummyField(None))
-        self.assertRaises(ValidationError, v, self.form, DummyField(0))
-        self.assertRaises(ValidationError, v, self.form, DummyField(12))
-        self.assertRaises(ValidationError, v, self.form, DummyField(-5))
-
-        onlymin = NumberRange(min=5)
-        self.assertEqual(onlymin(self.form, DummyField(500)), None)
-        self.assertRaises(ValidationError, onlymin, self.form, DummyField(4))
-
-        onlymax = NumberRange(max=50)
-        self.assertEqual(onlymax(self.form, DummyField(30)), None)
-        self.assertRaises(ValidationError, onlymax, self.form, DummyField(75))
-
-    def test_lazy_proxy(self):
-        """Tests that the validators support lazy translation strings for messages."""
-
-        class ReallyLazyProxy(object):
-            def __unicode__(self):
-                raise Exception('Translator function called during form declaration: it should be called at response time.')
-            __str__ = __unicode__
-
-        message = ReallyLazyProxy()
-        self.assertRaises(Exception, str, message)
-        self.assertRaises(Exception, text_type, message)
-        self.assertTrue(equal_to('fieldname', message=message))
-        self.assertTrue(length(min=1, message=message))
-        self.assertTrue(NumberRange(1, 5, message=message))
-        self.assertTrue(data_required(message=message))
-        self.assertTrue(regexp('.+', message=message))
-        self.assertTrue(email(message=message))
-        self.assertTrue(ip_address(message=message))
-        self.assertTrue(url(message=message))
-
-    def test_any_of(self):
-        self.assertEqual(AnyOf(['a', 'b', 'c'])(self.form, DummyField('b')), None)
-        self.assertRaises(ValueError, AnyOf(['a', 'b', 'c']), self.form, DummyField(None))
-
-        # Anyof in 1.0.1 failed on numbers for formatting the error with a TypeError
-        check_num = AnyOf([1, 2, 3])
-        self.assertEqual(check_num(self.form, DummyField(2)), None)
-        self.assertRaises(ValueError, check_num, self.form, DummyField(4))
-
-        # Test values_formatter
-        formatter = lambda values: '::'.join(text_type(x) for x in reversed(values))
-        checker = AnyOf([7, 8, 9], message='test %(values)s', values_formatter=formatter)
-        self.assertEqual(grab_error_message(checker, self.form, DummyField(4)), 'test 9::8::7')
-
-    def test_none_of(self):
-        self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)
-        self.assertRaises(ValueError, NoneOf(['a', 'b', 'c']), self.form, DummyField('a'))
+    with pytest.raises(StopValidation):
+        validator(dummy_form, dummy_field)
+        assert len(dummy_field.errors) == 0
 
 
 @pytest.mark.parametrize("address", [
@@ -259,39 +140,470 @@ class ValidatorsTest(TestCase):
     u"147.230.23.0",
     u"127.0.0.1"
 ])
-def test_ip4address_passes(address):
+def test_ip4address_passes(address, dummy_form, dummy_field):
     adr = ip_address()
-    field = DummyField(address)
-    adr(None, field)
+    dummy_field.data = address
+    adr(dummy_form, dummy_field)
 
 
 @pytest.mark.parametrize("address", [
     u"2001:718:1C01:1111::1111",
     u"2001:718:1C01:1111::",
+    u'::1',
+    u'dead:beef:0:0:0:0:42:1',
+    u'abcd:ef::42:1'
 ])
-def test_ip6address_passes(address):
+def test_good_ip6address_passes(address, dummy_form, dummy_field):
     adr = ip_address(ipv6=True)
-    field = DummyField(address)
-    adr(None, field)
+    dummy_field.data = address
+    adr(dummy_form, dummy_field)
 
 
 @pytest.mark.parametrize("address", [
     u"2001:718:1C01:1111::1111",
     u"2001:718:1C01:1111::",
+    u'abc.0.0.1',
+    u'abcd:1234::123::1',
+    u'1:2:3:4:5:6:7:8:9',
+    u'abcd::1ffff'
 ])
-def test_ip6address_raises(address):
+def test_bad_ip6address_raises(address, dummy_form, dummy_field):
     adr = ip_address()
-    field = DummyField(address)
+    dummy_field.data = address
     with pytest.raises(ValidationError):
-        adr(None, field)
+        adr(dummy_form, dummy_field)
 
 
 @pytest.mark.parametrize("address", [
     u"147.230.1000.25",
     u"2001:718::::",
+    u'abc.0.0.1',
+    u'1278.0.0.1',
+    u'127.0.0.abc',
+    u'900.200.100.75'
 ])
-def test_ip4address_raises(address):
+def test_bad_ip4address_raises(address, dummy_form, dummy_field):
     adr = ip_address(ipv6=True)
-    field = DummyField(address)
+    dummy_field.data = address
     with pytest.raises(ValidationError):
-        adr(None, field)
+        adr(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("email_address", [
+    'foo@bar.dk',
+    '123@bar.dk',
+    'foo@456.dk',
+    'foo@bar456.info',
+    u'foo@bücher.中国'
+])
+def test_valid_email_passes(email_address, dummy_form, dummy_field):
+    """
+    Valid email address should pass without raising
+    """
+    validator = email()
+    dummy_field.data = email_address
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("email_address", [
+    None,
+    '',
+    '  ',
+    'foo',
+    'bar.dk',
+    'foo@',
+    '@bar.dk',
+    'foo@bar',
+    'foo@bar.ab12',
+    'foo@.bar.ab',
+    'foo.@bar.co',
+    'foo@foo@bar.co',
+    'fo o@bar.co',
+])
+def test_invalid_email_raises(email_address, dummy_form, dummy_field):
+    """
+    Bad email address should raise ValidationError
+    """
+    validator = email()
+    dummy_field.data = email_address
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+def test_ip_address_raises_on_bad_init():
+    """
+    IpAddress validator should raise ValueError when ipv6=False and ipv4=False
+    """
+    with pytest.raises(ValueError):
+        ip_address(ipv4=False, ipv6=False)
+
+
+@pytest.mark.parametrize("mac_addr_val", [
+    '01:23:45:67:ab:CD'
+])
+def test_valid_mac_passes(mac_addr_val, dummy_form, dummy_field):
+    """
+    Valid MAC address should pass without raising
+    """
+    validator = mac_address()
+    dummy_field.data = mac_addr_val
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("mac_addr_val", [
+    '00:00:00:00:00',
+    '01:23:45:67:89:',
+    '01:23:45:67:89:gh',
+    '123:23:45:67:89:00'
+])
+def test_bad_mac_raises(mac_addr_val, dummy_form, dummy_field):
+    """
+    Bad MAC address should raise ValidatioError
+    """
+    validator = mac_address()
+    dummy_field.data = mac_addr_val
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("uuid_val", [
+    '2bc1c94f-0deb-43e9-92a1-4775189ec9f8',
+    '2bc1c94f0deb43e992a14775189ec9f8'
+])
+def test_valid_uuid_passes(uuid_val, dummy_form, dummy_field):
+    """
+    Valid UUID should pass without raising
+    """
+    validator = UUID()
+    dummy_field.data = uuid_val
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("uuid_val", [
+    '2bc1c94f-deb-43e9-92a1-4775189ec9f8',
+    '2bc1c94f-0deb-43e9-92a1-4775189ec9f',
+    'gbc1c94f-0deb-43e9-92a1-4775189ec9f8',
+    '2bc1c94f 0deb-43e9-92a1-4775189ec9f8'
+])
+def test_bad_uuid_raises(uuid_val, dummy_form, dummy_field):
+    """
+    Bad UUID should raise ValueError
+    """
+    validator = UUID()
+    dummy_field.data = uuid_val
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+def test_required_passes(dummy_form, dummy_field):
+    """
+    It should pass when required value is present
+    """
+    validator = data_required()
+    dummy_field.data = 'foobar'
+    validator(dummy_form, dummy_field)
+
+
+def test_required_passes(dummy_form, dummy_field):
+    """
+    It should raise stop the validation chain if required value is not present
+    """
+    validator = data_required()
+    dummy_field.data = ''
+    with pytest.raises(StopValidation):
+        validator(dummy_form, dummy_field)
+
+
+def test_equal_to_passes(dummy_form, dummy_field):
+    """
+    Equal values should pass
+    """
+    dummy_field.data = 'test'
+    dummy_form['foo'] = dummy_field
+    validator = equal_to('foo')
+    validator(dummy_form, dummy_form['foo'])
+
+
+@pytest.mark.parametrize("field_val,equal_val", [
+    ('test', 'invalid_field_name'),
+    ('bad_value', 'foo'),
+])
+def test_equal_to_raises(field_val, equal_val, dummy_form, dummy_field):
+    """
+    It should raise ValidationError if the values are not equal
+    """
+    dummy_form['foo'] = DummyField('test')
+    dummy_field.data = field_val
+    validator = equal_to(equal_val)
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("url_val", [
+    u'http://foobar.dk',
+    u'http://foobar.dk/',
+    u'http://foobar.museum/foobar',
+    u'http://192.168.0.1/foobar',
+    u'http://192.168.0.1:9000/fake',
+    u'http://\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631/foo.com',  # Arabic
+    u'http://उदाहरण.परीक्षा/',  # Hindi
+    u'http://실례.테스트'  # Hangul
+])
+def test_valid_url_passes(url_val, dummy_form, dummy_field):
+    """
+    Valid url should pass without raising
+    """
+    validator = url()
+    dummy_field.data = url_val
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("url_val", [
+    u'http://localhost/foobar',
+    u'http://foobar'
+])
+def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
+    """
+    Require TLD option se to false, correct URL should pass without raising
+    """
+    validator = url(require_tld=False)
+    dummy_field.data = url_val
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("url_val", [
+    u'http://foobar',
+    u'foobar.dk',
+    u'http://127.0.0/asdf',
+    u'http://foobar.d',
+    u'http://foobar.12',
+    u'http://localhost:abc/a'
+])
+def test_bad_url_raises(url_val, dummy_form, dummy_field):
+    """
+    Bad url should raise ValidationError
+    """
+    validator = url()
+    dummy_field.data = url_val
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("test_v, test_list", [
+    ('b', ['a', 'b', 'c']),
+    (2, [1, 2, 3])
+])
+def test_anyof_passes(test_v, test_list, dummy_form, dummy_field):
+    """
+    it should pass if the test_v is present in the test_list
+    """
+    validator = AnyOf(test_list)
+    dummy_field.data = test_v
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("test_v, test_list", [
+    ('d', ['a', 'b', 'c']),
+    (6, [1, 2, 3])
+])
+def test_anyof_raisses(test_v, test_list, dummy_form, dummy_field):
+    """
+    it should raise ValueError if the test_v is not present in the test_list
+    """
+    validator = AnyOf(test_list)
+    dummy_field.data = test_v
+    with pytest.raises(ValueError):
+        validator(dummy_form, dummy_field)
+
+
+def test_any_of_values_formatter(dummy_form, dummy_field):
+    """
+    Test AnyOf values_formatter formating of error message
+    """
+    formatter = lambda values: '::'.join(
+        text_type(x) for x in reversed(values))
+    checker = AnyOf([7, 8, 9], message='test %(values)s',
+                    values_formatter=formatter)
+    dummy_field.data = 4
+    expected = 'test 9::8::7'
+    with pytest.raises(ValidationError):
+        assert grab_error_message(checker(dummy_form, dummy_field)) == expected
+
+
+def test_none_of_pases(dummy_form, dummy_field):
+    """
+    it should pass if the value is not present in list
+    """
+    dummy_field.data = 'd'
+    validator = NoneOf(['a', 'b', 'c'])
+    validator(dummy_form, dummy_field)
+
+
+def test_none_of_pases(dummy_form, dummy_field):
+    """
+    it should raise ValueError if the value is present in list
+    """
+    dummy_field.data = 'a'
+    validator = NoneOf(['a', 'b', 'c'])
+    with pytest.raises(ValueError):
+        validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("min_v, max_v", [
+    (2, 6),
+    (6, -1),
+    (-1, 6),
+    (6, 6)
+])
+def test_correct_length_passes(min_v, max_v, dummy_form, dummy_field):
+    """
+    It should pass for the string with correct length
+    """
+    dummy_field.data = 'foobar'
+    validator = length(min_v, max_v)
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("min_v, max_v", [
+    (7, -1),
+    (-1, 5)
+])
+def test_bad_length_raises(min_v, max_v, dummy_form, dummy_field):
+    """
+    It should raise ValidationError for string with incorect length
+    """
+    dummy_field.data = 'foobar'
+    validator = length(min_v, max_v)
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("min_v, max_v", [
+    (-1, -1),  # none of the values is specified
+    (5, 2)  # max should be gt min
+])
+def test_bad_length_init_raises(min_v, max_v):
+    """
+    It should raise AssertionError if the validator constructor got wrong values
+    """
+    with pytest.raises(AssertionError):
+        validator = length(min_v, max_v)
+
+
+@pytest.mark.parametrize("min_v, max_v, message_v, expected", [
+    (2, 5, '%(min)d and %(max)d', '2 and 5'),
+    (8, -1, None, 'at least 8'),
+    (-1, 5, None, 'longer than 5'),
+    (2, 5, None, 'between 2 and 5'),
+    (5, 5, None, 'exactly 5')
+])
+def test_length_messages(min_v, max_v, message_v, expected, dummy_form, dummy_field):
+    """
+    It should raise ValidationError for string with incorect length
+    """
+    dummy_field.data = 'foobar'
+    grab = lambda **k: grab_error_message(length(**k), dummy_form, dummy_field)
+    assert expected in grab(min=min_v, max=max_v, message=message_v)
+
+
+@pytest.mark.parametrize("min_v, max_v, test_v", [
+    (5, 10, 7),
+    (5, None, 7),
+    (None, 100, 70)
+])
+def test_number_range_passes(min_v, max_v, test_v, dummy_form, dummy_field):
+    """
+    It should pass if the test_v is between min_v and max_v
+    """
+    dummy_field.data = test_v
+    validator = NumberRange(min_v, max_v)
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("min_v, max_v, test_v", [
+    (5, 10, None),
+    (5, 10, 0),
+    (5, 10, 12),
+    (5, 10, -5),
+    (5, None, 4),
+    (None, 100, 500)
+])
+def test_number_range_raises(min_v, max_v, test_v, dummy_form, dummy_field):
+    """
+    It should raise ValidationError if the test_v is not between min_v and max_v
+    """
+    dummy_field.data = test_v
+    validator = NumberRange(min_v, max_v)
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("test_function", [
+    str,
+    text_type
+])
+def test_lazy_proxy_raises(test_function, really_lazy_proxy):
+    """
+    Tests that the validators support lazy translation strings for messages.
+    """
+    with pytest.raises(Exception):
+        test_function(really_lazy_proxy)
+
+
+def test_lazy_proxy_raises(really_lazy_proxy):
+    """
+    Tests that the validators support lazy translation strings for messages.
+    """
+    equal_to('fieldname', message=really_lazy_proxy)
+    length(min=1, message=really_lazy_proxy)
+    NumberRange(1, 5, message=really_lazy_proxy)
+    data_required(message=really_lazy_proxy)
+    regexp('.+', message=really_lazy_proxy)
+    email(message=really_lazy_proxy)
+    ip_address(message=really_lazy_proxy)
+    url(message=really_lazy_proxy)
+
+
+@pytest.mark.parametrize("re_pattern, re_flags, test_v, expected_v", [
+    ('^a', None, 'abcd', 'a'),
+    ('^a', re.I, 'ABcd', 'A'),
+    (re.compile('^a'), None, 'abcd', 'a'),
+    (re.compile('^a', re.I), None, 'ABcd', 'A')
+])
+def test_regex_passes(re_pattern, re_flags, test_v, expected_v, dummy_form, dummy_field):
+    """
+    Regex should pass if there is a match. 
+    Should work for complie regex too
+    """
+    validator = regexp(
+        re_pattern, re_flags) if re_flags else regexp(re_pattern)
+    dummy_field.data = test_v
+    assert validator(dummy_form, dummy_field).group(0) == expected_v
+
+
+@pytest.mark.parametrize("re_pattern, re_flags, test_v", [
+    ('^a', None, 'ABC'),
+    ('^a', re.I, 'foo'),
+    ('^a', None, None),
+    (re.compile('^a'), None, 'foo'),
+    (re.compile('^a', re.I), None, None)
+])
+def test_regex_raises(re_pattern, re_flags, test_v, dummy_form, dummy_field):
+    """
+    Regex should raise ValidationError if there is no match
+    Should work for complie regex too
+    """
+    validator = regexp(
+        re_pattern, re_flags) if re_flags else regexp(re_pattern)
+    dummy_field.data = test_v
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+def test_regexp_message(dummy_form, dummy_field):
+    """
+    Regexp validator should return given message
+    """
+    validator = regexp('^a', message='foo')
+    dummy_field.data = 'f'
+    assert grab_error_message(validator, dummy_form, dummy_field) == 'foo'
