@@ -1,5 +1,4 @@
 import pytest
-from unittest import TestCase
 from wtforms.form import BaseForm
 from wtforms.utils import WebobInputWrapper
 from wtforms.utils import unset_value

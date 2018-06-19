@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
 import re
-from unittest import TestCase
 from wtforms.compat import text_type
 from wtforms.validators import (
     StopValidation, ValidationError, email, equal_to,
@@ -9,7 +8,6 @@ from wtforms.validators import (
     url, NumberRange, AnyOf, NoneOf, mac_address, UUID,
     input_required, data_required
 )
-from tests.common import DummyField, DummyForm, dummy_field, dummy_form, grab_error_message, grab_stop_message, really_lazy_proxy
 
 
 def test_data_required(dummy_form, dummy_field):
@@ -51,7 +49,7 @@ def test_data_required_clobber(dummy_form, dummy_field):
         assert len(dummy_field.errors) == 0
 
 
-def test_data_required_messages(dummy_form, dummy_field):
+def test_data_required_messages(dummy_form, dummy_field, grab_stop_message):
     """
     Check data_requred message and custom message
     """
@@ -85,7 +83,7 @@ def test_input_required_raises(dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
-def test_input_required_error_message(dummy_form, dummy_field):
+def test_input_required_error_message(dummy_form, dummy_field, grab_stop_message):
     """
     It should return error message when the required value is not present
     """
@@ -328,11 +326,11 @@ def test_equal_to_passes(dummy_form, dummy_field):
     ('test', 'invalid_field_name'),
     ('bad_value', 'foo'),
 ])
-def test_equal_to_raises(field_val, equal_val, dummy_form, dummy_field):
+def test_equal_to_raises(field_val, equal_val, dummy_form, dummy_field, dummy_field_class):
     """
     It should raise ValidationError if the values are not equal
     """
-    dummy_form['foo'] = DummyField('test')
+    dummy_form['foo'] = dummy_field_class('test')
     dummy_field.data = field_val
     validator = equal_to(equal_val)
     with pytest.raises(ValidationError):
@@ -416,7 +414,7 @@ def test_anyof_raisses(test_v, test_list, dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
-def test_any_of_values_formatter(dummy_form, dummy_field):
+def test_any_of_values_formatter(dummy_form, dummy_field, grab_error_message):
     """
     Test AnyOf values_formatter formating of error message
     """
@@ -497,7 +495,7 @@ def test_bad_length_init_raises(min_v, max_v):
     (2, 5, None, 'between 2 and 5'),
     (5, 5, None, 'exactly 5')
 ])
-def test_length_messages(min_v, max_v, message_v, expected, dummy_form, dummy_field):
+def test_length_messages(min_v, max_v, message_v, expected, dummy_form, dummy_field, grab_error_message):
     """
     It should raise ValidationError for string with incorect length
     """
@@ -600,7 +598,7 @@ def test_regex_raises(re_pattern, re_flags, test_v, dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
-def test_regexp_message(dummy_form, dummy_field):
+def test_regexp_message(dummy_form, dummy_field, grab_error_message):
     """
     Regexp validator should return given message
     """
