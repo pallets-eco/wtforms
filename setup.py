@@ -1,6 +1,5 @@
 from collections import OrderedDict
 import io
-import re
 
 from setuptools import Command, find_packages, setup
 from setuptools.command.develop import develop as BaseDevelop
@@ -14,8 +13,7 @@ except ImportError:
 with io.open("README.rst", "rt", encoding="utf8") as f:
     readme = f.read()
 
-with io.open("wtforms/__init__.py", "rt", encoding="utf8") as f:
-    version = re.search(r"__version__ = \'(.*?)\'", f.read()).group(1)
+version = "3.0.0.a0"
 
 
 class CompileCatalogMixin(object):
