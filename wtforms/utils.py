@@ -1,5 +1,3 @@
-
-
 class UnsetValue(object):
     """
     An unset value.
@@ -8,17 +6,19 @@ class UnsetValue(object):
     usually as the default value of a class variable or function parameter
     (iow, usually when `None` is a valid value.)
     """
+
     def __str__(self):
-        return '<unset value>'
+        return "<unset value>"
 
     def __repr__(self):
-        return '<unset value>'
+        return "<unset value>"
 
     def __bool__(self):
         return False
 
     def __nonzero__(self):
         return False
+
 
 unset_value = UnsetValue()
 
@@ -48,7 +48,7 @@ class WebobInputWrapper(object):
         return len(self._wrapped)
 
     def __contains__(self, name):
-        return (name in self._wrapped)
+        return name in self._wrapped
 
     def getlist(self, name):
         return self._wrapped.getall(name)

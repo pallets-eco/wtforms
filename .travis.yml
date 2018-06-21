@@ -11,7 +11,7 @@ env: TOXENV=py,coveralls
 
 matrix:
   include:
-    - env: TOXENV=docs-html
+    - env: TOXENV=stylecheck,docs-html
     - python: "2.7"
       env: TOXENV=py27,coveralls
   allow_failures:

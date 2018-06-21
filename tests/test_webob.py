@@ -6,13 +6,13 @@ from wtforms.fields import Field
 
 try:
     from webob.multidict import MultiDict
+
     has_webob = True
 except ImportError:
     has_webob = False
 
 
 class MockMultiDict(object):
-
     def __init__(self, tuples):
         self.tuples = tuples
 
@@ -38,7 +38,6 @@ class MockMultiDict(object):
 
 
 class SneakyField(Field):
-
     def __init__(self, sneaky_callable, *args, **kwargs):
         super(SneakyField, self).__init__(*args, **kwargs)
         self.sneaky_callable = sneaky_callable
@@ -54,7 +53,7 @@ def webob_class():
 
 @pytest.fixture
 def test_values():
-    return [('a', 'Apple'), ('b', 'Banana'), ('a', 'Cherry')]
+    return [("a", "Apple"), ("b", "Banana"), ("a", "Cherry")]
 
 
 @pytest.fixture()
@@ -71,7 +70,7 @@ def test_automatic_wrapping(filled_mdict):
     def _check(formdata):
         assert isinstance(formdata, WebobInputWrapper) == True
 
-    form = BaseForm({'a': SneakyField(_check)})
+    form = BaseForm({"a": SneakyField(_check)})
     form.process(filled_mdict)
 
 
@@ -80,16 +79,16 @@ def test_empty(empty_mdict):
     assert not formdata
     assert len(formdata) == 0
     assert list(formdata) == []
-    assert formdata.getlist('fake') == []
+    assert formdata.getlist("fake") == []
 
 
 def test_filled(filled_mdict):
     formdata = WebobInputWrapper(filled_mdict)
     assert formdata
     assert len(formdata) == 3
-    assert list(formdata) == ['a', 'b', 'a']
-    assert 'b' in formdata
-    assert 'fake' not in formdata
-    assert formdata.getlist('a') == ['Apple', 'Cherry']
-    assert formdata.getlist('b') == ['Banana']
-    assert formdata.getlist('fake') == []
+    assert list(formdata) == ["a", "b", "a"]
+    assert "b" in formdata
+    assert "fake" not in formdata
+    assert formdata.getlist("a") == ["Apple", "Cherry"]
+    assert formdata.getlist("b") == ["Banana"]
+    assert formdata.getlist("fake") == []

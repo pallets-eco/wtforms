@@ -35,16 +35,18 @@ class I18NTest(TestCase):
         self.assertRaises(IOError, get_translations, [])
 
     def test_us_translation(self):
-        translations = get_translations(['en_US'])
-        self.assertEqual(translations.gettext('Invalid Mac address.'), 'Invalid MAC address.')
+        translations = get_translations(["en_US"])
+        self.assertEqual(
+            translations.gettext("Invalid Mac address."), "Invalid MAC address."
+        )
 
     def _test_converter(self, translator):
         getter = lambda x: translator
 
         translations = get_translations([], getter=getter)
-        self.assertEqual(translations.gettext('Foo'), 'foo')
-        self.assertEqual(translations.ngettext('Foo', 'Foos', 1), 'foo')
-        self.assertEqual(translations.ngettext('Foo', 'Foos', 2), 'foos')
+        self.assertEqual(translations.gettext("Foo"), "foo")
+        self.assertEqual(translations.ngettext("Foo", "Foos", 1), "foo")
+        self.assertEqual(translations.ngettext("Foo", "Foos", 2), "foos")
         return translations
 
     def test_python2_wrap(self):
@@ -61,11 +63,14 @@ class I18NTest(TestCase):
 class CoreFormTest(TestCase):
     class F(form.Form):
         class Meta:
-            locales = ['en_US', 'en']
+            locales = ["en_US", "en"]
+
         a = StringField(validators=[validators.DataRequired()])
 
     class F2(form.Form):
-        a = StringField(validators=[validators.DataRequired(), validators.Length(max=3)])
+        a = StringField(
+            validators=[validators.DataRequired(), validators.Length(max=3)]
+        )
 
     class F3(form.Form):
         a = StringField(validators=[validators.Length(max=1)])
@@ -80,42 +85,60 @@ class CoreFormTest(TestCase):
 
     def test_defaults(self):
         # Test with the default language
-        form = self._common_test('This field is required.', {})
+        form = self._common_test("This field is required.", {})
         # Make sure we have a gettext translations context
-        self.assertNotEqual(form.a.gettext(''), '')
+        self.assertNotEqual(form.a.gettext(""), "")
 
-        form = self._common_test('This field is required.', {}, self.F2)
+        form = self._common_test("This field is required.", {}, self.F2)
         assert form.meta.get_translations(form) is None
         assert form.meta.locales is False
-        self.assertEqual(form.a.gettext(''), '')
+        self.assertEqual(form.a.gettext(""), "")
 
     def test_fallback(self):
-        form = self._common_test('This field is required.', dict(meta=dict(locales=False)))
-        self.assertEqual(form.a.gettext(''), '')
+        form = self._common_test(
+            "This field is required.", dict(meta=dict(locales=False))
+        )
+        self.assertEqual(form.a.gettext(""), "")
 
     def test_override_languages(self):
-        self._common_test('Este campo es obligatorio.', dict(meta=dict(locales=['es_ES'])))
+        self._common_test(
+            "Este campo es obligatorio.", dict(meta=dict(locales=["es_ES"]))
+        )
 
     def test_ngettext(self):
         language_settings = [
-            (['en_US', 'en'], 'Field cannot be longer than 3 characters.', 'Field cannot be longer than 1 character.'),
-            (['de_DE', 'de'], 'Feld kann nicht l\xe4nger als 3 Zeichen sein.', 'Feld kann nicht l\xe4nger als 1 Zeichen sein.'),
-            (['et'], 'V\xe4li ei tohi olla \xfcle 3 t\xe4hem\xe4rgi pikk.', 'V\xe4li ei tohi olla \xfcle 1 t\xe4hem\xe4rgi pikk.'),
+            (
+                ["en_US", "en"],
+                "Field cannot be longer than 3 characters.",
+                "Field cannot be longer than 1 character.",
+            ),
+            (
+                ["de_DE", "de"],
+                "Feld kann nicht l\xe4nger als 3 Zeichen sein.",
+                "Feld kann nicht l\xe4nger als 1 Zeichen sein.",
+            ),
+            (
+                ["et"],
+                "V\xe4li ei tohi olla \xfcle 3 t\xe4hem\xe4rgi pikk.",
+                "V\xe4li ei tohi olla \xfcle 1 t\xe4hem\xe4rgi pikk.",
+            ),
         ]
         for languages, match1, match2 in language_settings:
-            settings = dict(a='toolong', meta=dict(locales=languages))
+            settings = dict(a="toolong", meta=dict(locales=languages))
             self._common_test(match1, settings, self.F2)
             self._common_test(match2, settings, self.F3)
 
     def test_cache(self):
-        settings = {'meta': {'locales': ['de_DE'], 'cache_translations': True}}
-        expected = 'Dieses Feld wird ben\xf6tigt.'
+        settings = {"meta": {"locales": ["de_DE"], "cache_translations": True}}
+        expected = "Dieses Feld wird ben\xf6tigt."
         form1 = self._common_test(expected, settings)
         form2 = self._common_test(expected, settings)
         assert form1.meta.get_translations(form1) is form2.meta.get_translations(form2)
-        settings['meta']['cache_translations'] = False
+        settings["meta"]["cache_translations"] = False
         form3 = self._common_test(expected, settings)
-        assert form2.meta.get_translations(form2) is not form3.meta.get_translations(form3)
+        assert form2.meta.get_translations(form2) is not form3.meta.get_translations(
+            form3
+        )
 
 
 class TranslationsTest(TestCase):
@@ -127,7 +150,7 @@ class TranslationsTest(TestCase):
             def get_translations(self, form):
                 return Lower_Translator()
 
-        a = StringField('', [validators.Length(max=5)])
+        a = StringField("", [validators.Length(max=5)])
 
     def setUp(self):
         self.a = self.F().a
@@ -143,9 +166,9 @@ class TranslationsTest(TestCase):
         self.assertEqual(getit(2), "antelopes")
 
     def test_validator_translation(self):
-        form = self.F2(a='hellobye')
+        form = self.F2(a="hellobye")
         self.assertFalse(form.validate())
-        self.assertEqual(form.a.errors[0], 'field cannot be longer than 5 characters.')
-        form = self.F(a='hellobye')
+        self.assertEqual(form.a.errors[0], "field cannot be longer than 5 characters.")
+        form = self.F(a="hellobye")
         self.assertFalse(form.validate())
-        self.assertEqual(form.a.errors[0], 'Field cannot be longer than 5 characters.')
+        self.assertEqual(form.a.errors[0], "Field cannot be longer than 5 characters.")

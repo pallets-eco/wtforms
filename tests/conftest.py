@@ -46,7 +46,6 @@ def grab_stop_message():
 
 
 class DummyTranslations(object):
-
     def gettext(self, string):
         return string
 
@@ -77,10 +76,10 @@ class DummyForm(dict):
 
 
 class ReallyLazyProxy(object):
-
     def __unicode__(self):
         raise Exception(
-            'Translator function called during form declaration: it should be called at response time.')
+            "Translator function called during form declaration: it should be called at response time."
+        )
 
     __str__ = __unicode__
 
@@ -93,7 +92,6 @@ def contains_validator(field, v_type):
 
 
 class DummyPostData(dict):
-
     def getlist(self, key):
         v = self[key]
         if not isinstance(v, (list, tuple)):
@@ -104,12 +102,14 @@ class DummyPostData(dict):
 @contextmanager
 def assert_raises_text(e_type, text):
     import re
+
     try:
         yield
     except e_type as e:
         if not re.match(text, e.args[0]):
             raise AssertionError(
-                'Exception raised: %r but text %r did not match pattern %r' % (e, e.args[0], text))
+                "Exception raised: %r but text %r did not match pattern %r"
+                % (e, e.args[0], text)
+            )
     else:
-        raise AssertionError(
-            'Expected Exception %r, did not get it' % (e_type,))
+        raise AssertionError("Expected Exception %r, did not get it" % (e_type,))
