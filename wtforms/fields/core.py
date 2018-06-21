@@ -15,9 +15,19 @@ from wtforms.utils import unset_value
 from wtforms.validators import StopValidation
 
 __all__ = (
-    'BooleanField', 'DecimalField', 'DateField', 'DateTimeField', 'FieldList',
-    'FloatField', 'FormField', 'IntegerField', 'RadioField', 'SelectField',
-    'SelectMultipleField', 'StringField', 'TimeField',
+    "BooleanField",
+    "DecimalField",
+    "DateField",
+    "DateTimeField",
+    "FieldList",
+    "FloatField",
+    "FormField",
+    "IntegerField",
+    "RadioField",
+    "SelectField",
+    "SelectMultipleField",
+    "StringField",
+    "TimeField",
 )
 
 
@@ -25,6 +35,7 @@ class Field(object):
     """
     Field base class
     """
+
     errors = tuple()
     process_errors = tuple()
     raw_data = None
@@ -35,15 +46,27 @@ class Field(object):
     do_not_call_in_templates = True  # Allow Django 1.4 traversal
 
     def __new__(cls, *args, **kwargs):
-        if '_form' in kwargs and '_name' in kwargs:
+        if "_form" in kwargs and "_name" in kwargs:
             return super(Field, cls).__new__(cls)
         else:
             return UnboundField(cls, *args, **kwargs)
 
-    def __init__(self, label=None, validators=None, filters=tuple(),
-                 description='', id=None, default=None, widget=None,
-                 render_kw=None, _form=None, _name=None, _prefix='',
-                 _translations=None, _meta=None):
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        filters=tuple(),
+        description="",
+        id=None,
+        default=None,
+        widget=None,
+        render_kw=None,
+        _form=None,
+        _name=None,
+        _prefix="",
+        _translations=None,
+        _meta=None,
+    ):
         """
         Construct a new field.
 
@@ -110,13 +133,18 @@ class Field(object):
         self.validators = validators or self.validators
 
         self.id = id or self.name
-        self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
+        self.label = Label(
+            self.id,
+            label
+            if label is not None
+            else self.gettext(_name.replace("_", " ").title()),
+        )
 
         if widget is not None:
             self.widget = widget
 
         for v in itertools.chain(self.validators, [self.widget]):
-            flags = getattr(v, 'field_flags', ())
+            flags = getattr(v, "field_flags", ())
             for f in flags:
                 setattr(self.flags, f, True)
 
@@ -162,12 +190,16 @@ class Field(object):
         if validators is not None:
             for validator in validators:
                 if not callable(validator):
-                    raise TypeError("{} is not a valid validator because it is not "
-                                    "callable".format(validator))
+                    raise TypeError(
+                        "{} is not a valid validator because it is not "
+                        "callable".format(validator)
+                    )
 
                 if inspect.isclass(validator):
-                    raise TypeError("{} is not a valid validator because it is a class, "
-                                    "it should be an instance".format(validator))
+                    raise TypeError(
+                        "{} is not a valid validator because it is a class, "
+                        "it should be an instance".format(validator)
+                    )
 
     def gettext(self, string):
         """
@@ -358,11 +390,11 @@ class UnboundField(object):
         self.args = args
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
-        validators = kwargs.get('validators')
+        validators = kwargs.get("validators")
         if validators:
             self.field_class.check_validators(validators)
 
-    def bind(self, form, name, prefix='', translations=None, **kwargs):
+    def bind(self, form, name, prefix="", translations=None, **kwargs):
         kw = dict(
             self.kwargs,
             _form=form,
@@ -374,7 +406,11 @@ class UnboundField(object):
         return self.field_class(*self.args, **kw)
 
     def __repr__(self):
-        return '<UnboundField(%s, %r, %r)>' % (self.field_class.__name__, self.args, self.kwargs)
+        return "<UnboundField(%s, %r, %r)>" % (
+            self.field_class.__name__,
+            self.args,
+            self.kwargs,
+        )
 
 
 class Flags(object):
@@ -383,8 +419,9 @@ class Flags(object):
 
     Accessing a non-existing attribute returns False for its value.
     """
+
     def __getattr__(self, name):
-        if name.startswith('_'):
+        if name.startswith("_"):
             return super(Flags, self).__getattr__(name)
         return False
 
@@ -392,14 +429,15 @@ class Flags(object):
         return getattr(self, name)
 
     def __repr__(self):
-        flags = (name for name in dir(self) if not name.startswith('_'))
-        return '<wtforms.fields.Flags: {%s}>' % ', '.join(flags)
+        flags = (name for name in dir(self) if not name.startswith("_"))
+        return "<wtforms.fields.Flags: {%s}>" % ", ".join(flags)
 
 
 class Label(object):
     """
     An HTML form label.
     """
+
     def __init__(self, field_id, text):
         self.field_id = field_id
         self.text = text
@@ -414,17 +452,17 @@ class Label(object):
         return self()
 
     def __call__(self, text=None, **kwargs):
-        if 'for_' in kwargs:
-            kwargs['for'] = kwargs.pop('for_')
+        if "for_" in kwargs:
+            kwargs["for"] = kwargs.pop("for_")
         else:
-            kwargs.setdefault('for', self.field_id)
+            kwargs.setdefault("for", self.field_id)
 
         attributes = widgets.html_params(**kwargs)
         text = escape(text or self.text)
-        return Markup('<label %s>%s</label>' % (attributes, text))
+        return Markup("<label %s>%s</label>" % (attributes, text))
 
     def __repr__(self):
-        return 'Label(%r, %r)' % (self.field_id, self.text)
+        return "Label(%r, %r)" % (self.field_id, self.text)
 
 
 class SelectFieldBase(Field):
@@ -436,6 +474,7 @@ class SelectFieldBase(Field):
     This isn't a field, but an abstract base class for fields which want to
     provide this functionality.
     """
+
     def __init__(self, label=None, validators=None, option_widget=None, **kwargs):
         super(SelectFieldBase, self).__init__(label, validators, **kwargs)
 
@@ -450,9 +489,11 @@ class SelectFieldBase(Field):
         raise NotImplementedError()
 
     def __iter__(self):
-        opts = dict(widget=self.option_widget, _name=self.name, _form=None, _meta=self.meta)
+        opts = dict(
+            widget=self.option_widget, _name=self.name, _form=None, _meta=self.meta
+        )
         for i, (value, label, checked) in enumerate(self.iter_choices()):
-            opt = self._Option(label=label, id='%s-%d' % (self.id, i), **opts)
+            opt = self._Option(label=label, id="%s-%d" % (self.id, i), **opts)
             opt.process(None, value)
             opt.checked = checked
             yield opt
@@ -467,7 +508,9 @@ class SelectFieldBase(Field):
 class SelectField(SelectFieldBase):
     widget = widgets.Select()
 
-    def __init__(self, label=None, validators=None, coerce=text_type, choices=None, **kwargs):
+    def __init__(
+        self, label=None, validators=None, coerce=text_type, choices=None, **kwargs
+    ):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = copy(choices)
@@ -488,14 +531,14 @@ class SelectField(SelectFieldBase):
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
-                raise ValueError(self.gettext('Invalid Choice: could not coerce'))
+                raise ValueError(self.gettext("Invalid Choice: could not coerce"))
 
     def pre_validate(self, form):
         for v, _ in self.choices:
             if self.data == v:
                 break
         else:
-            raise ValueError(self.gettext('Not a valid choice'))
+            raise ValueError(self.gettext("Not a valid choice"))
 
 
 class SelectMultipleField(SelectField):
@@ -504,6 +547,7 @@ class SelectMultipleField(SelectField):
     validate) multiple choices.  You'll need to specify the HTML `size`
     attribute to the select field when rendering.
     """
+
     widget = widgets.Select(multiple=True)
 
     def iter_choices(self):
@@ -521,14 +565,21 @@ class SelectMultipleField(SelectField):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError:
-            raise ValueError(self.gettext('Invalid choice(s): one or more data inputs could not be coerced'))
+            raise ValueError(
+                self.gettext(
+                    "Invalid choice(s): one or more data inputs could not be coerced"
+                )
+            )
 
     def pre_validate(self, form):
         if self.data:
             values = list(c[0] for c in self.choices)
             for d in self.data:
                 if d not in values:
-                    raise ValueError(self.gettext("'%(value)s' is not a valid choice for this field") % dict(value=d))
+                    raise ValueError(
+                        self.gettext("'%(value)s' is not a valid choice for this field")
+                        % dict(value=d)
+                    )
 
 
 class RadioField(SelectField):
@@ -538,6 +589,7 @@ class RadioField(SelectField):
     Iterating the field will produce subfields (each containing a label as
     well) in order to allow custom rendering of the individual radio fields.
     """
+
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.RadioInput()
 
@@ -547,6 +599,7 @@ class StringField(Field):
     This field is the base for most of the more complicated fields, and
     represents an ``<input type="text">``.
     """
+
     widget = widgets.TextInput()
 
     def process_formdata(self, valuelist):
@@ -554,7 +607,7 @@ class StringField(Field):
             self.data = valuelist[0]
 
     def _value(self):
-        return text_type(self.data) if self.data is not None else ''
+        return text_type(self.data) if self.data is not None else ""
 
 
 class LocaleAwareNumberField(Field):
@@ -563,20 +616,29 @@ class LocaleAwareNumberField(Field):
 
     Locale-aware numbers require the 'babel' package to be present.
     """
-    def __init__(self, label=None, validators=None, use_locale=False, number_format=None, **kwargs):
+
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        use_locale=False,
+        number_format=None,
+        **kwargs
+    ):
         super(LocaleAwareNumberField, self).__init__(label, validators, **kwargs)
         self.use_locale = use_locale
         if use_locale:
             self.number_format = number_format
-            self.locale = kwargs['_form'].meta.locales[0]
+            self.locale = kwargs["_form"].meta.locales[0]
             self._init_babel()
 
     def _init_babel(self):
         try:
             from babel import numbers
+
             self.babel_numbers = numbers
         except ImportError:
-            raise ImportError('Using locale-aware decimals requires the babel library.')
+            raise ImportError("Using locale-aware decimals requires the babel library.")
 
     def _parse_decimal(self, value):
         return self.babel_numbers.parse_decimal(value, self.locale)
@@ -590,6 +652,7 @@ class IntegerField(Field):
     A text field, except all input is coerced to an integer.  Erroneous input
     is ignored and will not be accepted as a value.
     """
+
     widget = widgets.TextInput()
 
     def __init__(self, label=None, validators=None, **kwargs):
@@ -601,7 +664,7 @@ class IntegerField(Field):
         elif self.data is not None:
             return text_type(self.data)
         else:
-            return ''
+            return ""
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -609,7 +672,7 @@ class IntegerField(Field):
                 self.data = int(valuelist[0])
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Not a valid integer value'))
+                raise ValueError(self.gettext("Not a valid integer value"))
 
 
 class DecimalField(LocaleAwareNumberField):
@@ -630,12 +693,17 @@ class DecimalField(LocaleAwareNumberField):
         Optional number format for locale. If omitted, use the default decimal
         format for the locale.
     """
+
     widget = widgets.TextInput()
 
-    def __init__(self, label=None, validators=None, places=unset_value, rounding=None, **kwargs):
+    def __init__(
+        self, label=None, validators=None, places=unset_value, rounding=None, **kwargs
+    ):
         super(DecimalField, self).__init__(label, validators, **kwargs)
         if self.use_locale and (places is not unset_value or rounding is not None):
-            raise TypeError("When using locale-aware numbers, 'places' and 'rounding' are ignored.")
+            raise TypeError(
+                "When using locale-aware numbers, 'places' and 'rounding' are ignored."
+            )
 
         if places is unset_value:
             places = 2
@@ -649,8 +717,8 @@ class DecimalField(LocaleAwareNumberField):
             if self.use_locale:
                 return text_type(self._format_decimal(self.data))
             elif self.places is not None:
-                if hasattr(self.data, 'quantize'):
-                    exp = decimal.Decimal('.1') ** self.places
+                if hasattr(self.data, "quantize"):
+                    exp = decimal.Decimal(".1") ** self.places
                     if self.rounding is None:
                         quantized = self.data.quantize(exp)
                     else:
@@ -659,12 +727,12 @@ class DecimalField(LocaleAwareNumberField):
                 else:
                     # If for some reason, data is a float or int, then format
                     # as we would for floats using string formatting.
-                    format = '%%0.%df' % self.places
+                    format = "%%0.%df" % self.places
                     return format % self.data
             else:
                 return text_type(self.data)
         else:
-            return ''
+            return ""
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -675,7 +743,7 @@ class DecimalField(LocaleAwareNumberField):
                     self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 self.data = None
-                raise ValueError(self.gettext('Not a valid decimal value'))
+                raise ValueError(self.gettext("Not a valid decimal value"))
 
 
 class FloatField(Field):
@@ -683,6 +751,7 @@ class FloatField(Field):
     A text field, except all input is coerced to an float.  Erroneous input
     is ignored and will not be accepted as a value.
     """
+
     widget = widgets.TextInput()
 
     def __init__(self, label=None, validators=None, **kwargs):
@@ -694,7 +763,7 @@ class FloatField(Field):
         elif self.data is not None:
             return text_type(self.data)
         else:
-            return ''
+            return ""
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -702,7 +771,7 @@ class FloatField(Field):
                 self.data = float(valuelist[0])
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Not a valid float value'))
+                raise ValueError(self.gettext("Not a valid float value"))
 
 
 class BooleanField(Field):
@@ -716,8 +785,9 @@ class BooleanField(Field):
         string of what is considered a "false" value. Defaults to the tuple
         ``('false', '')``
     """
+
     widget = widgets.CheckboxInput()
-    false_values = (False, 'false', '')
+    false_values = (False, "false", "")
 
     def __init__(self, label=None, validators=None, false_values=None, **kwargs):
         super(BooleanField, self).__init__(label, validators, **kwargs)
@@ -737,67 +807,72 @@ class BooleanField(Field):
         if self.raw_data:
             return text_type(self.raw_data[0])
         else:
-            return 'y'
+            return "y"
 
 
 class DateTimeField(Field):
     """
     A text field which stores a `datetime.datetime` matching a format.
     """
+
     widget = widgets.TextInput()
 
-    def __init__(self, label=None, validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
+    def __init__(
+        self, label=None, validators=None, format="%Y-%m-%d %H:%M:%S", **kwargs
+    ):
         super(DateTimeField, self).__init__(label, validators, **kwargs)
         self.format = format
 
     def _value(self):
         if self.raw_data:
-            return ' '.join(self.raw_data)
+            return " ".join(self.raw_data)
         else:
-            return self.data and self.data.strftime(self.format) or ''
+            return self.data and self.data.strftime(self.format) or ""
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = ' '.join(valuelist)
+            date_str = " ".join(valuelist)
             try:
                 self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Not a valid datetime value'))
+                raise ValueError(self.gettext("Not a valid datetime value"))
 
 
 class DateField(DateTimeField):
     """
     Same as DateTimeField, except stores a `datetime.date`.
     """
-    def __init__(self, label=None, validators=None, format='%Y-%m-%d', **kwargs):
+
+    def __init__(self, label=None, validators=None, format="%Y-%m-%d", **kwargs):
         super(DateField, self).__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = ' '.join(valuelist)
+            date_str = " ".join(valuelist)
             try:
                 self.data = datetime.datetime.strptime(date_str, self.format).date()
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Not a valid date value'))
+                raise ValueError(self.gettext("Not a valid date value"))
 
 
 class TimeField(DateTimeField):
     """
     Same as DateTimeField, except stores a `time`.
     """
-    def __init__(self, label=None, validators=None, format='%H:%M', **kwargs):
+
+    def __init__(self, label=None, validators=None, format="%H:%M", **kwargs):
         super(TimeField, self).__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
         if valuelist:
-            time_str = ' '.join(valuelist)
+            time_str = " ".join(valuelist)
             try:
                 self.data = datetime.datetime.strptime(time_str, self.format).time()
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Not a valid time value'))
+                raise ValueError(self.gettext("Not a valid time value"))
 
 
 class FormField(Field):
@@ -810,17 +885,24 @@ class FormField(Field):
         A string which will be suffixed to this field's name to create the
         prefix to enclosed fields. The default is fine for most uses.
     """
+
     widget = widgets.TableWidget()
 
-    def __init__(self, form_class, label=None, validators=None, separator='-', **kwargs):
+    def __init__(
+        self, form_class, label=None, validators=None, separator="-", **kwargs
+    ):
         super(FormField, self).__init__(label, validators, **kwargs)
         self.form_class = form_class
         self.separator = separator
         self._obj = None
         if self.filters:
-            raise TypeError('FormField cannot take filters, as the encapsulated data is not mutable.')
+            raise TypeError(
+                "FormField cannot take filters, as the encapsulated data is not mutable."
+            )
         if validators:
-            raise TypeError('FormField does not accept any validators. Instead, define them on the enclosed form.')
+            raise TypeError(
+                "FormField does not accept any validators. Instead, define them on the enclosed form."
+            )
 
     def process(self, formdata, data=unset_value):
         if data is unset_value:
@@ -840,14 +922,18 @@ class FormField(Field):
 
     def validate(self, form, extra_validators=tuple()):
         if extra_validators:
-            raise TypeError('FormField does not accept in-line validators, as it gets errors from the enclosed form.')
+            raise TypeError(
+                "FormField does not accept in-line validators, as it gets errors from the enclosed form."
+            )
         return self.form.validate()
 
     def populate_obj(self, obj, name):
         candidate = getattr(obj, name, None)
         if candidate is None:
             if self._obj is None:
-                raise TypeError('populate_obj: cannot find a value to populate from the provided obj or input data/defaults')
+                raise TypeError(
+                    "populate_obj: cannot find a value to populate from the provided obj or input data/defaults"
+                )
             candidate = self._obj
             setattr(obj, name, candidate)
 
@@ -889,19 +975,32 @@ class FieldList(Field):
         accept no more than this many entries as input, even if more exist in
         formdata.
     """
+
     widget = widgets.ListWidget()
 
-    def __init__(self, unbound_field, label=None, validators=None, min_entries=0,
-                 max_entries=None, default=tuple(), **kwargs):
+    def __init__(
+        self,
+        unbound_field,
+        label=None,
+        validators=None,
+        min_entries=0,
+        max_entries=None,
+        default=tuple(),
+        **kwargs
+    ):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:
-            raise TypeError('FieldList does not accept any filters. Instead, define them on the enclosed field.')
-        assert isinstance(unbound_field, UnboundField), 'Field must be unbound, not a field class'
+            raise TypeError(
+                "FieldList does not accept any filters. Instead, define them on the enclosed field."
+            )
+        assert isinstance(
+            unbound_field, UnboundField
+        ), "Field must be unbound, not a field class"
         self.unbound_field = unbound_field
         self.min_entries = min_entries
         self.max_entries = max_entries
         self.last_index = -1
-        self._prefix = kwargs.get('_prefix', '')
+        self._prefix = kwargs.get("_prefix", "")
 
     def process(self, formdata, data=unset_value):
         self.entries = []
@@ -916,7 +1015,7 @@ class FieldList(Field):
         if formdata:
             indices = sorted(set(self._extract_indices(self.name, formdata)))
             if self.max_entries:
-                indices = indices[:self.max_entries]
+                indices = indices[: self.max_entries]
 
             idata = iter(data)
             for index in indices:
@@ -943,7 +1042,7 @@ class FieldList(Field):
         offset = len(prefix) + 1
         for k in formdata:
             if k.startswith(prefix):
-                k = k[offset:].split('-', 1)[0]
+                k = k[offset:].split("-", 1)[0]
                 if k.isdigit():
                     yield int(k)
 
@@ -978,26 +1077,33 @@ class FieldList(Field):
             ivalues = iter([])
 
         candidates = itertools.chain(ivalues, itertools.repeat(None))
-        _fake = type(str('_fake'), (object, ), {})
+        _fake = type(str("_fake"), (object,), {})
         output = []
         for field, data in izip(self.entries, candidates):
             fake_obj = _fake()
             fake_obj.data = data
-            field.populate_obj(fake_obj, 'data')
+            field.populate_obj(fake_obj, "data")
             output.append(fake_obj.data)
 
         setattr(obj, name, output)
 
     def _add_entry(self, formdata=None, data=unset_value, index=None):
-        assert not self.max_entries or len(self.entries) < self.max_entries, \
-            'You cannot have more than max_entries entries in this FieldList'
+        assert (
+            not self.max_entries or len(self.entries) < self.max_entries
+        ), "You cannot have more than max_entries entries in this FieldList"
         if index is None:
             index = self.last_index + 1
         self.last_index = index
-        name = '%s-%d' % (self.short_name, index)
-        id = '%s-%d' % (self.id, index)
-        field = self.unbound_field.bind(form=None, name=name, prefix=self._prefix, id=id, _meta=self.meta,
-                                        translations=self._translations)
+        name = "%s-%d" % (self.short_name, index)
+        id = "%s-%d" % (self.id, index)
+        field = self.unbound_field.bind(
+            form=None,
+            name=name,
+            prefix=self._prefix,
+            id=id,
+            _meta=self.meta,
+            translations=self._translations,
+        )
         field.process(formdata, data)
         self.entries.append(field)
         return field
