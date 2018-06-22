@@ -42,7 +42,8 @@ class DefaultMeta(object):
                 return WebobInputWrapper(formdata)
             else:
                 raise TypeError(
-                    "formdata should be a multidict-type wrapper that supports the 'getlist' method"
+                    "formdata should be a multidict-type wrapper "
+                    "that supports the 'getlist' method"
                 )
         return formdata
 

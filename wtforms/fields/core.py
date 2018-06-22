@@ -897,11 +897,13 @@ class FormField(Field):
         self._obj = None
         if self.filters:
             raise TypeError(
-                "FormField cannot take filters, as the encapsulated data is not mutable."
+                "FormField cannot take filters, "
+                "as the encapsulated data is not mutable."
             )
         if validators:
             raise TypeError(
-                "FormField does not accept any validators. Instead, define them on the enclosed form."
+                "FormField does not accept any validators. "
+                "Instead, define them on the enclosed form."
             )
 
     def process(self, formdata, data=unset_value):
@@ -923,7 +925,8 @@ class FormField(Field):
     def validate(self, form, extra_validators=tuple()):
         if extra_validators:
             raise TypeError(
-                "FormField does not accept in-line validators, as it gets errors from the enclosed form."
+                "FormField does not accept in-line validators, "
+                "as it gets errors from the enclosed form."
             )
         return self.form.validate()
 
@@ -932,7 +935,8 @@ class FormField(Field):
         if candidate is None:
             if self._obj is None:
                 raise TypeError(
-                    "populate_obj: cannot find a value to populate from the provided obj or input data/defaults"
+                    "populate_obj: cannot find a value to populate "
+                    "from the provided obj or input data/defaults"
                 )
             candidate = self._obj
             setattr(obj, name, candidate)
@@ -991,7 +995,8 @@ class FieldList(Field):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:
             raise TypeError(
-                "FieldList does not accept any filters. Instead, define them on the enclosed field."
+                "FieldList does not accept any filters. "
+                "Instead, define them on the enclosed field."
             )
         assert isinstance(
             unbound_field, UnboundField
