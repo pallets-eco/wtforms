@@ -157,7 +157,7 @@ class Length(object):
 
             raise ValidationError(
                 message % dict(min=self.min, max=self.max, length=length)
-                )
+            )
 
 
 class NumberRange(object):
