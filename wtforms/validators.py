@@ -379,8 +379,8 @@ class Email(object):
 
 class IPAddress(object):
     """
-    Validates an IP address. Requires ipaddress package
-    to be installed for Python 2 support.
+    Validates an IP address. Requires ipaddress package to be installed for
+    Python 2 support.
 
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)

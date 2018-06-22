@@ -995,8 +995,8 @@ class FieldList(Field):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
         if self.filters:
             raise TypeError(
-                "FieldList does not accept any filters."
-                " Instead, define them on the enclosed field."
+                "FieldList does not accept any filters. "
+                "Instead, define them on the enclosed field."
             )
         assert isinstance(
             unbound_field, UnboundField
