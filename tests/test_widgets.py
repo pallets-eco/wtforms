@@ -1,10 +1,9 @@
 from __future__ import unicode_literals
 
-from unittest import TestCase
-
 from markupsafe import Markup
+import pytest
 
-from wtforms.widgets import (
+from wtforms.widgets.core import (
     CheckboxInput,
     FileInput,
     HiddenInput,
@@ -16,235 +15,224 @@ from wtforms.widgets import (
     TableWidget,
     TextArea,
     TextInput,
-    html5,
     html_params,
 )
+from wtforms.widgets.html5 import NumberInput, RangeInput
 
 
-class DummyField(object):
-    def __init__(self, data, name="f", label="", id="", type="StringField"):
-        self.data = data
-        self.name = name
-        self.label = label
-        self.id = id
-        self.type = type
-
-    def _value(self):
-        return self.data
-
-    def __str__(self):
-        return self.data
-
-    __unicode__ = __str__
-
-    def __call__(self, **kwargs):
-        return self.data
-
-    def __iter__(self):
-        return iter(self.data)
-
-    iter_choices = __iter__
-
-
-class HTMLParamsTest(TestCase):
+class TestHTMLParams:
     def test_basic(self):
-        self.assertEqual(html_params(foo=9, k="wuuu"), 'foo="9" k="wuuu"')
-        self.assertEqual(html_params(class_="foo"), 'class="foo"')
-        self.assertEqual(html_params(class__="foo"), 'class_="foo"')
-        self.assertEqual(html_params(for_="foo"), 'for="foo"')
-        self.assertEqual(html_params(readonly=False, foo=9), 'foo="9"')
-
-    def test_data_prefix(self):
-        self.assertEqual(html_params(data_foo=22), 'data-foo="22"')
-        self.assertEqual(html_params(data_foo_bar=1), 'data-foo-bar="1"')
-
-    def test_aria_prefix(self):
-        self.assertEqual(html_params(aria_foo="bar"), 'aria-foo="bar"')
-        self.assertEqual(html_params(aria_foo_bar="foobar"), 'aria-foo-bar="foobar"')
-
-    def test_quoting(self):
-        self.assertEqual(html_params(foo='hi&bye"quot'), 'foo="hi&amp;bye&#34;quot"')
-
-
-class ListWidgetTest(TestCase):
-    def test(self):
-        # ListWidget just expects an iterable of field-like objects as its
-        # 'field' so that is what we will give it
-        field = DummyField(
-            [DummyField(x, label="l" + x) for x in ["foo", "bar"]], id="hai"
+        assert html_params(foo=9, k="wuuu") == 'foo="9" k="wuuu"'
+        assert html_params(class_="foo") == 'class="foo"'
+        assert html_params(class__="foo") == 'class_="foo"'
+        assert html_params(for_="foo") == 'for="foo"'
+        assert html_params(readonly=False, foo=9) == 'foo="9"'
+        assert (
+            html_params(accept="image/png, image/jpeg", required=True)
+            == 'accept="image/png, image/jpeg" required'
         )
 
-        self.assertEqual(
-            ListWidget()(field), '<ul id="hai"><li>lfoo foo</li><li>lbar bar</li></ul>'
+    def test_data_prefix(self):
+        assert html_params(data_foo=22) == 'data-foo="22"'
+        assert html_params(data_foo_bar=1) == 'data-foo-bar="1"'
+
+    def test_aria_prefix(self):
+        assert html_params(aria_foo="bar") == 'aria-foo="bar"'
+        assert html_params(aria_foo_bar="foobar") == 'aria-foo-bar="foobar"'
+
+    def test_quoting(self):
+        assert html_params(foo='hi&bye"quot') == 'foo="hi&amp;bye&#34;quot"'
+
+
+class TestListWidget:
+    def test_listwidget(self, dummy_field_class):
+        # ListWidget just expects an iterable of field-like objects as its
+        # 'field' so that is what we will give it
+        field = dummy_field_class(
+            [dummy_field_class(x, label="l" + x) for x in ["foo", "bar"]], id="hai"
+        )
+
+        assert (
+            ListWidget()(field)
+            == '<ul id="hai"><li>lfoo foo</li><li>lbar bar</li></ul>'
         )
 
         w = ListWidget(html_tag="ol", prefix_label=False)
-        self.assertEqual(
-            w(field), '<ol id="hai"><li>foo lfoo</li><li>bar lbar</li></ol>'
-        )
+
+        assert w(field) == '<ol id="hai"><li>foo lfoo</li><li>bar lbar</li></ol>'
 
 
-class TableWidgetTest(TestCase):
-    def test(self):
+class TestTableWidget:
+    def test_tablewidget(self, dummy_field_class):
         inner_fields = [
-            DummyField("hidden1", type="HiddenField"),
-            DummyField("foo", label="lfoo"),
-            DummyField("bar", label="lbar"),
-            DummyField("hidden2", type="HiddenField"),
+            dummy_field_class(data="hidden1", field_type="HiddenField"),
+            dummy_field_class(data="foo", label="lfoo"),
+            dummy_field_class(data="bar", label="lbar"),
+            dummy_field_class(data="hidden2", field_type="HiddenField"),
         ]
-        field = DummyField(inner_fields, id="hai")
-        self.assertEqual(
-            TableWidget()(field),
-            '<table id="hai">'
-            "<tr><th>lfoo</th><td>hidden1foo</td></tr>"
-            "<tr><th>lbar</th><td>bar</td></tr>"
-            "</table>hidden2",
+        field = dummy_field_class(inner_fields, id="hai")
+        assert (
+            TableWidget()(field)
+            == '<table id="hai"><tr><th>lfoo</th><td>hidden1foo</td></tr>'
+            "<tr><th>lbar</th><td>bar</td></tr></table>hidden2"
         )
 
 
-class BasicWidgetsTest(TestCase):
+class TestBasicWidgets:
     """Test most of the basic input widget types"""
 
-    def setUp(self):
-        self.field = DummyField("foo", name="bar", label="label", id="id")
-
     def test_input_type(self):
-        a = Input()
-        self.assertRaises(AttributeError, getattr, a, "input_type")
-        b = Input(input_type="test")
-        self.assertEqual(b.input_type, "test")
+        with pytest.raises(AttributeError):
+            getattr(Input(), "input_type")
 
-    def test_html_marking(self):
-        html = TextInput()(self.field)
-        self.assertTrue(hasattr(html, "__html__"))
-        self.assertTrue(html.__html__() is html)
+        test_input = Input(input_type="test")
+        assert test_input.input_type == "test"
 
-    def test_text_input(self):
-        self.assertEqual(
-            TextInput()(self.field),
-            '<input id="id" name="bar" type="text" value="foo">',
+    def test_html_marking(self, basic_widget_dummy_field):
+        html = TextInput()(basic_widget_dummy_field)
+        assert hasattr(html, "__html__")
+        assert html.__html__() is html
+
+    def test_text_input(self, basic_widget_dummy_field):
+        assert (
+            TextInput()(basic_widget_dummy_field)
+            == '<input id="id" name="bar" type="text" value="foo">'
         )
 
-    def test_password_input(self):
-        self.assertTrue('type="password"' in PasswordInput()(self.field))
-        self.assertTrue('value=""' in PasswordInput()(self.field))
-        self.assertTrue('value="foo"' in PasswordInput(hide_value=False)(self.field))
-
-    def test_hidden_input(self):
-        self.assertTrue('type="hidden"' in HiddenInput()(self.field))
-        self.assertTrue("hidden" in HiddenInput().field_flags)
-
-    def test_checkbox_input(self):
-        self.assertEqual(
-            CheckboxInput()(self.field, value="v"),
-            '<input checked id="id" name="bar" type="checkbox" value="v">',
+    def test_password_input(self, basic_widget_dummy_field):
+        assert 'type="password"' in PasswordInput()(basic_widget_dummy_field)
+        assert 'value=""' in PasswordInput()(basic_widget_dummy_field)
+        assert 'value="foo"' in PasswordInput(hide_value=False)(
+            basic_widget_dummy_field
         )
-        field2 = DummyField(False)
-        self.assertTrue("checked" not in CheckboxInput()(field2))
 
-    def test_radio_input(self):
-        self.field.checked = True
+    def test_hidden_input(self, basic_widget_dummy_field):
+        assert 'type="hidden"' in HiddenInput()(basic_widget_dummy_field)
+        assert "hidden" in HiddenInput().field_flags
+
+    def test_checkbox_input(self, basic_widget_dummy_field):
+        assert (
+            CheckboxInput()(basic_widget_dummy_field, value="v")
+            == '<input checked id="id" name="bar" type="checkbox" value="v">'
+        )
+        # set falsy value to dummy field
+        setattr(basic_widget_dummy_field, "data", "")
+        assert "checked" not in CheckboxInput()(basic_widget_dummy_field)
+        setattr(basic_widget_dummy_field, "data", False)
+        assert "checked" not in CheckboxInput()(basic_widget_dummy_field)
+
+    def test_radio_input(self, basic_widget_dummy_field):
+        basic_widget_dummy_field.checked = True
         expected = '<input checked id="id" name="bar" type="radio" value="foo">'
-        self.assertEqual(RadioInput()(self.field), expected)
-        self.field.checked = False
-        self.assertEqual(RadioInput()(self.field), expected.replace(" checked", ""))
+        assert RadioInput()(basic_widget_dummy_field) == expected
+        basic_widget_dummy_field.checked = False
+        assert RadioInput()(basic_widget_dummy_field) == expected.replace(
+            " checked", ""
+        )
 
-    def test_textarea(self):
+    def test_textarea(self, basic_widget_dummy_field):
         # Make sure textareas escape properly and render properly
-        f = DummyField("hi<>bye")
-        self.assertEqual(
-            TextArea()(f), '<textarea id="" name="f">\r\nhi&lt;&gt;bye</textarea>'
+        setattr(basic_widget_dummy_field, "data", "hi<>bye")
+        setattr(basic_widget_dummy_field, "name", "f")
+        setattr(basic_widget_dummy_field, "id", "")
+        assert (
+            TextArea()(basic_widget_dummy_field)
+            == '<textarea id="" name="f">\r\nhi&lt;&gt;bye</textarea>'
         )
 
-    def test_file(self):
-        self.assertEqual(
-            FileInput()(self.field), '<input id="id" name="bar" type="file">'
+    def test_file(self, basic_widget_dummy_field):
+        assert (
+            FileInput()(basic_widget_dummy_field)
+            == '<input id="id" name="bar" type="file">'
         )
-        self.assertEqual(
-            FileInput(multiple=True)(self.field),
-            '<input id="id" multiple name="bar" type="file">',
+        assert (
+            FileInput(multiple=True)(basic_widget_dummy_field)
+            == '<input id="id" multiple name="bar" type="file">'
         )
 
 
-class SelectTest(TestCase):
-    field = DummyField([("foo", "lfoo", True), ("bar", "lbar", False)])
+class TestSelect:
+    def test_select(self, select_dummy_field):
+        setattr(select_dummy_field, "name", "f")
 
-    def test(self):
-        self.assertEqual(
-            Select()(self.field),
-            '<select id="" name="f">'
-            '<option selected value="foo">lfoo</option>'
-            '<option value="bar">lbar</option></select>',
+        assert (
+            Select()(select_dummy_field)
+            == '<select id="" name="f"><option selected value="foo">lfoo</option>'
+            '<option value="bar">lbar</option></select>'
         )
-        self.assertEqual(
-            Select(multiple=True)(self.field),
-            '<select id="" multiple name="f">'
-            '<option selected value="foo">lfoo</option>'
-            '<option value="bar">lbar</option>'
-            "</select>",
+
+        assert (
+            Select(multiple=True)(select_dummy_field)
+            == '<select id="" multiple name="f"><option selected value="foo">'
+            'lfoo</option><option value="bar">lbar</option></select>'
         )
 
     def test_render_option(self):
         # value, label, selected
-        self.assertEqual(
-            Select.render_option("bar", "foo", False),
-            '<option value="bar">foo</option>',
+        assert (
+            Select.render_option("bar", "foo", False)
+            == '<option value="bar">foo</option>'
         )
-        self.assertEqual(
-            Select.render_option(True, "foo", True),
-            '<option selected value="True">foo</option>',
+
+        assert (
+            Select.render_option(True, "foo", True)
+            == '<option selected value="True">foo</option>'
         )
-        self.assertEqual(
-            Select.render_option("bar", '<i class="bar"></i>foo', False),
-            '<option value="bar">&lt;i class=&#34;bar&#34;&gt;&lt;/i&gt;foo</option>',
+
+        assert (
+            Select.render_option("bar", '<i class="bar"></i>foo', False)
+            == '<option value="bar">&lt;i class=&#34;bar&#34;&gt;&lt;/i&gt;foo</option>'
         )
-        self.assertEqual(
-            Select.render_option("bar", Markup('<i class="bar"></i>foo'), False),
-            '<option value="bar"><i class="bar"></i>foo</option>',
+
+        assert (
+            Select.render_option("bar", Markup('<i class="bar"></i>foo'), False)
+            == '<option value="bar"><i class="bar"></i>foo</option>'
         )
 
 
-class HTML5Test(TestCase):
-    field = DummyField("42", name="bar", id="id")
-
-    def test_number(self):
-        i1 = html5.NumberInput(step="any")
-        self.assertEqual(
-            i1(self.field),
-            '<input id="id" name="bar" step="any" type="number" value="42">',
-        )
-        i2 = html5.NumberInput(step=2)
-        self.assertEqual(
-            i2(self.field, step=3),
-            '<input id="id" name="bar" step="3" type="number" value="42">',
-        )
-        i3 = html5.NumberInput(min=10)
-        self.assertEqual(
-            i3(self.field),
-            '<input id="id" min="10" name="bar" type="number" value="42">',
-        )
-        self.assertEqual(
-            i3(self.field, min=5),
-            '<input id="id" min="5" name="bar" type="number" value="42">',
-        )
-        i4 = html5.NumberInput(max=100)
-        self.assertEqual(
-            i4(self.field),
-            '<input id="id" max="100" name="bar" type="number" value="42">',
-        )
-        self.assertEqual(
-            i4(self.field, max=50),
-            '<input id="id" max="50" name="bar" type="number" value="42">',
+class TestHTML5:
+    def test_number(self, html5_dummy_field):
+        i1 = NumberInput(step="any")
+        assert (
+            i1(html5_dummy_field)
+            == '<input id="id" name="bar" step="any" type="number" value="42">'
         )
 
-    def test_range(self):
-        i1 = html5.RangeInput(step="any")
-        self.assertEqual(
-            i1(self.field),
-            '<input id="id" name="bar" step="any" type="range" value="42">',
+        i2 = NumberInput(step=2)
+        assert (
+            i2(html5_dummy_field, step=3)
+            == '<input id="id" name="bar" step="3" type="number" value="42">'
         )
-        i2 = html5.RangeInput(step=2)
-        self.assertEqual(
-            i2(self.field, step=3),
-            '<input id="id" name="bar" step="3" type="range" value="42">',
+
+        i3 = NumberInput(min=10)
+        assert (
+            i3(html5_dummy_field)
+            == '<input id="id" min="10" name="bar" type="number" value="42">'
+        )
+        assert (
+            i3(html5_dummy_field, min=5)
+            == '<input id="id" min="5" name="bar" type="number" value="42">'
+        )
+
+        i4 = NumberInput(max=100)
+        assert (
+            i4(html5_dummy_field)
+            == '<input id="id" max="100" name="bar" type="number" value="42">'
+        )
+        assert (
+            i4(html5_dummy_field, max=50)
+            == '<input id="id" max="50" name="bar" type="number" value="42">'
+        )
+
+    def test_range(self, html5_dummy_field):
+        i1 = RangeInput(step="any")
+        assert (
+            i1(html5_dummy_field)
+            == '<input id="id" name="bar" step="any" type="range" value="42">'
+        )
+
+        i2 = RangeInput(step=2)
+        assert (
+            i2(html5_dummy_field, step=3)
+            == '<input id="id" name="bar" step="3" type="range" value="42">'
         )

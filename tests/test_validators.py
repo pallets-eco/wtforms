@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 import re
+
+from wtforms import Label
 from wtforms.compat import text_type
 from wtforms.validators import (
     StopValidation,
@@ -351,7 +353,7 @@ def test_equal_to_raises(
     """
     It should raise ValidationError if the values are not equal
     """
-    dummy_form["foo"] = dummy_field_class("test")
+    dummy_form["foo"] = dummy_field_class("test", label=Label("foo", "foo"))
     dummy_field.data = field_val
     validator = equal_to(equal_val)
     with pytest.raises(ValidationError):
