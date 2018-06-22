@@ -128,8 +128,8 @@ class Length(object):
         self.message = message
 
     def __call__(self, form, field):
-        l = field.data and len(field.data) or 0
-        if l < self.min or self.max != -1 and l > self.max:
+        length = field.data and len(field.data) or 0
+        if length < self.min or self.max != -1 and length > self.max:
             message = self.message
             if message is None:
                 if self.max == -1:
@@ -155,7 +155,9 @@ class Length(object):
                         "Field must be between %(min)d and %(max)d characters long."
                     )
 
-            raise ValidationError(message % dict(min=self.min, max=self.max, length=l))
+            raise ValidationError(
+                message % dict(min=self.min, max=self.max, length=length)
+            )
 
 
 class NumberRange(object):
@@ -346,9 +348,19 @@ class Email(object):
     """
 
     user_regex = re.compile(
-        r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*\Z"  # dot-atom
-        r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"\Z)',  # quoted-string
-        re.IGNORECASE,
+        r"""
+        ^(
+            [-!#$%&'*+/=?^_`{}|~0-9A-Z]+
+            (\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*  # dot-atom
+        |
+            "(
+                [\001-\010\013\014\016-\037!#-\[\]-\177]
+            |
+                \\[\001-\011\013\014\016-\177]
+            )*"  # quoted-string
+        )$
+        """,
+        re.IGNORECASE | re.VERBOSE,
     )
 
     def __init__(self, message=None):
@@ -376,7 +388,8 @@ class Email(object):
 
 class IPAddress(object):
     """
-    Validates an IP address. Requires ipaddress package to be instaled for Python 2 support.
+    Validates an IP address. Requires ipaddress package to be installed
+    for Python 2 support.
 
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
