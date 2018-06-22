@@ -78,7 +78,8 @@ class DummyForm(dict):
 class ReallyLazyProxy(object):
     def __unicode__(self):
         raise Exception(
-            "Translator function called during form declaration: it should be called at response time."
+            "Translator function called during form declaration: it"
+            " should be called at response time."
         )
 
     __str__ = __unicode__
