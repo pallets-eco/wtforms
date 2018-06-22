@@ -1,20 +1,48 @@
 from __future__ import unicode_literals
 
-import sys
-
 from datetime import date, datetime
-from decimal import Decimal, ROUND_UP, ROUND_DOWN
+from decimal import Decimal, ROUND_DOWN, ROUND_UP
+import sys
 from unittest import TestCase
 
 from markupsafe import Markup
 
-from wtforms import validators, widgets, meta
-from wtforms.fields import *
-from wtforms.fields import Label, Field, SelectFieldBase
-from wtforms.form import Form
-from wtforms.compat import text_type
-from wtforms.utils import unset_value
 from tests.common import DummyPostData
+from wtforms import meta, validators, widgets
+from wtforms.compat import text_type
+from wtforms.fields import (
+    BooleanField,
+    DateField,
+    DateTimeField,
+    DateTimeLocalField,
+    DecimalField,
+    DecimalRangeField,
+    EmailField,
+    Field,
+    FieldList,
+    FileField,
+    FloatField,
+    FormField,
+    HiddenField,
+    IntegerField,
+    IntegerRangeField,
+    Label,
+    MultipleFileField,
+    PasswordField,
+    RadioField,
+    SearchField,
+    SelectField,
+    SelectFieldBase,
+    SelectMultipleField,
+    StringField,
+    SubmitField,
+    TelField,
+    TextAreaField,
+    TimeField,
+    URLField,
+)
+from wtforms.form import Form
+from wtforms.utils import unset_value
 from wtforms.widgets import TextInput
 
 PYTHON_VERSION = sys.version_info
@@ -80,11 +108,13 @@ class LabelTest(TestCase):
         label = Label("test", '<script>alert("test");</script>')
         self.assertEqual(
             label(for_="foo"),
-            """<label for="foo">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>""",
+            '<label for="foo">&lt;script&gt;'
+            "alert(&#34;test&#34;);&lt;/script&gt;</label>",
         )
         self.assertEqual(
             label(**{"for": "bar"}),
-            """<label for="bar">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>""",
+            '<label for="bar">&lt;script&gt;'
+            "alert(&#34;test&#34;);&lt;/script&gt;</label>",
         )
 
 
@@ -310,11 +340,13 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.validate(), False)
         self.assertEqual(
             form.a(),
-            """<select id="a" name="a"><option selected value="a">hello</option><option value="btest">bye</option></select>""",
+            '<select id="a" name="a"><option selected value="a">hello</option>'
+            '<option value="btest">bye</option></select>',
         )
         self.assertEqual(
             form.b(),
-            """<select id="b" name="b"><option value="1">Item 1</option><option value="2">Item 2</option></select>""",
+            '<select id="b" name="b"><option value="1">Item 1</option>'
+            '<option value="2">Item 2</option></select>',
         )
 
     def test_with_data(self):
@@ -322,7 +354,8 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.a.data, "btest")
         self.assertEqual(
             form.a(),
-            """<select id="a" name="a"><option value="a">hello</option><option selected value="btest">bye</option></select>""",
+            '<select id="a" name="a"><option value="a">hello</option>'
+            '<option selected value="btest">bye</option></select>',
         )
 
     def test_value_coercion(self):
@@ -417,17 +450,23 @@ class RadioFieldTest(TestCase):
         self.assertEqual(
             form.a(),
             (
-                """<ul id="a">"""
-                """<li><input checked id="a-0" name="a" type="radio" value="a"> <label for="a-0">hello</label></li>"""
-                """<li><input id="a-1" name="a" type="radio" value="b"> <label for="a-1">bye</label></li></ul>"""
+                '<ul id="a">'
+                '<li><input checked id="a-0" name="a" type="radio" value="a"> '
+                '<label for="a-0">hello</label></li>'
+                '<li><input id="a-1" name="a" type="radio" value="b"> '
+                '<label for="a-1">bye</label></li>'
+                "</ul>"
             ),
         )
         self.assertEqual(
             form.b(),
             (
-                """<ul id="b">"""
-                """<li><input id="b-0" name="b" type="radio" value="1"> <label for="b-0">Item 1</label></li>"""
-                """<li><input id="b-1" name="b" type="radio" value="2"> <label for="b-1">Item 2</label></li></ul>"""
+                '<ul id="b">'
+                '<li><input id="b-0" name="b" type="radio" value="1"> '
+                '<label for="b-0">Item 1</label></li>'
+                '<li><input id="b-1" name="b" type="radio" value="2"> '
+                '<label for="b-1">Item 2</label></li>'
+                "</ul>"
             ),
         )
         self.assertEqual(
@@ -447,9 +486,12 @@ class RadioFieldTest(TestCase):
         form = F()
         self.assertEqual(
             form.a(),
-            """<ul id="a">"""
-            """<li><input id="a-0" name="a" type="radio" value="True"> <label for="a-0">yes</label></li>"""
-            """<li><input id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>""",
+            '<ul id="a">'
+            '<li><input id="a-0" name="a" type="radio" value="True"> '
+            '<label for="a-0">yes</label></li>'
+            '<li><input id="a-1" name="a" type="radio" value="False"> '
+            '<label for="a-1">no</label></li>'
+            "</ul>",
         )
 
 
@@ -808,10 +850,12 @@ class FormFieldTest(TestCase):
     def test_widget(self):
         self.assertEqual(
             self.F1().a(),
-            """<table id="a">"""
-            """<tr><th><label for="a-a">A</label></th><td><input id="a-a" name="a-a" required type="text" value=""></td></tr>"""
-            """<tr><th><label for="a-b">B</label></th><td><input id="a-b" name="a-b" type="text" value=""></td></tr>"""
-            """</table>""",
+            '<table id="a">'
+            '<tr><th><label for="a-a">A</label></th>'
+            '<td><input id="a-a" name="a-a" required type="text" value=""></td></tr>'
+            '<tr><th><label for="a-b">B</label></th>'
+            '<td><input id="a-b" name="a-b" type="text" value=""></td></tr>'
+            "</table>",
         )
 
     def test_separator(self):
@@ -1076,7 +1120,8 @@ class HTML5FieldsTest(TestCase):
             b(
                 "decimal",
                 "43.5",
-                '<input id="decimal" name="decimal" step="any" type="number" value="43.5">',
+                '<input id="decimal" name="decimal" '
+                'step="any" type="number" value="43.5">',
                 Decimal("43.5"),
             ),
             b(
@@ -1088,7 +1133,8 @@ class HTML5FieldsTest(TestCase):
             b(
                 "decimal_range",
                 "58",
-                '<input id="decimal_range" name="decimal_range" step="any" type="range" value="58">',
+                '<input id="decimal_range" name="decimal_range" '
+                'step="any" type="range" value="58">',
                 58,
             ),
         )

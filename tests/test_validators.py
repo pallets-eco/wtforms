@@ -307,7 +307,7 @@ def test_required_passes(dummy_form, dummy_field):
     validator(dummy_form, dummy_field)
 
 
-def test_required_passes(dummy_form, dummy_field):
+def test_required_stops_validation(dummy_form, dummy_field):
     """
     It should raise stop the validation chain if required value is not present
     """
@@ -351,7 +351,8 @@ def test_equal_to_raises(
         u"http://foobar.museum/foobar",
         u"http://192.168.0.1/foobar",
         u"http://192.168.0.1:9000/fake",
-        u"http://\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631/foo.com",  # Arabic
+        u"http://\u0645\u062b\u0627\u0644."
+        u"\u0625\u062e\u062a\u0628\u0627\u0631/foo.com",  # Arabic
         u"http://उदाहरण.परीक्षा/",  # Hindi
         u"http://실례.테스트",  # Hangul
     ],
@@ -429,7 +430,7 @@ def test_any_of_values_formatter(dummy_form, dummy_field, grab_error_message):
         assert grab_error_message(checker(dummy_form, dummy_field)) == expected
 
 
-def test_none_of_pases(dummy_form, dummy_field):
+def test_none_of_passes(dummy_form, dummy_field):
     """
     it should pass if the value is not present in list
     """
@@ -438,7 +439,7 @@ def test_none_of_pases(dummy_form, dummy_field):
     validator(dummy_form, dummy_field)
 
 
-def test_none_of_pases(dummy_form, dummy_field):
+def test_none_of_raises(dummy_form, dummy_field):
     """
     it should raise ValueError if the value is present in list
     """
@@ -478,7 +479,7 @@ def test_bad_length_init_raises(min_v, max_v):
     It should raise AssertionError if the validator constructor got wrong values
     """
     with pytest.raises(AssertionError):
-        validator = length(min_v, max_v)
+        length(min_v, max_v)
 
 
 @pytest.mark.parametrize(
@@ -544,7 +545,7 @@ def test_lazy_proxy_raises(test_function, really_lazy_proxy):
         test_function(really_lazy_proxy)
 
 
-def test_lazy_proxy_raises(really_lazy_proxy):
+def test_lazy_proxy_fixture(really_lazy_proxy):
     """
     Tests that the validators support lazy translation strings for messages.
     """
@@ -571,7 +572,7 @@ def test_regex_passes(
     re_pattern, re_flags, test_v, expected_v, dummy_form, dummy_field
 ):
     """
-    Regex should pass if there is a match. 
+    Regex should pass if there is a match.
     Should work for complie regex too
     """
     validator = regexp(re_pattern, re_flags) if re_flags else regexp(re_pattern)
