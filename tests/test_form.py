@@ -156,6 +156,12 @@ class FormTest(TestCase):
         form = self.F()
         self.assertRaises(TypeError, form.__setitem__, "foo", StringField())
 
+    def test_restricted_field_names(self):
+        class R(Form):
+            meta = StringField()
+
+        self.assertRaises(RuntimeError, R)
+
     def test_field_removal(self):
         form = self.F()
         del form.test
