@@ -6,5 +6,5 @@ include tox.ini
 graft docs
 prune docs/_build
 graft tests
-graft wtforms/locale
+graft src/wtforms/locale
 global-exclude *.py[co]

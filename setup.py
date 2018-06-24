@@ -14,7 +14,7 @@ except ImportError:
 with io.open("README.rst", "rt", encoding="utf8") as f:
     readme = f.read()
 
-with io.open("wtforms/__init__.py", "rt", encoding="utf8") as f:
+with io.open("src/wtforms/__init__.py", "rt", encoding="utf8") as f:
     version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
 
@@ -93,7 +93,8 @@ setup(
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages("src"),
+    package_dir={"": "src"},
     include_package_data=True,
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     setup_requires=["Babel"],
