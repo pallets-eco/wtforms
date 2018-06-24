@@ -6,9 +6,9 @@ __pycache__/
 .DS_Store
 env/
 venv/
-WTForms.egg-info/
+src/WTForms.egg-info/
 .eggs/
-wtforms/locale/**/wtforms.mo
+src/wtforms/locale/**/wtforms.mo
 build/
 dist/
 docs/_build
@@ -17,4 +17,3 @@ docs/_build
 .coverage
 .coverage.*
 htmlcov/
-.eggs/
