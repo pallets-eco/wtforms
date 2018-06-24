@@ -17,10 +17,11 @@ def _fix_import_path():
     Don't want to pollute the config globals, so do path munging
     here in this function
     """
-    import sys, os
+    import os
+    import sys
 
     try:
-        import wtforms
+        __import__("wtforms")
     except ImportError:
         parent_dir = os.path.abspath(
             os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")

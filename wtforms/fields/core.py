@@ -55,7 +55,7 @@ class Field(object):
         self,
         label=None,
         validators=None,
-        filters=tuple(),
+        filters=(),
         description="",
         id=None,
         default=None,
@@ -222,7 +222,7 @@ class Field(object):
         """
         return self._translations.ngettext(singular, plural, n)
 
-    def validate(self, form, extra_validators=tuple()):
+    def validate(self, form, extra_validators=()):
         """
         Validates the field and returns True or False. `self.errors` will
         contain any errors raised during validation. This is usually only
@@ -922,7 +922,7 @@ class FormField(Field):
         else:
             self.form = self.form_class(formdata=formdata, obj=data, prefix=prefix)
 
-    def validate(self, form, extra_validators=tuple()):
+    def validate(self, form, extra_validators=()):
         if extra_validators:
             raise TypeError(
                 "FormField does not accept in-line validators, as it"
@@ -989,7 +989,7 @@ class FieldList(Field):
         validators=None,
         min_entries=0,
         max_entries=None,
-        default=tuple(),
+        default=(),
         **kwargs
     ):
         super(FieldList, self).__init__(label, validators, default=default, **kwargs)
@@ -1051,7 +1051,7 @@ class FieldList(Field):
                 if k.isdigit():
                     yield int(k)
 
-    def validate(self, form, extra_validators=tuple()):
+    def validate(self, form, extra_validators=()):
         """
         Validate this FieldList.
 

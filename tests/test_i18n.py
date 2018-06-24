@@ -41,9 +41,7 @@ class I18NTest(TestCase):
         )
 
     def _test_converter(self, translator):
-        getter = lambda x: translator
-
-        translations = get_translations([], getter=getter)
+        translations = get_translations([], getter=lambda x: translator)
         self.assertEqual(translations.gettext("Foo"), "foo")
         self.assertEqual(translations.ngettext("Foo", "Foos", 1), "foo")
         self.assertEqual(translations.ngettext("Foo", "Foos", 2), "foos")
@@ -160,7 +158,9 @@ class TranslationsTest(TestCase):
         self.assertTrue(self.a.gettext(x) is x)
 
     def test_ngettext(self):
-        getit = lambda n: self.a.ngettext("antelope", "antelopes", n)
+        def getit(n):
+            return self.a.ngettext("antelope", "antelopes", n)
+
         self.assertEqual(getit(0), "antelopes")
         self.assertEqual(getit(1), "antelope")
         self.assertEqual(getit(2), "antelopes")

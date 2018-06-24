@@ -1,28 +1,22 @@
 from __future__ import unicode_literals
 
 from contextlib import contextmanager
-from functools import partial
-from unittest import TestCase
-
-from wtforms.fields import StringField
-from wtforms.form import Form
-from wtforms.csrf.core import CSRF
-from wtforms.csrf.session import SessionCSRF
-from tests.common import DummyPostData
-
 import datetime
+from functools import partial
 import hashlib
 import hmac
+from unittest import TestCase
+
+from tests.common import DummyPostData
+from wtforms.csrf.core import CSRF
+from wtforms.csrf.session import SessionCSRF
+from wtforms.fields import StringField
+from wtforms.form import Form
 
 
 class DummyCSRF(CSRF):
     def generate_csrf_token(self, csrf_token_field):
         return "dummytoken"
-
-
-class FakeSessionRequest(object):
-    def __init__(self, session):
-        self.session = session
 
 
 class TimePin(SessionCSRF):

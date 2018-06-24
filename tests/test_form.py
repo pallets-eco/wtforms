@@ -141,7 +141,7 @@ class FormTest(TestCase):
     class F(Form):
         test = StringField()
 
-        def validate_test(form, field):
+        def validate_test(self, field):
             if field.data != "foobar":
                 raise ValidationError("error")
 
@@ -209,7 +209,9 @@ class FormTest(TestCase):
         self.assertEqual(form.test.data, "bar")
 
     def test_empty_formdata(self):
-        """"If formdata is empty, field.process_formdata should still run to handle empty data."""
+        """"If formdata is empty, field.process_formdata should still
+        run to handle empty data.
+        """
 
         class EmptyStringField(StringField):
             def process_formdata(self, valuelist):
@@ -240,15 +242,15 @@ class MetaTest(TestCase):
             foo = 12
             bar = 8
 
-    class H(F, G):
+    class Basic(F, G):
         class Meta:
             quux = 42
 
-    class I(F, G):
+    class MissingDiamond(F, G):
         pass
 
     def test_basic(self):
-        form = self.H()
+        form = self.Basic()
         meta = form.meta
         self.assertEqual(meta.foo, 9)
         self.assertEqual(meta.bar, 8)
@@ -256,9 +258,10 @@ class MetaTest(TestCase):
         assert isinstance(meta, self.F.Meta)
         assert isinstance(meta, self.G.Meta)
         self.assertEqual(
-            type(meta).__bases__, (self.H.Meta, self.F.Meta, self.G.Meta, DefaultMeta)
+            type(meta).__bases__,
+            (self.Basic.Meta, self.F.Meta, self.G.Meta, DefaultMeta),
         )
 
     def test_missing_diamond(self):
-        meta = self.I().meta
+        meta = self.MissingDiamond().meta
         self.assertEqual(type(meta).__bases__, (self.F.Meta, self.G.Meta, DefaultMeta))

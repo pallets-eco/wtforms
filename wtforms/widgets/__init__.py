@@ -1,3 +1,4 @@
+# flake8: noqa
 from wtforms.widgets.core import *
 
 # Compatibility imports
