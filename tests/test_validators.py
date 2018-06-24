@@ -56,14 +56,22 @@ def test_data_required_clobber(dummy_form, dummy_field):
         assert len(dummy_field.errors) == 0
 
 
-def test_data_required_messages(dummy_form, dummy_field, grab_stop_message):
+@pytest.mark.parametrize(
+    ("validator", "message"),
+    (
+        (data_required(), "This field is required."),
+        (data_required(message="foo"), "foo"),
+    ),
+)
+def test_data_required_messages(dummy_form, dummy_field, validator, message):
     """
     Check data_requred message and custom message
     """
     dummy_field.data = ""
-    grab = lambda **k: grab_stop_message(data_required(**k), dummy_form, dummy_field)
-    assert grab() == "This field is required."
-    assert grab(message="foo") == "foo"
+
+    with pytest.raises(StopValidation) as e:
+        validator(dummy_form, dummy_field)
+        assert str(e.value) == message
 
 
 def test_input_required(dummy_form, dummy_field):
@@ -89,16 +97,23 @@ def test_input_required_raises(dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
-def test_input_required_error_message(dummy_form, dummy_field, grab_stop_message):
+@pytest.mark.parametrize(
+    ("validator", "message"),
+    (
+        (input_required(), "This field is required."),
+        (input_required(message="foo"), "foo"),
+    ),
+)
+def test_input_required_error_message(dummy_form, dummy_field, validator, message):
     """
     It should return error message when the required value is not present
     """
     dummy_field.data = ""
     dummy_field.raw_data = [""]
-    grab = lambda **k: grab_stop_message(input_required(**k), dummy_form, dummy_field)
 
-    assert grab() == "This field is required."
-    assert grab(message="foo") == "foo"
+    with pytest.raises(StopValidation) as e:
+        validator(dummy_form, dummy_field)
+        assert str(e.value) == message
 
 
 def test_input_optional_passes(dummy_form, dummy_field):
@@ -418,16 +433,19 @@ def test_anyof_raisses(test_v, test_list, dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
-def test_any_of_values_formatter(dummy_form, dummy_field, grab_error_message):
+def test_any_of_values_formatter(dummy_form, dummy_field):
     """
     Test AnyOf values_formatter formating of error message
     """
-    formatter = lambda values: "::".join(text_type(x) for x in reversed(values))
-    checker = AnyOf([7, 8, 9], message="test %(values)s", values_formatter=formatter)
+
+    def formatter(values):
+        return "::".join(text_type(x) for x in reversed(values))
+
+    validator = AnyOf([7, 8, 9], message="test %(values)s", values_formatter=formatter)
     dummy_field.data = 4
-    expected = "test 9::8::7"
-    with pytest.raises(ValidationError):
-        assert grab_error_message(checker(dummy_form, dummy_field)) == expected
+    with pytest.raises(ValidationError) as e:
+        validator(dummy_form, dummy_field)
+        assert str(e.value) == "test 9::8::7"
 
 
 def test_none_of_passes(dummy_form, dummy_field):
@@ -483,24 +501,24 @@ def test_bad_length_init_raises(min_v, max_v):
 
 
 @pytest.mark.parametrize(
-    "min_v, max_v, message_v, expected",
-    [
-        (2, 5, "%(min)d and %(max)d", "2 and 5"),
-        (8, -1, None, "at least 8"),
-        (-1, 5, None, "longer than 5"),
-        (2, 5, None, "between 2 and 5"),
-        (5, 5, None, "exactly 5"),
-    ],
+    ("validator", "message"),
+    (
+        (length(2, 5, "%(min)d and %(max)d"), "2 and 5"),
+        (length(8, -1), "at least 8"),
+        (length(-1, 5), "longer than 5"),
+        (length(2, 5), "between 2 and 5"),
+        (length(5, 5), "exactly 5"),
+    ),
 )
-def test_length_messages(
-    min_v, max_v, message_v, expected, dummy_form, dummy_field, grab_error_message
-):
+def test_length_messages(dummy_form, dummy_field, validator, message):
     """
     It should raise ValidationError for string with incorect length
     """
     dummy_field.data = "foobar"
-    grab = lambda **k: grab_error_message(length(**k), dummy_form, dummy_field)
-    assert expected in grab(min=min_v, max=max_v, message=message_v)
+
+    with pytest.raises(ValidationError) as e:
+        validator(dummy_form, dummy_field)
+        assert str(e.value) == message
 
 
 @pytest.mark.parametrize(

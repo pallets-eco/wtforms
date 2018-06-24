@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
+from collections import namedtuple
 from datetime import date, datetime
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
 import sys
 from unittest import TestCase
 
 from markupsafe import Markup
+import pytest
 
 from tests.common import DummyPostData
 from wtforms import meta, validators, widgets
@@ -478,10 +480,12 @@ class RadioFieldTest(TestCase):
         )
 
     def test_text_coercion(self):
-        # Regression test for text coercsion scenarios where the value is a boolean.
-        coerce_func = lambda x: False if x == "False" else bool(x)
+        # Regression test for text coercion scenarios where the value is a boolean.
         F = make_form(
-            a=RadioField(choices=[(True, "yes"), (False, "no")], coerce=coerce_func)
+            a=RadioField(
+                choices=[(True, "yes"), (False, "no")],
+                coerce=lambda x: False if x == "False" else bool(x),
+            )
         )
         form = F()
         self.assertEqual(
@@ -878,7 +882,7 @@ class FormFieldTest(TestCase):
         class C(Form):
             a = FormField(self.F1)
 
-            def validate_a(form, field):
+            def validate_a(self, field):
                 pass
 
         form = C()
@@ -924,7 +928,9 @@ class FieldListTest(TestCase):
         self.assertEqual(list(iter(form.a)), list(form.a.entries))
 
     def test_enclosed_subform(self):
-        make_inner = lambda: AttrDict(a=None)
+        def make_inner():
+            return AttrDict(a=None)
+
         F = make_form(
             a=FieldList(FormField(make_form("FChild", a=self.t), default=make_inner))
         )
@@ -1005,19 +1011,13 @@ class FieldListTest(TestCase):
         self.assertEqual(form.a.errors, [["This field is required."]])
 
     def test_no_filters(self):
-        my_filter = lambda x: x
-        self.assertRaises(
-            TypeError, FieldList, self.t, filters=[my_filter], _form=Form(), _name="foo"
-        )
+        with pytest.raises(TypeError):
+            FieldList(self.t, filters=[lambda x: x], _form=Form(), _name="foo")
 
     def test_process_prefilled(self):
         data = ["foo", "hi", "rawr"]
-
-        class A(object):
-            def __init__(self, a):
-                self.a = a
-
-        obj = A(data)
+        Obj = namedtuple("Obj", "a")
+        obj = Obj(data)
         F = make_form(a=FieldList(self.t))
         # fill form
         form = F(obj=obj)

@@ -6,6 +6,8 @@ from wtforms.meta import DefaultMeta
 
 __all__ = ("BaseForm", "Form")
 
+_default_meta = DefaultMeta()
+
 
 class BaseForm(object):
     """
@@ -13,7 +15,7 @@ class BaseForm(object):
     validation, and data and error proxying.
     """
 
-    def __init__(self, fields, prefix="", meta=DefaultMeta()):
+    def __init__(self, fields, prefix="", meta=_default_meta):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.

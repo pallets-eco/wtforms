@@ -4,8 +4,21 @@ from unittest import TestCase
 
 from markupsafe import Markup
 
-from wtforms.widgets import *
-from wtforms.widgets import html5
+from wtforms.widgets import (
+    CheckboxInput,
+    FileInput,
+    HiddenInput,
+    Input,
+    ListWidget,
+    PasswordInput,
+    RadioInput,
+    Select,
+    TableWidget,
+    TextArea,
+    TextInput,
+    html5,
+    html_params,
+)
 
 
 class DummyField(object):
@@ -16,12 +29,21 @@ class DummyField(object):
         self.id = id
         self.type = type
 
-    _value = lambda x: x.data
-    __unicode__ = lambda x: x.data
-    __str__ = lambda x: x.data
-    __call__ = lambda x, **k: x.data
-    __iter__ = lambda x: iter(x.data)
-    iter_choices = lambda x: iter(x.data)
+    def _value(self):
+        return self.data
+
+    def __str__(self):
+        return self.data
+
+    __unicode__ = __str__
+
+    def __call__(self, **kwargs):
+        return self.data
+
+    def __iter__(self):
+        return iter(self.data)
+
+    iter_choices = __iter__
 
 
 class HTMLParamsTest(TestCase):
@@ -73,7 +95,10 @@ class TableWidgetTest(TestCase):
         field = DummyField(inner_fields, id="hai")
         self.assertEqual(
             TableWidget()(field),
-            '<table id="hai"><tr><th>lfoo</th><td>hidden1foo</td></tr><tr><th>lbar</th><td>bar</td></tr></table>hidden2',
+            '<table id="hai">'
+            "<tr><th>lfoo</th><td>hidden1foo</td></tr>"
+            "<tr><th>lbar</th><td>bar</td></tr>"
+            "</table>hidden2",
         )
 
 
@@ -147,11 +172,16 @@ class SelectTest(TestCase):
     def test(self):
         self.assertEqual(
             Select()(self.field),
-            '<select id="" name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>',
+            '<select id="" name="f">'
+            '<option selected value="foo">lfoo</option>'
+            '<option value="bar">lbar</option></select>',
         )
         self.assertEqual(
             Select(multiple=True)(self.field),
-            '<select id="" multiple name="f"><option selected value="foo">lfoo</option><option value="bar">lbar</option></select>',
+            '<select id="" multiple name="f">'
+            '<option selected value="foo">lfoo</option>'
+            '<option value="bar">lbar</option>'
+            "</select>",
         )
 
     def test_render_option(self):

@@ -68,7 +68,7 @@ def filled_mdict(webob_class, test_values):
 
 def test_automatic_wrapping(filled_mdict):
     def _check(formdata):
-        assert isinstance(formdata, WebobInputWrapper) == True
+        assert isinstance(formdata, WebobInputWrapper)
 
     form = BaseForm({"a": SneakyField(_check)})
     form.process(filled_mdict)
