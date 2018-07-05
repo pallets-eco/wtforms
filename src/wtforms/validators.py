@@ -344,24 +344,50 @@ class Email(object):
 
     :param message:
         Error message to raise in case of a validation error.
+    :param granular_messsage:
+        Use validation failed message from email_validator library
+        (Default False).
+    :param check_deliverability:
+        Perform domain name resolution check (Default False).
+    :param allow_smtputf8:
+        Fail validation for addresses that would require SMTPUTF8
+        (Default True).
+    :param allow_empty_local:
+        Allow an empty local part (i.e. @example.com), e.g. for validating
+        Postfix aliases (Default False).
     """
 
-    defaults = {"check_deliverability": False}
-
-    def __init__(self, message=None, **options):
+    def __init__(
+        self,
+        message=None,
+        granular_message=False,
+        check_deliverability=False,
+        allow_smtputf8=True,
+        allow_empty_local=False,
+    ):
         self.message = message
-        self.options = self.defaults.copy()
-        self.options.update(options)
+        self.granular_message = granular_message
+        self.check_deliverability = check_deliverability
+        self.allow_smtputf8 = allow_smtputf8
+        self.allow_empty_local = allow_empty_local
 
     def __call__(self, form, field):
         try:
             if field.data is None:
                 raise EmailNotValidError()
-            validate_email(field.data, **self.options)
-        except EmailNotValidError:
+            validate_email(
+                field.data,
+                check_deliverability=self.check_deliverability,
+                allow_smtputf8=self.allow_smtputf8,
+                allow_empty_local=self.allow_empty_local,
+            )
+        except EmailNotValidError as e:
             message = self.message
             if message is None:
-                message = field.gettext("Invalid email address.")
+                if self.granular_message:
+                    message = field.gettext(e)
+                else:
+                    message = field.gettext("Invalid email address.")
             raise ValidationError(message)
 
 

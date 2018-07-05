@@ -247,8 +247,23 @@ def test_invalid_email_raises(email_address, dummy_form, dummy_field):
     """
     validator = email()
     dummy_field.data = email_address
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError) as e:
         validator(dummy_form, dummy_field)
+
+    assert str(e.value) == "Invalid email address."
+
+
+@pytest.mark.parametrize("email_address", ["foo@"])
+def test_invalid_email_raises_granular_message(email_address, dummy_form, dummy_field):
+    """
+    When granular_message=True uses message from email_validator library.
+    """
+    validator = email(granular_message=True)
+    dummy_field.data = email_address
+    with pytest.raises(ValidationError) as e:
+        validator(dummy_form, dummy_field)
+
+    assert str(e.value) == "There must be something after the @-sign."
 
 
 def test_ip_address_raises_on_bad_init():
