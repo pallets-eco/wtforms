@@ -374,7 +374,7 @@ class Email(object):
         if message is None:
             message = field.gettext("Invalid email address.")
 
-        if not value or "@" not in value:
+        if not value or "@" not in value or " " in value:
             raise ValidationError(message)
 
         user_part, domain_part = value.rsplit("@", 1)

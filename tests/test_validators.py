@@ -239,6 +239,7 @@ def test_valid_email_passes(email_address, dummy_form, dummy_field):
         "foo.@bar.co",
         "foo@foo@bar.co",
         "fo o@bar.co",
+        "foo@bar.ua foo@bar.ua",
     ],
 )
 def test_invalid_email_raises(email_address, dummy_form, dummy_field):
