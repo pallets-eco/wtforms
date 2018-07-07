@@ -2,8 +2,11 @@ from __future__ import unicode_literals
 
 import re
 import uuid
-from email_validator import validate_email, EmailNotValidError
 
+try:
+    import email_validator
+except ImportError:
+    email_validator = None
 try:
     import ipaddress
 except ImportError:
@@ -340,7 +343,8 @@ class Regexp(object):
 
 class Email(object):
     """
-    Validates an email address using the email_validator library.
+    Validates an email address. Requires email_validator package to be
+    installed. For ex: pip install wtforms[email].
 
     :param message:
         Error message to raise in case of a validation error.
@@ -365,6 +369,8 @@ class Email(object):
         allow_smtputf8=True,
         allow_empty_local=False,
     ):
+        if email_validator is None:
+            raise Exception("Install 'email_validator' for email validation support.")
         self.message = message
         self.granular_message = granular_message
         self.check_deliverability = check_deliverability
@@ -374,14 +380,14 @@ class Email(object):
     def __call__(self, form, field):
         try:
             if field.data is None:
-                raise EmailNotValidError()
-            validate_email(
+                raise email_validator.EmailNotValidError()
+            email_validator.validate_email(
                 field.data,
                 check_deliverability=self.check_deliverability,
                 allow_smtputf8=self.allow_smtputf8,
                 allow_empty_local=self.allow_empty_local,
             )
-        except EmailNotValidError as e:
+        except email_validator.EmailNotValidError as e:
             message = self.message
             if message is None:
                 if self.granular_message:
@@ -394,7 +400,7 @@ class Email(object):
 class IPAddress(object):
     """
     Validates an IP address. Requires ipaddress package to be installed
-    for Python 2 support.
+    for Python 2 support. For ex: pip install wtforms[ipaddress].
 
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
