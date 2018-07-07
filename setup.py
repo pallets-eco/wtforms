@@ -100,7 +100,7 @@ setup(
     setup_requires=["Babel>=2.6.0"],
     install_requires=["MarkupSafe"],
     extras_require={
-        "ipaddress": ['ipaddress;python_version<"3"'],
+        "ipaddress": ['ipaddress;python_version<"3.3"'],
         "email": ["email_validator"],
     },
     cmdclass=command_classes,
