@@ -158,5 +158,5 @@ msgstr "Не дійсне значення дати"
 
 #: wtforms/fields/core.py:779
 msgid "Not a valid time value"
-msgstr ""
+msgstr "Не дійсне значення часу"
 
