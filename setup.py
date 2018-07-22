@@ -99,6 +99,9 @@ setup(
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     setup_requires=["Babel>=2.6.0"],
     install_requires=["MarkupSafe"],
-    extras_require={"locale": ["Babel"]},
+    extras_require={
+        "ipaddress": ['ipaddress;python_version<"3.3"'],
+        "email": ["email_validator"],
+    },
     cmdclass=command_classes,
 )
