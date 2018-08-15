@@ -535,7 +535,7 @@ class SelectField(SelectFieldBase):
 
     def pre_validate(self, form):
         for v, _ in self.choices:
-            if self.data == v:
+            if self.data == v or self.data is None:
                 break
         else:
             raise ValueError(self.gettext("Not a valid choice"))
