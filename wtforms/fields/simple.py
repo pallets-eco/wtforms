@@ -39,6 +39,12 @@ class PasswordField(StringField):
     Also, whatever value is accepted by this field is not rendered back
     to the browser like normal fields.
     """
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = valuelist[0]
+        else:
+            self.data = ''
+            
     widget = widgets.PasswordInput()
 
 
