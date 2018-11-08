@@ -666,6 +666,16 @@ class IntegerField(Field):
         else:
             return ""
 
+    def process_data(self, value):
+        if value is not None and value is not unset_value:
+            try:
+                self.data = int(value)
+            except (ValueError, TypeError):
+                self.data = None
+                raise ValueError(self.gettext("Not a valid integer value"))
+        else:
+            self.data = None
+
     def process_formdata(self, valuelist):
         if valuelist:
             try:
