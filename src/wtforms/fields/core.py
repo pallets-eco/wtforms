@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import string
+
 from copy import copy
 import datetime
 import decimal
@@ -668,9 +670,9 @@ class IntegerField(Field):
 
     def process_formdata(self, valuelist):
         if valuelist:
-            try:
+            if string.isnumeric(valuelist[0]):
                 self.data = int(valuelist[0])
-            except ValueError:
+            else:
                 self.data = None
                 raise ValueError(self.gettext("Not a valid integer value"))
 
