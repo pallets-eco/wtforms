@@ -516,8 +516,12 @@ class SelectField(SelectFieldBase):
         self.choices = copy(choices)
 
     def iter_choices(self):
-        for value, label in self.choices:
-            yield (value, label, self.coerce(value) == self.data)
+        try:
+            for value, label in self.choices:
+                yield (value, label, self.coerce(value) == self.data)
+
+        except TypeError as exception:
+            raise RuntimeError('No choices set on field') from exception
 
     def process_data(self, value):
         try:
