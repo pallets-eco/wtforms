@@ -322,14 +322,18 @@ class Regexp(object):
         Error message to raise in case of a validation error.
     """
 
-    def __init__(self, regex, flags=0, message=None):
+    def __init__(self, regex, flags=0, message=None, use_raw=False):
         if isinstance(regex, string_types):
             regex = re.compile(regex, flags)
         self.regex = regex
+        self.use_raw = use_raw
         self.message = message
 
     def __call__(self, form, field, message=None):
-        match = self.regex.match(field.data or "")
+        if self.use_raw:
+            match = all(map(self.regex.match, field.raw_data))
+        else:
+            match = self.regex.match(field.data or "")
         if not match:
             if message is None:
                 if self.message is None:
