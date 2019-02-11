@@ -143,9 +143,15 @@ class Field:
             self.widget = widget
 
         for v in itertools.chain(self.validators, [self.widget]):
-            flags = getattr(v, "field_flags", ())
-            for f in flags:
-                setattr(self.flags, f, True)
+            flags = getattr(v, "field_flags", lambda: {})
+            # check for legacy format, remove eventually
+            if isinstance(flags, tuple):
+                for f in flags:
+                    setattr(self.flags, f, True)
+            else:
+                flags = flags()
+                for k in flags:
+                    setattr(self.flags, k, flags[k])
 
     def __str__(self):
         """
