@@ -119,9 +119,9 @@ class Length:
     def field_flags(self):
         flags = {}
         if self.min != -1:
-            flags['minlength'] = self.min
+            flags["minlength"] = self.min
         if self.max != -1:
-            flags['maxlength'] = self.max
+            flags["maxlength"] = self.max
         return flags
 
     def __init__(self, min=-1, max=-1, message=None):
@@ -187,9 +187,9 @@ class NumberRange:
     def field_flags(self):
         flags = {}
         if self.min is not None:
-            flags['min'] = self.min
+            flags["min"] = self.min
         if self.max is not None:
-            flags['max'] = self.max
+            flags["max"] = self.max
         return flags
 
     def __init__(self, min=None, max=None, message=None):

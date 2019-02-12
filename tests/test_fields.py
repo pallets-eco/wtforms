@@ -1378,7 +1378,7 @@ class TestHTML5Fields:
 class FieldValidatorsTest(TestCase):
     class F(Form):
         v1 = [validators.Length(min=1)]
-        v2 = [validators.Length(min=1,max=3)]
+        v2 = [validators.Length(min=1, max=3)]
         string1 = StringField(validators=v1)
         string2 = StringField(validators=v2)
         password1 = PasswordField(validators=v1)
@@ -1402,60 +1402,75 @@ class FieldValidatorsTest(TestCase):
     def test_minlength_maxlength(self):
         form = self.F()
         self.assertEqual(
-            form.string1(), """<input id="string1" minlength="1" name="string1" type="text" value="">"""
+            form.string1(),
+            """<input id="string1" minlength="1" name="string1" type="text" value="">""",
         )
         self.assertEqual(
-            form.string2(), """<input id="string2" maxlength="3" minlength="1" name="string2" type="text" value="">"""
+            form.string2(),
+            """<input id="string2" maxlength="3" minlength="1" name="string2" type="text" value="">""",
         )
 
         self.assertEqual(
-            form.password1(), """<input id="password1" minlength="1" name="password1" type="password" value="">"""
+            form.password1(),
+            """<input id="password1" minlength="1" name="password1" type="password" value="">""",
         )
         self.assertEqual(
-            form.password2(), """<input id="password2" maxlength="3" minlength="1" name="password2" type="password" value="">"""
+            form.password2(),
+            """<input id="password2" maxlength="3" minlength="1" name="password2" type="password" value="">""",
         )
 
         self.assertEqual(
-            form.textarea1(), """<textarea id="textarea1" minlength="1" name="textarea1">\r\n</textarea>"""
+            form.textarea1(),
+            """<textarea id="textarea1" minlength="1" name="textarea1">\r\n</textarea>""",
         )
         self.assertEqual(
-            form.textarea2(), """<textarea id="textarea2" maxlength="3" minlength="1" name="textarea2">\r\n</textarea>"""
+            form.textarea2(),
+            """<textarea id="textarea2" maxlength="3" minlength="1" name="textarea2">\r\n</textarea>""",
         )
 
         self.assertEqual(
-            form.search1(), """<input id="search1" minlength="1" name="search1" type="search" value="">"""
+            form.search1(),
+            """<input id="search1" minlength="1" name="search1" type="search" value="">""",
         )
         self.assertEqual(
-            form.search2(), """<input id="search2" maxlength="3" minlength="1" name="search2" type="search" value="">"""
+            form.search2(),
+            """<input id="search2" maxlength="3" minlength="1" name="search2" type="search" value="">""",
         )
-
 
     def test_min_max(self):
         form = self.F()
         self.assertEqual(
-            form.integer1(), """<input id="integer1" min="1" name="integer1" type="number" value="">"""
+            form.integer1(),
+            """<input id="integer1" min="1" name="integer1" type="number" value="">""",
         )
         self.assertEqual(
-            form.integer2(), """<input id="integer2" max="3" min="1" name="integer2" type="number" value="">"""
-        )
-
-        self.assertEqual(
-            form.integerrange1(), """<input id="integerrange1" min="1" name="integerrange1" type="range" value="">"""
-        )
-        self.assertEqual(
-            form.integerrange2(), """<input id="integerrange2" max="3" min="1" name="integerrange2" type="range" value="">"""
+            form.integer2(),
+            """<input id="integer2" max="3" min="1" name="integer2" type="number" value="">""",
         )
 
         self.assertEqual(
-            form.decimal1(), """<input id="decimal1" min="1" name="decimal1" step="any" type="number" value="">"""
+            form.integerrange1(),
+            """<input id="integerrange1" min="1" name="integerrange1" type="range" value="">""",
         )
         self.assertEqual(
-            form.decimal2(), """<input id="decimal2" max="3" min="1" name="decimal2" step="any" type="number" value="">"""
+            form.integerrange2(),
+            """<input id="integerrange2" max="3" min="1" name="integerrange2" type="range" value="">""",
         )
 
         self.assertEqual(
-            form.decimalrange1(), """<input id="decimalrange1" min="1" name="decimalrange1" step="any" type="range" value="">"""
+            form.decimal1(),
+            """<input id="decimal1" min="1" name="decimal1" step="any" type="number" value="">""",
         )
         self.assertEqual(
-            form.decimalrange2(), """<input id="decimalrange2" max="3" min="1" name="decimalrange2" step="any" type="range" value="">"""
+            form.decimal2(),
+            """<input id="decimal2" max="3" min="1" name="decimal2" step="any" type="number" value="">""",
+        )
+
+        self.assertEqual(
+            form.decimalrange1(),
+            """<input id="decimalrange1" min="1" name="decimalrange1" step="any" type="range" value="">""",
+        )
+        self.assertEqual(
+            form.decimalrange2(),
+            """<input id="decimalrange2" max="3" min="1" name="decimalrange2" step="any" type="range" value="">""",
         )

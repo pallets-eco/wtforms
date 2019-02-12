@@ -162,7 +162,7 @@ class Input:
         flags = getattr(field, "flags", {})
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
-                kwargs[k] = getattr(flags,k)
+                kwargs[k] = getattr(flags, k)
         return Markup("<input %s>" % self.html_params(name=field.name, **kwargs))
 
 
