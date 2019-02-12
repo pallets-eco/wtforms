@@ -196,8 +196,10 @@ class HiddenInput(Input):
     Render a hidden input.
     """
 
-    field_flags = ("hidden",)
     input_type = "hidden"
+
+    def field_flags(self):
+        return {"hidden": True}
 
 
 class CheckboxInput(Input):

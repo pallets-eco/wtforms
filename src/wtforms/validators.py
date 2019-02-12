@@ -116,6 +116,14 @@ class Length:
         are provided depending on the existence of min and max.
     """
 
+    def field_flags(self):
+        flags = {}
+        if self.min != -1:
+            flags['minlength'] = self.min
+        if self.max != -1:
+            flags['maxlength'] = self.max
+        return flags
+
     def __init__(self, min=-1, max=-1, message=None):
         assert (
             min != -1 or max != -1
@@ -176,6 +184,14 @@ class NumberRange:
         are provided depending on the existence of min and max.
     """
 
+    def field_flags(self):
+        flags = {}
+        if self.min is not None:
+            flags['min'] = self.min
+        if self.max is not None:
+            flags['max'] = self.max
+        return flags
+
     def __init__(self, min=None, max=None, message=None):
         self.min = min
         self.max = max
@@ -217,7 +233,8 @@ class Optional:
         consists of only whitespace.
     """
 
-    field_flags = ("optional",)
+    def field_flags(self):
+        return {"optional": True}
 
     def __init__(self, strip_whitespace=True):
         if strip_whitespace:
@@ -258,7 +275,8 @@ class DataRequired:
         Error message to raise in case of a validation error.
     """
 
-    field_flags = ("required",)
+    def field_flags(self):
+        return {"required": True}
 
     def __init__(self, message=None):
         self.message = message
@@ -283,7 +301,8 @@ class InputRequired:
     looks at the post-coercion data.
     """
 
-    field_flags = ("required",)
+    def field_flags(self):
+        return {"required": True}
 
     def __init__(self, message=None):
         self.message = message
