@@ -148,6 +148,7 @@ class Input:
     """
 
     html_params = staticmethod(html_params)
+    validation_attrs = ["required"]
 
     def __init__(self, input_type=None):
         if input_type is not None:
@@ -158,8 +159,10 @@ class Input:
         kwargs.setdefault("type", self.input_type)
         if "value" not in kwargs:
             kwargs["value"] = field._value()
-        if "required" not in kwargs and "required" in getattr(field, "flags", []):
-            kwargs["required"] = True
+        flags = getattr(field, "flags", {})
+        for k in dir(flags):
+            if k in self.validation_attrs and k not in kwargs:
+                kwargs[k] = getattr(flags,k)
         return Markup("<input %s>" % self.html_params(name=field.name, **kwargs))
 
 
@@ -169,6 +172,7 @@ class TextInput(Input):
     """
 
     input_type = "text"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
 
 
 class PasswordInput(Input):
@@ -181,6 +185,7 @@ class PasswordInput(Input):
     """
 
     input_type = "password"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
 
     def __init__(self, hide_value=True):
         self.hide_value = hide_value
@@ -240,6 +245,7 @@ class FileInput(Input):
     """
 
     input_type = "file"
+    validation_attrs = ["required", "accept"]
 
     def __init__(self, multiple=False):
         super().__init__()
@@ -277,10 +283,14 @@ class TextArea:
     `rows` and `cols` ought to be passed as keyword args when rendering.
     """
 
+    validation_attrs = ["required", "maxlength", "minlength"]
+
     def __call__(self, field, **kwargs):
         kwargs.setdefault("id", field.id)
-        if "required" not in kwargs and "required" in getattr(field, "flags", []):
-            kwargs["required"] = True
+        flags = getattr(field, "flags", {})
+        for k in dir(flags):
+            if k in self.validation_attrs and k not in kwargs:
+                kwargs[k] = getattr(flags, k)
         return Markup(
             "<textarea %s>\r\n%s</textarea>"
             % (html_params(name=field.name, **kwargs), escape(field._value()))
@@ -299,6 +309,8 @@ class Select:
     `(value, label, selected)`.
     """
 
+    validation_attrs = ["required"]
+
     def __init__(self, multiple=False):
         self.multiple = multiple
 
@@ -306,8 +318,10 @@ class Select:
         kwargs.setdefault("id", field.id)
         if self.multiple:
             kwargs["multiple"] = True
-        if "required" not in kwargs and "required" in getattr(field, "flags", []):
-            kwargs["required"] = True
+        flags = getattr(field, "flags", {})
+        for k in dir(flags):
+            if k in self.validation_attrs and k not in kwargs:
+                kwargs[k] = getattr(flags, k)
         html = ["<select %s>" % html_params(name=field.name, **kwargs)]
         for val, label, selected in field.iter_choices():
             html.append(self.render_option(val, label, selected))
