@@ -1403,7 +1403,7 @@ class FieldValidatorsTest(TestCase):
         form = self.F()
         self.assertEqual(
             form.string1(),
-            '<input id="string1" minlength="1"' ' name="string1" type="text" value="">',
+            '<input id="string1" minlength="1" name="string1" type="text" value="">',
         )
         self.assertEqual(
             form.string2(),
@@ -1448,7 +1448,7 @@ class FieldValidatorsTest(TestCase):
         form = self.F()
         self.assertEqual(
             form.integer1(),
-            '<input id="integer1" min="1"' ' name="integer1" type="number" value="">',
+            '<input id="integer1" min="1" name="integer1" type="number" value="">',
         )
         self.assertEqual(
             form.integer2(),
