@@ -1403,74 +1403,88 @@ class FieldValidatorsTest(TestCase):
         form = self.F()
         self.assertEqual(
             form.string1(),
-            """<input id="string1" minlength="1" name="string1" type="text" value="">""",
+            '<input id="string1" minlength="1"' ' name="string1" type="text" value="">',
         )
         self.assertEqual(
             form.string2(),
-            """<input id="string2" maxlength="3" minlength="1" name="string2" type="text" value="">""",
+            '<input id="string2" maxlength="3" minlength="1"'
+            ' name="string2" type="text" value="">',
         )
 
         self.assertEqual(
             form.password1(),
-            """<input id="password1" minlength="1" name="password1" type="password" value="">""",
+            '<input id="password1" minlength="1"'
+            ' name="password1" type="password" value="">',
         )
         self.assertEqual(
             form.password2(),
-            """<input id="password2" maxlength="3" minlength="1" name="password2" type="password" value="">""",
+            '<input id="password2" maxlength="3" minlength="1"'
+            ' name="password2" type="password" value="">',
         )
 
         self.assertEqual(
             form.textarea1(),
-            """<textarea id="textarea1" minlength="1" name="textarea1">\r\n</textarea>""",
+            '<textarea id="textarea1" minlength="1"'
+            ' name="textarea1">\r\n</textarea>',
         )
         self.assertEqual(
             form.textarea2(),
-            """<textarea id="textarea2" maxlength="3" minlength="1" name="textarea2">\r\n</textarea>""",
+            '<textarea id="textarea2" maxlength="3" minlength="1"'
+            ' name="textarea2">\r\n</textarea>',
         )
 
         self.assertEqual(
             form.search1(),
-            """<input id="search1" minlength="1" name="search1" type="search" value="">""",
+            '<input id="search1" minlength="1"'
+            ' name="search1" type="search" value="">',
         )
         self.assertEqual(
             form.search2(),
-            """<input id="search2" maxlength="3" minlength="1" name="search2" type="search" value="">""",
+            '<input id="search2" maxlength="3" minlength="1"'
+            ' name="search2" type="search" value="">',
         )
 
     def test_min_max(self):
         form = self.F()
         self.assertEqual(
             form.integer1(),
-            """<input id="integer1" min="1" name="integer1" type="number" value="">""",
+            '<input id="integer1" min="1"' ' name="integer1" type="number" value="">',
         )
         self.assertEqual(
             form.integer2(),
-            """<input id="integer2" max="3" min="1" name="integer2" type="number" value="">""",
+            '<input id="integer2" max="3" min="1"'
+            ' name="integer2" type="number" value="">',
         )
 
         self.assertEqual(
             form.integerrange1(),
-            """<input id="integerrange1" min="1" name="integerrange1" type="range" value="">""",
+            '<input id="integerrange1" min="1"'
+            ' name="integerrange1" type="range" value="">',
         )
         self.assertEqual(
             form.integerrange2(),
-            """<input id="integerrange2" max="3" min="1" name="integerrange2" type="range" value="">""",
+            '<input id="integerrange2" max="3" min="1"'
+            ' name="integerrange2" type="range" value="">',
         )
 
         self.assertEqual(
             form.decimal1(),
-            """<input id="decimal1" min="1" name="decimal1" step="any" type="number" value="">""",
+            '<input id="decimal1" min="1"'
+            ' name="decimal1" step="any" type="number" value="">',
         )
         self.assertEqual(
             form.decimal2(),
-            """<input id="decimal2" max="3" min="1" name="decimal2" step="any" type="number" value="">""",
+            '<input id="decimal2" max="3" min="1"'
+            ' name="decimal2" step="any" type="number" value="">',
         )
 
         self.assertEqual(
             form.decimalrange1(),
-            """<input id="decimalrange1" min="1" name="decimalrange1" step="any" type="range" value="">""",
+            '<input id="decimalrange1" min="1"'
+            ' name="decimalrange1" step="any" type="range" value="">',
         )
         self.assertEqual(
             form.decimalrange2(),
-            """<input id="decimalrange2" max="3" min="1" name="decimalrange2" step="any" type="range" value="">""",
+            '<input id="decimalrange2" max="3" min="1"'
+            ' name="decimalrange2" step="any" type="range" value="">',
         )
