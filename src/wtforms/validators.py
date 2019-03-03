@@ -320,6 +320,9 @@ class Regexp(object):
         `regex` is not a string.
     :param message:
         Error message to raise in case of a validation error.
+    :param use_raw:
+        Validate the raw data from `formdata` instead of `data`.
+        (Default False)
     """
 
     def __init__(self, regex, flags=0, message=None, use_raw=False):
@@ -352,7 +355,7 @@ class Email(object):
 
     :param message:
         Error message to raise in case of a validation error.
-    :param granular_messsage:
+    :param granular_message:
         Use validation failed message from email_validator library
         (Default False).
     :param check_deliverability:
