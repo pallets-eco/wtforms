@@ -495,7 +495,14 @@ class URL(Regexp):
     """
 
     def __init__(self, require_tld=True, message=None):
-        regex = r"^[a-z]+://(?P<host>[^/:]+)(?P<port>:[0-9]+)?(?P<path>\/.*)?$"
+        regex = (
+            r"^[a-z]+://"
+            r"(?P<login>[a-zA-Z0-9_-]+(?P<password>:[a-zA-Z0-9_-]*)?@)?"
+            r"(?P<host>[^/:]+)"
+            r"(?P<port>:[0-9]+)?"
+            r"(?P<path>\/.*)?"
+            r"$"
+        )
         super(URL, self).__init__(regex, re.IGNORECASE, message)
         self.validate_hostname = HostnameValidation(
             require_tld=require_tld, allow_ip=True

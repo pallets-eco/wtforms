@@ -387,6 +387,9 @@ def test_equal_to_raises(
         u"\u0625\u062e\u062a\u0628\u0627\u0631/foo.com",  # Arabic
         u"http://उदाहरण.परीक्षा/",  # Hindi
         u"http://실례.테스트",  # Hangul
+        u"https://01234-567890_abcdefg:x-oauth-basic@github.com:443/wtforms/wtforms",
+        u"https://username_and_no_password@github.com:443/wtforms/wtforms",
+        u"https://username_and_empty_password:@github.com:443/wtforms/wtforms",
     ],
 )
 def test_valid_url_passes(url_val, dummy_form, dummy_field):
@@ -417,6 +420,9 @@ def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
         u"http://foobar.d",
         u"http://foobar.12",
         u"http://localhost:abc/a",
+        u"http://loginwith$pecial:chars@basic-auth.host",
+        u"http://:onlypassword@basic-auth.host",
+        u"https://@github.com",
     ],
 )
 def test_bad_url_raises(url_val, dummy_form, dummy_field):
