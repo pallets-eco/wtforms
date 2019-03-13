@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-from copy import copy
 import datetime
 import decimal
 import itertools
@@ -513,7 +512,7 @@ class SelectField(SelectFieldBase):
     ):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
-        self.choices = copy(choices)
+        self.choices = list(choices) if choices is not None else None
 
     def iter_choices(self):
         for value, label in self.choices:
