@@ -1,3 +1,9 @@
+__all__ = (
+    "unset_value",
+    "WebobInputWrapper"
+)
+
+
 class UnsetValue(object):
     """
     An unset value.
@@ -6,9 +12,6 @@ class UnsetValue(object):
     usually as the default value of a class variable or function parameter
     (iow, usually when `None` is a valid value.)
     """
-
-    def __str__(self):
-        return "<unset value>"
 
     def __repr__(self):
         return "<unset value>"
