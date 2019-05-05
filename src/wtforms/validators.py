@@ -653,12 +653,12 @@ class BooleanRequired(object):
     """
     Validates that boolean input was provided for this field.
     """
-    field_flags: Tuple[str] = ('required',)
+    field_flags = ('required',)
 
-    def __init__(self, message: Optional[str] = None):
+    def __init__(self, message = None):
         self.message = message
 
-    def __call__(self, form: Form, field: BooleanField):
+    def __call__(self, form, field):
         if not field.raw_data or field.raw_data[0] not in (True, False):
             if self.message is None:
                 message = field.gettext('This field is required.')
