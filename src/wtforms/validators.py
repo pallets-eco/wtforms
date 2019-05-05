@@ -649,6 +649,26 @@ class HostnameValidation(object):
         return True
 
 
+class BooleanRequired(object):
+    """
+    Validates that boolean input was provided for this field.
+    """
+    field_flags: Tuple[str] = ('required',)
+
+    def __init__(self, message: Optional[str] = None):
+        self.message = message
+
+    def __call__(self, form: Form, field: BooleanField):
+        if not field.raw_data or field.raw_data[0] not in (True, False):
+            if self.message is None:
+                message = field.gettext('This field is required.')
+            else:
+                message = self.message
+
+            field.errors[:] = []
+            raise StopValidation(message)
+
+
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
@@ -662,3 +682,4 @@ regexp = Regexp
 url = URL
 any_of = AnyOf
 none_of = NoneOf
+boolean_required = BooleanRequired
