@@ -37,13 +37,21 @@ class DefaultMeta(object):
         :param formdata: Form data.
         :return: A form-input wrapper compatible with WTForms.
         """
+
         if formdata is not None and not hasattr(formdata, "getlist"):
             if hasattr(formdata, "getall"):
+                # Presence of getall attribute implies Webob-style multidict
+                if len(formdata) == 0:
+                    # If length is 0, formdata is NoVars: it doesn't contain any
+                    # information so None should be returned to prevent errors
+                    # occuring due to formdata not being None
+                    return None
+
                 return WebobInputWrapper(formdata)
             else:
                 raise TypeError(
-                    "formdata should be a multidict-type wrapper that"
-                    " supports the 'getlist' method"
+                    "formdata should be a multidict-type wrapper that supports"
+                    "the 'getlist' method"
                 )
         return formdata
 
