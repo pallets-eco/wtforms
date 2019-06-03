@@ -191,8 +191,8 @@ class NumberRange(object):
         data = field.data
         if (
             data is None
-            or (self.min is not None and data < self.min)
-            or (self.max is not None and data > self.max)
+            or (self.min is not None and float(data) < self.min)
+            or (self.max is not None and float(data) > self.max)
         ):
             message = self.message
             if message is None:
