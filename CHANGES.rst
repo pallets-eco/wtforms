@@ -37,10 +37,27 @@ Unreleased
     (`#326`_, `#409`_)
 -   Added a ``check_validators`` method to :class:`~fields.Field` which checks
     if the given validators are both callable, and not classes (`#298`_, `#410`_)
-
+-   Fixed broken IPv6 validator, validation now uses the ``ipaddress`` package
+    (`#385`_, `#403`_)
+-   ``FieldList`` error list is keeps entries in orders for easier identifcation
+    of erroring fields (`#257`_, `#407`_)
+-   Converted certain tests to use PyTest style (`#413`_, `#422`_)
+-   Black is now used for code formatting (`#399`_, `#415`_)
+-   Fixed :class:`~validators.IPAddress` docstring typo and conformed line lengths to PEP8 (`#418`_)
+-   Fixed some small formatting issues in tests (`#420`_)
+-   Enabled Flake8 (`#416`_, `#423`_)
+-   Moved WTForms to the ``src`` directory (`#397`_, `#424`_)
+-   Specified version of Babel required for setup to avoid errors (`#430`_)
+-   Updated Ukrainian translation (`#433`_)
+-   Email validation is now handled by an optional library, ``email_validator`` (`#429`_)
+-   Fixed broken format string in Arabic translation (`#471`_)
+-   Replaced usage of ``getattr``/``setattr`` with constant attributes with
+    regular variable accesses (`#482`_, `#484`_)
+-   Updated ``false_values`` param in ``BooleanField`` docs (`#483`_, `#485`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
+.. _#257: https://github.com/wtforms/wtforms/issues/257
 .. _#266: https://github.com/wtforms/wtforms/pull/266
 .. _#288: https://github.com/wtforms/wtforms/pull/288
 .. _#289: https://github.com/wtforms/wtforms/issues/289
@@ -50,11 +67,33 @@ Unreleased
 .. _#343: https://github.com/wtforms/wtforms/pull/343
 .. _#355: https://github.com/wtforms/wtforms/pull/355
 .. _#375: https://github.com/wtforms/wtforms/pull/375
+.. _#385: https://github.com/wtforms/wtforms/issues/385
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
+.. _#397: https://github.com/wtforms/wtforms/issues/397
+.. _#399: https://github.com/wtforms/wtforms/issues/399
 .. _#400: https://github.com/wtforms/wtforms/pull/400
+.. _#403: https://github.com/wtforms/wtforms/pull/403
+.. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#409: https://github.com/wtforms/wtforms/pull/409
 .. _#410: https://github.com/wtforms/wtforms/pull/410
+.. _#413: https://github.com/wtforms/wtforms/pull/413
+.. _#415: https://github.com/wtforms/wtforms/pull/415
+.. _#416: https://github.com/wtforms/wtforms/issues/416
+.. _#418: https://github.com/wtforms/wtforms/pull/418
+.. _#420: https://github.com/wtforms/wtforms/pull/420
+.. _#422: https://github.com/wtforms/wtforms/pull/422
+.. _#423: https://github.com/wtforms/wtforms/pull/423
+.. _#424: https://github.com/wtforms/wtforms/pull/424
+.. _#429: https://github.com/wtforms/wtforms/pull/429
+.. _#430: https://github.com/wtforms/wtforms/pull/430
+.. _#433: https://github.com/wtforms/wtforms/pull/433
+.. _#471: https://github.com/wtforms/wtforms/pull/471
+.. _#482: https://github.com/wtforms/wtforms/issues/482
+.. _#483: https://github.com/wtforms/wtforms/issues/483
+.. _#484: https://github.com/wtforms/wtforms/pull/484
+.. _#485: https://github.com/wtforms/wtforms/pull/485
+
 
 
 Version 2.2.1
