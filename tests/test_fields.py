@@ -394,6 +394,21 @@ class SelectFieldTest(TestCase):
         self.assertEqual(len(form.a.errors), 1)
         self.assertEqual(form.a.errors[0], "Not a valid choice")
 
+    def test_validate_choices(self):
+        F = make_form(a=SelectField(choices=[("a", "Foo")]))
+        form = F(DummyPostData(a=["b"]))
+        assert not form.validate()
+        self.assertEqual(form.a.data, "b")
+        self.assertEqual(len(form.a.errors), 1)
+        self.assertEqual(form.a.errors[0], "Not a valid choice")
+
+    def test_dont_validate_choices(self):
+        F = make_form(a=SelectField(choices=[("a", "Foo")], validate_choice=False))
+        form = F(DummyPostData(a=["b"]))
+        assert form.validate()
+        self.assertEqual(form.a.data, "b")
+        self.assertEqual(len(form.a.errors), 0)
+
 
 class SelectMultipleFieldTest(TestCase):
     class F(Form):
