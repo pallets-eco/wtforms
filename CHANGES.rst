@@ -43,17 +43,21 @@ Unreleased
     of erroring fields (`#257`_, `#407`_)
 -   Converted certain tests to use PyTest style (`#413`_, `#422`_)
 -   Black is now used for code formatting (`#399`_, `#415`_)
--   Fixed :class:`~validators.IPAddress` docstring typo and conformed line lengths to PEP8 (`#418`_)
+-   Fixed :class:`~validators.IPAddress` docstring typo and conformed line
+    lengths to PEP8 (`#418`_)
 -   Fixed some small formatting issues in tests (`#420`_)
 -   Enabled Flake8 (`#416`_, `#423`_)
 -   Moved WTForms to the ``src`` directory (`#397`_, `#424`_)
 -   Specified version of Babel required for setup to avoid errors (`#430`_)
 -   Updated Ukrainian translation (`#433`_)
--   Email validation is now handled by an optional library, ``email_validator`` (`#429`_)
+-   Email validation is now handled by an optional library, ``email_validator``
+    (`#429`_)
 -   Fixed broken format string in Arabic translation (`#471`_)
 -   Replaced usage of ``getattr``/``setattr`` with constant attributes with
     regular variable accesses (`#482`_, `#484`_)
 -   Updated ``false_values`` param in ``BooleanField`` docs (`#483`_, `#485`_)
+-   Added a parameter to :class:`~fields.SelectField` to skip choice validation
+    (`#434`_, `#493`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -88,11 +92,13 @@ Unreleased
 .. _#429: https://github.com/wtforms/wtforms/pull/429
 .. _#430: https://github.com/wtforms/wtforms/pull/430
 .. _#433: https://github.com/wtforms/wtforms/pull/433
+.. _#434: https://github.com/wtforms/wtforms/issues/434
 .. _#471: https://github.com/wtforms/wtforms/pull/471
 .. _#482: https://github.com/wtforms/wtforms/issues/482
 .. _#483: https://github.com/wtforms/wtforms/issues/483
 .. _#484: https://github.com/wtforms/wtforms/pull/484
 .. _#485: https://github.com/wtforms/wtforms/pull/485
+.. _#493: https://github.com/wtforms/wtforms/pull/493
 
 
 
