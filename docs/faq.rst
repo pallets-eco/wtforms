@@ -124,13 +124,6 @@ This is for a number of reasons:
 2. Bug-finding. If you omitted a field in your template, it might fall through
    to the default and you'd possibly miss it.
 
-3. Consistency.
-
-See the following mailing list posts for more discussion on the topic:
-
--   https://groups.google.com/forum/#!topic/wtforms/BnVaRaE4eOk
--   https://groups.google.com/forum/#!msg/wtforms/nF-TVnfxft4/Lfa2iYycQPoJ
-
 
 How do I... [convoluted combination of libraries]
 -------------------------------------------------
