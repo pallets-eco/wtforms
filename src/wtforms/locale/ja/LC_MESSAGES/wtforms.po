@@ -1,0 +1,157 @@
+# Japanese translations for WTForms.
+# Copyright (C) 2018 WTForms Team
+# This file is distributed under the same license as the WTForms project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WTForms 2.0dev\n"
+"Report-Msgid-Bugs-To: wtforms+i18n@jamescrasta.com\n"
+"POT-Creation-Date: 2018-06-02 11:16-0700\n"
+"PO-Revision-Date: 2015-07-06 23:49+0900\n"
+"Last-Translator: yusuke furukawa <littlefive.jp@gmail.com>\n"
+"Language: ja\n"
+"Language-Team: ja <littlefive.jp@gmail.com>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.6.0\n"
+
+#: wtforms/validators.py:57
+#, python-format
+msgid "Invalid field name '%s'."
+msgstr "%s は無効なフィールド名です。"
+
+#: wtforms/validators.py:65
+#, python-format
+msgid "Field must be equal to %(other_name)s."
+msgstr "フィールドは %(other_name)s でなければいけません。"
+
+#: wtforms/validators.py:98
+#, python-format
+msgid "Field must be at least %(min)d character long."
+msgid_plural "Field must be at least %(min)d characters long."
+msgstr[0] "フィールドは %(min)d 文字以上でなければなりません。"
+
+#: wtforms/validators.py:101
+#, python-format
+msgid "Field cannot be longer than %(max)d character."
+msgid_plural "Field cannot be longer than %(max)d characters."
+msgstr[0] "フィールドは %(max)d 文字を超えることはできません。"
+
+#: wtforms/validators.py:104
+#, python-format
+msgid "Field must be between %(min)d and %(max)d characters long."
+msgstr "フィールドは %(min)d 以上, %(max)d 文字以内でなければなりません。"
+
+#: wtforms/validators.py:140
+#, python-format
+msgid "Number must be at least %(min)s."
+msgstr "数値は %(min)s 以上でなければなりません。"
+
+#: wtforms/validators.py:142
+#, python-format
+msgid "Number must be at most %(max)s."
+msgstr "数値は 最高でも %(max)s でなければなりません。"
+
+#: wtforms/validators.py:144
+#, python-format
+msgid "Number must be between %(min)s and %(max)s."
+msgstr "数値は %(min)s 以上, %(max)s 以下でなければいけません。"
+
+#: wtforms/validators.py:204 wtforms/validators.py:228
+msgid "This field is required."
+msgstr "このフィールドは必須です。"
+
+#: wtforms/validators.py:260
+msgid "Invalid input."
+msgstr "無効な入力です。"
+
+#: wtforms/validators.py:294
+msgid "Invalid email address."
+msgstr "無効なメールアドレスです。"
+
+#: wtforms/validators.py:335
+msgid "Invalid IP address."
+msgstr "無効なIPアドレスです。"
+
+#: wtforms/validators.py:386
+msgid "Invalid Mac address."
+msgstr "無効なMacアドレスです。"
+
+#: wtforms/validators.py:415
+msgid "Invalid URL."
+msgstr "無効なURLです。"
+
+#: wtforms/validators.py:435
+msgid "Invalid UUID."
+msgstr "無効なUUIDです。"
+
+#: wtforms/validators.py:465
+#, python-format
+msgid "Invalid value, must be one of: %(values)s."
+msgstr "無効な値です, 次のうちの１つでなければいけません: %(values)s."
+
+#: wtforms/validators.py:497
+#, python-format
+msgid "Invalid value, can't be any of: %(values)s."
+msgstr "無効な値です、次に含まれるものは使えません: %(values)s."
+
+#: wtforms/csrf/core.py:98
+msgid "Invalid CSRF Token"
+msgstr "不正なCSRFトークンです"
+
+#: wtforms/csrf/session.py:61
+msgid "CSRF token missing"
+msgstr "CSRFトークンがありません"
+
+#: wtforms/csrf/session.py:69
+msgid "CSRF failed"
+msgstr "CSRF認証に失敗しました"
+
+#: wtforms/csrf/session.py:74
+msgid "CSRF token expired"
+msgstr "CSRFトークンの期限が切れました"
+
+#: wtforms/fields/core.py:468
+msgid "Invalid Choice: could not coerce"
+msgstr "無効な選択: 型変換できません"
+
+#: wtforms/fields/core.py:475
+msgid "Not a valid choice"
+msgstr "選択肢が正しくありません"
+
+#: wtforms/fields/core.py:501
+msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgstr "無効な選択: １つ以上の値を型変換できません"
+
+#: wtforms/fields/core.py:508
+#, python-format
+msgid "'%(value)s' is not a valid choice for this field"
+msgstr "'%(value)s' はこのフィールドでは有効ではありません"
+
+#: wtforms/fields/core.py:591
+msgid "Not a valid integer value"
+msgstr "無効な整数です"
+
+#: wtforms/fields/core.py:657
+msgid "Not a valid decimal value"
+msgstr "無効な少数です"
+
+#: wtforms/fields/core.py:684
+msgid "Not a valid float value"
+msgstr "無効なfloat値です"
+
+#: wtforms/fields/core.py:745
+msgid "Not a valid datetime value"
+msgstr "無効な時間型です"
+
+#: wtforms/fields/core.py:762
+msgid "Not a valid date value"
+msgstr "無効な日付型です"
+
+#: wtforms/fields/core.py:779
+msgid "Not a valid time value"
+msgstr ""
+

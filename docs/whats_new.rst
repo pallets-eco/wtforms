@@ -1,14 +1,26 @@
-What's New in WTForms 2
+What's New in WTForms 3
 =======================
 
-WTForms 2 is the first major version bump since WTForms 1.0. Coming with it
+New Features
+------------
+
+WTForms 3 is something something TODO
+
+
+Past Major Releases
+-------------------
+
+WTForms 2
+~~~~~~~~~
+
+WTForms 2 was the first major version bump since WTForms 1.0. Coming with it
 are a number of major changes that allow far more customization of core
 WTForms features. This is done to make WTForms even more capable when working
 along with companion libraries.
 
 
 New Features
-------------
+^^^^^^^^^^^^
 
 * :doc:`Class Meta <meta>` paradigm allows customization of many aspects of WTForms.
 * :doc:`CSRF <csrf>` and :doc:`i18n <i18n>` are core features not needing
@@ -22,7 +34,7 @@ New Features
 
 
 Deprecated API's
-----------------
+^^^^^^^^^^^^^^^^
 
 These API's still work, but in most cases will cause a DeprecationWarning.
 The deprecated API's will be removed in WTForms 3.0, so write code against
@@ -46,12 +58,12 @@ the new API's unless it needs to work across both WTForms 1.x and 2.x
   because it would allow them to have a separate release schedule that suits
   their companion libraries.
 
-  * :mod:`wtforms.ext.appengine` Is deprecated, see `WTForms-Appengine`_
-  * :mod:`wtforms.ext.csrf` CSRF protection is now :doc:`built in <csrf>`
-  * :mod:`wtforms.ext.dateutil` Is deprecated, but does not have a new home yet.
-  * :mod:`wtforms.ext.django` Is deprecated. See `WTForms-Django`_
-  * :mod:`wtforms.ext.i18n` i18n is now :doc:`built in <i18n>`
-  * :mod:`wtforms.ext.sqlalchemy` Is deprecated, look at `WTForms-Alchemy`_
+  * ``wtforms.ext.appengine`` Is deprecated, see `WTForms-Appengine`_
+  * ``wtforms.ext.csrf`` CSRF protection is now :doc:`built in <csrf>`
+  * ``wtforms.ext.dateutil`` Is deprecated, but does not have a new home yet.
+  * ``wtforms.ext.django`` Is deprecated. See `WTForms-Django`_
+  * ``wtforms.ext.i18n`` i18n is now :doc:`built in <i18n>`
+  * ``wtforms.ext.sqlalchemy`` Is deprecated, look at `WTForms-Alchemy`_
     (`docs <WTForms-Alchemy-docs_>`_)
 
 .. _WTForms-Alchemy: https://pypi.org/project/WTForms-Alchemy/
@@ -61,7 +73,7 @@ the new API's unless it needs to work across both WTForms 1.x and 2.x
 
 
 Low-level Changes
------------------
+^^^^^^^^^^^^^^^^^
 
 Most of these changes shouldn't affect the typical library user, however we
 are including these changes for completeness for those who are creating

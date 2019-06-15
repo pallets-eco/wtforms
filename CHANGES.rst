@@ -4,18 +4,115 @@ WTForms Changelog
 =================
 
 
+Version 3.0
+-----------
+
+Unreleased
+
+-   HTML is escaped using MarkupSafe instead of the previous internal
+    implementation. :func:`~widgets.core.escape_html` is removed,
+    replaced by :func:`markupsafe.escape`.
+    :class:`~widgets.core.HTMLString` is removed, replaced by
+    :class:`markupsafe.Markup`. (`#400`_)
+-   ``aria_`` args are rendered the same way as ``data_`` args, by
+    converting underscores to hyphens. ``aria_describedby="name-help"``
+    becomes ``aria-describedby="name-help"``. (`#239`_, `#389`_)
+-   HTML5 :class:`~fields.html5.IntegerField` and
+    :class:`~fields.html5.RangeInput` don't render the ``step="1"``
+    attribute by default. (`#343`_)
+-   The :class:`~widgets.TextArea` widget prepends a ``\r\n`` newline
+    when rendering to account for browsers stripping an initial line for
+    display. This does not affect the value. (`#238`_, `#395`_)
+-   :class:`~fields.core.Label` text is escaped before rendering.
+    (`#315`_, `#375`_)
+-   :class:`~fields.StringField` sets ``data`` to ``None`` when form
+    data is empty and an initial value was not provided. Although it
+    previously set an empty string, ``None`` is consistent with the
+    behavior of other fields. (`#355`_)
+-   :class:`~fields.SelectField` no longer coerces ``None`` to ``"None"``
+    allowing use of ``"None"`` as an option (`#288`_, `#289`_)
+-   :class:`~validators.Length` gives a more helpful error message when
+    ``min`` and ``max`` are the same value (`#266`_)
+-   Added more documentation on HTML5 fields and corrected related tests
+    (`#326`_, `#409`_)
+-   Added a ``check_validators`` method to :class:`~fields.Field` which checks
+    if the given validators are both callable, and not classes (`#298`_, `#410`_)
+-   Fixed broken IPv6 validator, validation now uses the ``ipaddress`` package
+    (`#385`_, `#403`_)
+-   ``FieldList`` error list is keeps entries in orders for easier identifcation
+    of erroring fields (`#257`_, `#407`_)
+-   Converted certain tests to use PyTest style (`#413`_, `#422`_)
+-   Black is now used for code formatting (`#399`_, `#415`_)
+-   Fixed :class:`~validators.IPAddress` docstring typo and conformed line
+    lengths to PEP8 (`#418`_)
+-   Fixed some small formatting issues in tests (`#420`_)
+-   Enabled Flake8 (`#416`_, `#423`_)
+-   Moved WTForms to the ``src`` directory (`#397`_, `#424`_)
+-   Specified version of Babel required for setup to avoid errors (`#430`_)
+-   Updated Ukrainian translation (`#433`_)
+-   Email validation is now handled by an optional library, ``email_validator``
+    (`#429`_)
+-   Fixed broken format string in Arabic translation (`#471`_)
+-   Replaced usage of ``getattr``/``setattr`` with constant attributes with
+    regular variable accesses (`#482`_, `#484`_)
+-   Updated ``false_values`` param in ``BooleanField`` docs (`#483`_, `#485`_)
+-   Added a parameter to :class:`~fields.SelectField` to skip choice validation
+    (`#434`_, `#493`_)
+
+.. _#238: https://github.com/wtforms/wtforms/issues/238
+.. _#239: https://github.com/wtforms/wtforms/issues/239
+.. _#257: https://github.com/wtforms/wtforms/issues/257
+.. _#266: https://github.com/wtforms/wtforms/pull/266
+.. _#288: https://github.com/wtforms/wtforms/pull/288
+.. _#289: https://github.com/wtforms/wtforms/issues/289
+.. _#298: https://github.com/wtforms/wtforms/pull/298
+.. _#315: https://github.com/wtforms/wtforms/pull/315
+.. _#326: https://github.com/wtforms/wtforms/pull/326
+.. _#343: https://github.com/wtforms/wtforms/pull/343
+.. _#355: https://github.com/wtforms/wtforms/pull/355
+.. _#375: https://github.com/wtforms/wtforms/pull/375
+.. _#385: https://github.com/wtforms/wtforms/issues/385
+.. _#389: https://github.com/wtforms/wtforms/pull/389
+.. _#395: https://github.com/wtforms/wtforms/pull/395
+.. _#397: https://github.com/wtforms/wtforms/issues/397
+.. _#399: https://github.com/wtforms/wtforms/issues/399
+.. _#400: https://github.com/wtforms/wtforms/pull/400
+.. _#403: https://github.com/wtforms/wtforms/pull/403
+.. _#407: https://github.com/wtforms/wtforms/pull/407
+.. _#409: https://github.com/wtforms/wtforms/pull/409
+.. _#410: https://github.com/wtforms/wtforms/pull/410
+.. _#413: https://github.com/wtforms/wtforms/pull/413
+.. _#415: https://github.com/wtforms/wtforms/pull/415
+.. _#416: https://github.com/wtforms/wtforms/issues/416
+.. _#418: https://github.com/wtforms/wtforms/pull/418
+.. _#420: https://github.com/wtforms/wtforms/pull/420
+.. _#422: https://github.com/wtforms/wtforms/pull/422
+.. _#423: https://github.com/wtforms/wtforms/pull/423
+.. _#424: https://github.com/wtforms/wtforms/pull/424
+.. _#429: https://github.com/wtforms/wtforms/pull/429
+.. _#430: https://github.com/wtforms/wtforms/pull/430
+.. _#433: https://github.com/wtforms/wtforms/pull/433
+.. _#434: https://github.com/wtforms/wtforms/issues/434
+.. _#471: https://github.com/wtforms/wtforms/pull/471
+.. _#482: https://github.com/wtforms/wtforms/issues/482
+.. _#483: https://github.com/wtforms/wtforms/issues/483
+.. _#484: https://github.com/wtforms/wtforms/pull/484
+.. _#485: https://github.com/wtforms/wtforms/pull/485
+.. _#493: https://github.com/wtforms/wtforms/pull/493
+
+
+
 Version 2.2.1
 -------------
 
 Released on June 7th, 2018
 
--   :class:`~fields.StringField` only sets ``data = ''` when form data
+-   :class:`~fields.StringField` only sets ``data = ''`` when form data
     is empty and an initial value was not provided. This fixes an issue
     where the default value wasn't rendered with the initial form.
-    (`#291`_, `#355`_, `#401`_)
+    (`#291`_, `#401`_)
 
 .. _#291: https://github.com/wtforms/wtforms/issues/291
-.. _#355: https://github.com/wtforms/wtforms/pull/355
 .. _#401: https://github.com/wtforms/wtforms/issues/401
 
 

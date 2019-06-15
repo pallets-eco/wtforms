@@ -25,8 +25,8 @@ fails, you should try reading the source for insight into how things work and
 how you can use things to your advantage.
 
 If you come up with a solution that you feel is useful to others and wish to
-share it, please let us know via email or the mailing list, and we'll add it
-to this document.
+share it, please let us know on GitHub by raising an issue or submitting a
+pull request.
 
 
 Removing Fields Per-instance
@@ -79,10 +79,6 @@ subclasses:
 
         form = F(request.POST, ...)
         # do view stuff
-
-For more form composition tricks, refer to `this mailing list post`_
-
-.. _this mailing list post: https://groups.google.com/forum/#!topic/wtforms/cJl3aqzZieA
 
 
 .. _jinja-macros-example:

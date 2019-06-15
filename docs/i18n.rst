@@ -1,14 +1,11 @@
 Internationalization (i18n)
 ===========================
 
-Localizing strings in WTForms is a topic that frequently comes up in the
-mailing list. While WTForms does not provide its own localization library, you
-can integrate WTForms with almost any gettext-like framework easily.
-
-In WTForms, the majority of messages that are transmitted are provided by you,
-the user. However, there is support for translating some of the *built-in*
-messages in WTForms (such as errors which occur during data coercion) so that
-the user can make sure the user experience is consistent.
+Localizing strings in WTForms is a topic that frequently comes up.
+In WTForms, the majority of messages that are transmitted are
+provided by you, the user. However, there is support for translating some of
+the *built-in* messages in WTForms (such as errors which occur during data
+coercion) so that the user can make sure the user experience is consistent.
 
 Translating user-provided messages
 ----------------------------------
@@ -61,7 +58,7 @@ with the package. Localizations for several languages are included, and we
 hope that soon there will be more submitted.
 
 To use the builtin translations provider, simply pass locale languages as
-locales in the `meta` section of the 
+locales in the `meta` section of the
 :meth:`constructor <wtforms.form.Form.__init__>` of your form::
 
     form = MyForm(request.form, meta={'locales': ['en_US', 'en']})
