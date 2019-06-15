@@ -1,8 +1,8 @@
 Internationalization (i18n)
 ===========================
 
-Localizing strings in WTForms is a topic that frequently comes up in the
-mailing list. In WTForms, the majority of messages that are transmitted are
+Localizing strings in WTForms is a topic that frequently comes up.
+In WTForms, the majority of messages that are transmitted are
 provided by you, the user. However, there is support for translating some of
 the *built-in* messages in WTForms (such as errors which occur during data
 coercion) so that the user can make sure the user experience is consistent.
