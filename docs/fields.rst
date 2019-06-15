@@ -279,7 +279,7 @@ refer to a single input from the form.
 
     Note that the `choices` keyword is only evaluated once, so if you want to make
     a dynamic drop-down list, you'll want to assign the choices list to the field
-    after instantiation. Any inputted choices which are not in the given choices
+    after instantiation. Any submitted choices which are not in the given choices
     list will cause validation on the field to fail. If this option cannot be
     applied to your problem you may wish to skip choice validation (see below).
 
@@ -322,7 +322,7 @@ refer to a single input from the form.
 .. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=unicode, option_widget=None)
 
    The data on the SelectMultipleField is stored as a list of objects, each of
-   which is checked and coerced from the form input.  Any inputted choices
+   which is checked and coerced from the form input.  Any submitted choices
    which are not in the given choices list will cause validation on the field
    to fail.
 
