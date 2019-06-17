@@ -59,6 +59,9 @@ Unreleased
 -   Added a parameter to :class:`~fields.SelectField` to skip choice validation
     (`#434`_, `#493`_)
 -   Permitted underscores in ``HostnameValidation`` (`#463`_)
+-   Modified the changes made in `#286`_: instead of copying the list of
+    ``choices``, :class:`~fields.SelectField` now uses ``list()`` to construct
+    a new list of choices. (`#475`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -96,6 +99,7 @@ Unreleased
 .. _#434: https://github.com/wtforms/wtforms/issues/434
 .. _#463: https://github.com/wtforms/wtforms/pull/463
 .. _#471: https://github.com/wtforms/wtforms/pull/471
+.. _#475: https://github.com/wtforms/wtforms/pull/475/
 .. _#482: https://github.com/wtforms/wtforms/issues/482
 .. _#483: https://github.com/wtforms/wtforms/issues/483
 .. _#484: https://github.com/wtforms/wtforms/pull/484
