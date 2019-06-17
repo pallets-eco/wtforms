@@ -380,6 +380,8 @@ def test_equal_to_raises(
     [
         u"http://foobar.dk",
         u"http://foobar.dk/",
+        u"http://foo-bar.dk/",
+        u"http://foo_bar.dk/",
         u"http://foobar.museum/foobar",
         u"http://192.168.0.1/foobar",
         u"http://192.168.0.1:9000/fake",
@@ -412,6 +414,8 @@ def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
     "url_val",
     [
         u"http://foobar",
+        u"http://-foobar.dk/",
+        u"http://foobar-.dk/",
         u"foobar.dk",
         u"http://127.0.0/asdf",
         u"http://foobar.d",
