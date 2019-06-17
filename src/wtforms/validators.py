@@ -609,7 +609,7 @@ class HostnameValidation(object):
     This is not a validator in and of itself, and as such is not exported.
     """
 
-    hostname_part = re.compile(r"^(xn-|[a-z0-9]+)(-[a-z0-9]+)*$", re.IGNORECASE)
+    hostname_part = re.compile(r"^(xn-|[a-z0-9_]+)(-[a-z0-9_]+)*$", re.IGNORECASE)
     tld_part = re.compile(r"^([a-z]{2,20}|xn--([a-z0-9]+-)*[a-z0-9]+)$", re.IGNORECASE)
 
     def __init__(self, require_tld=True, allow_ip=False):

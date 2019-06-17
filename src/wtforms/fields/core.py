@@ -508,11 +508,18 @@ class SelectField(SelectFieldBase):
     widget = widgets.Select()
 
     def __init__(
-        self, label=None, validators=None, coerce=text_type, choices=None, **kwargs
+        self,
+        label=None,
+        validators=None,
+        coerce=text_type,
+        choices=None,
+        validate_choice=True,
+        **kwargs
     ):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = list(choices) if choices is not None else None
+        self.validate_choice = validate_choice
 
     def iter_choices(self):
         for value, label in self.choices:
@@ -533,11 +540,12 @@ class SelectField(SelectFieldBase):
                 raise ValueError(self.gettext("Invalid Choice: could not coerce"))
 
     def pre_validate(self, form):
-        for v, _ in self.choices:
-            if self.data == v:
-                break
-        else:
-            raise ValueError(self.gettext("Not a valid choice"))
+        if self.validate_choice:
+            for v, _ in self.choices:
+                if self.data == v:
+                    break
+            else:
+                raise ValueError(self.gettext("Not a valid choice"))
 
 
 class SelectMultipleField(SelectField):
@@ -782,7 +790,7 @@ class BooleanField(Field):
     :param false_values:
         If provided, a sequence of strings each of which is an exact match
         string of what is considered a "false" value. Defaults to the tuple
-        ``('false', '')``
+        ``(False, "false", "")``
     """
 
     widget = widgets.CheckboxInput()

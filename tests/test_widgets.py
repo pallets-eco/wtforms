@@ -83,7 +83,7 @@ class TestBasicWidgets:
 
     def test_input_type(self):
         with pytest.raises(AttributeError):
-            getattr(Input(), "input_type")
+            Input().input_type
 
         test_input = Input(input_type="test")
         assert test_input.input_type == "test"
@@ -116,9 +116,9 @@ class TestBasicWidgets:
             == '<input checked id="id" name="bar" type="checkbox" value="v">'
         )
         # set falsy value to dummy field
-        setattr(basic_widget_dummy_field, "data", "")
+        basic_widget_dummy_field.data = ""
         assert "checked" not in CheckboxInput()(basic_widget_dummy_field)
-        setattr(basic_widget_dummy_field, "data", False)
+        basic_widget_dummy_field.data = False
         assert "checked" not in CheckboxInput()(basic_widget_dummy_field)
 
     def test_radio_input(self, basic_widget_dummy_field):
@@ -132,9 +132,9 @@ class TestBasicWidgets:
 
     def test_textarea(self, basic_widget_dummy_field):
         # Make sure textareas escape properly and render properly
-        setattr(basic_widget_dummy_field, "data", "hi<>bye")
-        setattr(basic_widget_dummy_field, "name", "f")
-        setattr(basic_widget_dummy_field, "id", "")
+        basic_widget_dummy_field.data = "hi<>bye"
+        basic_widget_dummy_field.name = "f"
+        basic_widget_dummy_field.id = ""
         assert (
             TextArea()(basic_widget_dummy_field)
             == '<textarea id="" name="f">\r\nhi&lt;&gt;bye</textarea>'
@@ -153,7 +153,7 @@ class TestBasicWidgets:
 
 class TestSelect:
     def test_select(self, select_dummy_field):
-        setattr(select_dummy_field, "name", "f")
+        select_dummy_field.name = "f"
 
         assert (
             Select()(select_dummy_field)
