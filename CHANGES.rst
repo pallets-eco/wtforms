@@ -58,6 +58,7 @@ Unreleased
 -   Updated ``false_values`` param in ``BooleanField`` docs (`#483`_, `#485`_)
 -   Added a parameter to :class:`~fields.SelectField` to skip choice validation
     (`#434`_, `#493`_)
+-   Permitted underscores in ``HostnameValidation`` (`#463`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -93,6 +94,7 @@ Unreleased
 .. _#430: https://github.com/wtforms/wtforms/pull/430
 .. _#433: https://github.com/wtforms/wtforms/pull/433
 .. _#434: https://github.com/wtforms/wtforms/issues/434
+.. _#463: https://github.com/wtforms/wtforms/pull/463
 .. _#471: https://github.com/wtforms/wtforms/pull/471
 .. _#482: https://github.com/wtforms/wtforms/issues/482
 .. _#483: https://github.com/wtforms/wtforms/issues/483
