@@ -1027,13 +1027,13 @@ class FieldList(Field):
         if formdata:
             indices = sorted(set(self._extract_indices(self.name, formdata)))
             if self.max_entries:
-                indices = indices[: self.max_entries]
+                indices = indices[:self.max_entries]
 
-            idata = iter(data)
+            ldata = list(data)
             for index in indices:
-                try:
-                    obj_data = next(idata)
-                except StopIteration:
+                if index < len(ldata):
+                    obj_data = ldata[index]
+                else:
                     obj_data = unset_value
                 self._add_entry(formdata, obj_data, index=index)
         else:
