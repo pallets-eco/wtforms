@@ -1,7 +1,10 @@
 os: linux
+dist: xenial
 sudo: false
 language: python
+
 python:
+  - 3.7
   - 3.6
   - 3.5
   - 3.4
@@ -11,7 +14,8 @@ env: TOXENV=py,coveralls
 
 matrix:
   include:
-    - env: TOXENV=stylecheck,docs-html
+    - python: "3.6"
+      env: TOXENV=stylecheck,docs-html
     - python: "2.7"
       env: TOXENV=py27,coveralls
   allow_failures:
