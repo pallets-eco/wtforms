@@ -897,13 +897,11 @@ class FieldList(Field):
             if self.max_entries:
                 indices = indices[:self.max_entries]
 
-            idata = iter(data)
-            for index in indices:
-                try:
-                    obj_data = next(idata)
-                except StopIteration:
-                    obj_data = unset_value
-                self._add_entry(formdata, obj_data, index=index)
+            max_index = max(max(indices), len(data))
+            for index in range(max_index+1):
+                if index < len(data) or index in indices:
+                    obj_data = data[index] if index < len(data) else unset_value
+                    self._add_entry(formdata, obj_data, index=index)
         else:
             for obj_data in data:
                 self._add_entry(formdata, obj_data)

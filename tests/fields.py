@@ -744,14 +744,14 @@ class FieldListTest(TestCase):
         self.assertFalse(form.validate())
 
         form = F(pdata, a=data)
-        self.assertEqual(form.a.data, ['bleh', 'yarg', '', 'mmm'])
+        self.assertEqual(form.a.data, ['bleh', 'hi', 'rawr', 'yarg', '', 'mmm'])
         self.assertFalse(form.validate())
 
         # Test for formdata precedence
         pdata = DummyPostData({'a-0': ['a'], 'a-1': ['b']})
         form = F(pdata, a=data)
-        self.assertEqual(len(form.a.entries), 2)
-        self.assertEqual(form.a.data, ['a', 'b'])
+        self.assertEqual(len(form.a.entries), 3)
+        self.assertEqual(form.a.data, ['a', 'b', 'rawr'])
         self.assertEqual(list(iter(form.a)), list(form.a.entries))
 
     def test_enclosed_subform(self):
@@ -812,10 +812,10 @@ class FieldListTest(TestCase):
     def test_min_entries_default_values(self):
         F = make_form(a=FieldList(self.t, min_entries=5, max_entries=5))
         a = F().a
-        pdata = DummyPostData({"a-0": "foo"})
+        pdata = DummyPostData({"a-1": "foo"})
         data = ["bar0", "bar1", "bar2"]
         a.process(pdata, data)
-        self.assertEqual(a.data, ["foo", "bar1", "bar2", "", ""])
+        self.assertEqual(a.data, ["bar0", "foo", "bar2", "", ""])
 
     def test_validators(self):
         def validator(form, field):
