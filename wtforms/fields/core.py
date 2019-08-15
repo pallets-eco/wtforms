@@ -909,7 +909,10 @@ class FieldList(Field):
                 self._add_entry(formdata, obj_data)
 
         while len(self.entries) < self.min_entries:
-            self._add_entry(formdata)
+            if len(self.entries) < len(data):
+                self._add_entry(formdata, data[len(self.entries)])
+            else:
+                self._add_entry(formdata)
 
     def _extract_indices(self, prefix, formdata):
         """

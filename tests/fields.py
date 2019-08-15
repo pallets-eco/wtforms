@@ -809,6 +809,14 @@ class FieldListTest(TestCase):
         self.assertEqual(a.data, ['foo', 'flaf', 'bar'])
         self.assertRaises(AssertionError, a.append_entry)
 
+    def test_min_entries_default_values(self):
+        F = make_form(a=FieldList(self.t, min_entries=5, max_entries=5))
+        a = F().a
+        pdata = DummyPostData({"a-0": "foo"})
+        data = ["bar0", "bar1", "bar2"]
+        a.process(pdata, data)
+        self.assertEqual(a.data, ["foo", "bar1", "bar2", "", ""])
+
     def test_validators(self):
         def validator(form, field):
             if field.data and field.data[0] == 'fail':
