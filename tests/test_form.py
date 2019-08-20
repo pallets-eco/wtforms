@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import pytest
-from unittest import TestCase
 
 from wtforms.form import BaseForm, Form
 from wtforms.meta import DefaultMeta
@@ -10,7 +9,7 @@ from wtforms.validators import ValidationError
 from tests.common import DummyPostData
 
 
-class TestBaseForm(TestCase):
+class TestBaseForm:
     def get_form(self, **kwargs):
         def validate_test(form, field):
             if field.data != "foobar":
@@ -86,7 +85,7 @@ class TestBaseForm(TestCase):
             form.process([])
 
 
-class TestFormMeta(TestCase):
+class TestFormMeta:
     def test_monkeypatch(self):
         class F(Form):
             a = StringField()
@@ -142,7 +141,7 @@ class TestFormMeta(TestCase):
         assert issubclass(F._wtforms_meta, MetaB)
 
 
-class TestForm(TestCase):
+class TestForm:
     class F(Form):
         test = StringField()
 
@@ -232,7 +231,7 @@ class TestForm(TestCase):
         assert F(DummyPostData({"test": "foo"}), test="test").test.data == "foo"
 
 
-class TestMeta(TestCase):
+class TestMeta:
     class F(Form):
         class Meta:
             foo = 9

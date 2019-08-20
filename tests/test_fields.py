@@ -4,7 +4,6 @@ from collections import namedtuple
 from datetime import date, datetime
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
 import sys
-from unittest import TestCase
 
 from markupsafe import Markup
 import pytest
@@ -59,7 +58,7 @@ def make_form(_name="F", **fields):
     return type(str(_name), (Form,), fields)
 
 
-class TestDefaults(TestCase):
+class TestDefaults:
     def test(self):
         expected = 42
 
@@ -75,7 +74,7 @@ class TestDefaults(TestCase):
         assert test_callable.data == expected
 
 
-class TestLabel(TestCase):
+class TestLabel:
     def test(self):
         expected = """<label for="test">Caption</label>"""
         label = Label("test", "Caption")
@@ -117,39 +116,40 @@ class TestLabel(TestCase):
         )
 
 
-class TestFlags(TestCase):
-    def setUp(self):
-        t = StringField(validators=[validators.DataRequired()]).bind(Form(), "a")
-        self.flags = t.flags
+@pytest.fixture()
+def flags():
+    return StringField(validators=[validators.DataRequired()]).bind(Form(), "a").flags
 
-    def test_existing_values(self):
-        assert self.flags.required is True
-        assert "required" in self.flags
-        assert self.flags.optional is False
-        assert "optional" not in self.flags
 
-    def test_assignment(self):
-        assert "optional" not in self.flags
-        self.flags.optional = True
-        assert self.flags.optional is True
-        assert "optional" in self.flags
+class TestFlags:
+    def test_existing_values(self, flags):
+        assert flags.required is True
+        assert "required" in flags
+        assert flags.optional is False
+        assert "optional" not in flags
 
-    def test_unset(self):
-        self.flags.required = False
-        assert self.flags.required is False
-        assert "required" not in self.flags
+    def test_assignment(self, flags):
+        assert "optional" not in flags
+        flags.optional = True
+        assert flags.optional is True
+        assert "optional" in flags
 
-    def test_repr(self):
-        assert repr(self.flags) == "<wtforms.fields.Flags: {required}>"
+    def test_unset(self, flags):
+        flags.required = False
+        assert flags.required is False
+        assert "required" not in flags
 
-    def test_underscore_property(self):
+    def test_repr(self, flags):
+        assert repr(flags) == "<wtforms.fields.Flags: {required}>"
+
+    def test_underscore_property(self, flags):
         with pytest.raises(AttributeError):
-            self.flags._foo
-        self.flags._foo = 42
-        assert self.flags._foo == 42
+            flags._foo
+        flags._foo = 42
+        assert flags._foo == 42
 
 
-class TestUnsetValue(TestCase):
+class TestUnsetValue:
     def test(self):
         assert str(unset_value) == "<unset value>"
         assert repr(unset_value) == "<unset value>"
@@ -159,7 +159,7 @@ class TestUnsetValue(TestCase):
         assert unset_value.__bool__() is False
 
 
-class TestFilters(TestCase):
+class TestFilters:
     class F(Form):
         a = StringField(default=" hello", filters=[lambda x: x.strip()])
         b = StringField(default="42", filters=[int, lambda x: -x])
@@ -178,13 +178,10 @@ class TestFilters(TestCase):
         assert not form.validate()
 
 
-class TestField(TestCase):
+class TestField:
     class F(Form):
         a = StringField(default="hello", render_kw={"readonly": True, "foo": "bar"})
         b = StringField(validators=[validators.InputRequired()])
-
-    def setUp(self):
-        self.field = self.F().a
 
     def test_unbound_field(self):
         unbound = self.F.a
@@ -198,18 +195,21 @@ class TestField(TestCase):
         assert repr(unbound).startswith("<UnboundField(StringField")
 
     def test_htmlstring(self):
-        assert isinstance(self.field.__html__(), Markup)
+        assert isinstance(self.F().a.__html__(), Markup)
 
     def test_str_coerce(self):
-        assert isinstance(str(self.field), str)
-        assert str(self.field) == str(self.field())
+        field = self.F().a
+        assert isinstance(str(field), str)
+        assert str(field) == str(field)
 
     def test_unicode_coerce(self):
-        assert text_type(self.field) == self.field()
+        field = self.F().a
+        assert text_type(field) == field()
 
     def test_process_formdata(self):
-        Field.process_formdata(self.field, [42])
-        assert self.field.data == 42
+        field = self.F().a
+        Field.process_formdata(field, [42])
+        assert field.data == 42
 
     def test_meta_attribute(self):
         # Can we pass in meta via _form?
@@ -298,7 +298,7 @@ class PrePostTestField(StringField):
             raise ValueError("Post-stopped")
 
 
-class TestPrePostValidation(TestCase):
+class TestPrePostValidation:
     class F(Form):
         a = PrePostTestField(validators=[validators.Length(max=1, message="too long")])
 
@@ -324,7 +324,7 @@ class TestPrePostValidation(TestCase):
         assert stopped.errors == ["stop with message", "Post-stopped"]
 
 
-class TestSelectField(TestCase):
+class TestSelectField:
     class F(Form):
         a = SelectField(choices=[("a", "hello"), ("btest", "bye")], default="a")
         b = SelectField(
@@ -402,7 +402,7 @@ class TestSelectField(TestCase):
         assert len(form.a.errors) == 0
 
 
-class TestSelectMultipleField(TestCase):
+class TestSelectMultipleField:
     class F(Form):
         a = SelectMultipleField(
             choices=[("a", "hello"), ("b", "bye"), ("c", "something")], default=("a",)
@@ -445,7 +445,7 @@ class TestSelectMultipleField(TestCase):
         assert form.b.data == [1, 3]
 
 
-class TestRadioField(TestCase):
+class TestRadioField:
     class F(Form):
         a = RadioField(choices=[("a", "hello"), ("b", "bye")], default="a")
         b = RadioField(choices=[(1, "Item 1"), (2, "Item 2")], coerce=int)
@@ -495,7 +495,7 @@ class TestRadioField(TestCase):
         )
 
 
-class TestStringField(TestCase):
+class TestStringField:
     class F(Form):
         a = StringField()
 
@@ -510,7 +510,7 @@ class TestStringField(TestCase):
         assert form.a.data is None
 
 
-class TestHiddenField(TestCase):
+class TestHiddenField:
     class F(Form):
         a = HiddenField(default="LE DEFAULT")
 
@@ -522,7 +522,7 @@ class TestHiddenField(TestCase):
         assert form.a.flags.hidden
 
 
-class TestTextAreaField(TestCase):
+class TestTextAreaField:
     class F(Form):
         a = TextAreaField(default="LE DEFAULT")
 
@@ -531,7 +531,7 @@ class TestTextAreaField(TestCase):
         assert form.a() == """<textarea id="a" name="a">\r\nLE DEFAULT</textarea>"""
 
 
-class TestPasswordField(TestCase):
+class TestPasswordField:
     class F(Form):
         a = PasswordField(
             widget=widgets.PasswordInput(hide_value=False), default="LE DEFAULT"
@@ -546,7 +546,7 @@ class TestPasswordField(TestCase):
         assert form.b() == """<input id="b" name="b" type="password" value="">"""
 
 
-class TestFileField(TestCase):
+class TestFileField:
     def test_file_field(self):
         class F(Form):
             file = FileField()
@@ -577,7 +577,7 @@ class TestFileField(TestCase):
         assert f.file() == '<input id="file" name="file" type="text">'
 
 
-class TestIntegerField(TestCase):
+class TestIntegerField:
     class F(Form):
         a = IntegerField()
         b = IntegerField(default=48)
@@ -612,7 +612,7 @@ class TestIntegerField(TestCase):
         assert len(form.b.errors) == 1
 
 
-class TestDecimalField(TestCase):
+class TestDecimalField:
     def test(self):
         F = make_form(a=DecimalField())
         form = F(DummyPostData(a="2.1"))
@@ -644,7 +644,7 @@ class TestDecimalField(TestCase):
         assert form.b._value() == "72"
 
 
-class TestFloatField(TestCase):
+class TestFloatField:
     class F(Form):
         a = FloatField()
         b = FloatField(default=48.0)
@@ -671,7 +671,7 @@ class TestFloatField(TestCase):
         assert form.b._value() == "9.0"
 
 
-class TestBooleanField(TestCase):
+class TestBooleanField:
     class BoringForm(Form):
         bool1 = BooleanField()
         bool2 = BooleanField(default=True, false_values=())
@@ -716,7 +716,7 @@ class TestBooleanField(TestCase):
         assert form.bool2.data is False
 
 
-class TestDateField(TestCase):
+class TestDateField:
     class F(Form):
         a = DateField()
         b = DateField(format="%m/%d %Y")
@@ -738,7 +738,7 @@ class TestDateField(TestCase):
         assert form.a.process_errors[0] == "Not a valid date value"
 
 
-class TestTimeField(TestCase):
+class TestTimeField:
     class F(Form):
         a = TimeField()
         b = TimeField(format="%H:%M")
@@ -759,7 +759,7 @@ class TestTimeField(TestCase):
         assert form.a.errors[0] == "Not a valid time value"
 
 
-class TestDateTimeField(TestCase):
+class TestDateTimeField:
     class F(Form):
         a = DateTimeField()
         b = DateTimeField(format="%Y-%m-%d %H:%M")
@@ -798,7 +798,7 @@ class TestDateTimeField(TestCase):
         assert d == form.a.data
 
 
-class TestSubmitField(TestCase):
+class TestSubmitField:
     class F(Form):
         a = SubmitField("Label")
 
@@ -806,27 +806,36 @@ class TestSubmitField(TestCase):
         assert self.F().a() == """<input id="a" name="a" type="submit" value="Label">"""
 
 
-class TestFormField(TestCase):
-    def setUp(self):
-        F = make_form(
-            a=StringField(validators=[validators.DataRequired()]), b=StringField()
-        )
-        self.F1 = make_form("F1", a=FormField(F))
-        self.F2 = make_form("F2", a=FormField(F, separator="::"))
+@pytest.fixture
+def F1():
+    F = make_form(
+        a=StringField(validators=[validators.DataRequired()]), b=StringField()
+    )
+    return make_form("F1", a=FormField(F))
 
-    def test_formdata(self):
-        form = self.F1(DummyPostData({"a-a": ["moo"]}))
+
+@pytest.fixture
+def F2():
+    F = make_form(
+        a=StringField(validators=[validators.DataRequired()]), b=StringField()
+    )
+    return make_form("F2", a=FormField(F, separator="::"))
+
+
+class TestFormField:
+    def test_formdata(self, F1):
+        form = F1(DummyPostData({"a-a": ["moo"]}))
         assert form.a.form.a.name == "a-a"
         assert form.a["a"].data == "moo"
         assert form.a["b"].data is None
         assert form.validate()
 
-    def test_iteration(self):
-        assert [x.name for x in self.F1().a] == ["a-a", "a-b"]
+    def test_iteration(self, F1):
+        assert [x.name for x in F1().a] == ["a-a", "a-b"]
 
-    def test_with_obj(self):
+    def test_with_obj(self, F1):
         obj = AttrDict(a=AttrDict(a="mmm"))
-        form = self.F1(obj=obj)
+        form = F1(obj=obj)
         assert form.a.form.a.data == "mmm"
         assert form.a.form.b.data is None
         obj_inner = AttrDict(a=None, b="rawr")
@@ -836,8 +845,8 @@ class TestFormField(TestCase):
         assert obj_inner.a == "mmm"
         assert obj_inner.b is None
 
-    def test_widget(self):
-        assert self.F1().a() == (
+    def test_widget(self, F1):
+        assert F1().a() == (
             '<table id="a">'
             '<tr><th><label for="a-a">A</label></th>'
             '<td><input id="a-a" name="a-a" required type="text" value=""></td></tr>'
@@ -846,27 +855,27 @@ class TestFormField(TestCase):
             "</table>"
         )
 
-    def test_separator(self):
-        form = self.F2(DummyPostData({"a-a": "fake", "a::a": "real"}))
+    def test_separator(self, F2):
+        form = F2(DummyPostData({"a-a": "fake", "a::a": "real"}))
         assert form.a.a.name == "a::a"
         assert form.a.a.data == "real"
         assert form.validate()
 
-    def test_no_validators_or_filters(self):
+    def test_no_validators_or_filters(self, F1):
         class A(Form):
-            a = FormField(self.F1, validators=[validators.DataRequired()])
+            a = FormField(F1, validators=[validators.DataRequired()])
 
         with pytest.raises(TypeError):
             A()
 
         class B(Form):
-            a = FormField(self.F1, filters=[lambda x: x])
+            a = FormField(F1, filters=[lambda x: x])
 
         with pytest.raises(TypeError):
             B()
 
         class C(Form):
-            a = FormField(self.F1)
+            a = FormField(F1)
 
             def validate_a(self, field):
                 pass
@@ -875,16 +884,16 @@ class TestFormField(TestCase):
         with pytest.raises(TypeError):
             form.validate()
 
-    def test_populate_missing_obj(self):
+    def test_populate_missing_obj(self, F1):
         obj = AttrDict(a=None)
         obj2 = AttrDict(a=AttrDict(a="mmm"))
-        form = self.F1()
+        form = F1()
         with pytest.raises(TypeError):
             form.populate_obj(obj)
         form.populate_obj(obj2)
 
 
-class TestFieldList(TestCase):
+class TestFieldList:
     t = StringField(validators=[validators.DataRequired()])
 
     def test_form(self):
@@ -1036,7 +1045,7 @@ class MyCustomField(StringField):
         return super(MyCustomField, self).process_data(data)
 
 
-class TestCustomFieldQuirks(TestCase):
+class TestCustomFieldQuirks:
     class F(Form):
         a = MyCustomField()
         b = SelectFieldBase()
@@ -1053,7 +1062,7 @@ class TestCustomFieldQuirks(TestCase):
             f.b.iter_choices()
 
 
-class TestHTML5Fields(TestCase):
+class TestHTML5Fields:
     class F(Form):
         search = SearchField()
         telephone = TelField()

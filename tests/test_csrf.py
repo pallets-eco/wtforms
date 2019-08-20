@@ -6,7 +6,6 @@ from functools import partial
 import hashlib
 import hmac
 import pytest
-from unittest import TestCase
 
 from tests.common import DummyPostData
 from wtforms.csrf.core import CSRF
@@ -45,7 +44,7 @@ class SimplePopulateObject(object):
     csrf_token = None
 
 
-class TestDummyCSRF(TestCase):
+class TestDummyCSRF:
     class F(Form):
         class Meta:
             csrf = True
@@ -82,7 +81,7 @@ class TestDummyCSRF(TestCase):
         assert obj.a == "test"
 
 
-class TestSessionCSRF(TestCase):
+class TestSessionCSRF:
     class F(Form):
         class Meta:
             csrf = True

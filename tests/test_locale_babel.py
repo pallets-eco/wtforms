@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import pytest
 from decimal import Decimal, ROUND_UP
-from unittest import TestCase
 
 from tests.common import DummyPostData
 from wtforms import Form
@@ -11,7 +10,7 @@ from wtforms.fields import DecimalField
 from wtforms.utils import unset_value
 
 
-class TestLocaleDecimal(TestCase):
+class TestLocaleDecimal:
     class F(Form):
         class Meta:
             locales = ["hi_IN", "en_US"]

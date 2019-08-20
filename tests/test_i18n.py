@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import pytest
-from unittest import TestCase
 from wtforms import form, StringField, validators
 from wtforms.i18n import get_translations
 
@@ -31,7 +30,7 @@ class Python2_Translator(object):
     ungettext = ngettext_lower
 
 
-class TestI18N(TestCase):
+class TestI18N:
     def test_failure(self):
         with pytest.raises(IOError):
             get_translations([])
@@ -58,7 +57,7 @@ class TestI18N(TestCase):
         assert translations is translator
 
 
-class TestCoreForm(TestCase):
+class TestCoreForm:
     class F(form.Form):
         class Meta:
             locales = ["en_US", "en"]
@@ -139,7 +138,7 @@ class TestCoreForm(TestCase):
         )
 
 
-class TestTranslations(TestCase):
+class TestTranslations:
     class F(form.Form):
         a = StringField(validators=[validators.Length(max=5)])
 
@@ -150,16 +149,13 @@ class TestTranslations(TestCase):
 
         a = StringField("", [validators.Length(max=5)])
 
-    def setUp(self):
-        self.a = self.F().a
-
     def test_gettext(self):
         x = "foo"
-        assert self.a.gettext(x) is x
+        assert self.F().a.gettext(x) is x
 
     def test_ngettext(self):
         def getit(n):
-            return self.a.ngettext("antelope", "antelopes", n)
+            return self.F().a.ngettext("antelope", "antelopes", n)
 
         assert getit(0) == "antelopes"
         assert getit(1) == "antelope"
