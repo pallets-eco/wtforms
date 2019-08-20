@@ -143,7 +143,8 @@ class FlagsTest(TestCase):
         assert repr(self.flags) == "<wtforms.fields.Flags: {required}>"
 
     def test_underscore_property(self):
-        self.assertRaises(AttributeError, getattr, self.flags, "_foo")
+        with pytest.raises(AttributeError):
+            self.flags._foo
         self.flags._foo = 42
         assert self.flags._foo == 42
 
@@ -221,7 +222,8 @@ class FieldTest(TestCase):
         assert field.meta is form_meta
 
         # Do we fail if both _meta and _form are None?
-        self.assertRaises(TypeError, StringField, _name="foo", _form=None)
+        with pytest.raises(TypeError):
+            StringField(_name="foo", _form=None)
 
     def test_render_kw(self):
         form = self.F()
@@ -266,15 +268,16 @@ class FieldTest(TestCase):
         v1 = "Not callable"
         v2 = validators.DataRequired
 
-        with self.assertRaisesRegexp(
+        with pytest.raises(
             TypeError,
-            "{} is not a valid validator because " "it is not callable".format(v1),
+            match=r"{} is not a valid validator because "
+            "it is not callable".format(v1),
         ):
             Field(validators=[v1])
 
-        with self.assertRaisesRegexp(
+        with pytest.raises(
             TypeError,
-            "{} is not a valid validator because "
+            match=r"{} is not a valid validator because "
             "it is a class, it should be an "
             "instance".format(v2),
         ):
@@ -853,12 +856,14 @@ class FormFieldTest(TestCase):
         class A(Form):
             a = FormField(self.F1, validators=[validators.DataRequired()])
 
-        self.assertRaises(TypeError, A)
+        with pytest.raises(TypeError):
+            A()
 
         class B(Form):
             a = FormField(self.F1, filters=[lambda x: x])
 
-        self.assertRaises(TypeError, B)
+        with pytest.raises(TypeError):
+            B()
 
         class C(Form):
             a = FormField(self.F1)
@@ -867,13 +872,15 @@ class FormFieldTest(TestCase):
                 pass
 
         form = C()
-        self.assertRaises(TypeError, form.validate)
+        with pytest.raises(TypeError):
+            form.validate()
 
     def test_populate_missing_obj(self):
         obj = AttrDict(a=None)
         obj2 = AttrDict(a=AttrDict(a="mmm"))
         form = self.F1()
-        self.assertRaises(TypeError, form.populate_obj, obj)
+        with pytest.raises(TypeError):
+            form.populate_obj(obj)
         form.populate_obj(obj2)
 
 
@@ -939,7 +946,8 @@ class FieldListTest(TestCase):
 
         # Test failure on populate
         obj2 = AttrDict(a=42)
-        self.assertRaises(TypeError, form.populate_obj, obj2)
+        with pytest.raises(TypeError):
+            form.populate_obj(obj2)
 
     def test_entry_management(self):
         F = make_form(a=FieldList(self.t))
@@ -951,7 +959,8 @@ class FieldListTest(TestCase):
         assert a[-1].name == "a-1"
         assert a.pop_entry().data == "orange"
         assert a.pop_entry().name == "a-0"
-        self.assertRaises(IndexError, a.pop_entry)
+        with pytest.raises(IndexError):
+            a.pop_entry()
 
     def test_min_max_entries(self):
         F = make_form(a=FieldList(self.t, min_entries=1, max_entries=3))
@@ -959,11 +968,13 @@ class FieldListTest(TestCase):
         assert len(a) == 1
         assert a[0].data is None
         big_input = ["foo", "flaf", "bar", "baz"]
-        self.assertRaises(AssertionError, F, a=big_input)
+        with pytest.raises(AssertionError):
+            F(a=big_input)
         pdata = DummyPostData(("a-%d" % i, v) for i, v in enumerate(big_input))
         a = F(pdata).a
         assert a.data == ["foo", "flaf", "bar"]
-        self.assertRaises(AssertionError, a.append_entry)
+        with pytest.raises(AssertionError):
+            a.append_entry()
 
     def test_validators(self):
         def validator(form, field):
@@ -1038,7 +1049,8 @@ class CustomFieldQuirksTest(TestCase):
 
     def test_default_impls(self):
         f = self.F()
-        self.assertRaises(NotImplementedError, f.b.iter_choices)
+        with pytest.raises(NotImplementedError):
+            f.b.iter_choices()
 
 
 class HTML5FieldsTest(TestCase):

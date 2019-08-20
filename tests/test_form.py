@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import pytest
 from unittest import TestCase
 
 from wtforms.form import BaseForm, Form
@@ -41,7 +42,8 @@ class BaseFormTest(TestCase):
     def test_field_removal(self):
         form = self.get_form()
         del form["test"]
-        self.assertRaises(AttributeError, getattr, form, "test")
+        with pytest.raises(AttributeError):
+            form.test
         assert "test" not in form
 
     def test_field_adding(self):
@@ -54,7 +56,8 @@ class BaseFormTest(TestCase):
         form["test"] = IntegerField()
         assert isinstance(form["test"], IntegerField)
         assert len(list(form)) == 2
-        self.assertRaises(AttributeError, getattr, form["test"], "data")
+        with pytest.raises(AttributeError):
+            form["test"].data
         form.process(DummyPostData(test=["1"]))
         assert form["test"].data == 1
         assert form["foo"].data is None
@@ -79,7 +82,8 @@ class BaseFormTest(TestCase):
 
     def test_formdata_wrapper_error(self):
         form = self.get_form()
-        self.assertRaises(TypeError, form.process, [])
+        with pytest.raises(TypeError):
+            form.process([])
 
 
 class FormMetaTest(TestCase):
@@ -95,7 +99,8 @@ class FormMetaTest(TestCase):
         F()
         assert F._unbound_fields == [("a", F.a), ("b", F.b)]
         del F.a
-        self.assertRaises(AttributeError, lambda: F.a)
+        with pytest.raises(AttributeError):
+            F.a
         F()
         assert F._unbound_fields == [("b", F.b)]
         F._m = StringField()
@@ -154,7 +159,8 @@ class FormTest(TestCase):
 
     def test_field_adding_disabled(self):
         form = self.F()
-        self.assertRaises(TypeError, form.__setitem__, "foo", StringField())
+        with pytest.raises(TypeError):
+            form.__setitem__("foo", StringField())
 
     def test_field_removal(self):
         form = self.F()
@@ -163,7 +169,8 @@ class FormTest(TestCase):
         assert form.test is None
         assert len(list(form)) == 0
         # Try deleting a nonexistent field
-        self.assertRaises(AttributeError, form.__delattr__, "fake")
+        with pytest.raises(AttributeError):
+            form.__delattr__("fake")
 
     def test_delattr_idempotency(self):
         form = self.F()
@@ -173,7 +180,8 @@ class FormTest(TestCase):
         # Make sure deleting a normal attribute works
         form.foo = 9
         del form.foo
-        self.assertRaises(AttributeError, form.__delattr__, "foo")
+        with pytest.raises(AttributeError):
+            form.__delattr__("foo")
 
         # Check idempotency
         del form.test

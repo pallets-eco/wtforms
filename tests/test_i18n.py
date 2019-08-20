@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import pytest
 from unittest import TestCase
 from wtforms import form, StringField, validators
 from wtforms.i18n import get_translations
@@ -32,7 +33,8 @@ class Python2_Translator(object):
 
 class I18NTest(TestCase):
     def test_failure(self):
-        self.assertRaises(IOError, get_translations, [])
+        with pytest.raises(IOError):
+            get_translations([])
 
     def test_us_translation(self):
         translations = get_translations(["en_US"])

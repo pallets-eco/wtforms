@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import pytest
 from decimal import Decimal, ROUND_UP
 from unittest import TestCase
 
@@ -35,8 +36,11 @@ class TestLocaleDecimal(TestCase):
                 **kw
             )
 
-        self.assertRaises(TypeError, build, places=2)
-        self.assertRaises(TypeError, build, rounding=ROUND_UP)
+        with pytest.raises(TypeError):
+            build(places=2)
+
+        with pytest.raises(TypeError):
+            build(rounding=ROUND_UP)
 
     def test_formatting(self):
         val = Decimal("123456.789")

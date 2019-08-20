@@ -5,6 +5,7 @@ import datetime
 from functools import partial
 import hashlib
 import hmac
+import pytest
 from unittest import TestCase
 
 from tests.common import DummyPostData
@@ -53,7 +54,8 @@ class DummyCSRFTest(TestCase):
         a = StringField()
 
     def test_base_class(self):
-        self.assertRaises(NotImplementedError, self.F, meta={"csrf_class": CSRF})
+        with pytest.raises(NotImplementedError):
+            self.F(meta={"csrf_class": CSRF})
 
     def test_basic_impl(self):
         form = self.F()
@@ -97,8 +99,10 @@ class SessionCSRFTest(TestCase):
             csrf_class = TimePin
 
     def test_various_failures(self):
-        self.assertRaises(TypeError, self.F)
-        self.assertRaises(Exception, self.F, meta={"csrf_secret": None})
+        with pytest.raises(TypeError):
+            self.F()
+        with pytest.raises(Exception):
+            self.F(meta={"csrf_secret": None})
 
     def test_no_time_limit(self):
         session = {}
