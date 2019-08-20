@@ -59,7 +59,7 @@ def make_form(_name="F", **fields):
     return type(str(_name), (Form,), fields)
 
 
-class DefaultsTest(TestCase):
+class TestDefaults(TestCase):
     def test(self):
         expected = 42
 
@@ -75,7 +75,7 @@ class DefaultsTest(TestCase):
         assert test_callable.data == expected
 
 
-class LabelTest(TestCase):
+class TestLabel(TestCase):
     def test(self):
         expected = """<label for="test">Caption</label>"""
         label = Label("test", "Caption")
@@ -117,7 +117,7 @@ class LabelTest(TestCase):
         )
 
 
-class FlagsTest(TestCase):
+class TestFlags(TestCase):
     def setUp(self):
         t = StringField(validators=[validators.DataRequired()]).bind(Form(), "a")
         self.flags = t.flags
@@ -149,7 +149,7 @@ class FlagsTest(TestCase):
         assert self.flags._foo == 42
 
 
-class UnsetValueTest(TestCase):
+class TestUnsetValue(TestCase):
     def test(self):
         assert str(unset_value) == "<unset value>"
         assert repr(unset_value) == "<unset value>"
@@ -159,7 +159,7 @@ class UnsetValueTest(TestCase):
         assert unset_value.__bool__() is False
 
 
-class FiltersTest(TestCase):
+class TestFilters(TestCase):
     class F(Form):
         a = StringField(default=" hello", filters=[lambda x: x.strip()])
         b = StringField(default="42", filters=[int, lambda x: -x])
@@ -178,7 +178,7 @@ class FiltersTest(TestCase):
         assert not form.validate()
 
 
-class FieldTest(TestCase):
+class TestField(TestCase):
     class F(Form):
         a = StringField(default="hello", render_kw={"readonly": True, "foo": "bar"})
         b = StringField(validators=[validators.InputRequired()])
@@ -298,7 +298,7 @@ class PrePostTestField(StringField):
             raise ValueError("Post-stopped")
 
 
-class PrePostValidationTest(TestCase):
+class TestPrePostValidation(TestCase):
     class F(Form):
         a = PrePostTestField(validators=[validators.Length(max=1, message="too long")])
 
@@ -324,7 +324,7 @@ class PrePostValidationTest(TestCase):
         assert stopped.errors == ["stop with message", "Post-stopped"]
 
 
-class SelectFieldTest(TestCase):
+class TestSelectField(TestCase):
     class F(Form):
         a = SelectField(choices=[("a", "hello"), ("btest", "bye")], default="a")
         b = SelectField(
@@ -402,7 +402,7 @@ class SelectFieldTest(TestCase):
         assert len(form.a.errors) == 0
 
 
-class SelectMultipleFieldTest(TestCase):
+class TestSelectMultipleField(TestCase):
     class F(Form):
         a = SelectMultipleField(
             choices=[("a", "hello"), ("b", "bye"), ("c", "something")], default=("a",)
@@ -445,7 +445,7 @@ class SelectMultipleFieldTest(TestCase):
         assert form.b.data == [1, 3]
 
 
-class RadioFieldTest(TestCase):
+class TestRadioField(TestCase):
     class F(Form):
         a = RadioField(choices=[("a", "hello"), ("b", "bye")], default="a")
         b = RadioField(choices=[(1, "Item 1"), (2, "Item 2")], coerce=int)
@@ -495,7 +495,7 @@ class RadioFieldTest(TestCase):
         )
 
 
-class StringFieldTest(TestCase):
+class TestStringField(TestCase):
     class F(Form):
         a = StringField()
 
@@ -510,7 +510,7 @@ class StringFieldTest(TestCase):
         assert form.a.data is None
 
 
-class HiddenFieldTest(TestCase):
+class TestHiddenField(TestCase):
     class F(Form):
         a = HiddenField(default="LE DEFAULT")
 
@@ -522,7 +522,7 @@ class HiddenFieldTest(TestCase):
         assert form.a.flags.hidden
 
 
-class TextAreaFieldTest(TestCase):
+class TestTextAreaField(TestCase):
     class F(Form):
         a = TextAreaField(default="LE DEFAULT")
 
@@ -531,7 +531,7 @@ class TextAreaFieldTest(TestCase):
         assert form.a() == """<textarea id="a" name="a">\r\nLE DEFAULT</textarea>"""
 
 
-class PasswordFieldTest(TestCase):
+class TestPasswordField(TestCase):
     class F(Form):
         a = PasswordField(
             widget=widgets.PasswordInput(hide_value=False), default="LE DEFAULT"
@@ -546,7 +546,7 @@ class PasswordFieldTest(TestCase):
         assert form.b() == """<input id="b" name="b" type="password" value="">"""
 
 
-class FileFieldTest(TestCase):
+class TestFileField(TestCase):
     def test_file_field(self):
         class F(Form):
             file = FileField()
@@ -577,7 +577,7 @@ class FileFieldTest(TestCase):
         assert f.file() == '<input id="file" name="file" type="text">'
 
 
-class IntegerFieldTest(TestCase):
+class TestIntegerField(TestCase):
     class F(Form):
         a = IntegerField()
         b = IntegerField(default=48)
@@ -612,7 +612,7 @@ class IntegerFieldTest(TestCase):
         assert len(form.b.errors) == 1
 
 
-class DecimalFieldTest(TestCase):
+class TestDecimalField(TestCase):
     def test(self):
         F = make_form(a=DecimalField())
         form = F(DummyPostData(a="2.1"))
@@ -644,7 +644,7 @@ class DecimalFieldTest(TestCase):
         assert form.b._value() == "72"
 
 
-class FloatFieldTest(TestCase):
+class TestFloatField(TestCase):
     class F(Form):
         a = FloatField()
         b = FloatField(default=48.0)
@@ -671,7 +671,7 @@ class FloatFieldTest(TestCase):
         assert form.b._value() == "9.0"
 
 
-class BooleanFieldTest(TestCase):
+class TestBooleanField(TestCase):
     class BoringForm(Form):
         bool1 = BooleanField()
         bool2 = BooleanField(default=True, false_values=())
@@ -716,7 +716,7 @@ class BooleanFieldTest(TestCase):
         assert form.bool2.data is False
 
 
-class DateFieldTest(TestCase):
+class TestDateField(TestCase):
     class F(Form):
         a = DateField()
         b = DateField(format="%m/%d %Y")
@@ -738,7 +738,7 @@ class DateFieldTest(TestCase):
         assert form.a.process_errors[0] == "Not a valid date value"
 
 
-class TimeFieldTest(TestCase):
+class TestTimeField(TestCase):
     class F(Form):
         a = TimeField()
         b = TimeField(format="%H:%M")
@@ -759,7 +759,7 @@ class TimeFieldTest(TestCase):
         assert form.a.errors[0] == "Not a valid time value"
 
 
-class DateTimeFieldTest(TestCase):
+class TestDateTimeField(TestCase):
     class F(Form):
         a = DateTimeField()
         b = DateTimeField(format="%Y-%m-%d %H:%M")
@@ -798,7 +798,7 @@ class DateTimeFieldTest(TestCase):
         assert d == form.a.data
 
 
-class SubmitFieldTest(TestCase):
+class TestSubmitField(TestCase):
     class F(Form):
         a = SubmitField("Label")
 
@@ -806,7 +806,7 @@ class SubmitFieldTest(TestCase):
         assert self.F().a() == """<input id="a" name="a" type="submit" value="Label">"""
 
 
-class FormFieldTest(TestCase):
+class TestFormField(TestCase):
     def setUp(self):
         F = make_form(
             a=StringField(validators=[validators.DataRequired()]), b=StringField()
@@ -884,7 +884,7 @@ class FormFieldTest(TestCase):
         form.populate_obj(obj2)
 
 
-class FieldListTest(TestCase):
+class TestFieldList(TestCase):
     t = StringField(validators=[validators.DataRequired()])
 
     def test_form(self):
@@ -1036,7 +1036,7 @@ class MyCustomField(StringField):
         return super(MyCustomField, self).process_data(data)
 
 
-class CustomFieldQuirksTest(TestCase):
+class TestCustomFieldQuirks(TestCase):
     class F(Form):
         a = MyCustomField()
         b = SelectFieldBase()
@@ -1053,7 +1053,7 @@ class CustomFieldQuirksTest(TestCase):
             f.b.iter_choices()
 
 
-class HTML5FieldsTest(TestCase):
+class TestHTML5Fields(TestCase):
     class F(Form):
         search = SearchField()
         telephone = TelField()

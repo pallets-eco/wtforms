@@ -31,7 +31,7 @@ class Python2_Translator(object):
     ungettext = ngettext_lower
 
 
-class I18NTest(TestCase):
+class TestI18N(TestCase):
     def test_failure(self):
         with pytest.raises(IOError):
             get_translations([])
@@ -58,7 +58,7 @@ class I18NTest(TestCase):
         assert translations is translator
 
 
-class CoreFormTest(TestCase):
+class TestCoreForm(TestCase):
     class F(form.Form):
         class Meta:
             locales = ["en_US", "en"]
@@ -139,7 +139,7 @@ class CoreFormTest(TestCase):
         )
 
 
-class TranslationsTest(TestCase):
+class TestTranslations(TestCase):
     class F(form.Form):
         a = StringField(validators=[validators.Length(max=5)])
 
