@@ -36,15 +36,13 @@ class I18NTest(TestCase):
 
     def test_us_translation(self):
         translations = get_translations(["en_US"])
-        self.assertEqual(
-            translations.gettext("Invalid Mac address."), "Invalid MAC address."
-        )
+        assert translations.gettext("Invalid Mac address.") == "Invalid MAC address."
 
     def _test_converter(self, translator):
         translations = get_translations([], getter=lambda x: translator)
-        self.assertEqual(translations.gettext("Foo"), "foo")
-        self.assertEqual(translations.ngettext("Foo", "Foos", 1), "foo")
-        self.assertEqual(translations.ngettext("Foo", "Foos", 2), "foos")
+        assert translations.gettext("Foo") == "foo"
+        assert translations.ngettext("Foo", "Foos", 1) == "foo"
+        assert translations.ngettext("Foo", "Foos", 2) == "foos"
         return translations
 
     def test_python2_wrap(self):
@@ -78,25 +76,25 @@ class CoreFormTest(TestCase):
             form_class = self.F
         form = form_class(**form_kwargs)
         assert not form.validate()
-        self.assertEqual(form.a.errors[0], expected_error)
+        assert form.a.errors[0] == expected_error
         return form
 
     def test_defaults(self):
         # Test with the default language
         form = self._common_test("This field is required.", {})
         # Make sure we have a gettext translations context
-        self.assertNotEqual(form.a.gettext(""), "")
+        assert form.a.gettext("") != ""
 
         form = self._common_test("This field is required.", {}, self.F2)
         assert form.meta.get_translations(form) is None
         assert form.meta.locales is False
-        self.assertEqual(form.a.gettext(""), "")
+        assert form.a.gettext("") == ""
 
     def test_fallback(self):
         form = self._common_test(
             "This field is required.", dict(meta=dict(locales=False))
         )
-        self.assertEqual(form.a.gettext(""), "")
+        assert form.a.gettext("") == ""
 
     def test_override_languages(self):
         self._common_test(
@@ -155,20 +153,20 @@ class TranslationsTest(TestCase):
 
     def test_gettext(self):
         x = "foo"
-        self.assertTrue(self.a.gettext(x) is x)
+        assert self.a.gettext(x) is x
 
     def test_ngettext(self):
         def getit(n):
             return self.a.ngettext("antelope", "antelopes", n)
 
-        self.assertEqual(getit(0), "antelopes")
-        self.assertEqual(getit(1), "antelope")
-        self.assertEqual(getit(2), "antelopes")
+        assert getit(0) == "antelopes"
+        assert getit(1) == "antelope"
+        assert getit(2) == "antelopes"
 
     def test_validator_translation(self):
         form = self.F2(a="hellobye")
-        self.assertFalse(form.validate())
-        self.assertEqual(form.a.errors[0], "field cannot be longer than 5 characters.")
+        assert not form.validate()
+        assert form.a.errors[0] == "field cannot be longer than 5 characters."
         form = self.F(a="hellobye")
-        self.assertFalse(form.validate())
-        self.assertEqual(form.a.errors[0], "Field cannot be longer than 5 characters.")
+        assert not form.validate()
+        assert form.a.errors[0] == "Field cannot be longer than 5 characters."
