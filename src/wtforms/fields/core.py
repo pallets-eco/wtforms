@@ -660,7 +660,7 @@ class IntegerField(Field):
     is ignored and will not be accepted as a value.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.NumberInput()
 
     def __init__(self, label=None, validators=None, **kwargs):
         super(IntegerField, self).__init__(label, validators, **kwargs)
@@ -701,7 +701,7 @@ class DecimalField(LocaleAwareNumberField):
         format for the locale.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.NumberInput(step="any")
 
     def __init__(
         self, label=None, validators=None, places=unset_value, rounding=None, **kwargs
@@ -822,7 +822,7 @@ class DateTimeField(Field):
     A text field which stores a `datetime.datetime` matching a format.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.DateTimeInput()
 
     def __init__(
         self, label=None, validators=None, format="%Y-%m-%d %H:%M:%S", **kwargs
@@ -851,6 +851,8 @@ class DateField(DateTimeField):
     Same as DateTimeField, except stores a `datetime.date`.
     """
 
+    widget = widgets.DateInput()
+
     def __init__(self, label=None, validators=None, format="%Y-%m-%d", **kwargs):
         super(DateField, self).__init__(label, validators, format, **kwargs)
 
@@ -868,6 +870,8 @@ class TimeField(DateTimeField):
     """
     Same as DateTimeField, except stores a `time`.
     """
+
+    widget = widgets.TimeInput()
 
     def __init__(self, label=None, validators=None, format="%H:%M", **kwargs):
         super(TimeField, self).__init__(label, validators, format, **kwargs)

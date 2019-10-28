@@ -5,17 +5,12 @@ from ..widgets import html5 as widgets
 from . import core
 
 __all__ = (
-    "DateField",
-    "DateTimeField",
     "DateTimeLocalField",
-    "DecimalField",
     "DecimalRangeField",
     "EmailField",
-    "IntegerField",
     "IntegerRangeField",
     "SearchField",
     "TelField",
-    "TimeField",
     "URLField",
 )
 
@@ -52,52 +47,12 @@ class EmailField(core.StringField):
     widget = widgets.EmailInput()
 
 
-class DateTimeField(core.DateTimeField):
-    """
-    Represents an ``<input type="datetime">``.
-    """
-
-    widget = widgets.DateTimeInput()
-
-
-class DateField(core.DateField):
-    """
-    Represents an ``<input type="date">``.
-    """
-
-    widget = widgets.DateInput()
-
-
-class TimeField(core.TimeField):
-    """
-    Represents an ``<input type="time">``.
-    """
-
-    widget = widgets.TimeInput()
-
-
 class DateTimeLocalField(core.DateTimeField):
     """
     Represents an ``<input type="datetime-local">``.
     """
 
     widget = widgets.DateTimeLocalInput()
-
-
-class IntegerField(core.IntegerField):
-    """
-    Represents an ``<input type="number">``.
-    """
-
-    widget = widgets.NumberInput()
-
-
-class DecimalField(core.DecimalField):
-    """
-    Represents an ``<input type="number">``.
-    """
-
-    widget = widgets.NumberInput(step="any")
 
 
 class IntegerRangeField(core.IntegerField):
