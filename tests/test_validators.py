@@ -416,7 +416,7 @@ def test_valid_url_passes(url_val, dummy_form, dummy_field):
 )
 def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
     """
-    Require TLD option se to false, correct URL should pass without raising
+    Require TLD option set to false, correct URL should pass without raising
     """
     validator = url(require_tld=False)
     dummy_field.data = url_val
