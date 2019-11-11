@@ -382,6 +382,9 @@ def test_equal_to_raises(
         u"http://foobar.dk/",
         u"http://foo-bar.dk/",
         u"http://foo_bar.dk/",
+        u"http://foobar.dk?query=param",
+        u"http://foobar.dk/path?query=param",
+        u"http://foobar.dk/path?query=param&foo=faa",
         u"http://foobar.museum/foobar",
         u"http://192.168.0.1/foobar",
         u"http://192.168.0.1:9000/fake",
@@ -400,10 +403,20 @@ def test_valid_url_passes(url_val, dummy_form, dummy_field):
     validator(dummy_form, dummy_field)
 
 
-@pytest.mark.parametrize("url_val", [u"http://localhost/foobar", u"http://foobar"])
+@pytest.mark.parametrize(
+    "url_val",
+    [
+        u"http://localhost/foobar",
+        u"http://foobar",
+        u"http://foobar?query=param&foo=faa",
+        u"http://foobar:5000?query=param&foo=faa",
+        u"http://foobar/path?query=param&foo=faa",
+        u"http://foobar:1234/path?query=param&foo=faa",
+    ],
+)
 def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
     """
-    Require TLD option se to false, correct URL should pass without raising
+    Require TLD option set to false, correct URL should pass without raising
     """
     validator = url(require_tld=False)
     dummy_field.data = url_val
