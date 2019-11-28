@@ -298,7 +298,7 @@ class InputRequired(object):
         self.message = message
 
     def __call__(self, form, field):
-        if not field.raw_data or not field.raw_data[0]:
+        if not field.raw_data or field.raw_data[0] is None:
             if self.message is None:
                 message = field.gettext("This field is required.")
             else:
