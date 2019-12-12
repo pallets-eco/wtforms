@@ -864,6 +864,7 @@ class DateField(DateTimeField):
                 self.data = None
                 raise ValueError(self.gettext("Not a valid date value"))
 
+
 class DateMonthField(DateTimeField):
     """
     Similar to DateField, represents a month, stores a `datetime.date` with day = 1. 
