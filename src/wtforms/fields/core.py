@@ -17,6 +17,7 @@ __all__ = (
     "BooleanField",
     "DecimalField",
     "DateField",
+    "DateMonthField",
     "DateTimeField",
     "FieldList",
     "FloatField",
@@ -863,6 +864,15 @@ class DateField(DateTimeField):
                 self.data = None
                 raise ValueError(self.gettext("Not a valid date value"))
 
+class DateMonthField(DateTimeField):
+    """
+    Similar to DateField, represents a month, stores a `datetime.date` with day = 1. 
+    Enables correct parsing of 'month' input type.
+    """
+
+    def __init__(self, label=None, validators=None, format="%Y-%m", **kwargs):
+        super(DateMonthField, self).__init__(label, validators, format, **kwargs
+                                             
 
 class TimeField(DateTimeField):
     """
