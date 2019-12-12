@@ -69,7 +69,7 @@ class DateField(core.DateField):
     widget = widgets.DateInput()
     
 
-class MonthField(core.MonthField):
+class MonthField(core.DateMonthField):
     """
     Represents an ``<input type="month">``.
     """
