@@ -865,10 +865,10 @@ class DateField(DateTimeField):
                 raise ValueError(self.gettext("Not a valid date value"))
 
 
-class DateMonthField(DateTimeField):
+class DateMonthField(DateField):
     """
-    Similar to DateField, represents a month, stores a `datetime.date` with day = 1. 
-    Enables correct parsing of 'month' input type.
+    Same as DateField, except represents a month, stores a `datetime.date` with `day = 1`. 
+    Enables correct parsing of `month` input type.
     """
 
     def __init__(self, label=None, validators=None, format="%Y-%m", **kwargs):
