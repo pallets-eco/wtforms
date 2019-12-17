@@ -522,7 +522,12 @@ class SelectField(SelectFieldBase):
         self.validate_choice = validate_choice
 
     def iter_choices(self):
-        for value, label in self.choices:
+        if isinstance(self.choices[0], (list, tuple)):
+            choices = self.choices
+        else:
+            choices = zip(self.choices, self.choices)
+
+        for value, label in choices:
             yield (value, label, self.coerce(value) == self.data)
 
     def process_data(self, value):
