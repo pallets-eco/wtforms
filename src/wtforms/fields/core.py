@@ -526,7 +526,7 @@ class SelectField(SelectFieldBase):
             choices = self.choices
         else:
             choices = zip(self.choices, self.choices)
-            
+
         for value, label in choices:
             yield (value, label, self.coerce(value) == self.data)
 
