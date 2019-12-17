@@ -4,6 +4,7 @@ sudo: false
 language: python
 
 python:
+  - 3.8
   - 3.7
   - 3.6
   - 3.5
@@ -14,7 +15,7 @@ env: TOXENV=py,coveralls
 
 matrix:
   include:
-    - python: "3.6"
+    - python: "3.8"
       env: TOXENV=stylecheck,docs-html
     - python: "2.7"
       env: TOXENV=py27,coveralls
