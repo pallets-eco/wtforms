@@ -12,7 +12,7 @@ python:
   - pypy3
 env: TOXENV=py,coveralls
 
-matrix:
+jobs:
   include:
     - python: "3.8"
       env: TOXENV=stylecheck,docs-html
