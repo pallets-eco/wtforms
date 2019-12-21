@@ -67,7 +67,7 @@ def test_data_required_clobber(dummy_form, dummy_field):
 )
 def test_data_required_messages(dummy_form, dummy_field, validator, message):
     """
-    Check data_requred message and custom message
+    Check data_required message and custom message
     """
     dummy_field.data = ""
 
