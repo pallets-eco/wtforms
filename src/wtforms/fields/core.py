@@ -574,14 +574,15 @@ class SelectMultipleField(SelectField):
             self.data = None
 
     def process_formdata(self, valuelist):
-        try:
-            self.data = list(self.coerce(x) for x in valuelist)
-        except ValueError:
-            raise ValueError(
-                self.gettext(
-                    "Invalid choice(s): one or more data inputs could not be coerced"
+        if valuelist:
+            try:
+                self.data = list(self.coerce(x) for x in valuelist)
+            except ValueError:
+                raise ValueError(
+                    self.gettext(
+                        "Invalid choice(s): one or more data inputs could not be coerced"
+                    )
                 )
-            )
 
     def pre_validate(self, form):
         if self.data:
