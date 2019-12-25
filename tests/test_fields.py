@@ -437,7 +437,7 @@ class SelectMultipleFieldTest(TestCase):
             list(form.a.iter_choices()),
             [("a", "hello", True), ("b", "bye", False), ("c", "something", True)],
         )
-        self.assertEqual(form.b.data, [])
+        self.assertEqual(form.b.data, [1, 3])
         form = self.F(DummyPostData(b=["1", "2"]))
         self.assertEqual(form.b.data, [1, 2])
         self.assertTrue(form.validate())
