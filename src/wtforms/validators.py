@@ -594,10 +594,20 @@ class NoneOf(object):
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
+        if field.type == "SelectMultipleField":
+            if any(e in self.values for e in field.data):
+                message = self.message
+                if message is None:
+                    message = field.gettext('Invalid value, cannot be any of: %(values)s.')
+
+                raise ValidationError(
+                    message % dict(values=self.values_formatter(self.values))
+                )
+
         if field.data in self.values:
             message = self.message
             if message is None:
-                message = field.gettext("Invalid value, can't be any of: %(values)s.")
+                message = field.gettext("Invalid value, cannot be any of: %(values)s.")
 
             raise ValidationError(
                 message % dict(values=self.values_formatter(self.values))
