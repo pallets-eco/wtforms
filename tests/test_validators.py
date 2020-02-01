@@ -381,6 +381,7 @@ def test_equal_to_raises(
         u"http://foobar.dk",
         u"http://foobar.dk/",
         u"http://foo-bar.dk/",
+        u"http://foo--bar.dk/",
         u"http://foo_bar.dk/",
         u"http://foobar.dk?query=param",
         u"http://foobar.dk/path?query=param",
