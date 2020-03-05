@@ -2,7 +2,6 @@ from .. import widgets
 from .core import Field, StringField, BooleanField
 
 __all__ = (
-    "BooleanField",
     "TextAreaField",
     "PasswordField",
     "FileField",
