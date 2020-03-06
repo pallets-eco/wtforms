@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import pytest
 from decimal import Decimal, ROUND_UP
-from unittest import TestCase
 
 from tests.common import DummyPostData
 from wtforms import Form
@@ -10,7 +10,7 @@ from wtforms.fields import DecimalField
 from wtforms.utils import unset_value
 
 
-class TestLocaleDecimal(TestCase):
+class TestLocaleDecimal:
     class F(Form):
         class Meta:
             locales = ["hi_IN", "en_US"]
@@ -22,7 +22,7 @@ class TestLocaleDecimal(TestCase):
         if locales is not unset_value:
             meta = {"locales": locales}
         form = self.F(meta=meta, a=Decimal(val))
-        self.assertEqual(form.a._value(), expected)
+        assert form.a._value() == expected
 
     def test_typeerror(self):
         def build(**kw):
@@ -35,8 +35,11 @@ class TestLocaleDecimal(TestCase):
                 **kw
             )
 
-        self.assertRaises(TypeError, build, places=2)
-        self.assertRaises(TypeError, build, rounding=ROUND_UP)
+        with pytest.raises(TypeError):
+            build(places=2)
+
+        with pytest.raises(TypeError):
+            build(rounding=ROUND_UP)
 
     def test_formatting(self):
         val = Decimal("123456.789")
@@ -60,7 +63,7 @@ class TestLocaleDecimal(TestCase):
                 "Expected value %r to parse as a decimal, instead got %r"
                 % (raw_val, form.a.errors)
             )
-        self.assertEqual(form.a.data, expected)
+        assert form.a.data == expected
 
     def _fail_parse(self, raw_val, expected_error, locales=unset_value):
         meta = None
@@ -68,7 +71,7 @@ class TestLocaleDecimal(TestCase):
             meta = {"locales": locales}
         form = self.F(DummyPostData(a=raw_val), meta=meta)
         assert not form.validate()
-        self.assertEqual(form.a.errors[0], expected_error)
+        assert form.a.errors[0] == expected_error
 
     def test_parsing(self):
         expected = Decimal("123456.789")
