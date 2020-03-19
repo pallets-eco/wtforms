@@ -215,6 +215,8 @@ refer to a single input from the form.
 
 .. autoclass:: BooleanField(default field arguments, false_values=None)
 
+.. autoclass:: SwitchField(default field arguments, false_values=None)
+
 .. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
 
 .. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')

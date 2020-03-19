@@ -832,6 +832,17 @@ class BooleanField(Field):
             return "y"
 
 
+class SwitchField(BooleanField):
+    """
+    Same as BooleanField, except can render automatically as a switch with
+    front-end frameworks such as Bootstrap, jQuery Mobile and Siimple CSS.
+    """
+    def __init__(self, label=None, validators=None, false_values=None, **kwargs):
+        super(SwitchField, self).__init__(label, validators, **kwargs)
+        if false_values is not None:
+            self.false_values = false_values
+
+
 class DateTimeField(Field):
     """
     A text field which stores a `datetime.datetime` matching a format.
