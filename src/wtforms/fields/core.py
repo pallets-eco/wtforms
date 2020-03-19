@@ -15,6 +15,7 @@ from wtforms.validators import StopValidation
 
 __all__ = (
     "BooleanField",
+    "SwitchField",
     "DecimalField",
     "DateField",
     "DateTimeField",
