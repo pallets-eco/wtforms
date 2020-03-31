@@ -394,6 +394,20 @@ class TestSelectField:
         assert len(form.a.errors) == 1
         assert form.a.errors[0] == "Not a valid choice"
 
+    def test_validate_choices_when_empty(self):
+        F = make_form(a=SelectField(choices=[]))
+        form = F(DummyPostData(a=["b"]))
+        assert not form.validate()
+        self.assertEqual(form.a.data, "b")
+        self.assertEqual(len(form.a.errors), 1)
+        self.assertEqual(form.a.errors[0], "Not a valid choice")
+
+    def test_validate_choices_when_none(self):
+        F = make_form(a=SelectField())
+        form = F(DummyPostData(a="b"))
+        with pytest.raises(TypeError, match="Choices cannot be None"):
+            form.validate()
+
     def test_dont_validate_choices(self):
         F = make_form(a=SelectField(choices=[("a", "Foo")], validate_choice=False))
         form = F(DummyPostData(a=["b"]))

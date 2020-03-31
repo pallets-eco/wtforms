@@ -545,6 +545,9 @@ class SelectField(SelectFieldBase):
                 raise ValueError(self.gettext("Invalid Choice: could not coerce"))
 
     def pre_validate(self, form):
+        if self.choices is None:
+            raise TypeError(self.gettext("Choices cannot be None"))
+
         if self.validate_choice:
             for v, _ in self.choices:
                 if self.data == v:
