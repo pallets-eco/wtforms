@@ -398,9 +398,9 @@ class TestSelectField:
         F = make_form(a=SelectField(choices=[]))
         form = F(DummyPostData(a=["b"]))
         assert not form.validate()
-        self.assertEqual(form.a.data, "b")
-        self.assertEqual(len(form.a.errors), 1)
-        self.assertEqual(form.a.errors[0], "Not a valid choice")
+        assert form.a.data == "b"
+        assert len(form.a.errors) == 1
+        assert form.a.errors[0] == "Not a valid choice"
 
     def test_validate_choices_when_none(self):
         F = make_form(a=SelectField())
