@@ -9,6 +9,7 @@ Version 3.0
 
 Unreleased
 
+-   Dropped support for python <= 3.4. (:pr:`554`).
 -   HTML is escaped using MarkupSafe instead of the previous internal
     implementation. :func:`~widgets.core.escape_html` is removed,
     replaced by :func:`markupsafe.escape`.
