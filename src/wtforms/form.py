@@ -136,7 +136,7 @@ class BaseForm(object):
 
     @property
     def data(self):
-        return dict((name, f.data) for name, f in self._fields.items())
+        return {name: f.data for name, f in self._fields.items()}
 
     @property
     def errors(self):

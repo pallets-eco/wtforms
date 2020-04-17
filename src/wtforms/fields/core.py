@@ -395,10 +395,8 @@ class UnboundField(object):
         return self.field_class(*self.args, **kw)
 
     def __repr__(self):
-        return "<UnboundField(%s, %r, %r)>" % (
-            self.field_class.__name__,
-            self.args,
-            self.kwargs,
+        return "<UnboundField({}, {!r}, {!r})>".format(
+            self.field_class.__name__, self.args, self.kwargs,
         )
 
 
@@ -445,10 +443,10 @@ class Label(object):
 
         attributes = widgets.html_params(**kwargs)
         text = escape(text or self.text)
-        return Markup("<label %s>%s</label>" % (attributes, text))
+        return Markup("<label {}>{}</label>".format(attributes, text))
 
     def __repr__(self):
-        return "Label(%r, %r)" % (self.field_id, self.text)
+        return "Label({!r}, {!r})".format(self.field_id, self.text)
 
 
 class SelectFieldBase(Field):

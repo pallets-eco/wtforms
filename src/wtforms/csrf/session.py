@@ -47,7 +47,7 @@ class SessionCSRF(CSRF):
 
         if self.time_limit:
             expires = (self.now() + self.time_limit).strftime(self.TIME_FORMAT)
-            csrf_build = "%s%s" % (session["csrf"], expires)
+            csrf_build = "{}{}".format(session["csrf"], expires)
         else:
             expires = ""
             csrf_build = session["csrf"]
@@ -55,7 +55,7 @@ class SessionCSRF(CSRF):
         hmac_csrf = hmac.new(
             meta.csrf_secret, csrf_build.encode("utf8"), digestmod=sha1
         )
-        return "%s##%s" % (expires, hmac_csrf.hexdigest())
+        return "{}##{}".format(expires, hmac_csrf.hexdigest())
 
     def validate_csrf_token(self, form, field):
         meta = self.form_meta

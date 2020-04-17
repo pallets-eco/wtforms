@@ -61,7 +61,7 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append('%s="%s"' % (str(k), escape(v)))
+            params.append('{}="{}"'.format(str(k), escape(v)))
     return " ".join(params)
 
 
@@ -85,12 +85,12 @@ class ListWidget(object):
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault("id", field.id)
-        html = ["<%s %s>" % (self.html_tag, html_params(**kwargs))]
+        html = ["<{} {}>".format(self.html_tag, html_params(**kwargs))]
         for subfield in field:
             if self.prefix_label:
-                html.append("<li>%s %s</li>" % (subfield.label, subfield()))
+                html.append("<li>{} {}</li>".format(subfield.label, subfield()))
             else:
-                html.append("<li>%s %s</li>" % (subfield(), subfield.label))
+                html.append("<li>{} {}</li>".format(subfield(), subfield.label))
         html.append("</%s>" % self.html_tag)
         return Markup("".join(html))
 
@@ -317,7 +317,7 @@ class Select(object):
         if selected:
             options["selected"] = True
         return Markup(
-            "<option %s>%s</option>" % (html_params(**options), escape(label))
+            "<option {}>{}</option>".format(html_params(**options), escape(label))
         )
 
 

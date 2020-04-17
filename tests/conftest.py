@@ -154,4 +154,4 @@ def assert_raises_text(e_type, text):
                 % (e, e.args[0], text)
             )
     else:
-        raise AssertionError("Expected Exception %r, did not get it" % (e_type,))
+        raise AssertionError("Expected Exception {!r}, did not get it".format(e_type))
