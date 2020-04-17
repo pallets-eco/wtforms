@@ -1,4 +1,5 @@
 import math
+import ipaddress
 import re
 import uuid
 
@@ -6,10 +7,6 @@ try:
     import email_validator
 except ImportError:
     email_validator = None
-try:
-    import ipaddress
-except ImportError:
-    ipaddress = None
 
 __all__ = (
     "DataRequired",
@@ -393,8 +390,7 @@ class Email(object):
 
 class IPAddress(object):
     """
-    Validates an IP address. Requires ipaddress package to be installed
-    for Python 2 support. For ex: pip install wtforms[ipaddress].
+    Validates an IP address.
 
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
@@ -405,8 +401,6 @@ class IPAddress(object):
     """
 
     def __init__(self, ipv4=True, ipv6=False, message=None):
-        if ipaddress is None:
-            raise Exception("Install 'ipaddress' for Python 2 support.")
         if not ipv4 and not ipv6:
             raise ValueError(
                 "IP Address Validator must have at least one of ipv4 or ipv6 enabled."
