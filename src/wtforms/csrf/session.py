@@ -12,8 +12,6 @@ for extra security) is used as the value of the csrf_token. If this token
 validates with the hmac of the random value + expiration time, and the
 expiration time is not passed, the CSRF validation will pass.
 """
-from __future__ import unicode_literals
-
 import hmac
 import os
 

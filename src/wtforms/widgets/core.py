@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from markupsafe import Markup, escape
 
 from wtforms.compat import iteritems, text_type

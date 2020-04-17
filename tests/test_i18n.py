@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import pytest
 from wtforms import form, StringField, validators
 from wtforms.i18n import get_translations

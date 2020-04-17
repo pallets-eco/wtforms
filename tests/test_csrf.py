@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from contextlib import contextmanager
 import datetime
 from functools import partial

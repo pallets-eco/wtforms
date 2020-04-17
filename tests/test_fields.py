@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from collections import namedtuple
 from datetime import date, datetime
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
