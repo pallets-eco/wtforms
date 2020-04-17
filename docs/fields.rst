@@ -12,8 +12,8 @@ Field definitions
 Fields are defined as members on a form in a declarative fashion::
 
     class MyForm(Form):
-        name    = StringField(u'Full Name', [validators.required(), validators.length(max=10)])
-        address = TextAreaField(u'Mailing Address', [validators.optional(), validators.length(max=200)])
+        name    = StringField('Full Name', [validators.required(), validators.length(max=10)])
+        address = TextAreaField('Mailing Address', [validators.optional(), validators.length(max=200)])
 
 When a field is defined on a form, the construction parameters are saved until
 the form is instantiated. At form instantiation time, a copy of the field is
@@ -228,8 +228,8 @@ refer to a single input from the form.
     Example usage::
 
         class UploadForm(Form):
-            image        = FileField(u'Image File', [validators.regexp(u'^[^/\\]\.jpg$')])
-            description  = TextAreaField(u'Image Description')
+            image        = FileField('Image File', [validators.regexp('^[^/\\]\.jpg$')])
+            description  = TextAreaField('Image Description')
 
             def validate_image(form, field):
                 if field.data:
@@ -275,7 +275,7 @@ refer to a single input from the form.
     **Select fields with static choice values**::
 
         class PastebinEntry(Form):
-            language = SelectField(u'Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
+            language = SelectField('Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
 
     Note that the `choices` keyword is only evaluated once, so if you want to make
     a dynamic drop-down list, you'll want to assign the choices list to the field
@@ -286,7 +286,7 @@ refer to a single input from the form.
     **Select fields with dynamic choice values**::
 
         class UserDetails(Form):
-            group_id = SelectField(u'Group', coerce=int)
+            group_id = SelectField('Group', coerce=int)
 
         def edit_user(request, id):
             user = User.query.get(id)
@@ -476,9 +476,9 @@ Let's design a field which represents a comma-separated list of tags::
 
         def _value(self):
             if self.data:
-                return u', '.join(self.data)
+                return ', '.join(self.data)
             else:
-                return u''
+                return ''
 
         def process_formdata(self, valuelist):
             if valuelist:

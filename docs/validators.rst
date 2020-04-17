@@ -144,7 +144,7 @@ use the pattern of allowing the error message to be customized via passing a
             self.min = min
             self.max = max
             if not message:
-                message = u'Field must be between %i and %i characters long.' % (min, max)
+                message = 'Field must be between %i and %i characters long.' % (min, max)
             self.message = message
 
         def __call__(self, form, field):

@@ -147,17 +147,17 @@ console::
 
     >>> from wtforms import Form, StringField, validators
     >>> class UsernameForm(Form):
-    ...     username = StringField('Username', [validators.Length(min=5)], default=u'test')
+    ...     username = StringField('Username', [validators.Length(min=5)], default='test')
     ...
     >>> form = UsernameForm()
     >>> form['username']
     <wtforms.fields.StringField object at 0x827eccc>
     >>> form.username.data
-    u'test'
+    'test'
     >>> form.validate()
     False
     >>> form.errors
-    {'username': [u'Field must be at least 5 characters long.']}
+    {'username': ['Field must be at least 5 characters long.']}
 
 What we've found here is that when you instantiate a form, it contains
 instances of all the fields, which can be accessed via either dictionary-style
@@ -169,9 +169,9 @@ summary of all the errors.
 
 .. code-block:: python
 
-    >>> form2 = UsernameForm(username=u'Robert')
+    >>> form2 = UsernameForm(username='Robert')
     >>> form2.data
-    {'username': u'Robert'}
+    {'username': 'Robert'}
     >>> form2.validate()
     True
 
@@ -228,8 +228,8 @@ provide a custom error message::
 
     class ChangeEmailForm(Form):
         email = StringField('Email', [
-            validators.Length(min=6, message=_(u'Little short for an email address?')),
-            validators.Email(message=_(u'That\'s not a valid email address.'))
+            validators.Length(min=6, message=_('Little short for an email address?')),
+            validators.Email(message=_('That\'s not a valid email address.'))
         ])
 
 It is generally preferable to provide your own messages, as the default messages
@@ -252,14 +252,14 @@ Rendering a field is as simple as coercing it to a string::
     >>> str(form.content)
     '<input id="content" name="content" type="text" value="foobar" />'
     >>> unicode(form.content)
-    u'<input id="content" name="content" type="text" value="foobar" />'
+    '<input id="content" name="content" type="text" value="foobar" />'
 
 However, the real power comes from rendering the field with its :meth:`~wtforms.fields.Field.__call__`
 method. By calling the field, you can provide keyword arguments, which will be
 injected as html attributes in the output::
 
     >>> form.content(style="width: 200px;", class_="bar")
-    u'<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar" />'
+    '<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar" />'
 
 Now let's apply this power to rendering a form in a `Jinja <http://jinja.pocoo.org/>`_
 template. First, our form::
@@ -377,7 +377,7 @@ Or by providing an in-form field-specific validator::
 
         def validate_num(form, field):
             if field.data != 42:
-                raise ValidationError(u'Must be 42')
+                raise ValidationError('Must be 42')
 
 For more complex validators that take parameters, check the :ref:`custom-validators` section.
 

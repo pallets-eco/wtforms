@@ -57,14 +57,14 @@ Let's look at a widget which renders a text field with an additional class if
 there are errors::
 
     class MyTextInput(TextInput):
-        def __init__(self, error_class=u'has_errors'):
+        def __init__(self, error_class='has_errors'):
             super(MyTextInput, self).__init__()
             self.error_class = error_class
 
         def __call__(self, field, **kwargs):
             if field.errors:
                 c = kwargs.pop('class', '') or kwargs.pop('class_', '')
-                kwargs['class'] = u'%s %s' % (self.error_class, c)
+                kwargs['class'] = '%s %s' % (self.error_class, c)
             return super(MyTextInput, self).__call__(field, **kwargs)
 
 In the above example, we extended the behavior of the existing
@@ -76,13 +76,13 @@ class.  For example, here is a widget that renders a
     def select_multi_checkbox(field, ul_class='', **kwargs):
         kwargs.setdefault('type', 'checkbox')
         field_id = kwargs.pop('id', field.id)
-        html = [u'<ul %s>' % html_params(id=field_id, class_=ul_class)]
+        html = ['<ul %s>' % html_params(id=field_id, class_=ul_class)]
         for value, label, checked in field.iter_choices():
-            choice_id = u'%s-%s' % (field_id, value)
+            choice_id = '%s-%s' % (field_id, value)
             options = dict(kwargs, name=field.name, value=value, id=choice_id)
             if checked:
                 options['checked'] = 'checked'
-            html.append(u'<li><input %s /> ' % html_params(**options))
-            html.append(u'<label for="%s">%s</label></li>' % (field_id, label))
-        html.append(u'</ul>')
-        return u''.join(html)
+            html.append('<li><input %s /> ' % html_params(**options))
+            html.append('<label for="%s">%s</label></li>' % (field_id, label))
+        html.append('</ul>')
+        return ''.join(html)

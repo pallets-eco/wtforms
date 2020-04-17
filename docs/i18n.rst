@@ -27,10 +27,10 @@ Here's a simple example of how one would provide translated strings to WTForms::
     from wtforms import Form, StringField, IntegerField, validators as v
 
     class RegistrationForm(Form):
-        name = StringField(_(u'Name'), [v.InputRequired(_(u'Please provide your name'))])
+        name = StringField(_('Name'), [v.InputRequired(_('Please provide your name'))])
         age = IntegerField(
-            _(u'Age'),
-            [v.NumberRange(min=12, message=_(u'Must be at least %(min)d years old.'))]
+            _('Age'),
+            [v.NumberRange(min=12, message=_('Must be at least %(min)d years old.'))]
         )
 
 The field label is left un-perturbed until rendering time in a template, so you
