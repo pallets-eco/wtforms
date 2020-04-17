@@ -3,6 +3,10 @@
 WTForms Changelog
 =================
 
+Unreleased
+----------
+
+-   Updated French translation.
 
 Version 2.2.1
 -------------
