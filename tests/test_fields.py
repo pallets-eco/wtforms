@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from collections import namedtuple
 from datetime import date, datetime
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
-import sys
 
 from markupsafe import Markup
 import pytest
@@ -46,8 +45,6 @@ from wtforms.form import Form
 from wtforms.utils import unset_value
 from wtforms.widgets import TextInput
 
-PYTHON_VERSION = sys.version_info
-
 
 class AttrDict(object):
     def __init__(self, *args, **kw):
@@ -85,11 +82,8 @@ class TestLabel:
         assert label().__html__() == expected
         assert label("hello") == """<label for="test">hello</label>"""
         assert StringField("hi").bind(Form(), "a").label.text == "hi"
-        if PYTHON_VERSION < (3,):
-            assert repr(label) == "Label(u'test', u'Caption')"
-        else:
-            assert repr(label) == "Label('test', 'Caption')"
-            assert label.__unicode__() == expected
+        assert repr(label) == "Label('test', 'Caption')"
+        assert label.__unicode__() == expected
 
     def test_auto_label(self):
         t1 = StringField().bind(Form(), "foo_bar")
