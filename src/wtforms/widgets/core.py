@@ -1,7 +1,5 @@
 from markupsafe import Markup, escape
 
-from wtforms.compat import iteritems, text_type
-
 __all__ = (
     "CheckboxInput",
     "FileInput",
@@ -53,7 +51,7 @@ def html_params(**kwargs):
         only the first one.
     """
     params = []
-    for k, v in sorted(iteritems(kwargs)):
+    for k, v in sorted(kwargs.items()):
         if k in ("class_", "class__", "for_"):
             k = k[:-1]
         elif k.startswith("data_") or k.startswith("aria_"):
@@ -63,7 +61,7 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append('%s="%s"' % (text_type(k), escape(v)))
+            params.append('%s="%s"' % (str(k), escape(v)))
     return " ".join(params)
 
 
@@ -120,11 +118,11 @@ class TableWidget(object):
         hidden = ""
         for subfield in field:
             if subfield.type in ("HiddenField", "CSRFTokenField"):
-                hidden += text_type(subfield)
+                hidden += str(subfield)
             else:
                 html.append(
                     "<tr><th>%s</th><td>%s%s</td></tr>"
-                    % (text_type(subfield.label), hidden, text_type(subfield))
+                    % (str(subfield.label), hidden, str(subfield))
                 )
                 hidden = ""
         if self.with_table_tag:
@@ -313,7 +311,7 @@ class Select(object):
     def render_option(cls, value, label, selected, **kwargs):
         if value is True:
             # Handle the special case of a 'True' value.
-            value = text_type(value)
+            value = str(value)
 
         options = dict(kwargs, value=value)
         if selected:

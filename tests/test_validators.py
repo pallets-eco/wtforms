@@ -3,7 +3,6 @@ import pytest
 import re
 
 from wtforms import Label, Form, StringField
-from wtforms.compat import text_type
 from wtforms.validators import (
     StopValidation,
     ValidationError,
@@ -474,7 +473,7 @@ def test_any_of_values_formatter(dummy_form, dummy_field):
     """
 
     def formatter(values):
-        return "::".join(text_type(x) for x in reversed(values))
+        return "::".join(str(x) for x in reversed(values))
 
     validator = AnyOf([7, 8, 9], message="test %(values)s", values_formatter=formatter)
     dummy_field.data = 4
@@ -597,13 +596,12 @@ def test_number_range_nan(nan, dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
-@pytest.mark.parametrize("test_function", [str, text_type])
-def test_lazy_proxy_raises(test_function, really_lazy_proxy):
+def test_lazy_proxy_raises(really_lazy_proxy):
     """
     Tests that the validators support lazy translation strings for messages.
     """
     with pytest.raises(Exception):
-        test_function(really_lazy_proxy)
+        str(really_lazy_proxy)
 
 
 def test_lazy_proxy_fixture(really_lazy_proxy):

@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import itertools
 
-from wtforms.compat import iteritems, itervalues, with_metaclass
 from wtforms.meta import DefaultMeta
 
 __all__ = ("BaseForm", "Form")
@@ -49,7 +48,7 @@ class BaseForm(object):
 
     def __iter__(self):
         """Iterate form fields in creation order."""
-        return iter(itervalues(self._fields))
+        return iter(self._fields.values())
 
     def __contains__(self, name):
         """ Returns `True` if the named field is a member of this form. """
@@ -75,7 +74,7 @@ class BaseForm(object):
         :note: This is a destructive operation; Any attribute with the same name
                as a field will be overridden. Use with caution.
         """
-        for name, field in iteritems(self._fields):
+        for name, field in self._fields.items():
             field.populate_obj(obj, name)
 
     def process(self, formdata=None, obj=None, data=None, **kwargs):
@@ -106,7 +105,7 @@ class BaseForm(object):
             #     Temporarily, this can simply be merged with kwargs.
             kwargs = dict(data, **kwargs)
 
-        for name, field in iteritems(self._fields):
+        for name, field in self._fields.items():
             if obj is not None and hasattr(obj, name):
                 field.process(formdata, getattr(obj, name))
             elif name in kwargs:
@@ -126,7 +125,7 @@ class BaseForm(object):
         Returns `True` if no errors occur.
         """
         success = True
-        for name, field in iteritems(self._fields):
+        for name, field in self._fields.items():
             if extra_validators is not None and name in extra_validators:
                 extra = extra_validators[name]
             else:
@@ -137,7 +136,7 @@ class BaseForm(object):
 
     @property
     def data(self):
-        return dict((name, f.data) for name, f in iteritems(self._fields))
+        return dict((name, f.data) for name, f in self._fields.items())
 
     @property
     def errors(self):
@@ -212,7 +211,7 @@ class FormMeta(type):
         type.__delattr__(cls, name)
 
 
-class Form(with_metaclass(FormMeta, BaseForm)):
+class Form(BaseForm, metaclass=FormMeta):
     """
     Declarative Form base class. Extends BaseForm's core behaviour allowing
     fields to be defined on Form subclasses as class attributes.
@@ -255,7 +254,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             meta_obj.update_values(meta)
         super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
 
-        for name, field in iteritems(self._fields):
+        for name, field in self._fields.items():
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
             setattr(self, name, field)

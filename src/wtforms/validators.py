@@ -11,8 +11,6 @@ try:
 except ImportError:
     ipaddress = None
 
-from wtforms.compat import string_types, text_type
-
 __all__ = (
     "DataRequired",
     "data_required",
@@ -233,7 +231,7 @@ class Optional(object):
     def __call__(self, form, field):
         if (
             not field.raw_data
-            or isinstance(field.raw_data[0], string_types)
+            or isinstance(field.raw_data[0], str)
             and not self.string_check(field.raw_data[0])
         ):
             field.errors[:] = []
@@ -269,11 +267,7 @@ class DataRequired(object):
         self.message = message
 
     def __call__(self, form, field):
-        if (
-            not field.data
-            or isinstance(field.data, string_types)
-            and not field.data.strip()
-        ):
+        if not field.data or isinstance(field.data, str) and not field.data.strip():
             if self.message is None:
                 message = field.gettext("This field is required.")
             else:
@@ -323,7 +317,7 @@ class Regexp(object):
     """
 
     def __init__(self, regex, flags=0, message=None):
-        if isinstance(regex, string_types):
+        if isinstance(regex, str):
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message
@@ -570,7 +564,7 @@ class AnyOf(object):
 
     @staticmethod
     def default_values_formatter(values):
-        return ", ".join(text_type(x) for x in values)
+        return ", ".join(str(x) for x in values)
 
 
 class NoneOf(object):
@@ -605,7 +599,7 @@ class NoneOf(object):
 
     @staticmethod
     def default_values_formatter(v):
-        return ", ".join(text_type(x) for x in v)
+        return ", ".join(str(x) for x in v)
 
 
 class HostnameValidation(object):
@@ -634,7 +628,7 @@ class HostnameValidation(object):
             pass
 
         # Turn back into a string in Python 3x
-        if not isinstance(hostname, string_types):
+        if not isinstance(hostname, str):
             hostname = hostname.decode("ascii")
 
         if len(hostname) > 253:

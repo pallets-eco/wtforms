@@ -7,7 +7,6 @@ import pytest
 
 from tests.common import DummyPostData
 from wtforms import meta, validators, widgets
-from wtforms.compat import text_type
 from wtforms.fields import (
     BooleanField,
     DateField,
@@ -75,7 +74,7 @@ class TestLabel:
         label = Label("test", "Caption")
         assert label() == expected
         assert str(label) == expected
-        assert text_type(label) == expected
+        assert str(label) == expected
         assert label.__html__() == expected
         assert label().__html__() == expected
         assert label("hello") == """<label for="test">hello</label>"""
@@ -196,7 +195,7 @@ class TestField:
 
     def test_unicode_coerce(self):
         field = self.F().a
-        assert text_type(field) == field()
+        assert str(field) == field()
 
     def test_process_formdata(self):
         field = self.F().a
@@ -359,7 +358,7 @@ class TestSelectField:
         form = self.F()
         first_option = list(form.a)[0]
         assert isinstance(first_option, form.a._Option)
-        assert list(text_type(x) for x in form.a) == [
+        assert list(str(x) for x in form.a) == [
             '<option selected value="a">hello</option>',
             '<option value="btest">bye</option>',
         ]
@@ -477,7 +476,7 @@ class TestRadioField:
             '<label for="b-1">Item 2</label></li>'
             "</ul>"
         )
-        assert [text_type(x) for x in form.a] == [
+        assert [str(x) for x in form.a] == [
             '<input checked id="a-0" name="a" type="radio" value="a">',
             '<input id="a-1" name="a" type="radio" value="b">',
         ]
