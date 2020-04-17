@@ -144,13 +144,6 @@ class Field(object):
             for f in flags:
                 setattr(self.flags, f, True)
 
-    def __unicode__(self):
-        """
-        Returns a HTML representation of the field. For more powerful rendering,
-        see the `__call__` method.
-        """
-        return self()
-
     def __str__(self):
         """
         Returns a HTML representation of the field. For more powerful rendering,
@@ -440,9 +433,6 @@ class Label(object):
 
     def __str__(self):
         return str(self())
-
-    def __unicode__(self):
-        return self()
 
     def __html__(self):
         return self()

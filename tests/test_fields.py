@@ -80,7 +80,6 @@ class TestLabel:
         assert label("hello") == """<label for="test">hello</label>"""
         assert StringField("hi").bind(Form(), "a").label.text == "hi"
         assert repr(label) == "Label('test', 'Caption')"
-        assert label.__unicode__() == expected
 
     def test_auto_label(self):
         t1 = StringField().bind(Form(), "foo_bar")

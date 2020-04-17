@@ -98,9 +98,6 @@ class DummyField(object):
     def __str__(self):
         return self.data
 
-    def __unicode__(self):
-        return self.data
-
     def __iter__(self):
         return iter(self.data)
 
@@ -122,13 +119,11 @@ class DummyForm(dict):
 
 
 class ReallyLazyProxy(object):
-    def __unicode__(self):
+    def __str__(self):
         raise Exception(
             "Translator function called during form declaration: it"
             " should be called at response time."
         )
-
-    __str__ = __unicode__
 
 
 def contains_validator(field, v_type):
