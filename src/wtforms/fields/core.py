@@ -11,7 +11,7 @@ from wtforms import widgets
 from wtforms.compat import izip, text_type
 from wtforms.i18n import DummyTranslations
 from wtforms.utils import unset_value
-from wtforms.validators import StopValidation
+from wtforms.validators import StopValidation, ValidationError
 
 __all__ = (
     "BooleanField",
@@ -277,7 +277,7 @@ class Field(object):
                 if e.args and e.args[0]:
                     self.errors.append(e.args[0])
                 return True
-            except ValueError as e:
+            except ValidationError as e:
                 self.errors.append(e.args[0])
 
         return False

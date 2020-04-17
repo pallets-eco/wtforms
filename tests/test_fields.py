@@ -1002,9 +1002,9 @@ class TestFieldList:
     def test_validators(self):
         def validator(form, field):
             if field.data and field.data[0] == "fail":
-                raise ValueError("fail")
+                raise validators.ValidationError("fail")
             elif len(field.data) > 2:
-                raise ValueError("too many")
+                raise validators.ValidationError("too many")
 
         F = make_form(a=FieldList(self.t, validators=[validator]))
 

@@ -3,7 +3,7 @@ import decimal
 import pytest
 import re
 
-from wtforms import Label
+from wtforms import Label, Form, StringField
 from wtforms.compat import text_type
 from wtforms.validators import (
     StopValidation,
@@ -670,3 +670,17 @@ def test_regexp_message(dummy_form, dummy_field, grab_error_message):
     validator = regexp("^a", message="foo")
     dummy_field.data = "f"
     assert grab_error_message(validator, dummy_form, dummy_field) == "foo"
+
+
+@pytest.mark.parametrize("exc", [IndexError, ZeroDivisionError, ValueError])
+def test_raise_exceptions(exc):
+    def validate(form, field):
+        raise exc
+
+    class F(Form):
+        field = StringField(validators=[validate])
+
+    f = F()
+
+    with pytest.raises(exc):
+        f.validate()
