@@ -151,7 +151,7 @@ def test_input_optional_raises(data_v, raw_data_v, dummy_form, dummy_field):
         assert len(dummy_field.errors) == 0
 
 
-@pytest.mark.parametrize("address", [u"147.230.23.25", u"147.230.23.0", u"127.0.0.1"])
+@pytest.mark.parametrize("address", ["147.230.23.25", "147.230.23.0", "127.0.0.1"])
 def test_ip4address_passes(address, dummy_form, dummy_field):
     adr = ip_address()
     dummy_field.data = address
@@ -161,11 +161,11 @@ def test_ip4address_passes(address, dummy_form, dummy_field):
 @pytest.mark.parametrize(
     "address",
     [
-        u"2001:718:1C01:1111::1111",
-        u"2001:718:1C01:1111::",
-        u"::1",
-        u"dead:beef:0:0:0:0:42:1",
-        u"abcd:ef::42:1",
+        "2001:718:1C01:1111::1111",
+        "2001:718:1C01:1111::",
+        "::1",
+        "dead:beef:0:0:0:0:42:1",
+        "abcd:ef::42:1",
     ],
 )
 def test_good_ip6address_passes(address, dummy_form, dummy_field):
@@ -177,12 +177,12 @@ def test_good_ip6address_passes(address, dummy_form, dummy_field):
 @pytest.mark.parametrize(
     "address",
     [
-        u"2001:718:1C01:1111::1111",
-        u"2001:718:1C01:1111::",
-        u"abc.0.0.1",
-        u"abcd:1234::123::1",
-        u"1:2:3:4:5:6:7:8:9",
-        u"abcd::1ffff",
+        "2001:718:1C01:1111::1111",
+        "2001:718:1C01:1111::",
+        "abc.0.0.1",
+        "abcd:1234::123::1",
+        "1:2:3:4:5:6:7:8:9",
+        "abcd::1ffff",
     ],
 )
 def test_bad_ip6address_raises(address, dummy_form, dummy_field):
@@ -195,12 +195,12 @@ def test_bad_ip6address_raises(address, dummy_form, dummy_field):
 @pytest.mark.parametrize(
     "address",
     [
-        u"147.230.1000.25",
-        u"2001:718::::",
-        u"abc.0.0.1",
-        u"1278.0.0.1",
-        u"127.0.0.abc",
-        u"900.200.100.75",
+        "147.230.1000.25",
+        "2001:718::::",
+        "abc.0.0.1",
+        "1278.0.0.1",
+        "127.0.0.abc",
+        "900.200.100.75",
     ],
 )
 def test_bad_ip4address_raises(address, dummy_form, dummy_field):
@@ -212,7 +212,7 @@ def test_bad_ip4address_raises(address, dummy_form, dummy_field):
 
 @pytest.mark.parametrize(
     "email_address",
-    ["foo@bar.dk", "123@bar.dk", "foo@456.dk", "foo@bar456.info", u"foo@bücher.中国"],
+    ["foo@bar.dk", "123@bar.dk", "foo@456.dk", "foo@bar456.info", "foo@bücher.中国"],
 )
 def test_valid_email_passes(email_address, dummy_form, dummy_field):
     """
@@ -378,21 +378,21 @@ def test_equal_to_raises(
 @pytest.mark.parametrize(
     "url_val",
     [
-        u"http://foobar.dk",
-        u"http://foobar.dk/",
-        u"http://foo-bar.dk/",
-        u"http://foo--bar.dk/",
-        u"http://foo_bar.dk/",
-        u"http://foobar.dk?query=param",
-        u"http://foobar.dk/path?query=param",
-        u"http://foobar.dk/path?query=param&foo=faa",
-        u"http://foobar.museum/foobar",
-        u"http://192.168.0.1/foobar",
-        u"http://192.168.0.1:9000/fake",
-        u"http://\u0645\u062b\u0627\u0644."
-        u"\u0625\u062e\u062a\u0628\u0627\u0631/foo.com",  # Arabic
-        u"http://उदाहरण.परीक्षा/",  # Hindi
-        u"http://실례.테스트",  # Hangul
+        "http://foobar.dk",
+        "http://foobar.dk/",
+        "http://foo-bar.dk/",
+        "http://foo--bar.dk/",
+        "http://foo_bar.dk/",
+        "http://foobar.dk?query=param",
+        "http://foobar.dk/path?query=param",
+        "http://foobar.dk/path?query=param&foo=faa",
+        "http://foobar.museum/foobar",
+        "http://192.168.0.1/foobar",
+        "http://192.168.0.1:9000/fake",
+        "http://\u0645\u062b\u0627\u0644."
+        "\u0625\u062e\u062a\u0628\u0627\u0631/foo.com",  # Arabic
+        "http://उदाहरण.परीक्षा/",  # Hindi
+        "http://실례.테스트",  # Hangul
     ],
 )
 def test_valid_url_passes(url_val, dummy_form, dummy_field):
@@ -407,12 +407,12 @@ def test_valid_url_passes(url_val, dummy_form, dummy_field):
 @pytest.mark.parametrize(
     "url_val",
     [
-        u"http://localhost/foobar",
-        u"http://foobar",
-        u"http://foobar?query=param&foo=faa",
-        u"http://foobar:5000?query=param&foo=faa",
-        u"http://foobar/path?query=param&foo=faa",
-        u"http://foobar:1234/path?query=param&foo=faa",
+        "http://localhost/foobar",
+        "http://foobar",
+        "http://foobar?query=param&foo=faa",
+        "http://foobar:5000?query=param&foo=faa",
+        "http://foobar/path?query=param&foo=faa",
+        "http://foobar:1234/path?query=param&foo=faa",
     ],
 )
 def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
@@ -427,14 +427,14 @@ def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
 @pytest.mark.parametrize(
     "url_val",
     [
-        u"http://foobar",
-        u"http://-foobar.dk/",
-        u"http://foobar-.dk/",
-        u"foobar.dk",
-        u"http://127.0.0/asdf",
-        u"http://foobar.d",
-        u"http://foobar.12",
-        u"http://localhost:abc/a",
+        "http://foobar",
+        "http://-foobar.dk/",
+        "http://foobar-.dk/",
+        "foobar.dk",
+        "http://127.0.0/asdf",
+        "http://foobar.d",
+        "http://foobar.12",
+        "http://localhost:abc/a",
     ],
 )
 def test_bad_url_raises(url_val, dummy_form, dummy_field):
