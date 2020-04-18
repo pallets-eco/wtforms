@@ -57,7 +57,7 @@ you should have no unicode issues.
 What versions of Python are supported?
 --------------------------------------
 
-WTForms supports Python 2.6-2.7 and 3.2+ with a single codebase. Without 2to3 tool.
+WTForms supports Python 3.5+
 
 
 How can I contribute to WTForms?
