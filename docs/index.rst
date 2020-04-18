@@ -1,11 +1,24 @@
 .. _doc-index:
 
-WTForms Documentation
-=====================
+WTForms
+=======
 
 This is the documentation for WTForms |release|.
 
 For a quick introduction, as well as download/installation instructions, check out the :doc:`crash_course`.
+
+**Help**
+
+.. toctree::
+   :maxdepth: 1
+
+   faq
+   specific_problems
+   crash_course
+   i18n
+   changes
+   contributing
+   whats_new
 
 **API**
 
@@ -19,19 +32,6 @@ For a quick introduction, as well as download/installation instructions, check o
    meta
    csrf
    ext
-
-**Additional Help**
-
-.. toctree::
-   :maxdepth: 1
-
-   faq
-   specific_problems
-   crash_course
-   i18n
-   changes
-   contributing
-   whats_new
 
 **Indices and tables:**
 
