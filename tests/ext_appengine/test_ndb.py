@@ -56,7 +56,7 @@ class TestKeyPropertyField(TestCase):
         # Bogus Data
         form = self.F(DummyPostData(author='fooflaf'))
         assert not form.validate()
-        print list(form.author.iter_choices())
+        print(list(form.author.iter_choices()))
         assert all(x[2] is False for x in form.author.iter_choices())
 
 
