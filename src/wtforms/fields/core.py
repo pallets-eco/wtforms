@@ -196,8 +196,8 @@ class Field(object):
 
         This proxies for the internal translations object.
 
-        :param string: A unicode string to be translated.
-        :return: A unicode string which is the translated output.
+        :param string: A string to be translated.
+        :return: A string which is the translated output.
         """
         return self._translations.gettext(string)
 

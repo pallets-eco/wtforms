@@ -100,7 +100,7 @@ The Field base class
 
             <input type="text" name="field_name" value="blah" class="text_blob" id="field_name" />
 
-        Note: Simply coercing the field to a string or unicode will render it as
+        Note: Simply coercing the field to a string will render it as
         if it was called with no arguments.
 
     .. automethod:: __html__
@@ -252,7 +252,7 @@ refer to a single input from the form.
 
 .. autoclass:: IntegerField(default field arguments)
 
-.. autoclass:: RadioField(default field arguments, choices=[], coerce=unicode)
+.. autoclass:: RadioField(default field arguments, choices=[], coerce=str)
 
     .. code-block:: jinja
 
@@ -266,7 +266,7 @@ refer to a single input from the form.
     Simply outputting the field without iterating its subfields will result in
     a ``<ul>`` list of radio choices.
 
-.. class:: SelectField(default field arguments, choices=[], coerce=unicode, option_widget=None, validate_choice=True)
+.. class:: SelectField(default field arguments, choices=[], coerce=str, option_widget=None, validate_choice=True)
 
     Select fields keep a `choices` property which is a sequence of `(value,
     label)` pairs.  The value portion can be any type in theory, but as form
@@ -298,7 +298,7 @@ refer to a single input from the form.
     constructor, but rather created the list in the view function. Also, the
     `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we
     use :func:`int()` to coerce form data.  The default coerce is
-    :func:`unicode()`.
+    :func:`str()`.
 
     **Skipping choice validation**::
 
@@ -320,7 +320,7 @@ refer to a single input from the form.
     a list of fields each representing an option. The rendering of this can be
     further controlled by specifying `option_widget=`.
 
-.. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=unicode, option_widget=None)
+.. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=str, option_widget=None)
 
    The data on the SelectMultipleField is stored as a list of objects, each of
    which is checked and coerced from the form input.  Any submitted choices
