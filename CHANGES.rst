@@ -14,6 +14,7 @@ Unreleased
 -   :class:`~validators.URL` validator now allows query parameters in the URL. (`#523`_, `#524`_).
 -   Updated ``false_values`` param in ``BooleanField`` docs (`#483`_, `#485`_)
 -   Fixed broken format string in Arabic translation (`#471`_)
+-   Updated French and Japanese translations. (`#514`_, `#506`_)
 
 .. _#475: https://github.com/wtforms/wtforms/pull/475/
 .. _#463: https://github.com/wtforms/wtforms/pull/463
@@ -22,6 +23,8 @@ Unreleased
 .. _#483: https://github.com/wtforms/wtforms/pull/483
 .. _#485: https://github.com/wtforms/wtforms/pull/485
 .. _#471: https://github.com/wtforms/wtforms/pull/471
+.. _#514: https://github.com/wtforms/wtforms/pull/514
+.. _#506: https://github.com/wtforms/wtforms/pull/506
 
 Version 2.2.1
 -------------
