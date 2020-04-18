@@ -99,8 +99,8 @@ To define a form, one makes a subclass of :class:`Form` and defines the fields
 declaratively as class attributes::
 
     class MyForm(Form):
-        first_name = StringField(u'First Name', validators=[validators.input_required()])
-        last_name  = StringField(u'Last Name', validators=[validators.optional()])
+        first_name = StringField('First Name', validators=[validators.input_required()])
+        last_name  = StringField('Last Name', validators=[validators.optional()])
 
 Field names can be any valid python identifier, with the following restrictions:
 
@@ -118,11 +118,11 @@ name re-used on a subclass causes the new definition to obscure the original.
 .. code-block:: python
 
     class PastebinEdit(Form):
-        language = SelectField(u'Programming Language', choices=PASTEBIN_LANGUAGES)
+        language = SelectField('Programming Language', choices=PASTEBIN_LANGUAGES)
         code     = TextAreaField()
 
     class PastebinEntry(PastebinEdit):
-        name = StringField(u'User Name')
+        name = StringField('User Name')
 
 
 .. _inline-validators:
@@ -135,7 +135,7 @@ write a one-time-use validator, validation can be defined inline by defining a
 method with the convention `validate_fieldname`::
 
     class SignupForm(Form):
-        age = IntegerField(u'Age')
+        age = IntegerField('Age')
 
         def validate_age(form, field):
             if field.data < 13:
