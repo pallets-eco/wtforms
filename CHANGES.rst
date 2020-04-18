@@ -13,7 +13,7 @@ Version 2.2.1
 
 Released on June 7th, 2018
 
--   :class:`~fields.StringField` only sets ``data = ''` when form data
+-   :class:`~fields.StringField` only sets `data = ''` when form data
     is empty and an initial value was not provided. This fixes an issue
     where the default value wasn't rendered with the initial form.
     (`#291`_, `#355`_, `#401`_)
