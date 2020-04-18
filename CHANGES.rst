@@ -7,6 +7,13 @@ Unreleased
 ----------
 
 -   Updated French translation.
+-   Modified the changes made in `#286`_: instead of copying the list of
+    ``choices``, :class:`~fields.SelectField` now uses ``list()`` to construct
+    a new list of choices. (`#475`_)
+-   Permitted underscores in ``HostnameValidation`` (`#463`_)
+
+.. _#475: https://github.com/wtforms/wtforms/pull/475/
+.. _#463: https://github.com/wtforms/wtforms/pull/463
 
 Version 2.2.1
 -------------
