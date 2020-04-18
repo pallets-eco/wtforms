@@ -16,7 +16,14 @@ Unreleased
 -   Fixed broken format string in Arabic translation (`#471`_)
 -   Updated French and Japanese translations. (`#514`_, `#506`_)
 -   Updated Ukrainian translation (`#433`_)
+-   ``FieldList`` error list is keeps entries in orders for easier identifcation
+    of erroring fields (`#257`_, `#407`_)
+-   :class:`~validators.Length` gives a more helpful error message when
+    ``min`` and ``max`` are the same value (`#266`_)
 
+.. _#257: https://github.com/wtforms/wtforms/issues/257
+.. _#266: https://github.com/wtforms/wtforms/pull/266
+.. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#475: https://github.com/wtforms/wtforms/pull/475/
 .. _#463: https://github.com/wtforms/wtforms/pull/463
 .. _#523: https://github.com/wtforms/wtforms/pull/523
