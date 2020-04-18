@@ -31,6 +31,8 @@ Unreleased
 -   ``aria_`` args are rendered the same way as ``data_`` args, by
     converting underscores to hyphens. ``aria_describedby="name-help"``
     becomes ``aria-describedby="name-help"``. (`#239`_, `#389`_)
+-   Added a ``check_validators`` method to :class:`~fields.Field` which checks
+    if the given validators are both callable, and not classes (`#298`_, `#410`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -38,11 +40,13 @@ Unreleased
 .. _#266: https://github.com/wtforms/wtforms/pull/266
 .. _#288: https://github.com/wtforms/wtforms/pull/288
 .. _#289: https://github.com/wtforms/wtforms/issues/289
+.. _#298: https://github.com/wtforms/wtforms/issues/298
 .. _#343: https://github.com/wtforms/wtforms/pull/343
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#407: https://github.com/wtforms/wtforms/pull/407
-.. _#475: https://github.com/wtforms/wtforms/pull/475/
+.. _#410: https://github.com/wtforms/wtforms/pull/410
+.. _#475: https://github.com/wtforms/wtforms/pull/475
 .. _#463: https://github.com/wtforms/wtforms/pull/463
 .. _#523: https://github.com/wtforms/wtforms/pull/523
 .. _#524: https://github.com/wtforms/wtforms/pull/524

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import datetime
 import decimal
 import itertools
+import inspect
 
 from copy import copy
 
@@ -104,7 +105,9 @@ class Field(object):
         self.name = _prefix + _name
         self.short_name = _name
         self.type = type(self).__name__
-        self.validators = validators or list(self.validators)
+
+        self.check_validators(validators)
+        self.validators = validators or self.validators
 
         self.id = id or self.name
         self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
@@ -154,6 +157,18 @@ class Field(object):
         """
         return self.meta.render_field(self, kwargs)
 
+    @classmethod
+    def check_validators(cls, validators):
+        if validators is not None:
+            for validator in validators:
+                if not callable(validator):
+                    raise TypeError("{} is not a valid validator because it is not "
+                                    "callable".format(validator))
+
+                if inspect.isclass(validator):
+                    raise TypeError("{} is not a valid validator because it is a class, "
+                                    "it should be an instance".format(validator))
+
     def gettext(self, string):
         """
         Get a translation for the given message.
@@ -189,6 +204,9 @@ class Field(object):
         """
         self.errors = list(self.process_errors)
         stop_validation = False
+
+        # Check the type of extra_validators
+        self.check_validators(extra_validators)
 
         # Call pre_validate
         try:
@@ -340,6 +358,9 @@ class UnboundField(object):
         self.args = args
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
+        validators = kwargs.get('validators')
+        if validators:
+            self.field_class.check_validators(validators)
 
     def bind(self, form, name, prefix='', translations=None, **kwargs):
         kw = dict(
