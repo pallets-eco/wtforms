@@ -22,11 +22,16 @@ Unreleased
     ``min`` and ``max`` are the same value (`#266`_)
 -   :class:`~fields.SelectField` no longer coerces ``None`` to ``"None"``
     allowing use of ``"None"`` as an option (`#288`_, `#289`_)
+-   The :class:`~widgets.TextArea` widget prepends a ``\r\n`` newline
+    when rendering to account for browsers stripping an initial line for
+    display. This does not affect the value. (`#238`_, `#395`_)
 
+.. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#257: https://github.com/wtforms/wtforms/issues/257
 .. _#266: https://github.com/wtforms/wtforms/pull/266
 .. _#288: https://github.com/wtforms/wtforms/pull/288
 .. _#289: https://github.com/wtforms/wtforms/issues/289
+.. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#475: https://github.com/wtforms/wtforms/pull/475/
 .. _#463: https://github.com/wtforms/wtforms/pull/463

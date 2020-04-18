@@ -117,7 +117,7 @@ class BasicWidgetsTest(TestCase):
     def test_textarea(self):
         # Make sure textareas escape properly and render properly
         f = DummyField('hi<>bye')
-        self.assertEqual(TextArea()(f), '<textarea id="" name="f">hi&lt;&gt;bye</textarea>')
+        self.assertEqual(TextArea()(f), '<textarea id="" name="f">\r\nhi&lt;&gt;bye</textarea>')
 
     def test_file(self):
         self.assertEqual(FileInput()(self.field), '<input id="id" name="bar" type="file">')
