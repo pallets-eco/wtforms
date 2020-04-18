@@ -47,7 +47,7 @@ with frameworks even better.
     from SQLAlchemy models.
 -   `WTForms-AppEngine`_ provides ORM-backed fields and form generation
     from AppEnding db/ndb schema
--   `WTForms-AppEngine`_ provides ORM-backed fields and form generation
+-   `WTForms-Django`_ provides ORM-backed fields and form generation
     from Django models, as well as integration with Django's I18N
     support.
 
