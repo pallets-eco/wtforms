@@ -251,8 +251,6 @@ Rendering a field is as simple as coercing it to a string::
     >>> form = SimpleForm(content='foobar')
     >>> str(form.content)
     '<input id="content" name="content" type="text" value="foobar" />'
-    >>> unicode(form.content)
-    '<input id="content" name="content" type="text" value="foobar" />'
 
 However, the real power comes from rendering the field with its :meth:`~wtforms.fields.Field.__call__`
 method. By calling the field, you can provide keyword arguments, which will be
