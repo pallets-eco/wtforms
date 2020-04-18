@@ -292,7 +292,7 @@ class SelectFieldTest(TestCase):
         F = make_form(a=SelectField(choices=[('a', 'Foo')]))
         form = F(DummyPostData(a=[]))
         assert not form.validate()
-        self.assertEqual(form.a.data, 'None')
+        self.assertEqual(form.a.data, None)
         self.assertEqual(len(form.a.errors), 1)
         self.assertEqual(form.a.errors[0], 'Not a valid choice')
 
@@ -372,7 +372,7 @@ class RadioFieldTest(TestCase):
             form.a(),
             '''<ul id="a">'''
             '''<li><input id="a-0" name="a" type="radio" value="True"> <label for="a-0">yes</label></li>'''
-            '''<li><input checked id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>'''
+            '''<li><input id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>'''
         )
 
 

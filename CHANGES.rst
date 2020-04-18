@@ -20,9 +20,13 @@ Unreleased
     of erroring fields (`#257`_, `#407`_)
 -   :class:`~validators.Length` gives a more helpful error message when
     ``min`` and ``max`` are the same value (`#266`_)
+-   :class:`~fields.SelectField` no longer coerces ``None`` to ``"None"``
+    allowing use of ``"None"`` as an option (`#288`_, `#289`_)
 
 .. _#257: https://github.com/wtforms/wtforms/issues/257
 .. _#266: https://github.com/wtforms/wtforms/pull/266
+.. _#288: https://github.com/wtforms/wtforms/pull/288
+.. _#289: https://github.com/wtforms/wtforms/issues/289
 .. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#475: https://github.com/wtforms/wtforms/pull/475/
 .. _#463: https://github.com/wtforms/wtforms/pull/463
