@@ -1,6 +1,13 @@
 WTForms
 =======
 
+.. image:: https://travis-ci.org/wtforms/wtforms.svg?branch=master
+    :target: https://travis-ci.org/wtforms/wtforms
+.. image:: https://coveralls.io/repos/github/wtforms/wtforms/badge.svg?branch=master
+    :target: https://coveralls.io/github/wtforms/wtforms?branch=master
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/psf/black
+
 WTForms is a flexible forms validation and rendering library for Python
 web development. It is `framework agnostic`_ and can work with whatever
 web framework and template engine you choose. There are various
