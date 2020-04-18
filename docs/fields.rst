@@ -148,6 +148,7 @@ The Field base class
         constructor to the field; this is not HTML escaped.
 
     .. attribute:: errors
+       :noindex:
 
        A sequence containing the validation errors for this field.
 

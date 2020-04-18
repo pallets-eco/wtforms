@@ -2,12 +2,14 @@
 *.pyc
 *.pyo
 .*.swp
+wtforms/locale/**/wtforms.mo
 .DS_Store
 
 # Extra Files
 MANIFEST
 WTForms.egg-info
 .coverage
+.coverage.*
 .coveralls.yml
 
 # Directories
