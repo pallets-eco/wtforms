@@ -938,8 +938,11 @@ class FieldList(Field):
 
         # Run validators on all entries within
         for subfield in self.entries:
-            if not subfield.validate(form):
-                self.errors.append(subfield.errors)
+            subfield.validate(form)
+            self.errors.append(subfield.errors)
+
+        if not any(x for x in self.errors):
+            self.errors = []
 
         chain = itertools.chain(self.validators, extra_validators)
         self._run_validation_chain(form, chain)

@@ -860,6 +860,12 @@ class FieldListTest(TestCase):
         self.assertEqual(len(form.a.entries), 3)
         self.assertEqual(form.a.data, data)
 
+    def test_errors(self):
+        F = make_form(a=FieldList(self.t))
+        form = F(DummyPostData({'a-0': ['a'], 'a-1': ''}))
+        assert not form.validate()
+        self.assertEqual(form.a.errors, [[], ['This field is required.']])
+
 
 class MyCustomField(TextField):
     def process_data(self, data):
