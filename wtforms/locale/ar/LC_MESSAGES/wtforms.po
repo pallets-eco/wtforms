@@ -54,7 +54,7 @@ msgstr[5] ""
 #: wtforms/validators.py:105
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr "يجب على طول الحقل ان يكون ما بين %(min) و %(max)d حرف."
+msgstr "يجب على طول الحقل ان يكون ما بين %(min)d و %(max)d حرف."
 
 #: wtforms/validators.py:141
 #, python-format
