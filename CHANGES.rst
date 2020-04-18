@@ -62,6 +62,10 @@ Unreleased
 -   Modified the changes made in :pr:`286`: instead of copying the list of
     ``choices``, :class:`~fields.SelectField` now uses ``list()`` to construct
     a new list of choices. (:pr:`475`)
+-   :class:`~fields.IntegerField` checks input type when processing data. (:issue:`451`)
+-   Choices which name and data are the same do not need to use tuples. (:pr:`526`)
+-   :class:`~validators.URL` validator now allows query parameters in the URL. (:pr:`523`, :pr:`524`).
+-   Updated French and Japanese translations. (:pr:`514`, :pr:`506`)
 
 
 Version 2.2.1
