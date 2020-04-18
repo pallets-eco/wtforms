@@ -11,9 +11,12 @@ Unreleased
     ``choices``, :class:`~fields.SelectField` now uses ``list()`` to construct
     a new list of choices. (`#475`_)
 -   Permitted underscores in ``HostnameValidation`` (`#463`_)
+-   :class:`~validators.URL` validator now allows query parameters in the URL. (`#523`_, `#524`_).
 
 .. _#475: https://github.com/wtforms/wtforms/pull/475/
 .. _#463: https://github.com/wtforms/wtforms/pull/463
+.. _#523: https://github.com/wtforms/wtforms/pull/523
+.. _#524: https://github.com/wtforms/wtforms/pull/524
 
 Version 2.2.1
 -------------
