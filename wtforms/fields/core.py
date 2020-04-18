@@ -448,7 +448,7 @@ class SelectField(SelectFieldBase):
     def __init__(self, label=None, validators=None, coerce=text_type, choices=None, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
-        self.choices = copy(choices)
+        self.choices = list(choices) if choices is not None else None
 
     def iter_choices(self):
         for value, label in self.choices:
