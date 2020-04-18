@@ -41,11 +41,12 @@ def html_params(**kwargs):
     frequent use of the normally reserved keywords `class` and `for`, suffixing
     these with an underscore will allow them to be used.
 
-    In order to facilitate the use of ``data-`` attributes, the first underscore
-    behind the ``data``-element is replaced with a hyphen.
+    In order to facilitate the use of ``data-`` and ``aria-`` attributes, if the
+    name of the attribute begins with ``data_`` or ``aria_``, then every
+    underscore will be replaced with a hyphen in the generated attribute.
 
-    >>> html_params(data_any_attribute='something')
-    'data-any_attribute="something"'
+    >>> html_params(data_attr='user.name', aria_labeledby='name')
+    'data-attr="user.name" aria-labeledby="name"'
 
     In addition, the values ``True`` and ``False`` are special:
       * ``attr=True`` generates the HTML compact output of a boolean attribute,
@@ -61,7 +62,7 @@ def html_params(**kwargs):
     for k, v in sorted(iteritems(kwargs)):
         if k in ('class_', 'class__', 'for_'):
             k = k[:-1]
-        elif k.startswith('data_'):
+        elif k.startswith('data_') or k.startswith('aria_'):
             k = k.replace('_', '-')
         if v is True:
             params.append(k)

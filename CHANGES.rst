@@ -28,13 +28,18 @@ Unreleased
 -   HTML5 :class:`~fields.html5.IntegerField` and
     :class:`~fields.html5.RangeInput` don't render the ``step="1"``
     attribute by default. (`#343`_)
+-   ``aria_`` args are rendered the same way as ``data_`` args, by
+    converting underscores to hyphens. ``aria_describedby="name-help"``
+    becomes ``aria-describedby="name-help"``. (`#239`_, `#389`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
+.. _#239: https://github.com/wtforms/wtforms/issues/239
 .. _#257: https://github.com/wtforms/wtforms/issues/257
 .. _#266: https://github.com/wtforms/wtforms/pull/266
 .. _#288: https://github.com/wtforms/wtforms/pull/288
 .. _#289: https://github.com/wtforms/wtforms/issues/289
 .. _#343: https://github.com/wtforms/wtforms/pull/343
+.. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#475: https://github.com/wtforms/wtforms/pull/475/
