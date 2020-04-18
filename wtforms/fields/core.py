@@ -693,7 +693,7 @@ class BooleanField(Field):
     :param false_values:
         If provided, a sequence of strings each of which is an exact match
         string of what is considered a "false" value. Defaults to the tuple
-        ``('false', '')``
+        ``(False, 'false', '',)``
     """
     widget = widgets.CheckboxInput()
     false_values = (False, 'false', '')
