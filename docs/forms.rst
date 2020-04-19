@@ -47,10 +47,6 @@ The Form class
         A dict containing a list of errors for each field. Empty if the form
         hasn't been validated, or there were no errors.
 
-        Note that this is a lazy property, and will only be generated when you
-        first access it. If you call :meth:`validate` after accessing it, the
-        cached result will be invalidated and regenerated on next access.
-
     .. attribute:: meta
 
         This is an object which contains various configuration options and also
