@@ -928,14 +928,14 @@ class TestFieldList:
         assert not form.validate()
 
         form = F(pdata, a=data)
-        assert form.a.data == ["bleh", "yarg", "", "mmm"]
+        assert form.a.data == ["bleh", "hi", "rawr", "yarg", "", "mmm"]
         assert not form.validate()
 
         # Test for formdata precedence
         pdata = DummyPostData({"a-0": ["a"], "a-1": ["b"]})
         form = F(pdata, a=data)
-        assert len(form.a.entries) == 2
-        assert form.a.data == ["a", "b"]
+        assert len(form.a.entries) == 3
+        assert form.a.data == ["a", "b", "rawr"]
         assert list(iter(form.a)) == list(form.a.entries)
 
     def test_enclosed_subform(self):
@@ -998,6 +998,14 @@ class TestFieldList:
         assert a.data == ["foo", "flaf", "bar"]
         with pytest.raises(AssertionError):
             a.append_entry()
+
+    def test_min_entries_default_values(self):
+        F = make_form(a=FieldList(self.t, min_entries=5, max_entries=5))
+        a = F().a
+        pdata = DummyPostData({"a-1": "foo"})
+        data = ["bar0", "bar1", "bar2"]
+        a.process(pdata, data)
+        assert ["bar0", "foo", "bar2", None, None] == a.data
 
     def test_validators(self):
         def validator(form, field):
