@@ -33,6 +33,8 @@ Unreleased
     becomes ``aria-describedby="name-help"``. (`#239`_, `#389`_)
 -   Added a ``check_validators`` method to :class:`~fields.Field` which checks
     if the given validators are both callable, and not classes (`#298`_, `#410`_)
+-   form.errors is not cached and will update if an error is appended to a field
+    after access. (`#568`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -56,6 +58,7 @@ Unreleased
 .. _#514: https://github.com/wtforms/wtforms/pull/514
 .. _#506: https://github.com/wtforms/wtforms/pull/506
 .. _#433: https://github.com/wtforms/wtforms/pull/433
+.. _#568: https://github.com/wtforms/wtforms/pull/568
 
 Version 2.2.1
 -------------
