@@ -5,7 +5,7 @@ import pytest
 from wtforms.form import BaseForm, Form
 from wtforms.meta import DefaultMeta
 from wtforms.fields import StringField, IntegerField
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, DataRequired
 from tests.common import DummyPostData
 
 
@@ -229,6 +229,21 @@ class TestForm:
         assert F(DummyPostData()).test.data == "processed"
         assert F(DummyPostData(), test="test").test.data == "processed"
         assert F(DummyPostData({"test": "foo"}), test="test").test.data == "foo"
+
+    def test_errors_access_during_validation(self):
+        class F(Form):
+            foo = StringField(validators=[DataRequired()])
+
+            def validate(self):
+                super(F, self).validate()
+                self.errors
+                self.foo.errors.append("bar")
+                return True
+
+        form = F(foo="whatever")
+        form.validate()
+
+        assert {"foo": ["bar"]} == form.errors
 
 
 class TestMeta:
