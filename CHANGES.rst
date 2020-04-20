@@ -51,6 +51,8 @@ Unreleased
     (`#385`_, `#403`_)
 -   :class:`~fields.core.Label` text is escaped before rendering.
     (`#315`_, `#375`_)
+-   Email validation is now handled by an optional library, ``email_validator``
+    (`#429`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -71,6 +73,7 @@ Unreleased
 .. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#409: https://github.com/wtforms/wtforms/pull/409
 .. _#410: https://github.com/wtforms/wtforms/pull/410
+.. _#429: https://github.com/wtforms/wtforms/pull/429
 .. _#434: https://github.com/wtforms/wtforms/issues/434
 .. _#451: https://github.com/wtforms/wtforms/pull/451
 .. _#475: https://github.com/wtforms/wtforms/pull/475

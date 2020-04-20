@@ -68,6 +68,8 @@ setup(
     include_package_data=True,
     install_requires=["MarkupSafe"],
     extras_require={
+        "ipaddress": ['ipaddress;python_version<"3.3"'],
+        "email": ["email_validator"],
         'locale': ['Babel>=1.3'],
         ':python_version=="2.6"': ['ordereddict'],
     },

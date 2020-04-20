@@ -42,6 +42,13 @@ class ValidatorsTest(TestCase):
         # Test IDNA domains
         self.assertEqual(email()(self.form, DummyField(u'foo@bücher.中国')), None)
 
+    def test_invalid_email_raises_granular_message(self):
+        """
+        When granular_message=True uses message from email_validator library.
+        """
+        validator = email(granular_message=True)
+        self.assertRaisesRegexp(ValidationError, "There must be something after the @-sign.", validator, self.form, DummyField("foo@"))
+
     def test_equal_to(self):
         self.form['foo'] = DummyField('test')
         self.assertEqual(equal_to('foo')(self.form, self.form['foo']), None)
