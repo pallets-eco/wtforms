@@ -35,6 +35,8 @@ Unreleased
     if the given validators are both callable, and not classes (`#298`_, `#410`_)
 -   form.errors is not cached and will update if an error is appended to a field
     after access. (`#568`_)
+-   :class:`~wtforms.validators.NumberRange` correctly handle *not a number*
+    values. (`#505`_, `#548`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -50,8 +52,10 @@ Unreleased
 .. _#410: https://github.com/wtforms/wtforms/pull/410
 .. _#475: https://github.com/wtforms/wtforms/pull/475
 .. _#463: https://github.com/wtforms/wtforms/pull/463
+.. _#505: https://github.com/wtforms/wtforms/pull/505
 .. _#523: https://github.com/wtforms/wtforms/pull/523
 .. _#524: https://github.com/wtforms/wtforms/pull/524
+.. _#548: https://github.com/wtforms/wtforms/pull/548
 .. _#483: https://github.com/wtforms/wtforms/pull/483
 .. _#485: https://github.com/wtforms/wtforms/pull/485
 .. _#471: https://github.com/wtforms/wtforms/pull/471

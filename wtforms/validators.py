@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import math
 import re
 import uuid
 import warnings
@@ -134,7 +135,7 @@ class NumberRange(object):
 
     def __call__(self, form, field):
         data = field.data
-        if data is None or (self.min is not None and data < self.min) or \
+        if data is None or math.isnan(data) or (self.min is not None and data < self.min) or \
                 (self.max is not None and data > self.max):
             message = self.message
             if message is None:

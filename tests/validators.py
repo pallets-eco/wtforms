@@ -9,6 +9,7 @@ from wtforms.validators import (
 )
 from functools import partial
 from tests.common import DummyField, grab_error_message, grab_stop_message
+import decimal
 
 
 class DummyForm(dict):
@@ -225,6 +226,11 @@ class ValidatorsTest(TestCase):
         onlymax = NumberRange(max=50)
         self.assertEqual(onlymax(self.form, DummyField(30)), None)
         self.assertRaises(ValidationError, onlymax, self.form, DummyField(75))
+
+    def test_number_range_nan(self):
+        validator = NumberRange(0, 10)
+        for nan in (float("Nan"), decimal.Decimal("NaN")):
+            self.assertRaises(ValidationError, validator, self.form, DummyField(nan))
 
     def test_lazy_proxy(self):
         """Tests that the validators support lazy translation strings for messages."""
