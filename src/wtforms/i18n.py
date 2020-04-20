@@ -44,7 +44,7 @@ def get_translations(languages=None, getter=get_builtin_gnu_translations):
         return translations
 
 
-class DefaultTranslations(object):
+class DefaultTranslations:
     """
     A WTForms translations object to wrap translations objects which use
     ugettext/ungettext.
@@ -60,7 +60,7 @@ class DefaultTranslations(object):
         return self.translations.ungettext(singular, plural, n)
 
 
-class DummyTranslations(object):
+class DummyTranslations:
     """
     A translations object which simply returns unmodified strings.
 

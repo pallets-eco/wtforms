@@ -43,7 +43,7 @@ from wtforms.utils import unset_value
 from wtforms.widgets import TextInput
 
 
-class AttrDict(object):
+class AttrDict:
     def __init__(self, *args, **kw):
         self.__dict__.update(*args, **kw)
 
@@ -235,7 +235,7 @@ class TestField:
             items = SelectField(choices=[])
 
             def __init__(self, *args, **kwargs):
-                super(F, self).__init__(*args, **kwargs)
+                super().__init__(*args, **kwargs)
 
             def add_choice(self, choice):
                 self.items.choices.append((choice, choice))
@@ -1046,7 +1046,7 @@ class MyCustomField(StringField):
         if data == "fail":
             raise ValueError("Contrived Failure")
 
-        return super(MyCustomField, self).process_data(data)
+        return super().process_data(data)
 
 
 class TestCustomFieldQuirks:

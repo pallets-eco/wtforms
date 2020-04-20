@@ -1,4 +1,4 @@
-class UnsetValue(object):
+class UnsetValue:
     """
     An unset value.
 
@@ -23,7 +23,7 @@ class UnsetValue(object):
 unset_value = UnsetValue()
 
 
-class WebobInputWrapper(object):
+class WebobInputWrapper:
     """
     Wrap a webob MultiDict for use as passing as `formdata` to Field.
 

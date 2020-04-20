@@ -18,7 +18,7 @@ class CSRFTokenField(HiddenField):
 
     def __init__(self, *args, **kw):
         self.csrf_impl = kw.pop("csrf_impl")
-        super(CSRFTokenField, self).__init__(*args, **kw)
+        super().__init__(*args, **kw)
 
     def _value(self):
         """
@@ -40,11 +40,11 @@ class CSRFTokenField(HiddenField):
         self.csrf_impl.validate_csrf_token(form, self)
 
     def process(self, *args):
-        super(CSRFTokenField, self).process(*args)
+        super().process(*args)
         self.current_token = self.csrf_impl.generate_csrf_token(self)
 
 
-class CSRF(object):
+class CSRF:
     field_class = CSRFTokenField
 
     def setup_form(self, form):

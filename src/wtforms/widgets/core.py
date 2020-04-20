@@ -65,7 +65,7 @@ def html_params(**kwargs):
     return " ".join(params)
 
 
-class ListWidget(object):
+class ListWidget:
     """
     Renders a list of fields as a `ul` or `ol` list.
 
@@ -88,14 +88,14 @@ class ListWidget(object):
         html = ["<{} {}>".format(self.html_tag, html_params(**kwargs))]
         for subfield in field:
             if self.prefix_label:
-                html.append("<li>{} {}</li>".format(subfield.label, subfield()))
+                html.append(f"<li>{subfield.label} {subfield()}</li>")
             else:
-                html.append("<li>{} {}</li>".format(subfield(), subfield.label))
+                html.append(f"<li>{subfield()} {subfield.label}</li>")
         html.append("</%s>" % self.html_tag)
         return Markup("".join(html))
 
 
-class TableWidget(object):
+class TableWidget:
     """
     Renders a list of fields as a set of table rows with th/td pairs.
 
@@ -132,7 +132,7 @@ class TableWidget(object):
         return Markup("".join(html))
 
 
-class Input(object):
+class Input:
     """
     Render a basic ``<input>`` field.
 
@@ -183,7 +183,7 @@ class PasswordInput(Input):
     def __call__(self, field, **kwargs):
         if self.hide_value:
             kwargs["value"] = ""
-        return super(PasswordInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class HiddenInput(Input):
@@ -207,7 +207,7 @@ class CheckboxInput(Input):
     def __call__(self, field, **kwargs):
         if getattr(field, "checked", field.data):
             kwargs["checked"] = True
-        return super(CheckboxInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class RadioInput(Input):
@@ -223,7 +223,7 @@ class RadioInput(Input):
     def __call__(self, field, **kwargs):
         if field.checked:
             kwargs["checked"] = True
-        return super(RadioInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class FileInput(Input):
@@ -235,7 +235,7 @@ class FileInput(Input):
     input_type = "file"
 
     def __init__(self, multiple=False):
-        super(FileInput, self).__init__()
+        super().__init__()
         self.multiple = multiple
 
     def __call__(self, field, **kwargs):
@@ -245,7 +245,7 @@ class FileInput(Input):
         if self.multiple:
             kwargs["multiple"] = True
 
-        return super(FileInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class SubmitInput(Input):
@@ -260,10 +260,10 @@ class SubmitInput(Input):
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault("value", field.label.text)
-        return super(SubmitInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
-class TextArea(object):
+class TextArea:
     """
     Renders a multi-line text area.
 
@@ -280,7 +280,7 @@ class TextArea(object):
         )
 
 
-class Select(object):
+class Select:
     """
     Renders a select field.
 
@@ -321,7 +321,7 @@ class Select(object):
         )
 
 
-class Option(object):
+class Option:
     """
     Renders the individual option from a select field.
 

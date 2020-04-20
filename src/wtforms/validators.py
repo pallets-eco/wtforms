@@ -63,7 +63,7 @@ class StopValidation(Exception):
         Exception.__init__(self, message, *args, **kwargs)
 
 
-class EqualTo(object):
+class EqualTo:
     """
     Compares the values of two fields.
 
@@ -100,7 +100,7 @@ class EqualTo(object):
             raise ValidationError(message % d)
 
 
-class Length(object):
+class Length:
     """
     Validates the length of a string.
 
@@ -158,7 +158,7 @@ class Length(object):
             )
 
 
-class NumberRange(object):
+class NumberRange:
     """
     Validates that a number is of a minimum and/or maximum value, inclusive.
     This will work with any comparable number type, such as floats and
@@ -205,7 +205,7 @@ class NumberRange(object):
             raise ValidationError(message % dict(min=self.min, max=self.max))
 
 
-class Optional(object):
+class Optional:
     """
     Allows empty input and stops the validation chain from continuing.
 
@@ -235,7 +235,7 @@ class Optional(object):
             raise StopValidation()
 
 
-class DataRequired(object):
+class DataRequired:
     """
     Checks the field's data is 'truthy' otherwise stops the validation chain.
 
@@ -274,7 +274,7 @@ class DataRequired(object):
             raise StopValidation(message)
 
 
-class InputRequired(object):
+class InputRequired:
     """
     Validates that input was provided for this field.
 
@@ -299,7 +299,7 @@ class InputRequired(object):
             raise StopValidation(message)
 
 
-class Regexp(object):
+class Regexp:
     """
     Validates the field against a user provided regexp.
 
@@ -332,7 +332,7 @@ class Regexp(object):
         return match
 
 
-class Email(object):
+class Email:
     """
     Validates an email address. Requires email_validator package to be
     installed. For ex: pip install wtforms[email].
@@ -388,7 +388,7 @@ class Email(object):
             raise ValidationError(message)
 
 
-class IPAddress(object):
+class IPAddress:
     """
     Validates an IP address.
 
@@ -458,14 +458,14 @@ class MacAddress(Regexp):
 
     def __init__(self, message=None):
         pattern = r"^(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$"
-        super(MacAddress, self).__init__(pattern, message=message)
+        super().__init__(pattern, message=message)
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext("Invalid Mac address.")
 
-        super(MacAddress, self).__call__(form, field, message)
+        super().__call__(form, field, message)
 
 
 class URL(Regexp):
@@ -490,7 +490,7 @@ class URL(Regexp):
             r"(?P<path>\/.*?)?"
             r"(?P<query>\?.*)?$"
         )
-        super(URL, self).__init__(regex, re.IGNORECASE, message)
+        super().__init__(regex, re.IGNORECASE, message)
         self.validate_hostname = HostnameValidation(
             require_tld=require_tld, allow_ip=True
         )
@@ -500,12 +500,12 @@ class URL(Regexp):
         if message is None:
             message = field.gettext("Invalid URL.")
 
-        match = super(URL, self).__call__(form, field, message)
+        match = super().__call__(form, field, message)
         if not self.validate_hostname(match.group("host")):
             raise ValidationError(message)
 
 
-class UUID(object):
+class UUID:
     """
     Validates a UUID.
 
@@ -526,7 +526,7 @@ class UUID(object):
             raise ValidationError(message)
 
 
-class AnyOf(object):
+class AnyOf:
     """
     Compares the incoming data to a sequence of valid inputs.
 
@@ -561,7 +561,7 @@ class AnyOf(object):
         return ", ".join(str(x) for x in values)
 
 
-class NoneOf(object):
+class NoneOf:
     """
     Compares the incoming data to a sequence of invalid inputs.
 
@@ -596,7 +596,7 @@ class NoneOf(object):
         return ", ".join(str(x) for x in v)
 
 
-class HostnameValidation(object):
+class HostnameValidation:
     """
     Helper class for checking hostnames for validation.
 

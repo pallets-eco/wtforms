@@ -60,7 +60,7 @@ def grab_stop_message():
     return grab_stop_message
 
 
-class DummyTranslations(object):
+class DummyTranslations:
     def gettext(self, string):
         return string
 
@@ -71,7 +71,7 @@ class DummyTranslations(object):
         return plural
 
 
-class DummyField(object):
+class DummyField:
     _translations = DummyTranslations()
 
     def __init__(
@@ -118,7 +118,7 @@ class DummyForm(dict):
     pass
 
 
-class ReallyLazyProxy(object):
+class ReallyLazyProxy:
     def __str__(self):
         raise Exception(
             "Translator function called during form declaration: it"
@@ -154,4 +154,4 @@ def assert_raises_text(e_type, text):
                 % (e, e.args[0], text)
             )
     else:
-        raise AssertionError("Expected Exception {!r}, did not get it".format(e_type))
+        raise AssertionError(f"Expected Exception {e_type!r}, did not get it")

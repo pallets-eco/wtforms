@@ -2,7 +2,7 @@ from wtforms.utils import WebobInputWrapper
 from wtforms import i18n
 
 
-class DefaultMeta(object):
+class DefaultMeta:
     """
     This is the default Meta class which defines all the default values and
     therefore also the 'API' of the class Meta interface.

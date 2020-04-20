@@ -57,7 +57,7 @@ you should have no unicode issues.
 What versions of Python are supported?
 --------------------------------------
 
-WTForms supports Python 3.5+
+WTForms supports Python 3.6+
 
 
 How can I contribute to WTForms?

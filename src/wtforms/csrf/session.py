@@ -29,7 +29,7 @@ class SessionCSRF(CSRF):
 
     def setup_form(self, form):
         self.form_meta = form.meta
-        return super(SessionCSRF, self).setup_form(form)
+        return super().setup_form(form)
 
     def generate_csrf_token(self, csrf_token_field):
         meta = self.form_meta
@@ -55,7 +55,7 @@ class SessionCSRF(CSRF):
         hmac_csrf = hmac.new(
             meta.csrf_secret, csrf_build.encode("utf8"), digestmod=sha1
         )
-        return "{}##{}".format(expires, hmac_csrf.hexdigest())
+        return f"{expires}##{hmac_csrf.hexdigest()}"
 
     def validate_csrf_token(self, form, field):
         meta = self.form_meta

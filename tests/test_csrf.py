@@ -37,7 +37,7 @@ class TimePin(SessionCSRF):
         return self.pinned_time
 
 
-class SimplePopulateObject(object):
+class SimplePopulateObject:
     a = None
     csrf_token = None
 

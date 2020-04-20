@@ -27,7 +27,7 @@ __all__ = (
 )
 
 
-class Field(object):
+class Field:
     """
     Field base class
     """
@@ -43,7 +43,7 @@ class Field(object):
 
     def __new__(cls, *args, **kwargs):
         if "_form" in kwargs and "_name" in kwargs:
-            return super(Field, cls).__new__(cls)
+            return super().__new__(cls)
         else:
             return UnboundField(cls, *args, **kwargs)
 
@@ -369,7 +369,7 @@ class Field(object):
         setattr(obj, name, self.data)
 
 
-class UnboundField(object):
+class UnboundField:
     _formfield = True
     creation_counter = 0
 
@@ -390,7 +390,7 @@ class UnboundField(object):
             _prefix=prefix,
             _name=name,
             _translations=translations,
-            **kwargs
+            **kwargs,
         )
         return self.field_class(*self.args, **kw)
 
@@ -400,7 +400,7 @@ class UnboundField(object):
         )
 
 
-class Flags(object):
+class Flags:
     """
     Holds a set of boolean flags as attributes.
 
@@ -409,7 +409,7 @@ class Flags(object):
 
     def __getattr__(self, name):
         if name.startswith("_"):
-            return super(Flags, self).__getattr__(name)
+            return super().__getattr__(name)
         return False
 
     def __contains__(self, name):
@@ -420,7 +420,7 @@ class Flags(object):
         return "<wtforms.fields.Flags: {%s}>" % ", ".join(flags)
 
 
-class Label(object):
+class Label:
     """
     An HTML form label.
     """
@@ -443,10 +443,10 @@ class Label(object):
 
         attributes = widgets.html_params(**kwargs)
         text = escape(text or self.text)
-        return Markup("<label {}>{}</label>".format(attributes, text))
+        return Markup(f"<label {attributes}>{text}</label>")
 
     def __repr__(self):
-        return "Label({!r}, {!r})".format(self.field_id, self.text)
+        return f"Label({self.field_id!r}, {self.text!r})"
 
 
 class SelectFieldBase(Field):
@@ -460,7 +460,7 @@ class SelectFieldBase(Field):
     """
 
     def __init__(self, label=None, validators=None, option_widget=None, **kwargs):
-        super(SelectFieldBase, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
 
         if option_widget is not None:
             self.option_widget = option_widget
@@ -499,9 +499,9 @@ class SelectField(SelectFieldBase):
         coerce=str,
         choices=None,
         validate_choice=True,
-        **kwargs
+        **kwargs,
     ):
-        super(SelectField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
         self.coerce = coerce
         self.choices = list(choices) if choices is not None else None
         self.validate_choice = validate_choice
@@ -623,9 +623,9 @@ class LocaleAwareNumberField(Field):
         validators=None,
         use_locale=False,
         number_format=None,
-        **kwargs
+        **kwargs,
     ):
-        super(LocaleAwareNumberField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
         self.use_locale = use_locale
         if use_locale:
             self.number_format = number_format
@@ -656,7 +656,7 @@ class IntegerField(Field):
     widget = widgets.TextInput()
 
     def __init__(self, label=None, validators=None, **kwargs):
-        super(IntegerField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
 
     def _value(self):
         if self.raw_data:
@@ -709,7 +709,7 @@ class DecimalField(LocaleAwareNumberField):
     def __init__(
         self, label=None, validators=None, places=unset_value, rounding=None, **kwargs
     ):
-        super(DecimalField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
         if self.use_locale and (places is not unset_value or rounding is not None):
             raise TypeError(
                 "When using locale-aware numbers, 'places' and 'rounding' are ignored."
@@ -765,7 +765,7 @@ class FloatField(Field):
     widget = widgets.TextInput()
 
     def __init__(self, label=None, validators=None, **kwargs):
-        super(FloatField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
 
     def _value(self):
         if self.raw_data:
@@ -800,7 +800,7 @@ class BooleanField(Field):
     false_values = (False, "false", "")
 
     def __init__(self, label=None, validators=None, false_values=None, **kwargs):
-        super(BooleanField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
         if false_values is not None:
             self.false_values = false_values
 
@@ -830,7 +830,7 @@ class DateTimeField(Field):
     def __init__(
         self, label=None, validators=None, format="%Y-%m-%d %H:%M:%S", **kwargs
     ):
-        super(DateTimeField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
         self.format = format
 
     def _value(self):
@@ -855,7 +855,7 @@ class DateField(DateTimeField):
     """
 
     def __init__(self, label=None, validators=None, format="%Y-%m-%d", **kwargs):
-        super(DateField, self).__init__(label, validators, format, **kwargs)
+        super().__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -873,7 +873,7 @@ class TimeField(DateTimeField):
     """
 
     def __init__(self, label=None, validators=None, format="%H:%M", **kwargs):
-        super(TimeField, self).__init__(label, validators, format, **kwargs)
+        super().__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -901,7 +901,7 @@ class FormField(Field):
     def __init__(
         self, form_class, label=None, validators=None, separator="-", **kwargs
     ):
-        super(FormField, self).__init__(label, validators, **kwargs)
+        super().__init__(label, validators, **kwargs)
         self.form_class = form_class
         self.separator = separator
         self._obj = None
@@ -1000,9 +1000,9 @@ class FieldList(Field):
         min_entries=0,
         max_entries=None,
         default=(),
-        **kwargs
+        **kwargs,
     ):
-        super(FieldList, self).__init__(label, validators, default=default, **kwargs)
+        super().__init__(label, validators, default=default, **kwargs)
         if self.filters:
             raise TypeError(
                 "FieldList does not accept any filters. Instead, define"
@@ -1092,7 +1092,7 @@ class FieldList(Field):
             ivalues = iter([])
 
         candidates = itertools.chain(ivalues, itertools.repeat(None))
-        _fake = type(str("_fake"), (object,), {})
+        _fake = type("_fake", (object,), {})
         output = []
         for field, data in zip(self.entries, candidates):
             fake_obj = _fake()

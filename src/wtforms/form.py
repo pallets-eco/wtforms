@@ -8,7 +8,7 @@ __all__ = ("BaseForm", "Form")
 _default_meta = DefaultMeta()
 
 
-class BaseForm(object):
+class BaseForm:
     """
     Base Form Class.  Provides core behaviour like field construction,
     validation, and data and error proxying.
@@ -252,7 +252,7 @@ class Form(BaseForm, metaclass=FormMeta):
         meta_obj = self._wtforms_meta()
         if meta is not None and isinstance(meta, dict):
             meta_obj.update_values(meta)
-        super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
+        super().__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
 
         for name, field in self._fields.items():
             # Set all the fields to attributes so that they obscure the class
@@ -277,7 +277,7 @@ class Form(BaseForm, metaclass=FormMeta):
             if unbound_field is not None and hasattr(unbound_field, "_formfield"):
                 setattr(self, name, None)
             else:
-                super(Form, self).__delattr__(name)
+                super().__delattr__(name)
 
     def validate(self):
         """
@@ -290,4 +290,4 @@ class Form(BaseForm, metaclass=FormMeta):
             if inline is not None:
                 extra[name] = [inline]
 
-        return super(Form, self).validate(extra)
+        return super().validate(extra)
