@@ -555,3 +555,39 @@ Additional Helper Classes
     .. attribute:: text
 
         The original label text passed to the field's constructor.
+
+
+HTML5 Fields
+------------
+
+.. module:: wtforms.fields.html5
+
+In addition to basic HTML fields, WTForms also supplies fields for the HTML5
+standard. These fields can be accessed under the :mod:`wtforms.fields.html5` namespace.
+In reality, these fields are just convenience fields that extend basic fields
+and implement HTML5 specific widgets. These widgets are located in the :mod:`wtforms.widgets.html5`
+namespace and can be overridden or modified just like any other widget.
+
+.. autoclass:: SearchField(default field arguments)
+
+.. autoclass:: TelField(default field arguments)
+
+.. autoclass:: URLField(default field arguments)
+
+.. autoclass:: EmailField(default field arguments)
+
+.. autoclass:: DateTimeField(default field arguments,  format='%Y-%m-%d %H:%M:%S')
+
+.. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
+
+.. autoclass:: TimeField(default field arguments, format='%H:%M')
+
+.. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
+
+.. autoclass:: IntegerField(default field arguments)
+
+.. autoclass:: DecimalField(default field arguments)
+
+.. autoclass:: IntegerRangeField(default field arguments)
+
+.. autoclass:: DecimalRangeField(default field arguments)

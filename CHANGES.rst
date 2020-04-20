@@ -41,6 +41,7 @@ Unreleased
 -   Added a parameter to :class:`~fields.SelectField` to skip choice validation
     (`#434`_, `#493`_)
 -   Choices which name and data are the same do not need to use tuples. (`#526`_)
+-   Added more documentation on HTML5 fields (`#326`_,  `#409`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -49,10 +50,12 @@ Unreleased
 .. _#288: https://github.com/wtforms/wtforms/pull/288
 .. _#289: https://github.com/wtforms/wtforms/issues/289
 .. _#298: https://github.com/wtforms/wtforms/issues/298
+.. _#326: https://github.com/wtforms/wtforms/issues/326
 .. _#343: https://github.com/wtforms/wtforms/pull/343
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#407: https://github.com/wtforms/wtforms/pull/407
+.. _#409: https://github.com/wtforms/wtforms/pull/409
 .. _#410: https://github.com/wtforms/wtforms/pull/410
 .. _#434: https://github.com/wtforms/wtforms/issues/434
 .. _#451: https://github.com/wtforms/wtforms/pull/451
