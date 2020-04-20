@@ -3,8 +3,13 @@ WTForms
 
 .. image:: https://travis-ci.org/wtforms/wtforms.svg?branch=master
     :target: https://travis-ci.org/wtforms/wtforms
+    :alt: Continuous Integration status
 .. image:: https://coveralls.io/repos/github/wtforms/wtforms/badge.svg?branch=master
     :target: https://coveralls.io/github/wtforms/wtforms?branch=master
+    :alt: Coverage status
+.. image:: https://readthedocs.org/projects/wtforms/badge/?version=stable
+    :target: https://wtforms.readthedocs.io/en/stable/?badge=stable
+    :alt: Documentation status
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
