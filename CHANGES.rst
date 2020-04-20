@@ -49,6 +49,8 @@ Unreleased
     :class:`markupsafe.Markup`. (`#400`_)
 -   Fixed broken IPv6 validator, validation now uses the ``ipaddress`` package
     (`#385`_, `#403`_)
+-   :class:`~fields.core.Label` text is escaped before rendering.
+    (`#315`_, `#375`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -57,8 +59,10 @@ Unreleased
 .. _#288: https://github.com/wtforms/wtforms/pull/288
 .. _#289: https://github.com/wtforms/wtforms/issues/289
 .. _#298: https://github.com/wtforms/wtforms/issues/298
+.. _#315: https://github.com/wtforms/wtforms/pull/315
 .. _#326: https://github.com/wtforms/wtforms/issues/326
 .. _#343: https://github.com/wtforms/wtforms/pull/343
+.. _#375: https://github.com/wtforms/wtforms/pull/375
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#385: https://github.com/wtforms/wtforms/issues/385
 .. _#395: https://github.com/wtforms/wtforms/pull/395
