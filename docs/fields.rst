@@ -11,7 +11,7 @@ Field definitions
 
 Fields are defined as members on a form in a declarative fashion::
 
-    class MyForm(Form):
+    class MyForm(wtforms.Form):
         name    = StringField('Full Name', [validators.required(), validators.length(max=10)])
         address = TextAreaField('Mailing Address', [validators.optional(), validators.length(max=200)])
 
@@ -529,7 +529,7 @@ Additional Helper Classes
 
     Usage::
 
-        >>> flags = Flags()
+        >>> flags = wtforms.Flags()
         >>> flags.required = True
         >>> 'required' in flags
         True

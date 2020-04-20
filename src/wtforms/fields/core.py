@@ -159,7 +159,7 @@ class Field(object):
         Returns a HTML representation of the field. For more powerful rendering,
         see the `__call__` method.
         """
-        return self()
+        return str(self())
 
     def __html__(self):
         """
@@ -442,7 +442,7 @@ class Label(object):
         self.text = text
 
     def __str__(self):
-        return self()
+        return str(self())
 
     def __unicode__(self):
         return self()

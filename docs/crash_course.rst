@@ -151,7 +151,7 @@ console::
     ...
     >>> form = UsernameForm()
     >>> form['username']
-    <wtforms.fields.StringField object at 0x827eccc>
+    <wtforms.fields.core.StringField object at ...>
     >>> form.username.data
     'test'
     >>> form.validate()
@@ -250,14 +250,14 @@ Rendering a field is as simple as coercing it to a string::
     ...
     >>> form = SimpleForm(content='foobar')
     >>> str(form.content)
-    '<input id="content" name="content" type="text" value="foobar" />'
+    '<input id="content" name="content" type="text" value="foobar">'
 
 However, the real power comes from rendering the field with its :meth:`~wtforms.fields.Field.__call__`
 method. By calling the field, you can provide keyword arguments, which will be
 injected as html attributes in the output::
 
-    >>> form.content(style="width: 200px;", class_="bar")
-    '<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar" />'
+    >>> str(form.content(style="width: 200px;", class_="bar"))
+    '<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar">'
 
 Now let's apply this power to rendering a form in a `Jinja <http://jinja.pocoo.org/>`_
 template. First, our form::
