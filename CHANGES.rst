@@ -47,6 +47,8 @@ Unreleased
     replaced by :func:`markupsafe.escape`.
     :class:`~widgets.core.HTMLString` is removed, replaced by
     :class:`markupsafe.Markup`. (`#400`_)
+-   Fixed broken IPv6 validator, validation now uses the ``ipaddress`` package
+    (`#385`_, `#403`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -58,8 +60,10 @@ Unreleased
 .. _#326: https://github.com/wtforms/wtforms/issues/326
 .. _#343: https://github.com/wtforms/wtforms/pull/343
 .. _#389: https://github.com/wtforms/wtforms/pull/389
+.. _#385: https://github.com/wtforms/wtforms/issues/385
 .. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#400: https://github.com/wtforms/wtforms/pull/400
+.. _#403: https://github.com/wtforms/wtforms/pull/403
 .. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#409: https://github.com/wtforms/wtforms/pull/409
 .. _#410: https://github.com/wtforms/wtforms/pull/410
