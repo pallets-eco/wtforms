@@ -266,7 +266,7 @@ refer to a single input from the form.
     Simply outputting the field without iterating its subfields will result in
     a ``<ul>`` list of radio choices.
 
-.. class:: SelectField(default field arguments, choices=[], coerce=unicode, option_widget=None)
+.. class:: SelectField(default field arguments, choices=[], coerce=unicode, option_widget=None, validate_choice=True)
 
     Select fields keep a `choices` property which is a sequence of `(value,
     label)` pairs.  The value portion can be any type in theory, but as form
@@ -281,7 +281,8 @@ refer to a single input from the form.
     Note that the `choices` keyword is only evaluated once, so if you want to make
     a dynamic drop-down list, you'll want to assign the choices list to the field
     after instantiation. Any inputted choices which are not in the given choices
-    list will cause validation on the field to fail.
+    list will cause validation on the field to fail. If this option cannot be
+    applied to your problem you may wish to skip choice validation (see below).
 
     **Select fields with dynamic choice values**::
 
@@ -298,6 +299,20 @@ refer to a single input from the form.
     `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we
     use :func:`int()` to coerce form data.  The default coerce is
     :func:`unicode()`.
+
+    **Skipping choice validation**::
+
+        class DynamicSelectForm(Form):
+            dynamic_select = SelectField("Choose an option", validate_choice=False)
+
+    Note the `validate_choice` parameter - by setting this to :const:`False` we
+    are telling the SelectField to skip the choice validation step and instead
+    to accept any inputted choice without checking to see if it was one of the
+    given choices. This should only really be used in situations where you
+    cannot use dynamic choice values as shown above - for example where the
+    choices of a :class:`~wtforms.fields.SelectField` are determined
+    dynamically by another field on the page, such as choosing a country and
+    state/region.
 
     **Advanced functionality**
 

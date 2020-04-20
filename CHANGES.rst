@@ -38,6 +38,8 @@ Unreleased
 -   :class:`~wtforms.validators.NumberRange` correctly handle *not a number*
     values. (`#505`_, `#548`_)
 -   :class:`~fields.IntegerField` checks input type when processing data. (`#451`_)
+-   Added a parameter to :class:`~fields.SelectField` to skip choice validation
+    (`#434`_, `#493`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -51,9 +53,11 @@ Unreleased
 .. _#395: https://github.com/wtforms/wtforms/pull/395
 .. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#410: https://github.com/wtforms/wtforms/pull/410
+.. _#434: https://github.com/wtforms/wtforms/issues/434
 .. _#451: https://github.com/wtforms/wtforms/pull/451
 .. _#475: https://github.com/wtforms/wtforms/pull/475
 .. _#463: https://github.com/wtforms/wtforms/pull/463
+.. _#493: https://github.com/wtforms/wtforms/pull/493
 .. _#505: https://github.com/wtforms/wtforms/pull/505
 .. _#523: https://github.com/wtforms/wtforms/pull/523
 .. _#524: https://github.com/wtforms/wtforms/pull/524
