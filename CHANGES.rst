@@ -40,6 +40,7 @@ Unreleased
 -   :class:`~fields.IntegerField` checks input type when processing data. (`#451`_)
 -   Added a parameter to :class:`~fields.SelectField` to skip choice validation
     (`#434`_, `#493`_)
+-   Choices which name and data are the same do not need to use tuples. (`#526`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -61,6 +62,7 @@ Unreleased
 .. _#505: https://github.com/wtforms/wtforms/pull/505
 .. _#523: https://github.com/wtforms/wtforms/pull/523
 .. _#524: https://github.com/wtforms/wtforms/pull/524
+.. _#526: https://github.com/wtforms/wtforms/pull/526
 .. _#548: https://github.com/wtforms/wtforms/pull/548
 .. _#483: https://github.com/wtforms/wtforms/pull/483
 .. _#485: https://github.com/wtforms/wtforms/pull/485
