@@ -67,6 +67,8 @@ Unreleased
 -   :class:`~validators.URL` validator now allows query parameters in the URL. (:pr:`523`, :pr:`524`).
 -   Updated French and Japanese translations. (:pr:`514`, :pr:`506`)
 -   form.errors is not cached and will update if an error is appended to a field after access. (:pr:`568`)
+-   :class:`~wtforms.validators.NumberRange` correctly handle *not a number*
+    values. (:pr:`505`, :pr:`548`)
 
 
 Version 2.2.1

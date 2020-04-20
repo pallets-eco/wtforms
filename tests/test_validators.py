@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import decimal
 import pytest
 import re
 
@@ -585,6 +586,14 @@ def test_number_range_raises(min_v, max_v, test_v, dummy_form, dummy_field):
     """
     dummy_field.data = test_v
     validator = NumberRange(min_v, max_v)
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("nan", [float("NaN"), decimal.Decimal("NaN")])
+def test_number_range_nan(nan, dummy_form, dummy_field):
+    validator = NumberRange(0, 10)
+    dummy_field.data = nan
     with pytest.raises(ValidationError):
         validator(dummy_form, dummy_field)
 
