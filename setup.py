@@ -66,6 +66,7 @@ setup(
         'wtforms.ext.sqlalchemy',
     ],
     include_package_data=True,
+    install_requires=["MarkupSafe"],
     extras_require={
         'locale': ['Babel>=1.3'],
         ':python_version=="2.6"': ['ordereddict'],

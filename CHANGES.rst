@@ -42,6 +42,11 @@ Unreleased
     (`#434`_, `#493`_)
 -   Choices which name and data are the same do not need to use tuples. (`#526`_)
 -   Added more documentation on HTML5 fields (`#326`_,  `#409`_)
+-   HTML is escaped using MarkupSafe instead of the previous internal
+    implementation. :func:`~widgets.core.escape_html` is removed,
+    replaced by :func:`markupsafe.escape`.
+    :class:`~widgets.core.HTMLString` is removed, replaced by
+    :class:`markupsafe.Markup`. (`#400`_)
 
 .. _#238: https://github.com/wtforms/wtforms/issues/238
 .. _#239: https://github.com/wtforms/wtforms/issues/239
@@ -54,6 +59,7 @@ Unreleased
 .. _#343: https://github.com/wtforms/wtforms/pull/343
 .. _#389: https://github.com/wtforms/wtforms/pull/389
 .. _#395: https://github.com/wtforms/wtforms/pull/395
+.. _#400: https://github.com/wtforms/wtforms/pull/400
 .. _#407: https://github.com/wtforms/wtforms/pull/407
 .. _#409: https://github.com/wtforms/wtforms/pull/409
 .. _#410: https://github.com/wtforms/wtforms/pull/410

@@ -103,7 +103,7 @@ class TemplateTagsTest(TestCase):
         )
         self.assertEqual(
             self._render('''{% form_field a class='foo"bar"' %}'''),
-            '<input class="foo&quot;bar&quot;" id="a" name="a" type="text" value="">'
+            '<input class="foo&#34;bar&#34;" id="a" name="a" type="text" value="">'
         )
 
     @override_settings(TEMPLATE_STRING_IF_INVALID='__INVALID')

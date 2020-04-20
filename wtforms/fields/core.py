@@ -7,6 +7,8 @@ import inspect
 
 from copy import copy
 
+from markupsafe import Markup
+
 from wtforms import widgets
 from wtforms.compat import text_type, izip
 from wtforms.i18n import DummyTranslations
@@ -420,7 +422,7 @@ class Label(object):
             kwargs.setdefault('for', self.field_id)
 
         attributes = widgets.html_params(**kwargs)
-        return widgets.HTMLString('<label %s>%s</label>' % (attributes, text or self.text))
+        return Markup('<label %s>%s</label>' % (attributes, text or self.text))
 
     def __repr__(self):
         return 'Label(%r, %r)' % (self.field_id, self.text)

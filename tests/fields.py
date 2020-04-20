@@ -6,6 +6,8 @@ from datetime import date, datetime
 from decimal import Decimal, ROUND_UP, ROUND_DOWN
 from unittest import TestCase
 
+from markupsafe import Markup
+
 from wtforms import validators, widgets, meta
 from wtforms.fields import *
 from wtforms.fields import Label, Field, SelectFieldBase, html5
@@ -150,7 +152,7 @@ class FieldTest(TestCase):
         assert repr(unbound).startswith('<UnboundField(TextField')
 
     def test_htmlstring(self):
-        self.assertTrue(isinstance(self.field.__html__(), widgets.HTMLString))
+        self.assertTrue(isinstance(self.field.__html__(), Markup))
 
     def test_str_coerce(self):
         self.assertTrue(isinstance(str(self.field), str))
