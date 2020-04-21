@@ -1,9 +1,6 @@
 from __future__ import unicode_literals
 
-try:
-    from html import escape
-except ImportError:
-    from cgi import escape
+from markupsafe import escape, Markup
 
 from wtforms.compat import text_type, iteritems
 
@@ -12,24 +9,6 @@ __all__ = (
     'RadioInput', 'Select', 'SubmitInput', 'TableWidget', 'TextArea',
     'TextInput', 'Option'
 )
-
-
-def escape_html(s, quote=True):
-    """
-    Replace special characters "&", "<" and ">" to HTML-safe sequences.
-
-    If the optional flag quote is true (the default), the quotation mark
-    characters, both double quote (") and single quote (') characters are also
-    translated.
-
-    If a `HTMLString` is provied, it's assumed that whatever you give to
-    escape_html is a string with any unsafe values already escaped.
-    """
-    if hasattr(s, '__html__'):
-        s = s.__html__()
-    else:
-        s = escape(text_type(s), quote=quote)
-    return s
 
 
 def html_params(**kwargs):
@@ -41,11 +20,12 @@ def html_params(**kwargs):
     frequent use of the normally reserved keywords `class` and `for`, suffixing
     these with an underscore will allow them to be used.
 
-    In order to facilitate the use of ``data-`` attributes, the first underscore
-    behind the ``data``-element is replaced with a hyphen.
+    In order to facilitate the use of ``data-`` and ``aria-`` attributes, if the
+    name of the attribute begins with ``data_`` or ``aria_``, then every
+    underscore will be replaced with a hyphen in the generated attribute.
 
-    >>> html_params(data_any_attribute='something')
-    'data-any_attribute="something"'
+    >>> html_params(data_attr='user.name', aria_labeledby='name')
+    'data-attr="user.name" aria-labeledby="name"'
 
     In addition, the values ``True`` and ``False`` are special:
       * ``attr=True`` generates the HTML compact output of a boolean attribute,
@@ -61,40 +41,15 @@ def html_params(**kwargs):
     for k, v in sorted(iteritems(kwargs)):
         if k in ('class_', 'class__', 'for_'):
             k = k[:-1]
-        elif k.startswith('data_'):
+        elif k.startswith('data_') or k.startswith('aria_'):
             k = k.replace('_', '-')
         if v is True:
             params.append(k)
         elif v is False:
             pass
         else:
-            params.append('%s="%s"' % (text_type(k), escape(text_type(v), quote=True)))
+            params.append('%s="%s"' % (text_type(k), escape(v)))
     return ' '.join(params)
-
-
-class HTMLString(text_type):
-    """
-    This is an "HTML safe string" class that is returned by WTForms widgets.
-
-    For the most part, HTMLString acts like a normal unicode string, except
-    in that it has a `__html__` method. This method is invoked by a compatible
-    auto-escaping HTML framework to get the HTML-safe version of a string.
-
-    Usage::
-
-        HTMLString('<input type="text" value="hello">')
-
-    """
-    def __html__(self):
-        """
-        Give an HTML-safe string.
-
-        This method actually returns itself, because it's assumed that
-        whatever you give to HTMLString is a string with any unsafe values
-        already escaped. This lets auto-escaping template frameworks
-        know that this string is safe for HTML rendering.
-        """
-        return self
 
 
 class ListWidget(object):
@@ -123,7 +78,7 @@ class ListWidget(object):
             else:
                 html.append('<li>%s %s</li>' % (subfield(), subfield.label))
         html.append('</%s>' % self.html_tag)
-        return HTMLString(''.join(html))
+        return Markup(''.join(html))
 
 
 class TableWidget(object):
@@ -156,7 +111,7 @@ class TableWidget(object):
             html.append('</table>')
         if hidden:
             html.append(hidden)
-        return HTMLString(''.join(html))
+        return Markup(''.join(html))
 
 
 class Input(object):
@@ -181,7 +136,7 @@ class Input(object):
             kwargs['value'] = field._value()
         if 'required' not in kwargs and 'required' in getattr(field, 'flags', []):
             kwargs['required'] = True
-        return HTMLString('<input %s>' % self.html_params(name=field.name, **kwargs))
+        return Markup('<input %s>' % self.html_params(name=field.name, **kwargs))
 
 
 class TextInput(Input):
@@ -293,9 +248,9 @@ class TextArea(object):
         kwargs.setdefault('id', field.id)
         if 'required' not in kwargs and 'required' in getattr(field, 'flags', []):
             kwargs['required'] = True
-        return HTMLString('<textarea %s>%s</textarea>' % (
+        return Markup('<textarea %s>\r\n%s</textarea>' % (
             html_params(name=field.name, **kwargs),
-            escape(text_type(field._value()), quote=False)
+            escape(field._value())
         ))
 
 
@@ -323,7 +278,7 @@ class Select(object):
         for val, label, selected in field.iter_choices():
             html.append(self.render_option(val, label, selected))
         html.append('</select>')
-        return HTMLString(''.join(html))
+        return Markup(''.join(html))
 
     @classmethod
     def render_option(cls, value, label, selected, **kwargs):
@@ -334,7 +289,7 @@ class Select(object):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s</option>' % (html_params(**options), escape_html(label, quote=False)))
+        return Markup('<option %s>%s</option>' % (html_params(**options), escape(label)))
 
 
 class Option(object):

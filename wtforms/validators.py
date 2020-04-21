@@ -1,8 +1,18 @@
 from __future__ import unicode_literals
 
+import math
 import re
 import uuid
 import warnings
+
+try:
+    import email_validator
+except ImportError:
+    email_validator = None
+try:
+    import ipaddress
+except ImportError:
+    ipaddress = None
 
 from wtforms.compat import string_types, text_type
 
@@ -101,6 +111,9 @@ class Length(object):
                 elif self.min == -1:
                     message = field.ngettext('Field cannot be longer than %(max)d character.',
                                              'Field cannot be longer than %(max)d characters.', self.max)
+                elif self.min == self.max:
+                    message = field.ngettext('Field must be exactly %(max)d character long.',
+                                             'Field must be exactly %(max)d characters long.', self.max)
                 else:
                     message = field.gettext('Field must be between %(min)d and %(max)d characters long.')
 
@@ -131,7 +144,7 @@ class NumberRange(object):
 
     def __call__(self, form, field):
         data = field.data
-        if data is None or (self.min is not None and data < self.min) or \
+        if data is None or math.isnan(data) or (self.min is not None and data < self.min) or \
                 (self.max is not None and data > self.max):
             message = self.message
             if message is None:
@@ -284,12 +297,22 @@ class Regexp(object):
 
 class Email(object):
     """
-    Validates an email address. Note that this uses a very primitive regular
-    expression and should only be used in instances where you later verify by
-    other means, such as email activation or lookups.
+    Validates an email address. Requires email_validator package to be
+    installed. For ex: pip install wtforms[email].
 
     :param message:
         Error message to raise in case of a validation error.
+    :param granular_messsage:
+        Use validation failed message from email_validator library
+        (Default False).
+    :param check_deliverability:
+        Perform domain name resolution check (Default False).
+    :param allow_smtputf8:
+        Fail validation for addresses that would require SMTPUTF8
+        (Default True).
+    :param allow_empty_local:
+        Allow an empty local part (i.e. @example.com), e.g. for validating
+        Postfix aliases (Default False).
     """
 
     user_regex = re.compile(
@@ -297,34 +320,45 @@ class Email(object):
         r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-\011\013\014\016-\177])*"\Z)',  # quoted-string
         re.IGNORECASE)
 
-    def __init__(self, message=None):
+    def __init__(
+        self,
+        message=None,
+        granular_message=False,
+        check_deliverability=False,
+        allow_smtputf8=True,
+        allow_empty_local=False,
+    ):
+        if email_validator is None:
+            raise Exception("Install 'email_validator' for email validation support.")
         self.message = message
-        self.validate_hostname = HostnameValidation(
-            require_tld=True,
-        )
+        self.granular_message = granular_message
+        self.check_deliverability = check_deliverability
+        self.allow_smtputf8 = allow_smtputf8
+        self.allow_empty_local = allow_empty_local
 
     def __call__(self, form, field):
-        value = field.data
-
-        message = self.message
-        if message is None:
-            message = field.gettext('Invalid email address.')
-
-        if not value or '@' not in value:
-            raise ValidationError(message)
-
-        user_part, domain_part = value.rsplit('@', 1)
-
-        if not self.user_regex.match(user_part):
-            raise ValidationError(message)
-
-        if not self.validate_hostname(domain_part):
+        try:
+            if field.data is None:
+                raise email_validator.EmailNotValidError()
+            email_validator.validate_email(
+                field.data,
+                check_deliverability=self.check_deliverability,
+                allow_smtputf8=self.allow_smtputf8,
+                allow_empty_local=self.allow_empty_local,
+            )
+        except email_validator.EmailNotValidError as e:
+            message = self.message
+            if message is None:
+                if self.granular_message:
+                    message = field.gettext(e)
+                else:
+                    message = field.gettext("Invalid email address.")
             raise ValidationError(message)
 
 
 class IPAddress(object):
     """
-    Validates an IP address.
+    Validates an IP address. Requires ipaddress package to be instaled for Python 2 support.
 
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
@@ -334,6 +368,8 @@ class IPAddress(object):
         Error message to raise in case of a validation error.
     """
     def __init__(self, ipv4=True, ipv6=False, message=None):
+        if ipaddress is None:
+            raise Exception("Install 'ipaddress' for Python 2 support.")
         if not ipv4 and not ipv6:
             raise ValueError('IP Address Validator must have at least one of ipv4 or ipv6 enabled.')
         self.ipv4 = ipv4
@@ -354,36 +390,27 @@ class IPAddress(object):
 
     @classmethod
     def check_ipv4(cls, value):
-        parts = value.split('.')
-        if len(parts) == 4 and all(x.isdigit() for x in parts):
-            numbers = list(int(x) for x in parts)
-            return all(num >= 0 and num < 256 for num in numbers)
-        return False
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError:
+            return False
+
+        if not isinstance(address, ipaddress.IPv4Address):
+            return False
+
+        return True
 
     @classmethod
     def check_ipv6(cls, value):
-        parts = value.split(':')
-        if len(parts) > 8:
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError:
             return False
 
-        num_blank = 0
-        for part in parts:
-            if not part:
-                num_blank += 1
-            else:
-                try:
-                    value = int(part, 16)
-                except ValueError:
-                    return False
-                else:
-                    if value < 0 or value >= 65536:
-                        return False
+        if not isinstance(address, ipaddress.IPv6Address):
+            return False
 
-        if num_blank < 2:
-            return True
-        elif num_blank == 2 and not parts[0] and not parts[1]:
-            return True
-        return False
+        return True
 
 
 class MacAddress(Regexp):
@@ -419,7 +446,13 @@ class URL(Regexp):
         Error message to raise in case of a validation error.
     """
     def __init__(self, require_tld=True, message=None):
-        regex = r'^[a-z]+://(?P<host>[^/:]+)(?P<port>:[0-9]+)?(?P<path>\/.*)?$'
+        regex = (
+            r"^[a-z]+://"
+            r"(?P<host>[^\/\?:]+)"
+            r"(?P<port>:[0-9]+)?"
+            r"(?P<path>\/.*?)?"
+            r"(?P<query>\?.*)?$"
+        )
         super(URL, self).__init__(regex, re.IGNORECASE, message)
         self.validate_hostname = HostnameValidation(
             require_tld=require_tld,
@@ -526,7 +559,7 @@ class HostnameValidation(object):
 
     This is not a validator in and of itself, and as such is not exported.
     """
-    hostname_part = re.compile(r'^(xn-|[a-z0-9]+)(-[a-z0-9]+)*$', re.IGNORECASE)
+    hostname_part = re.compile(r'^(xn-|[a-z0-9_]+)(-[a-z0-9_]+)*$', re.IGNORECASE)
     tld_part = re.compile(r'^([a-z]{2,20}|xn--([a-z0-9]+-)*[a-z0-9]+)$', re.IGNORECASE)
 
     def __init__(self, require_tld=True, allow_ip=False):

@@ -5,7 +5,7 @@ from unittest import TestCase
 from wtforms.form import BaseForm, Form
 from wtforms.meta import DefaultMeta
 from wtforms.fields import TextField, IntegerField
-from wtforms.validators import ValidationError
+from wtforms.validators import ValidationError, DataRequired
 from tests.common import DummyPostData
 
 
@@ -210,6 +210,21 @@ class FormTest(TestCase):
         self.assertEqual(self.F(DummyPostData()).test.data, '')
         self.assertEqual(self.F(DummyPostData(), test='test').test.data, 'test')
         self.assertEqual(self.F(DummyPostData({'test': 'foo'}), test='test').test.data, 'foo')
+
+    def test_errors_access_during_validation(self):
+        class F(Form):
+            foo = TextField(validators=[DataRequired()])
+
+            def validate(self):
+                super(F, self).validate()
+                self.errors
+                self.foo.errors.append("bar")
+                return True
+
+        form = F(foo="whatever")
+        form.validate()
+
+        self.assertEqual({"foo": ["bar"]}, form.errors)
 
 
 class MetaTest(TestCase):

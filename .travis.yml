@@ -10,7 +10,6 @@ python:
   - 3.5
   - 3.4
   - 3.3
-  - 2.7
   - 2.6
   - nightly
   - pypy3
@@ -25,6 +24,9 @@ matrix:
     - python: nightly
     - python: pypy3
   fast_finish: true
+  include:
+    - python: "2.7"
+      env: TOXENV=py27
 
 install:
   - pip install tox

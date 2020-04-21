@@ -6,6 +6,8 @@ from datetime import date, datetime
 from decimal import Decimal, ROUND_UP, ROUND_DOWN
 from unittest import TestCase
 
+from markupsafe import Markup
+
 from wtforms import validators, widgets, meta
 from wtforms.fields import *
 from wtforms.fields import Label, Field, SelectFieldBase, html5
@@ -71,6 +73,17 @@ class LabelTest(TestCase):
         label = Label('test', 'Caption')
         self.assertEqual(label(for_='foo'), """<label for="foo">Caption</label>""")
         self.assertEqual(label(**{'for': 'bar'}), """<label for="bar">Caption</label>""")
+
+    def test_escaped_label_text(self):
+        label = Label('test', '<script>alert("test");</script>')
+        self.assertEqual(
+            label(for_='foo'),
+            """<label for="foo">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>"""
+        )
+        self.assertEqual(
+            label(**{'for': 'bar'}),
+            """<label for="bar">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>"""
+        )
 
 
 class FlagsTest(TestCase):
@@ -150,7 +163,7 @@ class FieldTest(TestCase):
         assert repr(unbound).startswith('<UnboundField(TextField')
 
     def test_htmlstring(self):
-        self.assertTrue(isinstance(self.field.__html__(), widgets.HTMLString))
+        self.assertTrue(isinstance(self.field.__html__(), Markup))
 
     def test_str_coerce(self):
         self.assertTrue(isinstance(str(self.field), str))
@@ -208,6 +221,19 @@ class FieldTest(TestCase):
     def test_required_flag(self):
         form = self.F()
         self.assertEqual(form.b(), u'<input id="b" name="b" required type="text" value="">')
+
+    def test_check_validators(self):
+        v1 = "Not callable"
+        v2 = validators.DataRequired
+
+        with self.assertRaisesRegexp(TypeError, "{} is not a valid validator because "
+                                                "it is not callable".format(v1)):
+            Field(validators=[v1])
+
+        with self.assertRaisesRegexp(TypeError, "{} is not a valid validator because "
+                                                "it is a class, it should be an "
+                                                "instance".format(v2)):
+            Field(validators=[v2])
 
 
 class PrePostTestField(TextField):
@@ -292,9 +318,24 @@ class SelectFieldTest(TestCase):
         F = make_form(a=SelectField(choices=[('a', 'Foo')]))
         form = F(DummyPostData(a=[]))
         assert not form.validate()
-        self.assertEqual(form.a.data, 'None')
+        self.assertEqual(form.a.data, None)
         self.assertEqual(len(form.a.errors), 1)
         self.assertEqual(form.a.errors[0], 'Not a valid choice')
+
+    def test_validate_choices(self):
+        F = make_form(a=SelectField(choices=[("a", "Foo")]))
+        form = F(DummyPostData(a=["b"]))
+        assert not form.validate()
+        self.assertEqual(form.a.data, "b")
+        self.assertEqual(len(form.a.errors), 1)
+        self.assertEqual(form.a.errors[0], "Not a valid choice")
+
+    def test_dont_validate_choices(self):
+        F = make_form(a=SelectField(choices=[("a", "Foo")], validate_choice=False))
+        form = F(DummyPostData(a=["b"]))
+        assert form.validate()
+        self.assertEqual(form.a.data, "b")
+        self.assertEqual(len(form.a.errors), 0)
 
 
 class SelectMultipleFieldTest(TestCase):
@@ -372,7 +413,7 @@ class RadioFieldTest(TestCase):
             form.a(),
             '''<ul id="a">'''
             '''<li><input id="a-0" name="a" type="radio" value="True"> <label for="a-0">yes</label></li>'''
-            '''<li><input checked id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>'''
+            '''<li><input id="a-1" name="a" type="radio" value="False"> <label for="a-1">no</label></li></ul>'''
         )
 
 
@@ -407,7 +448,7 @@ class TextAreaFieldTest(TestCase):
 
     def test(self):
         form = self.F()
-        self.assertEqual(form.a(), """<textarea id="a" name="a">LE DEFAULT</textarea>""")
+        self.assertEqual(form.a(), """<textarea id="a" name="a">\r\nLE DEFAULT</textarea>""")
 
 
 class PasswordFieldTest(TestCase):
@@ -473,6 +514,13 @@ class IntegerFieldTest(TestCase):
         self.assertEqual(form.b.data, 9)
         self.assertEqual(form.a._value(), '')
         self.assertEqual(form.b._value(), '9')
+        form = self.F(DummyPostData(), data=dict(b="v"))
+        self.assertEqual(form.b.data, None)
+        self.assertEqual(form.a._value(), "")
+        self.assertEqual(form.b._value(), "")
+        self.assertTrue(not form.validate())
+        self.assertEqual(len(form.b.process_errors), 1)
+        self.assertEqual(len(form.b.errors), 1)
 
 
 class DecimalFieldTest(TestCase):
@@ -860,6 +908,12 @@ class FieldListTest(TestCase):
         self.assertEqual(len(form.a.entries), 3)
         self.assertEqual(form.a.data, data)
 
+    def test_errors(self):
+        F = make_form(a=FieldList(self.t))
+        form = F(DummyPostData({'a-0': ['a'], 'a-1': ''}))
+        assert not form.validate()
+        self.assertEqual(form.a.errors, [[], ['This field is required.']])
+
 
 class MyCustomField(TextField):
     def process_data(self, data):
@@ -921,9 +975,9 @@ class HTML5FieldsTest(TestCase):
             b('datetime', '2013-09-05 00:23:42', 'type="datetime"', datetime(2013, 9, 5, 0, 23, 42)),
             b('date', '2013-09-05', 'type="date"', date(2013, 9, 5)),
             b('dt_local', '2013-09-05 00:23:42', 'type="datetime-local"', datetime(2013, 9, 5, 0, 23, 42)),
-            b('integer', '42', '<input id="integer" name="integer" step="1" type="number" value="42">', 42),
+            b('integer', '42', '<input id="integer" name="integer" type="number" value="42">', 42),
             b('decimal', '43.5', '<input id="decimal" name="decimal" step="any" type="number" value="43.5">', Decimal('43.5')),
-            b('int_range', '4', '<input id="int_range" name="int_range" step="1" type="range" value="4">', 4),
+            b('int_range', '4', '<input id="int_range" name="int_range" type="range" value="4">', 4),
             b('decimal_range', '58', '<input id="decimal_range" name="decimal_range" step="any" type="range" value="58">', 58),
         )
         formdata = DummyPostData()

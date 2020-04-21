@@ -35,7 +35,6 @@ class BaseForm(object):
 
         self.meta = meta
         self._prefix = prefix
-        self._errors = None
         self._fields = OrderedDict()
 
         if hasattr(fields, 'items'):
@@ -142,7 +141,6 @@ class BaseForm(object):
 
         Returns `True` if no errors occur.
         """
-        self._errors = None
         success = True
         for name, field in iteritems(self._fields):
             if extra_validators is not None and name in extra_validators:
@@ -159,9 +157,7 @@ class BaseForm(object):
 
     @property
     def errors(self):
-        if self._errors is None:
-            self._errors = dict((name, f.errors) for name, f in iteritems(self._fields) if f.errors)
-        return self._errors
+        return {name: f.errors for name, f in self._fields.items() if f.errors}
 
 
 class FormMeta(type):

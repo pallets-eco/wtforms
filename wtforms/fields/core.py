@@ -3,8 +3,11 @@ from __future__ import unicode_literals
 import datetime
 import decimal
 import itertools
+import inspect
 
 from copy import copy
+
+from markupsafe import Markup, escape
 
 from wtforms import widgets
 from wtforms.compat import text_type, izip
@@ -104,7 +107,9 @@ class Field(object):
         self.name = _prefix + _name
         self.short_name = _name
         self.type = type(self).__name__
-        self.validators = validators or list(self.validators)
+
+        self.check_validators(validators)
+        self.validators = validators or self.validators
 
         self.id = id or self.name
         self.label = Label(self.id, label if label is not None else self.gettext(_name.replace('_', ' ').title()))
@@ -154,6 +159,18 @@ class Field(object):
         """
         return self.meta.render_field(self, kwargs)
 
+    @classmethod
+    def check_validators(cls, validators):
+        if validators is not None:
+            for validator in validators:
+                if not callable(validator):
+                    raise TypeError("{} is not a valid validator because it is not "
+                                    "callable".format(validator))
+
+                if inspect.isclass(validator):
+                    raise TypeError("{} is not a valid validator because it is a class, "
+                                    "it should be an instance".format(validator))
+
     def gettext(self, string):
         """
         Get a translation for the given message.
@@ -189,6 +206,9 @@ class Field(object):
         """
         self.errors = list(self.process_errors)
         stop_validation = False
+
+        # Check the type of extra_validators
+        self.check_validators(extra_validators)
 
         # Call pre_validate
         try:
@@ -340,6 +360,9 @@ class UnboundField(object):
         self.args = args
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
+        validators = kwargs.get('validators')
+        if validators:
+            self.field_class.check_validators(validators)
 
     def bind(self, form, name, prefix='', translations=None, **kwargs):
         kw = dict(
@@ -399,7 +422,8 @@ class Label(object):
             kwargs.setdefault('for', self.field_id)
 
         attributes = widgets.html_params(**kwargs)
-        return widgets.HTMLString('<label %s>%s</label>' % (attributes, text or self.text))
+        text = escape(text or self.text)
+        return Markup('<label %s>%s</label>' % (attributes, text))
 
     def __repr__(self):
         return 'Label(%r, %r)' % (self.field_id, self.text)
@@ -445,17 +469,28 @@ class SelectFieldBase(Field):
 class SelectField(SelectFieldBase):
     widget = widgets.Select()
 
-    def __init__(self, label=None, validators=None, coerce=text_type, choices=None, **kwargs):
+    def __init__(self, label=None, validators=None, coerce=text_type, choices=None, validate_choice=True, **kwargs):
         super(SelectField, self).__init__(label, validators, **kwargs)
         self.coerce = coerce
-        self.choices = copy(choices)
+        self.choices = list(choices) if choices is not None else None
+        self.validate_choice = validate_choice
 
     def iter_choices(self):
-        for value, label in self.choices:
+        if isinstance(self.choices[0], (list, tuple)):
+            choices = self.choices
+        else:
+            choices = zip(self.choices, self.choices)
+
+        for value, label in choices:
             yield (value, label, self.coerce(value) == self.data)
 
     def process_data(self, value):
         try:
+            # protect against coercing None,
+            # such as in text_type(None) -> "None"
+            if value is None:
+                raise ValueError()
+
             self.data = self.coerce(value)
         except (ValueError, TypeError):
             self.data = None
@@ -468,11 +503,12 @@ class SelectField(SelectFieldBase):
                 raise ValueError(self.gettext('Invalid Choice: could not coerce'))
 
     def pre_validate(self, form):
-        for v, _ in self.choices:
-            if self.data == v:
-                break
-        else:
-            raise ValueError(self.gettext('Not a valid choice'))
+        if self.validate_choice:
+            for v, _ in self.choices:
+                if self.data == v:
+                    break
+            else:
+                raise ValueError(self.gettext("Not a valid choice"))
 
 
 class SelectMultipleField(SelectField):
@@ -581,6 +617,16 @@ class IntegerField(Field):
             return text_type(self.data)
         else:
             return ''
+
+    def process_data(self, value):
+        if value is not None and value is not unset_value:
+            try:
+                self.data = int(value)
+            except (ValueError, TypeError):
+                self.data = None
+                raise ValueError(self.gettext("Not a valid integer value"))
+        else:
+            self.data = None
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -693,7 +739,7 @@ class BooleanField(Field):
     :param false_values:
         If provided, a sequence of strings each of which is an exact match
         string of what is considered a "false" value. Defaults to the tuple
-        ``('false', '')``
+        ``(False, 'false', '',)``
     """
     widget = widgets.CheckboxInput()
     false_values = (False, 'false', '')
@@ -938,8 +984,11 @@ class FieldList(Field):
 
         # Run validators on all entries within
         for subfield in self.entries:
-            if not subfield.validate(form):
-                self.errors.append(subfield.errors)
+            subfield.validate(form)
+            self.errors.append(subfield.errors)
+
+        if not any(x for x in self.errors):
+            self.errors = []
 
         chain = itertools.chain(self.validators, extra_validators)
         self._run_validation_chain(form, chain)

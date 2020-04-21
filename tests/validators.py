@@ -9,6 +9,7 @@ from wtforms.validators import (
 )
 from functools import partial
 from tests.common import DummyField, grab_error_message, grab_stop_message
+import decimal
 
 
 class DummyForm(dict):
@@ -41,6 +42,13 @@ class ValidatorsTest(TestCase):
         # Test IDNA domains
         self.assertEqual(email()(self.form, DummyField(u'foo@bücher.中国')), None)
 
+    def test_invalid_email_raises_granular_message(self):
+        """
+        When granular_message=True uses message from email_validator library.
+        """
+        validator = email(granular_message=True)
+        self.assertRaisesRegexp(ValidationError, "There must be something after the @-sign.", validator, self.form, DummyField("foo@"))
+
     def test_equal_to(self):
         self.form['foo'] = DummyField('test')
         self.assertEqual(equal_to('foo')(self.form, self.form['foo']), None)
@@ -48,15 +56,14 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValidationError, equal_to('foo'), self.form, DummyField('different_value'))
 
     def test_ip_address(self):
-        self.assertEqual(ip_address()(self.form, DummyField('127.0.0.1')), None)
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('abc.0.0.1'))
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('1278.0.0.1'))
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('127.0.0.abc'))
-        self.assertRaises(ValidationError, ip_address(), self.form, DummyField('900.200.100.75'))
-        for bad_address in ('abc.0.0.1', 'abcd:1234::123::1', '1:2:3:4:5:6:7:8:9', 'abcd::1ffff'):
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'abc.0.0.1'))
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'1278.0.0.1'))
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'1278.0.0.1'))
+        self.assertRaises(ValidationError, ip_address(), self.form, DummyField(u'900.200.100.75'))
+        for bad_address in (u'abc.0.0.1', u'abcd:1234::123::1', u'1:2:3:4:5:6:7:8:9', u'abcd::1ffff'):
             self.assertRaises(ValidationError, ip_address(ipv6=True), self.form, DummyField(bad_address))
 
-        for good_address in ('::1', 'dead:beef:0:0:0:0:42:1', 'abcd:ef::42:1'):
+        for good_address in (u'::1', u'dead:beef:0:0:0:0:42:1', u'abcd:ef::42:1'):
             self.assertEqual(ip_address(ipv6=True)(self.form, DummyField(good_address)), None)
 
         # Test ValueError on ipv6=False and ipv4=False
@@ -101,6 +108,7 @@ class ValidatorsTest(TestCase):
         self.assertEqual(length(min=6)(self.form, field), None)
         self.assertRaises(ValidationError, length(max=5), self.form, field)
         self.assertEqual(length(max=6)(self.form, field), None)
+        self.assertEqual(length(min=6, max=6)(self.form, field), None)
 
         self.assertRaises(AssertionError, length)
         self.assertRaises(AssertionError, length, min=5, max=2)
@@ -111,6 +119,7 @@ class ValidatorsTest(TestCase):
         self.assertTrue('at least 8' in grab(min=8))
         self.assertTrue('longer than 5' in grab(max=5))
         self.assertTrue('between 2 and 5' in grab(min=2, max=5))
+        self.assertTrue('exactly 5' in grab(min=5, max=5))
 
     def test_required(self):
         self.assertEqual(required()(self.form, DummyField('foobar')), None)
@@ -175,19 +184,30 @@ class ValidatorsTest(TestCase):
         self.assertEqual(grab_error_message(regexp('^a', message='foo'), self.form, DummyField('f')), 'foo')
 
     def test_url(self):
-        self.assertEqual(url()(self.form, DummyField('http://foobar.dk')), None)
-        self.assertEqual(url()(self.form, DummyField('http://foobar.dk/')), None)
-        self.assertEqual(url()(self.form, DummyField('http://foobar.museum/foobar')), None)
-        self.assertEqual(url()(self.form, DummyField('http://127.0.0.1/foobar')), None)
-        self.assertEqual(url()(self.form, DummyField('http://127.0.0.1:9000/fake')), None)
-        self.assertEqual(url(require_tld=False)(self.form, DummyField('http://localhost/foobar')), None)
-        self.assertEqual(url(require_tld=False)(self.form, DummyField('http://foobar')), None)
-        self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField('foobar.dk'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField('http://127.0.0/asdf'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.d'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField('http://foobar.12'))
-        self.assertRaises(ValidationError, url(), self.form, DummyField('http://localhost:abc/a'))
+        self.assertEqual(url()(self.form, DummyField(u'http://foobar.dk')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://foobar.dk/')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://foo-bar.dk/')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://foo_bar.dk/')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://foobar.dk?query=param')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://foobar.dk/path?query=param')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://foobar.dk/path?query=param&foo=faa')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://foobar.museum/foobar')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://198.168.0.1/foobar')), None)
+        self.assertEqual(url()(self.form, DummyField(u'http://198.168.0.1:9000/fake')), None)
+        self.assertEqual(url(require_tld=False)(self.form, DummyField(u'http://localhost/foobar')), None)
+        self.assertEqual(url(require_tld=False)(self.form, DummyField(u'http://foobar')), None)
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar?query=param&foo=faa'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar:5000?query=param&foo=faa'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar/path?query=param&foo=faa'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar:1234/path?query=param&foo=faa'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://-foobar.dk/'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar-.dk/'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'foobar.dk'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://127.0.0/asdf'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar.d'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://foobar.12'))
+        self.assertRaises(ValidationError, url(), self.form, DummyField(u'http://localhost:abc/a'))
         # Test IDNA
         IDNA_TESTS = (
             u'http://\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631/foo.com',  # Arabic test
@@ -212,6 +232,11 @@ class ValidatorsTest(TestCase):
         onlymax = NumberRange(max=50)
         self.assertEqual(onlymax(self.form, DummyField(30)), None)
         self.assertRaises(ValidationError, onlymax, self.form, DummyField(75))
+
+    def test_number_range_nan(self):
+        validator = NumberRange(0, 10)
+        for nan in (float("Nan"), decimal.Decimal("NaN")):
+            self.assertRaises(ValidationError, validator, self.form, DummyField(nan))
 
     def test_lazy_proxy(self):
         """Tests that the validators support lazy translation strings for messages."""
@@ -250,3 +275,42 @@ class ValidatorsTest(TestCase):
     def test_none_of(self):
         self.assertEqual(NoneOf(['a', 'b', 'c'])(self.form, DummyField('d')), None)
         self.assertRaises(ValueError, NoneOf(['a', 'b', 'c']), self.form, DummyField('a'))
+
+
+class IPAddreesTest(TestCase):
+    def test_ip4address_passes(self):
+        for address in [
+            u"147.230.23.25",
+            u"147.230.23.0",
+            u"127.0.0.1"
+        ]:
+            adr = ip_address()
+            field = DummyField(address)
+            adr(None, field)
+
+    def test_ip6address_passes(self):
+        for address in [
+            u"2001:718:1C01:1111::1111",
+            u"2001:718:1C01:1111::",
+        ]:
+            adr = ip_address(ipv6=True)
+            field = DummyField(address)
+            adr(None, field)
+
+    def test_ip6address_raises(self):
+        for address in [
+            u"2001:718:1C01:1111::1111",
+            u"2001:718:1C01:1111::",
+        ]:
+            adr = ip_address()
+            field = DummyField(address)
+            self.assertRaises(ValidationError, adr, None, field)
+
+    def test_ip4address_raises(self):
+        for address in [
+            u"147.230.1000.25",
+            u"2001:718::::",
+        ]:
+            adr = ip_address(ipv6=True)
+            field = DummyField(address)
+            self.assertRaises(ValidationError, adr, None, field)

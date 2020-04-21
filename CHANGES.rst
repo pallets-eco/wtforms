@@ -7,6 +7,90 @@ Unreleased
 ----------
 
 -   Updated French translation.
+-   Modified the changes made in `#286`_: instead of copying the list of
+    ``choices``, :class:`~fields.SelectField` now uses ``list()`` to construct
+    a new list of choices. (`#475`_)
+-   Permitted underscores in ``HostnameValidation`` (`#463`_)
+-   :class:`~validators.URL` validator now allows query parameters in the URL. (`#523`_, `#524`_).
+-   Updated ``false_values`` param in ``BooleanField`` docs (`#483`_, `#485`_)
+-   Fixed broken format string in Arabic translation (`#471`_)
+-   Updated French and Japanese translations. (`#514`_, `#506`_)
+-   Updated Ukrainian translation (`#433`_)
+-   ``FieldList`` error list is keeps entries in orders for easier identifcation
+    of erroring fields (`#257`_, `#407`_)
+-   :class:`~validators.Length` gives a more helpful error message when
+    ``min`` and ``max`` are the same value (`#266`_)
+-   :class:`~fields.SelectField` no longer coerces ``None`` to ``"None"``
+    allowing use of ``"None"`` as an option (`#288`_, `#289`_)
+-   The :class:`~widgets.TextArea` widget prepends a ``\r\n`` newline
+    when rendering to account for browsers stripping an initial line for
+    display. This does not affect the value. (`#238`_, `#395`_)
+-   HTML5 :class:`~fields.html5.IntegerField` and
+    :class:`~fields.html5.RangeInput` don't render the ``step="1"``
+    attribute by default. (`#343`_)
+-   ``aria_`` args are rendered the same way as ``data_`` args, by
+    converting underscores to hyphens. ``aria_describedby="name-help"``
+    becomes ``aria-describedby="name-help"``. (`#239`_, `#389`_)
+-   Added a ``check_validators`` method to :class:`~fields.Field` which checks
+    if the given validators are both callable, and not classes (`#298`_, `#410`_)
+-   form.errors is not cached and will update if an error is appended to a field
+    after access. (`#568`_)
+-   :class:`~wtforms.validators.NumberRange` correctly handle *not a number*
+    values. (`#505`_, `#548`_)
+-   :class:`~fields.IntegerField` checks input type when processing data. (`#451`_)
+-   Added a parameter to :class:`~fields.SelectField` to skip choice validation
+    (`#434`_, `#493`_)
+-   Choices which name and data are the same do not need to use tuples. (`#526`_)
+-   Added more documentation on HTML5 fields (`#326`_,  `#409`_)
+-   HTML is escaped using MarkupSafe instead of the previous internal
+    implementation. :func:`~widgets.core.escape_html` is removed,
+    replaced by :func:`markupsafe.escape`.
+    :class:`~widgets.core.HTMLString` is removed, replaced by
+    :class:`markupsafe.Markup`. (`#400`_)
+-   Fixed broken IPv6 validator, validation now uses the ``ipaddress`` package
+    (`#385`_, `#403`_)
+-   :class:`~fields.core.Label` text is escaped before rendering.
+    (`#315`_, `#375`_)
+-   Email validation is now handled by an optional library, ``email_validator``
+    (`#429`_)
+
+.. _#238: https://github.com/wtforms/wtforms/issues/238
+.. _#239: https://github.com/wtforms/wtforms/issues/239
+.. _#257: https://github.com/wtforms/wtforms/issues/257
+.. _#266: https://github.com/wtforms/wtforms/pull/266
+.. _#288: https://github.com/wtforms/wtforms/pull/288
+.. _#289: https://github.com/wtforms/wtforms/issues/289
+.. _#298: https://github.com/wtforms/wtforms/issues/298
+.. _#315: https://github.com/wtforms/wtforms/pull/315
+.. _#326: https://github.com/wtforms/wtforms/issues/326
+.. _#343: https://github.com/wtforms/wtforms/pull/343
+.. _#375: https://github.com/wtforms/wtforms/pull/375
+.. _#389: https://github.com/wtforms/wtforms/pull/389
+.. _#385: https://github.com/wtforms/wtforms/issues/385
+.. _#395: https://github.com/wtforms/wtforms/pull/395
+.. _#400: https://github.com/wtforms/wtforms/pull/400
+.. _#403: https://github.com/wtforms/wtforms/pull/403
+.. _#407: https://github.com/wtforms/wtforms/pull/407
+.. _#409: https://github.com/wtforms/wtforms/pull/409
+.. _#410: https://github.com/wtforms/wtforms/pull/410
+.. _#429: https://github.com/wtforms/wtforms/pull/429
+.. _#434: https://github.com/wtforms/wtforms/issues/434
+.. _#451: https://github.com/wtforms/wtforms/pull/451
+.. _#475: https://github.com/wtforms/wtforms/pull/475
+.. _#463: https://github.com/wtforms/wtforms/pull/463
+.. _#493: https://github.com/wtforms/wtforms/pull/493
+.. _#505: https://github.com/wtforms/wtforms/pull/505
+.. _#523: https://github.com/wtforms/wtforms/pull/523
+.. _#524: https://github.com/wtforms/wtforms/pull/524
+.. _#526: https://github.com/wtforms/wtforms/pull/526
+.. _#548: https://github.com/wtforms/wtforms/pull/548
+.. _#483: https://github.com/wtforms/wtforms/pull/483
+.. _#485: https://github.com/wtforms/wtforms/pull/485
+.. _#471: https://github.com/wtforms/wtforms/pull/471
+.. _#514: https://github.com/wtforms/wtforms/pull/514
+.. _#506: https://github.com/wtforms/wtforms/pull/506
+.. _#433: https://github.com/wtforms/wtforms/pull/433
+.. _#568: https://github.com/wtforms/wtforms/pull/568
 
 Version 2.2.1
 -------------
