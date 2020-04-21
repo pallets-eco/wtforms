@@ -41,5 +41,6 @@ Information
     :maxdepth: 2
 
     changes
-    contributing
     whats_new
+    license
+    contributing
