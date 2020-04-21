@@ -11,7 +11,7 @@ from wtforms import widgets
 from wtforms.compat import izip, text_type
 from wtforms.i18n import DummyTranslations
 from wtforms.utils import unset_value
-from wtforms.validators import StopValidation
+from wtforms.validators import StopValidation, ValidationError
 
 __all__ = (
     "BooleanField",
@@ -246,7 +246,7 @@ class Field(object):
             if e.args and e.args[0]:
                 self.errors.append(e.args[0])
             stop_validation = True
-        except ValueError as e:
+        except ValidationError as e:
             self.errors.append(e.args[0])
 
         # Run validators
@@ -257,7 +257,7 @@ class Field(object):
         # Call post_validate
         try:
             self.post_validate(form, stop_validation)
-        except ValueError as e:
+        except ValidationError as e:
             self.errors.append(e.args[0])
 
         return len(self.errors) == 0
@@ -277,7 +277,7 @@ class Field(object):
                 if e.args and e.args[0]:
                     self.errors.append(e.args[0])
                 return True
-            except ValueError as e:
+            except ValidationError as e:
                 self.errors.append(e.args[0])
 
         return False
@@ -553,7 +553,7 @@ class SelectField(SelectFieldBase):
                 if self.data == v:
                     break
             else:
-                raise ValueError(self.gettext("Not a valid choice"))
+                raise ValidationError(self.gettext("Not a valid choice"))
 
 
 class SelectMultipleField(SelectField):
@@ -591,7 +591,7 @@ class SelectMultipleField(SelectField):
             values = list(c[0] for c in self.choices)
             for d in self.data:
                 if d not in values:
-                    raise ValueError(
+                    raise ValidationError(
                         self.gettext("'%(value)s' is not a valid choice for this field")
                         % dict(value=d)
                     )

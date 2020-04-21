@@ -69,6 +69,9 @@ Unreleased
 -   form.errors is not cached and will update if an error is appended to a field after access. (:pr:`568`)
 -   :class:`~wtforms.validators.NumberRange` correctly handle *not a number*
     values. (:pr:`505`, :pr:`548`)
+-   :class:`ValueError` raised by a validator are handled like regular exceptions. validators
+    need to raise :class:`~wtforms.validators.ValidationError` or
+    :class:`~wtforms.validators.StopValidation` to make a validation fail (:pr:`445`, :pr:`551`).
 
 
 Version 2.2.1
