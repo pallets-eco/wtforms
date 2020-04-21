@@ -1,31 +1,20 @@
 ---
 os: linux
-sudo: false
 language: python
 
 python:
-  - 3.8
-  - 3.7
-  - 3.6
-  - 3.5
-  - 3.4
-  - 3.3
-  - 2.6
-  - nightly
+  - '3.8'
+  - '3.7'
+  - '3.6'
+  - '3.5'
   - pypy3
 
 env:
   - TOXENV=py
 
 matrix:
-  allow_failures:
-    - python: 2.6
-    - python: 3.3
-    - python: nightly
-    - python: pypy3
-  fast_finish: true
   include:
-    - python: "2.7"
+    - python: '2.7'
       env: TOXENV=py27
 
 install:
@@ -36,7 +25,6 @@ script:
 
 after_success:
   - pip install coveralls
-  - coverage combine
   - coverage report
   - coveralls
 
@@ -46,7 +34,7 @@ cache:
 branches:
   only:
     - master
-    - /^.*-maintenance$/
+    - /^.*\.x$/
 
 notifications:
   email: false
