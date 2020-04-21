@@ -3,7 +3,7 @@
 Version 2.3.0
 -------------
 
-Unreleased
+Released 2020-04-21
 
 -   Drop support for Python 2.6, 3.3, and 3.4.
 -   :class:`~fields.SelectField` uses ``list()`` to construct a new list
