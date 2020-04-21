@@ -257,14 +257,16 @@ injected as html attributes in the output::
     >>> form.content(style="width: 200px;", class_="bar")
     u'<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar" />'
 
-Now let's apply this power to rendering a form in a `Jinja <http://jinja.pocoo.org/>`_
-template. First, our form::
+Now let's apply this power to rendering a form in a `Jinja`_ template.
+First, our form::
 
     class LoginForm(Form):
         username = StringField('Username')
         password = PasswordField('Password')
 
     form = LoginForm()
+
+.. _Jinja: https://jinja.palletsprojects.com/
 
 And the template:
 

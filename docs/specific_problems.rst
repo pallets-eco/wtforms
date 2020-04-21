@@ -80,10 +80,6 @@ subclasses:
         form = F(request.POST, ...)
         # do view stuff
 
-For more form composition tricks, refer to `this mailing list post`_
-
-.. _this mailing list post: https://groups.google.com/forum/#!topic/wtforms/cJl3aqzZieA
-
 
 .. _jinja-macros-example:
 
@@ -91,7 +87,7 @@ Rendering Errors
 ----------------
 
 In your template, you will often find yourself faced with the repetitive task
-of rendering errors for a form field. Here's a Jinja2_ macro that may save you time:
+of rendering errors for a form field. Here's a `Jinja`_ macro that may save you time:
 
 .. code-block:: html+jinja
 
@@ -109,7 +105,7 @@ of rendering errors for a form field. Here's a Jinja2_ macro that may save you t
 
     Usage: {{ with_errors(form.field, style='font-weight: bold') }}
 
-.. _Jinja2: http://jinja.pocoo.org/
+.. _Jinja: https://jinja.palletsprojects.com/
 
 
 Specialty Field Tricks
