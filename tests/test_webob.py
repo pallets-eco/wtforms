@@ -12,7 +12,7 @@ except ImportError:
     has_webob = False
 
 
-class MockMultiDict(object):
+class MockMultiDict:
     def __init__(self, tuples):
         self.tuples = tuples
 
@@ -39,7 +39,7 @@ class MockMultiDict(object):
 
 class SneakyField(Field):
     def __init__(self, sneaky_callable, *args, **kwargs):
-        super(SneakyField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.sneaky_callable = sneaky_callable
 
     def process(self, formdata, data=unset_value):

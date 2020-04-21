@@ -1,16 +1,12 @@
-from __future__ import unicode_literals
-
 from collections import namedtuple
 from datetime import date, datetime
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
-import sys
 
 from markupsafe import Markup
 import pytest
 
 from tests.common import DummyPostData
 from wtforms import meta, validators, widgets
-from wtforms.compat import text_type
 from wtforms.fields import (
     BooleanField,
     DateField,
@@ -46,10 +42,8 @@ from wtforms.form import Form
 from wtforms.utils import unset_value
 from wtforms.widgets import TextInput
 
-PYTHON_VERSION = sys.version_info
 
-
-class AttrDict(object):
+class AttrDict:
     def __init__(self, *args, **kw):
         self.__dict__.update(*args, **kw)
 
@@ -80,16 +74,12 @@ class TestLabel:
         label = Label("test", "Caption")
         assert label() == expected
         assert str(label) == expected
-        assert text_type(label) == expected
+        assert str(label) == expected
         assert label.__html__() == expected
         assert label().__html__() == expected
         assert label("hello") == """<label for="test">hello</label>"""
         assert StringField("hi").bind(Form(), "a").label.text == "hi"
-        if PYTHON_VERSION < (3,):
-            assert repr(label) == "Label(u'test', u'Caption')"
-        else:
-            assert repr(label) == "Label('test', 'Caption')"
-            assert label.__unicode__() == expected
+        assert repr(label) == "Label('test', 'Caption')"
 
     def test_auto_label(self):
         t1 = StringField().bind(Form(), "foo_bar")
@@ -204,7 +194,7 @@ class TestField:
 
     def test_unicode_coerce(self):
         field = self.F().a
-        assert text_type(field) == field()
+        assert str(field) == field()
 
     def test_process_formdata(self):
         field = self.F().a
@@ -245,7 +235,7 @@ class TestField:
             items = SelectField(choices=[])
 
             def __init__(self, *args, **kwargs):
-                super(F, self).__init__(*args, **kwargs)
+                super().__init__(*args, **kwargs)
 
             def add_choice(self, choice):
                 self.items.choices.append((choice, choice))
@@ -367,7 +357,7 @@ class TestSelectField:
         form = self.F()
         first_option = list(form.a)[0]
         assert isinstance(first_option, form.a._Option)
-        assert list(text_type(x) for x in form.a) == [
+        assert list(str(x) for x in form.a) == [
             '<option selected value="a">hello</option>',
             '<option value="btest">bye</option>',
         ]
@@ -485,7 +475,7 @@ class TestRadioField:
             '<label for="b-1">Item 2</label></li>'
             "</ul>"
         )
-        assert [text_type(x) for x in form.a] == [
+        assert [str(x) for x in form.a] == [
             '<input checked id="a-0" name="a" type="radio" value="a">',
             '<input id="a-1" name="a" type="radio" value="b">',
         ]
@@ -1056,7 +1046,7 @@ class MyCustomField(StringField):
         if data == "fail":
             raise ValueError("Contrived Failure")
 
-        return super(MyCustomField, self).process_data(data)
+        return super().process_data(data)
 
 
 class TestCustomFieldQuirks:
@@ -1094,11 +1084,8 @@ class TestHTML5Fields:
         if data is unset_value:
             data = form_input
         if expected_html.startswith("type="):
-            expected_html = '<input id="%s" name="%s" %s value="%s">' % (
-                key,
-                key,
-                expected_html,
-                form_input,
+            expected_html = '<input id="{}" name="{}" {} value="{}">'.format(
+                key, key, expected_html, form_input,
             )
         return {
             "key": key,

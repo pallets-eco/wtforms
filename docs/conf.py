@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # WTForms documentation build configuration file, created by
 # sphinx-quickstart on Fri Aug 01 15:29:36 2008.
 #

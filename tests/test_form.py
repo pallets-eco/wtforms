@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import pytest
 
 from wtforms.form import BaseForm, Form
@@ -62,7 +60,7 @@ class TestBaseForm:
         assert form["foo"].data is None
 
     def test_populate_obj(self):
-        m = type(str("Model"), (object,), {})
+        m = type("Model", (object,), {})
         form = self.get_form()
         form.process(test="foobar")
         form.populate_obj(m)
@@ -235,7 +233,7 @@ class TestForm:
             foo = StringField(validators=[DataRequired()])
 
             def validate(self):
-                super(F, self).validate()
+                super().validate()
                 self.errors
                 self.foo.errors.append("bar")
                 return True

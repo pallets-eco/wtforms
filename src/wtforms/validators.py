@@ -1,6 +1,5 @@
-from __future__ import unicode_literals
-
 import math
+import ipaddress
 import re
 import uuid
 
@@ -8,12 +7,6 @@ try:
     import email_validator
 except ImportError:
     email_validator = None
-try:
-    import ipaddress
-except ImportError:
-    ipaddress = None
-
-from wtforms.compat import string_types, text_type
 
 __all__ = (
     "DataRequired",
@@ -70,7 +63,7 @@ class StopValidation(Exception):
         Exception.__init__(self, message, *args, **kwargs)
 
 
-class EqualTo(object):
+class EqualTo:
     """
     Compares the values of two fields.
 
@@ -107,7 +100,7 @@ class EqualTo(object):
             raise ValidationError(message % d)
 
 
-class Length(object):
+class Length:
     """
     Validates the length of a string.
 
@@ -165,7 +158,7 @@ class Length(object):
             )
 
 
-class NumberRange(object):
+class NumberRange:
     """
     Validates that a number is of a minimum and/or maximum value, inclusive.
     This will work with any comparable number type, such as floats and
@@ -212,7 +205,7 @@ class NumberRange(object):
             raise ValidationError(message % dict(min=self.min, max=self.max))
 
 
-class Optional(object):
+class Optional:
     """
     Allows empty input and stops the validation chain from continuing.
 
@@ -235,14 +228,14 @@ class Optional(object):
     def __call__(self, form, field):
         if (
             not field.raw_data
-            or isinstance(field.raw_data[0], string_types)
+            or isinstance(field.raw_data[0], str)
             and not self.string_check(field.raw_data[0])
         ):
             field.errors[:] = []
             raise StopValidation()
 
 
-class DataRequired(object):
+class DataRequired:
     """
     Checks the field's data is 'truthy' otherwise stops the validation chain.
 
@@ -271,11 +264,7 @@ class DataRequired(object):
         self.message = message
 
     def __call__(self, form, field):
-        if (
-            not field.data
-            or isinstance(field.data, string_types)
-            and not field.data.strip()
-        ):
+        if not field.data or isinstance(field.data, str) and not field.data.strip():
             if self.message is None:
                 message = field.gettext("This field is required.")
             else:
@@ -285,7 +274,7 @@ class DataRequired(object):
             raise StopValidation(message)
 
 
-class InputRequired(object):
+class InputRequired:
     """
     Validates that input was provided for this field.
 
@@ -310,7 +299,7 @@ class InputRequired(object):
             raise StopValidation(message)
 
 
-class Regexp(object):
+class Regexp:
     """
     Validates the field against a user provided regexp.
 
@@ -325,7 +314,7 @@ class Regexp(object):
     """
 
     def __init__(self, regex, flags=0, message=None):
-        if isinstance(regex, string_types):
+        if isinstance(regex, str):
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message
@@ -343,7 +332,7 @@ class Regexp(object):
         return match
 
 
-class Email(object):
+class Email:
     """
     Validates an email address. Requires email_validator package to be
     installed. For ex: pip install wtforms[email].
@@ -399,10 +388,9 @@ class Email(object):
             raise ValidationError(message)
 
 
-class IPAddress(object):
+class IPAddress:
     """
-    Validates an IP address. Requires ipaddress package to be installed
-    for Python 2 support. For ex: pip install wtforms[ipaddress].
+    Validates an IP address.
 
     :param ipv4:
         If True, accept IPv4 addresses as valid (default True)
@@ -413,8 +401,6 @@ class IPAddress(object):
     """
 
     def __init__(self, ipv4=True, ipv6=False, message=None):
-        if ipaddress is None:
-            raise Exception("Install 'ipaddress' for Python 2 support.")
         if not ipv4 and not ipv6:
             raise ValueError(
                 "IP Address Validator must have at least one of ipv4 or ipv6 enabled."
@@ -472,14 +458,14 @@ class MacAddress(Regexp):
 
     def __init__(self, message=None):
         pattern = r"^(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$"
-        super(MacAddress, self).__init__(pattern, message=message)
+        super().__init__(pattern, message=message)
 
     def __call__(self, form, field):
         message = self.message
         if message is None:
             message = field.gettext("Invalid Mac address.")
 
-        super(MacAddress, self).__call__(form, field, message)
+        super().__call__(form, field, message)
 
 
 class URL(Regexp):
@@ -504,7 +490,7 @@ class URL(Regexp):
             r"(?P<path>\/.*?)?"
             r"(?P<query>\?.*)?$"
         )
-        super(URL, self).__init__(regex, re.IGNORECASE, message)
+        super().__init__(regex, re.IGNORECASE, message)
         self.validate_hostname = HostnameValidation(
             require_tld=require_tld, allow_ip=True
         )
@@ -514,12 +500,12 @@ class URL(Regexp):
         if message is None:
             message = field.gettext("Invalid URL.")
 
-        match = super(URL, self).__call__(form, field, message)
+        match = super().__call__(form, field, message)
         if not self.validate_hostname(match.group("host")):
             raise ValidationError(message)
 
 
-class UUID(object):
+class UUID:
     """
     Validates a UUID.
 
@@ -540,7 +526,7 @@ class UUID(object):
             raise ValidationError(message)
 
 
-class AnyOf(object):
+class AnyOf:
     """
     Compares the incoming data to a sequence of valid inputs.
 
@@ -572,10 +558,10 @@ class AnyOf(object):
 
     @staticmethod
     def default_values_formatter(values):
-        return ", ".join(text_type(x) for x in values)
+        return ", ".join(str(x) for x in values)
 
 
-class NoneOf(object):
+class NoneOf:
     """
     Compares the incoming data to a sequence of invalid inputs.
 
@@ -607,10 +593,10 @@ class NoneOf(object):
 
     @staticmethod
     def default_values_formatter(v):
-        return ", ".join(text_type(x) for x in v)
+        return ", ".join(str(x) for x in v)
 
 
-class HostnameValidation(object):
+class HostnameValidation:
     """
     Helper class for checking hostnames for validation.
 
@@ -636,7 +622,7 @@ class HostnameValidation(object):
             pass
 
         # Turn back into a string in Python 3x
-        if not isinstance(hostname, string_types):
+        if not isinstance(hostname, str):
             hostname = hostname.decode("ascii")
 
         if len(hostname) > 253:

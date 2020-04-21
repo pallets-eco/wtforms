@@ -60,7 +60,7 @@ def grab_stop_message():
     return grab_stop_message
 
 
-class DummyTranslations(object):
+class DummyTranslations:
     def gettext(self, string):
         return string
 
@@ -71,7 +71,7 @@ class DummyTranslations(object):
         return plural
 
 
-class DummyField(object):
+class DummyField:
     _translations = DummyTranslations()
 
     def __init__(
@@ -98,9 +98,6 @@ class DummyField(object):
     def __str__(self):
         return self.data
 
-    def __unicode__(self):
-        return self.data
-
     def __iter__(self):
         return iter(self.data)
 
@@ -121,14 +118,12 @@ class DummyForm(dict):
     pass
 
 
-class ReallyLazyProxy(object):
-    def __unicode__(self):
+class ReallyLazyProxy:
+    def __str__(self):
         raise Exception(
             "Translator function called during form declaration: it"
             " should be called at response time."
         )
-
-    __str__ = __unicode__
 
 
 def contains_validator(field, v_type):
@@ -159,4 +154,4 @@ def assert_raises_text(e_type, text):
                 % (e, e.args[0], text)
             )
     else:
-        raise AssertionError("Expected Exception %r, did not get it" % (e_type,))
+        raise AssertionError(f"Expected Exception {e_type!r}, did not get it")

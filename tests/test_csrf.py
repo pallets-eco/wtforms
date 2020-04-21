@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from contextlib import contextmanager
 import datetime
 from functools import partial
@@ -39,7 +37,7 @@ class TimePin(SessionCSRF):
         return self.pinned_time
 
 
-class SimplePopulateObject(object):
+class SimplePopulateObject:
     a = None
     csrf_token = None
 

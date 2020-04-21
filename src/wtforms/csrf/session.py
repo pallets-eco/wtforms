@@ -12,8 +12,6 @@ for extra security) is used as the value of the csrf_token. If this token
 validates with the hmac of the random value + expiration time, and the
 expiration time is not passed, the CSRF validation will pass.
 """
-from __future__ import unicode_literals
-
 import hmac
 import os
 
@@ -31,7 +29,7 @@ class SessionCSRF(CSRF):
 
     def setup_form(self, form):
         self.form_meta = form.meta
-        return super(SessionCSRF, self).setup_form(form)
+        return super().setup_form(form)
 
     def generate_csrf_token(self, csrf_token_field):
         meta = self.form_meta
@@ -49,7 +47,7 @@ class SessionCSRF(CSRF):
 
         if self.time_limit:
             expires = (self.now() + self.time_limit).strftime(self.TIME_FORMAT)
-            csrf_build = "%s%s" % (session["csrf"], expires)
+            csrf_build = "{}{}".format(session["csrf"], expires)
         else:
             expires = ""
             csrf_build = session["csrf"]
@@ -57,7 +55,7 @@ class SessionCSRF(CSRF):
         hmac_csrf = hmac.new(
             meta.csrf_secret, csrf_build.encode("utf8"), digestmod=sha1
         )
-        return "%s##%s" % (expires, hmac_csrf.hexdigest())
+        return f"{expires}##{hmac_csrf.hexdigest()}"
 
     def validate_csrf_token(self, form, field):
         meta = self.form_meta

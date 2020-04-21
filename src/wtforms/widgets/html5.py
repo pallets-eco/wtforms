@@ -120,7 +120,7 @@ class NumberInput(Input):
             kwargs.setdefault("min", self.min)
         if self.max is not None:
             kwargs.setdefault("max", self.max)
-        return super(NumberInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class RangeInput(Input):
@@ -136,7 +136,7 @@ class RangeInput(Input):
     def __call__(self, field, **kwargs):
         if self.step is not None:
             kwargs.setdefault("step", self.step)
-        return super(RangeInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class ColorInput(Input):

@@ -1,3 +1,4 @@
+---
 os: linux
 dist: xenial
 language: python
@@ -6,8 +7,6 @@ python:
   - 3.8
   - 3.7
   - 3.6
-  - 3.5
-  - 3.4
   - nightly
   - pypy3
 env: TOXENV=py,coveralls
@@ -15,9 +14,7 @@ env: TOXENV=py,coveralls
 jobs:
   include:
     - python: "3.8"
-      env: TOXENV=stylecheck,docs-html
-    - python: "2.7"
-      env: TOXENV=py27,coveralls
+      env: TOXENV=py38,stylecheck,docs-html,coveralls
   allow_failures:
     - python: nightly
     - python: pypy3

@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import pytest
 from wtforms import form, StringField, validators
 from wtforms.i18n import get_translations
@@ -16,14 +14,14 @@ def ngettext_lower(self, singular, plural, n):
         return plural.lower()
 
 
-class Lower_Translator(object):
+class Lower_Translator:
     """A fake translator that just converts everything to lowercase."""
 
     gettext = gettext_lower
     ngettext = ngettext_lower
 
 
-class Python2_Translator(object):
+class Python2_Translator:
     """A mock translator which implements python2 ugettext methods."""
 
     ugettext = gettext_lower

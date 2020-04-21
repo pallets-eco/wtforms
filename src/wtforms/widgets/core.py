@@ -1,8 +1,4 @@
-from __future__ import unicode_literals
-
 from markupsafe import Markup, escape
-
-from wtforms.compat import iteritems, text_type
 
 __all__ = (
     "CheckboxInput",
@@ -55,7 +51,7 @@ def html_params(**kwargs):
         only the first one.
     """
     params = []
-    for k, v in sorted(iteritems(kwargs)):
+    for k, v in sorted(kwargs.items()):
         if k in ("class_", "class__", "for_"):
             k = k[:-1]
         elif k.startswith("data_") or k.startswith("aria_"):
@@ -65,11 +61,11 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append('%s="%s"' % (text_type(k), escape(v)))
+            params.append('{}="{}"'.format(str(k), escape(v)))
     return " ".join(params)
 
 
-class ListWidget(object):
+class ListWidget:
     """
     Renders a list of fields as a `ul` or `ol` list.
 
@@ -89,17 +85,17 @@ class ListWidget(object):
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault("id", field.id)
-        html = ["<%s %s>" % (self.html_tag, html_params(**kwargs))]
+        html = ["<{} {}>".format(self.html_tag, html_params(**kwargs))]
         for subfield in field:
             if self.prefix_label:
-                html.append("<li>%s %s</li>" % (subfield.label, subfield()))
+                html.append(f"<li>{subfield.label} {subfield()}</li>")
             else:
-                html.append("<li>%s %s</li>" % (subfield(), subfield.label))
+                html.append(f"<li>{subfield()} {subfield.label}</li>")
         html.append("</%s>" % self.html_tag)
         return Markup("".join(html))
 
 
-class TableWidget(object):
+class TableWidget:
     """
     Renders a list of fields as a set of table rows with th/td pairs.
 
@@ -122,11 +118,11 @@ class TableWidget(object):
         hidden = ""
         for subfield in field:
             if subfield.type in ("HiddenField", "CSRFTokenField"):
-                hidden += text_type(subfield)
+                hidden += str(subfield)
             else:
                 html.append(
                     "<tr><th>%s</th><td>%s%s</td></tr>"
-                    % (text_type(subfield.label), hidden, text_type(subfield))
+                    % (str(subfield.label), hidden, str(subfield))
                 )
                 hidden = ""
         if self.with_table_tag:
@@ -136,7 +132,7 @@ class TableWidget(object):
         return Markup("".join(html))
 
 
-class Input(object):
+class Input:
     """
     Render a basic ``<input>`` field.
 
@@ -187,7 +183,7 @@ class PasswordInput(Input):
     def __call__(self, field, **kwargs):
         if self.hide_value:
             kwargs["value"] = ""
-        return super(PasswordInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class HiddenInput(Input):
@@ -211,7 +207,7 @@ class CheckboxInput(Input):
     def __call__(self, field, **kwargs):
         if getattr(field, "checked", field.data):
             kwargs["checked"] = True
-        return super(CheckboxInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class RadioInput(Input):
@@ -227,7 +223,7 @@ class RadioInput(Input):
     def __call__(self, field, **kwargs):
         if field.checked:
             kwargs["checked"] = True
-        return super(RadioInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class FileInput(Input):
@@ -239,7 +235,7 @@ class FileInput(Input):
     input_type = "file"
 
     def __init__(self, multiple=False):
-        super(FileInput, self).__init__()
+        super().__init__()
         self.multiple = multiple
 
     def __call__(self, field, **kwargs):
@@ -249,7 +245,7 @@ class FileInput(Input):
         if self.multiple:
             kwargs["multiple"] = True
 
-        return super(FileInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
 class SubmitInput(Input):
@@ -264,10 +260,10 @@ class SubmitInput(Input):
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault("value", field.label.text)
-        return super(SubmitInput, self).__call__(field, **kwargs)
+        return super().__call__(field, **kwargs)
 
 
-class TextArea(object):
+class TextArea:
     """
     Renders a multi-line text area.
 
@@ -284,7 +280,7 @@ class TextArea(object):
         )
 
 
-class Select(object):
+class Select:
     """
     Renders a select field.
 
@@ -315,17 +311,17 @@ class Select(object):
     def render_option(cls, value, label, selected, **kwargs):
         if value is True:
             # Handle the special case of a 'True' value.
-            value = text_type(value)
+            value = str(value)
 
         options = dict(kwargs, value=value)
         if selected:
             options["selected"] = True
         return Markup(
-            "<option %s>%s</option>" % (html_params(**options), escape(label))
+            "<option {}>{}</option>".format(html_params(**options), escape(label))
         )
 
 
-class Option(object):
+class Option:
     """
     Renders the individual option from a select field.
 
