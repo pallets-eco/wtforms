@@ -1,5 +1,3 @@
-.. _crash-course:
-
 Crash Course
 ============
 
@@ -21,8 +19,6 @@ and presentation, and keep those messy parameters out of your python code.
 Because we strive for loose coupling, you should be able to do that in any
 templating engine you like, as well.
 
-
-.. _download-installation:
 
 Download / Installation
 -----------------------
@@ -389,5 +385,5 @@ WTForms to handle form input and validation in your application. For more
 information, you'll want to check the following:
 
  - The :doc:`WTForms documentation <index>` has API documentation for the entire library.
- - :ref:`specific_problems` can help you tackle specific
+ - :doc:`specific_problems` can help you tackle specific
    integration issues with WTForms and other frameworks.

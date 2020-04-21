@@ -131,5 +131,4 @@ See the following mailing list posts for more discussion on the topic:
 How do I... [convoluted combination of libraries]
 -------------------------------------------------
 
-You'll probably want to check out our
-:ref:`Solving Specific Problems <specific_problems>` doc.
+You'll probably want to check out our :doc:`specific_problems` doc.
