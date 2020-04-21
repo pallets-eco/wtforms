@@ -15,7 +15,6 @@ For a quick introduction, as well as download/installation instructions, check o
    faq
    specific_problems
    crash_course
-   i18n
    changes
    contributing
    whats_new
@@ -31,7 +30,7 @@ For a quick introduction, as well as download/installation instructions, check o
    widgets
    meta
    csrf
-   ext
+   i18n
 
 **Indices and tables:**
 
