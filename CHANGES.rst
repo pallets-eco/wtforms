@@ -5,6 +5,7 @@ Version 2.3.0
 
 Unreleased
 
+-   Drop support for Python 2.6, 3.3, and 3.4.
 -   :class:`~fields.SelectField` uses ``list()`` to construct a new list
     of choices. :pr:`475`
 -   Permitted underscores in ``HostnameValidation``. :pr:`463`
