@@ -388,6 +388,6 @@ The crash course has just skimmed the surface on how you can begin using
 WTForms to handle form input and validation in your application. For more
 information, you'll want to check the following:
 
- - The :ref:`WTForms documentation <doc-index>` has API documentation for the entire library.
+ - The :doc:`WTForms documentation <index>` has API documentation for the entire library.
  - :ref:`specific_problems` can help you tackle specific
    integration issues with WTForms and other frameworks.

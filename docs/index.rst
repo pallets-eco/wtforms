@@ -1,39 +1,45 @@
-.. _doc-index:
-
 WTForms
 =======
 
-This is the documentation for WTForms |release|.
+WTForms is a flexible forms validation and rendering library for Python
+web development. It can work with whatever web framework and template
+engine you choose. It supports data validation, CSRF protection,
+internationalization (I18N), and more. There are various community
+libraries that provide closer integration with popular frameworks.
 
-For a quick introduction, as well as download/installation instructions, check out the :doc:`crash_course`.
 
-**Help**
-
-.. toctree::
-   :maxdepth: 1
-
-   faq
-   specific_problems
-   crash_course
-   changes
-   contributing
-   whats_new
-
-**API**
+Help
+----
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 1
 
-   forms
-   fields
-   validators
-   widgets
-   meta
-   csrf
-   i18n
+    faq
+    specific_problems
+    crash_course
 
-**Indices and tables:**
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+API
+---
+
+.. toctree::
+    :maxdepth: 2
+
+    forms
+    fields
+    validators
+    widgets
+    meta
+    csrf
+    i18n
+
+
+Information
+-----------
+
+.. toctree::
+    :maxdepth: 2
+
+    changes
+    contributing
+    whats_new
