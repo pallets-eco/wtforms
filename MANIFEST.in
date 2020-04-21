@@ -1,9 +1,6 @@
-include AUTHORS.rst
 include CHANGES.rst
-include LICENSE.rst
-include README.rst
 graft docs
 prune docs/_build
 graft tests
 graft wtforms/locale
-global-exclude *.py[co]
+global-exclude *.pyc

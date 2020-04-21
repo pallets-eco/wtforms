@@ -1,23 +1,16 @@
-# File extensions
+/.idea/
+/.vscode/
+/env/
+/venv/
+__pycache__/
 *.pyc
-*.pyo
-.*.swp
-wtforms/locale/**/wtforms.mo
-.DS_Store
-
-# Extra Files
-MANIFEST
-WTForms.egg-info
+*.egg-info/
+/build/
+/dist/
+/.pytest_cache/
+/.tox/
 .coverage
 .coverage.*
-.coveralls.yml
-
-# Directories
-build/
-dist/
-docs/_build
-docs/html
-env/
-.pytest_cache/
-.tox/
-htmlcov/
+/htmlcov/
+/docs/_build/
+wtforms/locale/**/wtforms.mo

@@ -1,6 +1,5 @@
 import io
 import re
-import sys
 from setuptools import setup
 
 with io.open('README.rst', 'rt', encoding='utf8') as f:
@@ -9,11 +8,6 @@ with io.open('README.rst', 'rt', encoding='utf8') as f:
 with io.open('wtforms/__init__.py', 'rt', encoding='utf8') as f:
     version = re.search(r'__version__ = \'(.*?)\'', f.read()).group(1)
 
-extra = {}
-
-if sys.version_info < (2, 7):
-    extra['install_requires'] = ['ordereddict>=1.1']
-
 setup(
     name='WTForms',
     version=version,
@@ -21,7 +15,7 @@ setup(
     project_urls={
         'Documentation': 'https://wtforms.readthedocs.io/',
         'Code': 'https://github.com/wtforms/wtforms',
-        'Issue tracker': 'https://github.com/wtforms/wtforms/issues',
+        'Issue Tracker': 'https://github.com/wtforms/wtforms/issues',
     },
     license='BSD-3-Clause',
     maintainer='WTForms',
@@ -41,7 +35,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -69,7 +62,5 @@ setup(
         "ipaddress": ['ipaddress;python_version<"3.3"'],
         "email": ["email_validator"],
         'locale': ['Babel>=1.3'],
-        ':python_version=="2.6"': ['ordereddict'],
     },
-    **extra
 )
