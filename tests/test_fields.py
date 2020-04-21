@@ -293,9 +293,9 @@ class PrePostTestField(StringField):
 
     def post_validate(self, form, stopped):
         if self.data == "p":
-            raise ValueError("Post")
+            raise validators.ValidationError("Post")
         elif stopped and self.data == "stop-post":
-            raise ValueError("Post-stopped")
+            raise validators.ValidationError("Post-stopped")
 
 
 class TestPrePostValidation:
