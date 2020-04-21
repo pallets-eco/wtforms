@@ -1,2 +1,4 @@
+Changes
+=======
 
 .. include:: ../CHANGES.rst

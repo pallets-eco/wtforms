@@ -23,7 +23,7 @@ but if it's not listed, it doesn't mean it won't work.
 
 * **Templating Engines**
 
-  * Jinja2
+  * Jinja
   * Mako
   * Django Templates (To get the full power of WTForms in your templates, you
     will need to use the Django :mod:`extension <wtforms.ext.django>`.)
@@ -122,14 +122,8 @@ This is for a number of reasons:
 
 3. Consistency.
 
-See the following mailing list posts for more discussion on the topic:
-
--   https://groups.google.com/forum/#!topic/wtforms/BnVaRaE4eOk
--   https://groups.google.com/forum/#!msg/wtforms/nF-TVnfxft4/Lfa2iYycQPoJ
-
 
 How do I... [convoluted combination of libraries]
 -------------------------------------------------
 
-You'll probably want to check out our
-:ref:`Solving Specific Problems <specific_problems>` doc.
+You'll probably want to check out our :doc:`specific_problems` doc.

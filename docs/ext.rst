@@ -1,35 +1,48 @@
+:orphan:
+
 Extensions
 ==========
+
 .. module:: wtforms.ext
+
+.. warning::
+    .. deprecated:: 2.0
+        Everything in ``wtforms.ext`` is deprecated and will be removed
+        in WTForms 3.0.
 
 WTForms ships with a number of extensions that make it easier to work with
 other frameworks and libraries, such as Django.
 
+
 Appengine
 ---------
+
 .. module:: wtforms.ext.appengine
+
+.. warning::
+    .. deprecated:: 2.0
+        ``wtforms.ext.appengine`` is deprecated and will be removed in
+        WTForms 3.0. Use `WTForms-Appengine`_ instead.
+
+.. _WTForms-Appengine: https://github.com/wtforms/wtforms-appengine
 
 WTForms includes support for AppEngine fields as well as auto-form
 generation from models.
 
-.. deprecated:: 2.0
-    ``wtforms.ext.appengine`` is now deprecated, and will be removed in
-    WTForms 3.0. For an appengine module that will continue to be updated,
-    see `WTForms-Appengine`_
-
-
-.. _WTForms-Appengine: https://github.com/wtforms/wtforms-appengine
 
 Model Forms
 ~~~~~~~~~~~
+
 .. module:: wtforms.ext.appengine.db
 
 See the module docstring for examples on how to use :func:`model_form`.
 
 .. autofunction:: model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None)
 
+
 Datastore-backed Fields
 ~~~~~~~~~~~~~~~~~~~~~~~
+
 .. module:: wtforms.ext.appengine.fields
 
 .. autoclass:: ReferencePropertyField(default field arguments, reference_class=None, get_label=None, allow_blank=False, blank_text='')
@@ -37,6 +50,7 @@ Datastore-backed Fields
 .. autoclass:: StringListPropertyField(default field arguments)
 
 .. autoclass:: GeoPtPropertyField(default field arguments)
+
 
 NDB
 ~~~
@@ -51,11 +65,16 @@ relationship fields as well as generating forms from models.
 .. autofunction:: model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None)
 
 
-
 Dateutil
 --------
+
 .. module:: wtforms.ext.dateutil
 .. module:: wtforms.ext.dateutil.fields
+
+.. warning::
+    .. deprecated:: 2.0
+        ``wtforms.ext.dateutil`` is deprecated and will be removed in
+        WTForms 3.0.
 
 For better date-time parsing using the `python-dateutil`_  package,
 :mod:`wtforms.ext.dateutil` provides a set of fields to use to accept a wider
@@ -67,23 +86,27 @@ range of date input.
 
 .. autoclass:: DateField(default field arguments, parse_kwargs=None, display_format='%Y-%m-%d')
 
+
 Django
 ------
+
 .. module:: wtforms.ext.django
+
+.. warning::
+    .. deprecated:: 2.0
+        ``wtforms.ext.django`` is deprecated and will be removed in
+        WTForms 3.0. Use `WTForms-Django`_ instead.
+
+.. _WTForms-Django: https://github.com/wtforms/wtforms-django
 
 This extension provides templatetags to make it easier to work with Django
 templates and WTForms' html attribute rendering. It also provides a generator
 for automatically creating forms based on Django ORM models.
 
-.. deprecated:: 2.0
-    ``wtforms.ext.django`` is now deprecated, and will be removed in
-    WTForms 3.0. For Django support that will continue to be updated,
-    see `WTForms-Django`_
-
-.. _WTForms-Django: https://github.com/wtforms/wtforms-django
 
 Templatetags
 ~~~~~~~~~~~~
+
 .. module:: wtforms.ext.django.templatetags.wtforms
 
 Django templates do not allow arbitrarily calling functions with parameters,
@@ -104,8 +127,10 @@ attributes to form fields similar to the usage in jinja:
 be auto-escaped.  To avoid this happening, use Django's `{% autoescape off %}`
 block tag or use WTForms' `form_field` template tag.
 
+
 Model forms
 ~~~~~~~~~~~
+
 .. module:: wtforms.ext.django.orm
 
 .. autofunction:: model_form(model, base_class=Form, only=None, exclude=None, field_args=None, converter=None)
@@ -133,15 +158,15 @@ Model forms
     generated form fields won't be as strict with validation as a hand-written
     form might be.
 
+
 ORM-backed fields
 ~~~~~~~~~~~~~~~~~
-.. module:: wtforms.ext.django.fields
 
+.. module:: wtforms.ext.django.fields
 
 While linking data to most fields is fairly easy, making drop-down select lists
 using django ORM data can be quite repetitive. To this end, we have added some
 helpful tools to use the django ORM along with wtforms.
-
 
 .. autoclass:: QuerySetSelectField(default field args, queryset=None, get_label=None, allow_blank=False, blank_text=u'')
 
@@ -166,7 +191,15 @@ helpful tools to use the django ORM along with wtforms.
 
 SQLAlchemy
 ----------
+
 .. module:: wtforms.ext.sqlalchemy
+
+.. warning::
+    .. deprecated:: 2.0
+        ``wtforms.ext.sqlalchemy`` is deprecated and will be removed in
+        WTForms 3.0. Use `WTForms-SQLAlchemy`_ instead.
+
+.. _WTForms-SQLAlchemy: https://github.com/wtforms/wtforms-sqlalchemy
 
 This extension provides SelectField integration with SQLAlchemy ORM models,
 similar to those in the Django extension.
@@ -174,6 +207,7 @@ similar to those in the Django extension.
 
 ORM-backed fields
 ~~~~~~~~~~~~~~~~~
+
 .. module:: wtforms.ext.sqlalchemy.fields
 
 These fields are provided to make it easier to use data from ORM objects in
@@ -204,6 +238,7 @@ your forms.
 
 Model forms
 ~~~~~~~~~~~
+
 .. module:: wtforms.ext.sqlalchemy.orm
 
 It is possible to generate forms from SQLAlchemy models similarly to how it can be done for Django ORM models.
@@ -213,12 +248,13 @@ It is possible to generate forms from SQLAlchemy models similarly to how it can 
 
 CSRF
 ----
+
 .. module:: wtforms.ext.csrf
 
-.. deprecated:: 2.0
-    wtforms.ext.csrf is deprecated, as CSRF is now provided as a part of
-    the core of WTForms. This module exists as-is for backwards compatibility
-    and will be removed in WTForms 3.0. See the :doc:`CSRF Docs <csrf>`.
+.. warning::
+    .. deprecated:: 2.0
+        ``wtforms.ext.csrf`` is deprecated and will be removed in
+        WTForms 3.0. CSRF protection is now built-in. See :doc:`csrf`.
 
 The CSRF package includes tools that help you implement checking against
 cross-site request forgery ("csrf"). Due to the large number of variations on
@@ -296,11 +332,13 @@ request.
 
 I18n
 ----
+
 .. module:: wtforms.ext.i18n
 
-.. deprecated:: 2.0
-    I18n extension is now deprecated in favor of using the built-in locales
-    support on the form.
+.. warning::
+    .. deprecated:: 2.0
+        ``wtforms.ext.i18n`` is deprecated and will be removed in
+        WTForms 3.0. I18N support is now built-in. See :doc:`i18n`.
 
 .. module:: wtforms.ext.i18n.form
 

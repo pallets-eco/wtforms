@@ -23,10 +23,8 @@ setup(
         'Code': 'https://github.com/wtforms/wtforms',
         'Issue tracker': 'https://github.com/wtforms/wtforms/issues',
     },
-    license='BSD',
-    author='Thomas Johansson, James Crasta',
-    author_email='wtforms@simplecodes.com',
-    maintainer='WTForms team',
+    license='BSD-3-Clause',
+    maintainer='WTForms',
     maintainer_email='davidism@gmail.com',
     description=(
         'A flexible forms validation and rendering library for Python'
