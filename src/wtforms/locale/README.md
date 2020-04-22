@@ -1,22 +1,53 @@
-Translation Submission Guidelines
-=================================
+Translations
+============
 
-To create a translation, the easiest way to start is to run:
+WTForms uses gettext to provide translations. Translations for various
+strings rendered by WTForms are created and updated by the community. If
+you notice that your locale is missing, or find a translation error,
+please submit a fix.
 
-    $ python setup.py init_catalog --locale <your locale>
 
-Which will copy the template to the right location. To run that setup.py sub-command, you need Babel and setuptools/distribute installed.
+Create
+------
 
-.po files:
- - must be a valid utf-8 text file
- - should have the header filled out appropriately
- - should translate all messages
+To create a translation, initialize a catalog in the new locale:
 
-You probably want to try setup.py compile_catalog and try loading your translations up to verify you did it all right.
+```
+$ python setup.py init_catalog --locale <your locale>
+```
 
-Submitting
-----------
+This will create some folders under the locale name and copy the
+template.
 
-The best ways to submit your translation are as a pull request on github, or an email to james+i18n@simplecodes.com, with the file included as an attachment.
+Edit
+----
 
-utf-8 text may not format nicely in an email body, so please refrain from pasting the translations into an email body, and include them as an attachment instead. Also do not post translation files in the issue tracker text box, or onto the mailing list either, because again formatting may be broken.
+After creating a translation, or to edit an existing translation, open
+the ``.po`` file. While they can be edited by hand, there are also tools
+that make working with gettext files easier.
+
+Make sure the `.po` file:
+
+- Is a valid UTF-8 text file.
+- Has the header filled out appropriately.
+- Translates all messages.
+
+
+Verify
+------
+
+After working on the catalog, verify that it compiles and produces the
+correct translations.
+
+```
+$ setup.py compile_catalog
+```
+
+Try loading your translations into some sample code to verify they look
+correct.
+
+
+Submit
+------
+
+To submit your translation, create a pull request on GitHub.
