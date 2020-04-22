@@ -8,12 +8,11 @@ Unreleased
 
 -   All modules in ``wtforms.ext`` show a deprecation warning on import.
     They will be removed in version 3.0.
--   Fixed a bug when :class:`~wtforms.fields.core.SelectField` choices
-    is ``None``. :issue:`572, 585`
--   Restored :class:`~widgets.core.HTMLString` and
-    :func:`~widgets.core.escape_html` as aliases for MarkupSafe
-    functions. Their use shows a ``DeprecationWarning``. :issue:`581`,
-    :pr:`583`
+-   Fixed a bug when :class:`~fields.SelectField` choices is ``None``.
+    :issue:`572, 585`
+-   Restored ``HTMLString`` and ``escape_html`` as aliases for
+    MarkupSafe functions. Their use shows a ``DeprecationWarning``.
+    :issue:`581`, :pr:`583`
 
 
 Version 2.3.0
