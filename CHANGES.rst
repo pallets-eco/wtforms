@@ -13,6 +13,9 @@ Unreleased
 -   Restored ``HTMLString`` and ``escape_html`` as aliases for
     MarkupSafe functions. Their use shows a ``DeprecationWarning``.
     :issue:`581`, :pr:`583`
+-   ``Form.validate`` takes an ``extra_validators`` parameter, mapping
+    field names to lists of extra validator functions. This matches
+    ``BaseForm.validate``. :pr:`584`
 
 
 Version 2.3.0
