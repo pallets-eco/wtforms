@@ -1,7 +1,3 @@
-import re
-
-from setuptools import Command
-from setuptools import find_packages
 from setuptools import setup
 from setuptools.command.develop import develop as BaseDevelop
 from setuptools.command.sdist import sdist as BaseSDist
@@ -11,12 +7,6 @@ try:
 except ImportError:
     BaseBDistWheel = None
 
-with open("README.rst", encoding="utf8") as f:
-    readme = f.read()
-
-with open("src/wtforms/__init__.py", encoding="utf8") as f:
-    version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
-
 
 class CompileCatalogMixin:
     """Compile MO files with Babel's ``compile_catalog`` command. This
@@ -25,8 +15,7 @@ class CompileCatalogMixin:
     """
 
     def __init__(self, dist, **kw):
-        # underlying commands are old-style classes on Python 2 :-(
-        Command.__init__(self, dist, **kw)
+        super().__init__(dist, **kw)
 
     def run(self):
         is_develop = isinstance(self, Develop)
@@ -58,41 +47,9 @@ if BaseBDistWheel:
     command_classes["bdist_wheel"] = BDistWheel
 
 
+# Metadata goes in setup.cfg. These are here for GitHub's dependency graph.
 setup(
     name="WTForms",
-    version=version,
-    url="https://wtforms.readthedocs.io/",
-    project_urls={
-        "Documentation": "https://wtforms.readthedocs.io/",
-        "Code": "https://github.com/wtforms/wtforms",
-        "Issue Tracker": "https://github.com/wtforms/wtforms/issues",
-    },
-    license="BSD-3-Clause",
-    maintainer="WTForms",
-    maintainer_email="davidism@gmail.com",
-    description=(
-        "A flexible forms validation and rendering library for Python"
-        " web development."
-    ),
-    long_description=readme,
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Environment :: Web Environment",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: BSD License",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-    ],
-    packages=find_packages("src"),
-    package_dir={"": "src"},
-    include_package_data=True,
-    python_requires=">=3.5",
     setup_requires=["Babel>=2.6.0"],
     install_requires=["MarkupSafe"],
     extras_require={"email": ["email_validator"]},
