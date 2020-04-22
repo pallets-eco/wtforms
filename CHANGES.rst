@@ -4,7 +4,7 @@
 Version 2.3.1
 -------------
 
-Unreleased
+Released 2020-04-22
 
 -   All modules in ``wtforms.ext`` show a deprecation warning on import.
     They will be removed in version 3.0.
@@ -16,6 +16,7 @@ Unreleased
 -   ``Form.validate`` takes an ``extra_validators`` parameter, mapping
     field names to lists of extra validator functions. This matches
     ``BaseForm.validate``. :pr:`584`
+-   Update locale catalogs.
 
 
 Version 2.3.0
