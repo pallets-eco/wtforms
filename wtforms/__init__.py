@@ -13,4 +13,4 @@ from wtforms.fields import *
 from wtforms.form import Form
 from wtforms.validators import ValidationError
 
-__version__ = '2.3.0'
+__version__ = '2.3.1.dev'
