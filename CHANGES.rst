@@ -6,6 +6,8 @@ Version 2.3.1
 
 Unreleased
 
+-   All modules in ``wtforms.ext`` show a deprecation warning on import.
+    They will be removed in version 3.0.
 -   Fixed a bug when :class:`~wtforms.fields.core.SelectField` choices
     is ``None``. :issue:`572, 585`
 -   Restored :class:`~widgets.core.HTMLString` and
