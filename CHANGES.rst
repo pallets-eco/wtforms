@@ -16,6 +16,7 @@ Released 2020-04-22
 -   ``Form.validate`` takes an ``extra_validators`` parameter, mapping
     field names to lists of extra validator functions. This matches
     ``BaseForm.validate``. :pr:`584`
+-   Update locale catalogs.
 
 
 Version 2.3.0
