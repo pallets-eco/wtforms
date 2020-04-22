@@ -509,7 +509,9 @@ class SelectField(SelectFieldBase):
         self.validate_choice = validate_choice
 
     def iter_choices(self):
-        if isinstance(self.choices[0], (list, tuple)):
+        if not self.choices:
+            choices = []
+        elif isinstance(self.choices[0], (list, tuple)):
             choices = self.choices
         else:
             choices = zip(self.choices, self.choices)

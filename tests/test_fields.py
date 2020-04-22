@@ -408,6 +408,17 @@ class TestSelectField:
         assert form.a.data == "b"
         assert len(form.a.errors) == 0
 
+    def test_choice_shortcut(self):
+        F = make_form(a=SelectField(choices=["foo", "bar"], validate_choice=False))
+        form = F(a="bar")
+        assert '<option value="foo">foo</option>' in form.a()
+
+    @pytest.mark.parametrize("choices", [[], None])
+    def test_empty_choice(self, choices):
+        F = make_form(a=SelectField(choices=choices, validate_choice=False))
+        form = F(a="bar")
+        assert form.a() == '<select id="a" name="a"></select>'
+
 
 class TestSelectMultipleField:
     class F(Form):

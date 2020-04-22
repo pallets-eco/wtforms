@@ -279,15 +279,26 @@ class Form(BaseForm, metaclass=FormMeta):
             else:
                 super().__delattr__(name)
 
-    def validate(self):
+    def validate(self, extra_validators=None):
+        """Validate the form by calling ``validate`` on each field.
+        Returns ``True`` if validation passes.
+
+        If the form defines a ``validate_<fieldname>`` method, it is
+        appended as an extra validator for the field's ``validate``.
+
+        :param extra_validators: A dict mapping field names to lists of
+            extra validator methods to run. Extra validators run after
+            validators passed when creating the field. If the form has
+            ``validate_<fieldname>``, it is the last extra validator.
         """
-        Validates the form by calling `validate` on each field, passing any
-        extra `Form.validate_<fieldname>` validators to the field validator.
-        """
-        extra = {}
+        if extra_validators is not None:
+            extra = extra_validators.copy()
+        else:
+            extra = {}
+
         for name in self._fields:
-            inline = getattr(self.__class__, "validate_%s" % name, None)
+            inline = getattr(self.__class__, f"validate_{name}", None)
             if inline is not None:
-                extra[name] = [inline]
+                extra.setdefault(name, []).append(inline)
 
         return super().validate(extra)

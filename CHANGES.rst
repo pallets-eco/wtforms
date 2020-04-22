@@ -1,11 +1,12 @@
 .. currentmodule:: wtforms
 
+
 Version 3.0.0
 -------------
 
 Unreleased
 
--   Drop support for Python <= 3.5. :pr:`554`
+-   Drop support for Python < 3.6. :pr:`554`
 -   :class:`~fields.StringField` sets ``data`` to ``None`` when form
     data is empty and an initial value was not provided. Although it
     previously set an empty string, ``None`` is consistent with the
@@ -19,6 +20,24 @@ Unreleased
     :class:`~validators.ValidationError` or
     :class:`~validators.StopValidation` to make a validation fail.
     :issue:`445`
+
+
+Version 2.3.1
+-------------
+
+Released 2020-04-22
+
+-   All modules in ``wtforms.ext`` show a deprecation warning on import.
+    They will be removed in version 3.0.
+-   Fixed a bug when :class:`~fields.SelectField` choices is ``None``.
+    :issue:`572, 585`
+-   Restored ``HTMLString`` and ``escape_html`` as aliases for
+    MarkupSafe functions. Their use shows a ``DeprecationWarning``.
+    :issue:`581`, :pr:`583`
+-   ``Form.validate`` takes an ``extra_validators`` parameter, mapping
+    field names to lists of extra validator functions. This matches
+    ``BaseForm.validate``. :pr:`584`
+-   Update locale catalogs.
 
 
 Version 2.3.0

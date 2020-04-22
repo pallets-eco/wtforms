@@ -157,6 +157,23 @@ class TestForm:
         form = self.F()
         assert form.validate() is False
 
+    def test_validate_with_extra(self):
+        class F2(self.F):
+            other = StringField()
+
+        def extra(form, field):
+            if field.data != "extra":
+                raise ValidationError("error")
+
+        form = F2(test="foobar", other="extra")
+        assert form.validate(extra_validators={"other": [extra]})
+
+        form = F2(test="foobar", other="nope")
+        assert not form.validate(extra_validators={"other": [extra]})
+
+        form = F2(test="nope", other="extra")
+        assert not form.validate(extra_validators={"other": [extra]})
+
     def test_field_adding_disabled(self):
         form = self.F()
         with pytest.raises(TypeError):
