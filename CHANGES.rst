@@ -4,7 +4,7 @@
 Version 2.3.1
 -------------
 
-Unreleased
+Released 2020-04-22
 
 -   All modules in ``wtforms.ext`` show a deprecation warning on import.
     They will be removed in version 3.0.
