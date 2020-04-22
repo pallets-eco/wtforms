@@ -54,6 +54,4 @@ Links
 -   Releases: https://pypi.org/project/WTForms/
 -   Code: https://github.com/wtforms/wtforms
 -   Issue tracker: https://github.com/wtforms/wtforms/issues
--   Test status: https://travis-ci.org/wtforms/wtforms
--   Test coverage: https://coveralls.io/github/wtforms/wtforms
 -   Discord Chat: https://discord.gg/F65P7Z9
