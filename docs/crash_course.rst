@@ -139,7 +139,9 @@ Exploring in the console
 
 WTForms forms are very simple container objects, and perhaps the easiest way to
 find out what's available to you in a form is to play around with a form in the
-console::
+console:
+
+.. code-block:: pycon
 
     >>> from wtforms import Form, StringField, validators
     >>> class UsernameForm(Form):
@@ -163,7 +165,7 @@ When we validate the form, it returns False, meaning at least one validator was
 not satisfied. :attr:`form.errors <wtforms.form.Form.errors>` will give you a
 summary of all the errors.
 
-.. code-block:: python
+.. code-block:: pycon
 
     >>> form2 = UsernameForm(username='Robert')
     >>> form2.data
@@ -246,14 +248,14 @@ Rendering a field is as simple as coercing it to a string::
     ...
     >>> form = SimpleForm(content='foobar')
     >>> str(form.content)
-    '<input id="content" name="content" type="text" value="foobar">'
+    Markup('<input id="content" name="content" type="text" value="foobar">')
 
 However, the real power comes from rendering the field with its :meth:`~wtforms.fields.Field.__call__`
 method. By calling the field, you can provide keyword arguments, which will be
 injected as html attributes in the output::
 
-    >>> str(form.content(style="width: 200px;", class_="bar"))
-    '<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar">'
+    >>> form.content(style="width: 200px;", class_="bar")
+    Markup('<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar">')
 
 Now let's apply this power to rendering a form in a `Jinja`_ template.
 First, our form::

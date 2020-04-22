@@ -13,7 +13,6 @@ release, version = get_version("WTForms")
 master_doc = "index"
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "pallets_sphinx_themes",
