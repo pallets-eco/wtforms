@@ -24,7 +24,7 @@ Built-in validators
    -   Making a custom a widget that doesn't set it.
    -   Rendering the ``novalidate`` attribute" on the ``form`` tag, or the
        ``formnovalidate`` attribute on a submit button.
-   
+
    The ``required`` flag behavior also applies to the :class:`InputRequired` class.
 
 .. autoclass:: wtforms.validators.Email

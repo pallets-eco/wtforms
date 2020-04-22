@@ -155,4 +155,3 @@ msgstr "مقداری که وارد کردید، تاریخ نیست."
 #: wtforms/fields/core.py:779
 msgid "Not a valid time value"
 msgstr ""
-

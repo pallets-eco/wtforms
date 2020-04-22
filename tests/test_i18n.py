@@ -1,5 +1,8 @@
 import pytest
-from wtforms import form, StringField, validators
+
+from wtforms import form
+from wtforms import StringField
+from wtforms import validators
 from wtforms.i18n import get_translations
 
 

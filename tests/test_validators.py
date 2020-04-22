@@ -1,26 +1,27 @@
 import decimal
-import pytest
 import re
 
-from wtforms import Label, Form, StringField
-from wtforms.validators import (
-    StopValidation,
-    ValidationError,
-    email,
-    equal_to,
-    ip_address,
-    length,
-    optional,
-    regexp,
-    url,
-    NumberRange,
-    AnyOf,
-    NoneOf,
-    mac_address,
-    UUID,
-    input_required,
-    data_required,
-)
+import pytest
+
+from wtforms import Form
+from wtforms import Label
+from wtforms import StringField
+from wtforms.validators import AnyOf
+from wtforms.validators import data_required
+from wtforms.validators import email
+from wtforms.validators import equal_to
+from wtforms.validators import input_required
+from wtforms.validators import ip_address
+from wtforms.validators import length
+from wtforms.validators import mac_address
+from wtforms.validators import NoneOf
+from wtforms.validators import NumberRange
+from wtforms.validators import optional
+from wtforms.validators import regexp
+from wtforms.validators import StopValidation
+from wtforms.validators import url
+from wtforms.validators import UUID
+from wtforms.validators import ValidationError
 
 
 def test_data_required(dummy_form, dummy_field):

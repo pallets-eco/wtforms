@@ -1,7 +1,9 @@
-import pytest
-from decimal import Decimal, ROUND_UP
+from decimal import Decimal
+from decimal import ROUND_UP
 
+import pytest
 from tests.common import DummyPostData
+
 from wtforms import Form
 from wtforms.fields import DecimalField
 from wtforms.utils import unset_value

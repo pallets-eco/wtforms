@@ -1,4 +1,5 @@
-from markupsafe import Markup, escape
+from markupsafe import escape
+from markupsafe import Markup
 
 __all__ = (
     "CheckboxInput",

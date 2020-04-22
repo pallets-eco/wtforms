@@ -1,6 +1,9 @@
-import pytest
 from contextlib import contextmanager
-from wtforms.validators import ValidationError, StopValidation
+
+import pytest
+
+from wtforms.validators import StopValidation
+from wtforms.validators import ValidationError
 
 
 @pytest.fixture

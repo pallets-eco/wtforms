@@ -1,5 +1,7 @@
 from .. import widgets
-from .core import Field, StringField, BooleanField
+from .core import BooleanField
+from .core import Field
+from .core import StringField
 
 __all__ = (
     "BooleanField",

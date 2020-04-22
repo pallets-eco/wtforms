@@ -1,10 +1,13 @@
 import pytest
-
-from wtforms.form import BaseForm, Form
-from wtforms.meta import DefaultMeta
-from wtforms.fields import StringField, IntegerField
-from wtforms.validators import ValidationError, DataRequired
 from tests.common import DummyPostData
+
+from wtforms.fields import IntegerField
+from wtforms.fields import StringField
+from wtforms.form import BaseForm
+from wtforms.form import Form
+from wtforms.meta import DefaultMeta
+from wtforms.validators import DataRequired
+from wtforms.validators import ValidationError
 
 
 class TestBaseForm:

@@ -1,11 +1,12 @@
-from contextlib import contextmanager
 import datetime
-from functools import partial
 import hashlib
 import hmac
-import pytest
+from contextlib import contextmanager
+from functools import partial
 
+import pytest
 from tests.common import DummyPostData
+
 from wtforms.csrf.core import CSRF
 from wtforms.csrf.session import SessionCSRF
 from wtforms.fields import StringField

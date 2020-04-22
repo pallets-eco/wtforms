@@ -591,5 +591,3 @@ namespace and can be overridden or modified just like any other widget.
 .. autoclass:: IntegerRangeField(default field arguments)
 
 .. autoclass:: DecimalRangeField(default field arguments)
-
-

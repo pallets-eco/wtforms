@@ -1,7 +1,6 @@
 """
 Widgets for various HTML5 input types.
 """
-
 from .core import Input
 
 __all__ = (
