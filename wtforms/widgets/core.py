@@ -3,12 +3,34 @@ from __future__ import unicode_literals
 from markupsafe import escape, Markup
 
 from wtforms.compat import text_type, iteritems
+import warnings
+
 
 __all__ = (
     'CheckboxInput', 'FileInput', 'HiddenInput', 'ListWidget', 'PasswordInput',
     'RadioInput', 'Select', 'SubmitInput', 'TableWidget', 'TextArea',
-    'TextInput', 'Option'
+    'TextInput', 'Option', 'HTMLString', 'escape_html',
 )
+
+
+def HTMLString(*args, **kwargs):
+    warnings.warn(
+        "'HTMLString' will be removed in WTForms 3.0. Use"
+        " 'markupsafe.Markup' instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return Markup(*args, **kwargs)
+
+
+def escape_html(*args, **kwargs):
+    warnings.warn(
+        "'escape_html' will be removed in WTForms 3.0. Use"
+        " 'markupsafe.escape' instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return escape(*args, **kwargs)
 
 
 def html_params(**kwargs):

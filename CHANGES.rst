@@ -8,6 +8,10 @@ Unreleased
 
 -   Fixed a bug when :class:`~wtforms.fields.core.SelectField` choices
     is ``None``. :issue:`572, 585`
+-   Restored :class:`~widgets.core.HTMLString` and
+    :func:`~widgets.core.escape_html` as aliases for MarkupSafe
+    functions. Their use shows a ``DeprecationWarning``. :issue:`581`,
+    :pr:`583`
 
 
 Version 2.3.0
