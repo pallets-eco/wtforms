@@ -337,6 +337,21 @@ class SelectFieldTest(TestCase):
         self.assertEqual(form.a.data, "b")
         self.assertEqual(len(form.a.errors), 0)
 
+    def test_choice_shortcut(self):
+        F = make_form(a=SelectField(choices=["foo", "bar"], validate_choice=False))
+        form = F(a="bar")
+        self.assertEqual(form.a(), """<select id="a" name="a"><option value="foo">foo</option><option selected value="bar">bar</option></select>""")
+
+    def test_empty_choice(self):
+        F = make_form(a=SelectField(choices=[], validate_choice=False))
+        form = F(a="bar")
+        self.assertEqual(form.a(), """<select id="a" name="a"></select>""")
+
+    def test_none_choice(self):
+        F = make_form(a=SelectField(choices=None, validate_choice=False))
+        form = F(a="bar")
+        self.assertEqual(form.a(), """<select id="a" name="a"></select>""")
+
 
 class SelectMultipleFieldTest(TestCase):
     class F(Form):

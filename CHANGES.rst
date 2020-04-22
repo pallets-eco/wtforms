@@ -1,5 +1,15 @@
 .. currentmodule:: wtforms
 
+
+Version 2.3.1
+-------------
+
+Unreleased
+
+-   Fixed a bug when :class:`~wtforms.fields.core.SelectField` choices
+    is ``None``. :issue:`572, 585`
+
+
 Version 2.3.0
 -------------
 
