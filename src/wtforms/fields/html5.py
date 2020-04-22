@@ -1,6 +1,3 @@
-"""
-Fields to support various HTML5 input types.
-"""
 from . import core
 from ..widgets import html5 as widgets
 
