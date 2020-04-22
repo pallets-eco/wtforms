@@ -1,43 +1,46 @@
 from collections import namedtuple
-from datetime import date, datetime
-from decimal import Decimal, ROUND_DOWN, ROUND_UP
+from datetime import date
+from datetime import datetime
+from decimal import Decimal
+from decimal import ROUND_DOWN
+from decimal import ROUND_UP
 
-from markupsafe import Markup
 import pytest
-
+from markupsafe import Markup
 from tests.common import DummyPostData
-from wtforms import meta, validators, widgets
-from wtforms.fields import (
-    BooleanField,
-    DateField,
-    DateTimeField,
-    DateTimeLocalField,
-    DecimalField,
-    DecimalRangeField,
-    EmailField,
-    Field,
-    FieldList,
-    FileField,
-    FloatField,
-    FormField,
-    HiddenField,
-    IntegerField,
-    IntegerRangeField,
-    Label,
-    MultipleFileField,
-    PasswordField,
-    RadioField,
-    SearchField,
-    SelectField,
-    SelectFieldBase,
-    SelectMultipleField,
-    StringField,
-    SubmitField,
-    TelField,
-    TextAreaField,
-    TimeField,
-    URLField,
-)
+
+from wtforms import meta
+from wtforms import validators
+from wtforms import widgets
+from wtforms.fields import BooleanField
+from wtforms.fields import DateField
+from wtforms.fields import DateTimeField
+from wtforms.fields import DateTimeLocalField
+from wtforms.fields import DecimalField
+from wtforms.fields import DecimalRangeField
+from wtforms.fields import EmailField
+from wtforms.fields import Field
+from wtforms.fields import FieldList
+from wtforms.fields import FileField
+from wtforms.fields import FloatField
+from wtforms.fields import FormField
+from wtforms.fields import HiddenField
+from wtforms.fields import IntegerField
+from wtforms.fields import IntegerRangeField
+from wtforms.fields import Label
+from wtforms.fields import MultipleFileField
+from wtforms.fields import PasswordField
+from wtforms.fields import RadioField
+from wtforms.fields import SearchField
+from wtforms.fields import SelectField
+from wtforms.fields import SelectFieldBase
+from wtforms.fields import SelectMultipleField
+from wtforms.fields import StringField
+from wtforms.fields import SubmitField
+from wtforms.fields import TelField
+from wtforms.fields import TextAreaField
+from wtforms.fields import TimeField
+from wtforms.fields import URLField
 from wtforms.form import Form
 from wtforms.utils import unset_value
 from wtforms.widgets import TextInput

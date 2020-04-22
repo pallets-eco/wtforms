@@ -1,5 +1,5 @@
-from wtforms.validators import ValidationError
 from wtforms.fields import HiddenField
+from wtforms.validators import ValidationError
 
 __all__ = ("CSRFTokenField", "CSRF")
 

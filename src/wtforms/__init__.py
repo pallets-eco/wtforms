@@ -9,7 +9,8 @@ development.
 :license: BSD, see LICENSE.rst for details.
 """
 # flake8: noqa
-from wtforms import validators, widgets
+from wtforms import validators
+from wtforms import widgets
 from wtforms.fields import *
 from wtforms.form import Form
 from wtforms.validators import ValidationError

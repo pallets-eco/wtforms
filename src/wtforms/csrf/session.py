@@ -14,9 +14,9 @@ expiration time is not passed, the CSRF validation will pass.
 """
 import hmac
 import os
-
+from datetime import datetime
+from datetime import timedelta
 from hashlib import sha1
-from datetime import datetime, timedelta
 
 from ..validators import ValidationError
 from .core import CSRF

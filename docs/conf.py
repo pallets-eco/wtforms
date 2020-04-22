@@ -42,11 +42,11 @@ html_sidebars = {
 singlehtml_sidebars = {"index": ["project.html", "localtoc.html"]}
 html_static_path = ["_static"]
 html_logo = "_static/wtforms.png"
-html_title = "WTForms Documentation ({})".format(version)
+html_title = f"WTForms Documentation ({version})"
 html_show_sourcelink = False
 
 # LaTeX ----------------------------------------------------------------
 
 latex_documents = [
-    ("index", "WTForms-{}.tex".format(version), html_title, author, "manual"),
+    ("index", f"WTForms-{version}.tex", html_title, author, "manual"),
 ]

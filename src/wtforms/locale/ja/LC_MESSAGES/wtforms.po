@@ -154,4 +154,3 @@ msgstr "無効な日付型です"
 #: wtforms/fields/core.py:779
 msgid "Not a valid time value"
 msgstr "無効な時間型です"
-

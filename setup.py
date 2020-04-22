@@ -1,7 +1,8 @@
-import io
 import re
 
-from setuptools import Command, find_packages, setup
+from setuptools import Command
+from setuptools import find_packages
+from setuptools import setup
 from setuptools.command.develop import develop as BaseDevelop
 from setuptools.command.sdist import sdist as BaseSDist
 
@@ -10,14 +11,14 @@ try:
 except ImportError:
     BaseBDistWheel = None
 
-with io.open("README.rst", "rt", encoding="utf8") as f:
+with open("README.rst", encoding="utf8") as f:
     readme = f.read()
 
-with io.open("src/wtforms/__init__.py", "rt", encoding="utf8") as f:
+with open("src/wtforms/__init__.py", encoding="utf8") as f:
     version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
 
-class CompileCatalogMixin(object):
+class CompileCatalogMixin:
     """Compile MO files with Babel's ``compile_catalog`` command. This
     happens after installing in development mode, or before building
     sdist and wheel.
@@ -33,7 +34,7 @@ class CompileCatalogMixin(object):
         if not is_develop:
             self.run_command("compile_catalog")
 
-        super(CompileCatalogMixin, self).run()
+        super().run()
 
         if is_develop and not self.uninstall:
             self.run_command("compile_catalog")

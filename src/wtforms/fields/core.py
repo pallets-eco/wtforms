@@ -1,14 +1,16 @@
 import datetime
 import decimal
-import itertools
 import inspect
+import itertools
 
-from markupsafe import Markup, escape
+from markupsafe import escape
+from markupsafe import Markup
 
 from wtforms import widgets
 from wtforms.i18n import DummyTranslations
 from wtforms.utils import unset_value
-from wtforms.validators import StopValidation, ValidationError
+from wtforms.validators import StopValidation
+from wtforms.validators import ValidationError
 
 __all__ = (
     "BooleanField",

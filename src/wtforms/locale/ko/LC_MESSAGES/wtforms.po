@@ -154,4 +154,3 @@ msgstr "올바르지 않은 날짜 값입니다."
 #: wtforms/fields/core.py:779
 msgid "Not a valid time value"
 msgstr ""
-
