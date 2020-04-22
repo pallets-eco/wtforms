@@ -310,4 +310,4 @@ Now with any subclasses of MyBaseForm, you don't need to pass in the csrf
 context, and on top of that, we grab the secret key out of your normal app
 configuration.
 
-.. _Flask: http://flask.pocoo.org/
+.. _Flask: https://flask.palletsprojects.com/

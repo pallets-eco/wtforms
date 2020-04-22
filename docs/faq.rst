@@ -23,7 +23,7 @@ but if it's not listed, it doesn't mean it won't work.
 
 * **Templating Engines**
 
-  * Jinja2
+  * Jinja
   * Mako
   * Django Templates (To get the full power of WTForms in your templates, use
     `WTForms-Django`_.)
@@ -124,9 +124,10 @@ This is for a number of reasons:
 2. Bug-finding. If you omitted a field in your template, it might fall through
    to the default and you'd possibly miss it.
 
+3. Consistency.
+
 
 How do I... [convoluted combination of libraries]
 -------------------------------------------------
 
-You'll probably want to check out our
-:ref:`Solving Specific Problems <specific_problems>` doc.
+You'll probably want to check out our :doc:`specific_problems` doc.

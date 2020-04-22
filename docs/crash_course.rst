@@ -1,5 +1,3 @@
-.. _crash-course:
-
 Crash Course
 ============
 
@@ -21,8 +19,6 @@ and presentation, and keep those messy parameters out of your python code.
 Because we strive for loose coupling, you should be able to do that in any
 templating engine you like, as well.
 
-
-.. _download-installation:
 
 Download / Installation
 -----------------------
@@ -259,14 +255,16 @@ injected as html attributes in the output::
     >>> str(form.content(style="width: 200px;", class_="bar"))
     '<input class="bar" id="content" name="content" style="width: 200px;" type="text" value="foobar">'
 
-Now let's apply this power to rendering a form in a `Jinja <http://jinja.pocoo.org/>`_
-template. First, our form::
+Now let's apply this power to rendering a form in a `Jinja`_ template.
+First, our form::
 
     class LoginForm(Form):
         username = StringField('Username')
         password = PasswordField('Password')
 
     form = LoginForm()
+
+.. _Jinja: https://jinja.palletsprojects.com/
 
 And the template:
 
@@ -386,6 +384,6 @@ The crash course has just skimmed the surface on how you can begin using
 WTForms to handle form input and validation in your application. For more
 information, you'll want to check the following:
 
- - The :ref:`WTForms documentation <doc-index>` has API documentation for the entire library.
- - :ref:`specific_problems` can help you tackle specific
+ - The :doc:`WTForms documentation <index>` has API documentation for the entire library.
+ - :doc:`specific_problems` can help you tackle specific
    integration issues with WTForms and other frameworks.

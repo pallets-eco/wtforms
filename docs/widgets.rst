@@ -9,7 +9,7 @@ that widgets can easily be created to customize the rendering of existing
 fields.
 
 **Note** All built-in widgets will return upon rendering a "HTML-safe" unicode
-string subclass that many templating frameworks (Jinja2, Mako, Genshi) will
+string subclass that many templating frameworks (Jinja, Mako, Genshi) will
 recognize as not needing to be auto-escaped.
 
 Built-in widgets
@@ -40,7 +40,7 @@ WTForms uses `MarkupSafe`_ to escape unsafe HTML characters before
 rendering. You can mark a string using :class:`markupsafe.Markup` to
 indicate that it should not be escaped.
 
-.. _MarkupSafe: https://github.com/pallets/markupsafe
+.. _MarkupSafe: https://markupsafe.palletsprojects.com/
 
 
 Custom widgets

@@ -1,9 +1,9 @@
+:orphan:
+
 Extensions
 ==========
 
-.. deprecated:: 3.0
-    All WTForms extensions were removed in WTForms 3.0
-    See below for replacements
+All WTForms extensions were removed in WTForms 3.0.
 
  * ``wtforms.ext.appengine`` was extracted to `WTForms-Appengine <https://github.com/wtforms/wtforms-appengine>`_
  * ``wtforms.ext.csrf`` was integrated into WTForms core. See :doc:`CSRF Docs <csrf>`

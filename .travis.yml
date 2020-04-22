@@ -4,21 +4,17 @@ dist: xenial
 language: python
 
 python:
-  - 3.8
-  - 3.7
-  - 3.6
-  - nightly
+  - '3.8'
+  - '3.7'
+  - '3.6'
   - pypy3
-env: TOXENV=py,coveralls
 
-jobs:
+env: TOXENV=py,coverage-ci
+
+matrix:
   include:
-    - python: "3.8"
-      env: TOXENV=py38,stylecheck,docs-html,coveralls
-  allow_failures:
-    - python: nightly
-    - python: pypy3
-  fast_finish: true
+    - env: TOXENV=style
+    - env: TOXENV=docs
 
 install:
   - pip install tox
@@ -32,7 +28,7 @@ cache:
 branches:
   only:
     - master
-    - /^.*-maintenance$/
+    - /^.*\.x$/
 
 notifications:
   email: false

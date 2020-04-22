@@ -14,22 +14,18 @@ WTForms
     :target: https://github.com/psf/black
 
 WTForms is a flexible forms validation and rendering library for Python
-web development. It is `framework agnostic`_ and can work with whatever
-web framework and template engine you choose. There are various
-community libraries that provide closer integration with popular
-frameworks.
-
-To get started using WTForms, we recommend reading the `crash course`_
-in the docs.
-
-.. _crash course: https://wtforms.readthedocs.io/en/stable/crash_course.html
-.. _framework agnostic: https://wtforms.readthedocs.io/en/stable/faq.html#does-wtforms-work-with-library-here
+web development. It can work with whatever web framework and template
+engine you choose. It supports data validation, CSRF protection,
+internationalization (I18N), and more. There are various community
+libraries that provide closer integration with popular frameworks.
 
 
 Installation
 ------------
 
-Install and update using pip::
+Install and update using pip:
+
+.. code-block:: text
 
     pip install -U WTForms
 
@@ -67,12 +63,9 @@ Links
 -----
 
 -   Documentation: https://wtforms.readthedocs.io/
--   License: `BSD <https://github.com/wtforms/wtforms/blob/master/LICENSE>`_
 -   Releases: https://pypi.org/project/WTForms/
 -   Code: https://github.com/wtforms/wtforms
 -   Issue tracker: https://github.com/wtforms/wtforms/issues
--   Test status:
-
-    -   Linux: https://travis-ci.org/wtforms/wtforms
-
+-   Test status: https://travis-ci.org/wtforms/wtforms
 -   Test coverage: https://coveralls.io/github/wtforms/wtforms
+-   Discord Chat: https://discord.gg/F65P7Z9

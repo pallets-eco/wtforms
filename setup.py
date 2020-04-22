@@ -1,4 +1,3 @@
-from collections import OrderedDict
 import io
 import re
 
@@ -62,16 +61,14 @@ setup(
     name="WTForms",
     version=version,
     url="https://wtforms.readthedocs.io/",
-    project_urls=OrderedDict(
-        (
-            ("Documentation", "https://wtforms.readthedocs.io/"),
-            ("Code", "https://github.com/wtforms/wtforms"),
-            ("Issue tracker", "https://github.com/wtforms/wtforms/issues"),
-        )
-    ),
-    license="BSD",
-    maintainer="WTForms team",
-    maintainer_email="davidism+wtforms@gmail.com",
+    project_urls={
+        "Documentation": "https://wtforms.readthedocs.io/",
+        "Code": "https://github.com/wtforms/wtforms",
+        "Issue Tracker": "https://github.com/wtforms/wtforms/issues",
+    },
+    license="BSD-3-Clause",
+    maintainer="WTForms",
+    maintainer_email="davidism@gmail.com",
     description=(
         "A flexible forms validation and rendering library for Python"
         " web development."
