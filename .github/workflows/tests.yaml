@@ -1,0 +1,62 @@
+on:
+  push:
+    branches:
+      - master
+      - '*.x'
+  pull_request:
+    branches:
+      - master
+      - '*.x'
+jobs:
+  tests:
+    name: ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python:
+          - '3.8'
+          - '3.7'
+          - '3.6'
+          - pypy3
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
+      - run: pip install tox
+      - run: tox -e py
+  style:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ hashFiles('.pre-commit-config.yaml') }}
+      - run: pip install tox
+      - run: tox -e style
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.8'
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
+      - run: pip install tox
+      - run: tox -e docs
