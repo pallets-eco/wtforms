@@ -292,15 +292,15 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             else:
                 super(Form, self).__delattr__(name)
 
-    def validate(self):
+    def validate(self, extra_validators=None):
         """
         Validates the form by calling `validate` on each field, passing any
         extra `Form.validate_<fieldname>` validators to the field validator.
         """
-        extra = {}
+        extra = extra_validators or {}
         for name in self._fields:
             inline = getattr(self.__class__, 'validate_%s' % name, None)
             if inline is not None:
-                extra[name] = [inline]
+                extra.setdefault(name, []).append(inline)
 
         return super(Form, self).validate(extra)
