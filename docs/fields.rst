@@ -268,10 +268,12 @@ refer to a single input from the form.
 
 .. class:: SelectField(default field arguments, choices=[], coerce=unicode, option_widget=None, validate_choice=True)
 
-    Select fields keep a `choices` property which is a sequence of `(value,
-    label)` pairs.  The value portion can be any type in theory, but as form
-    data is sent by the browser as strings, you will need to provide a function
-    which can coerce the string representation back to a comparable object.
+    Select fields take a ``choices`` parameter which is a list of
+    ``(value, label)`` pairs. It can also be a list of only values, in
+    which case the value is used as the label. The value can be any
+    type, but because form data is sent to the browser as strings, you
+    will need to provide a ``coerce`` function that converts a string
+    back to the expected type.
 
     **Select fields with static choice values**::
 
