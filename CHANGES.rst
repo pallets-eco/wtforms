@@ -34,6 +34,7 @@ Unreleased
 -   Render attribute names like ``for_`` and ``class_`` are normalized
     consistently so later values override those specified earlier.
     :issue:`449`, :pr:`596`
+-   Flags can take non-boolean values. :issue:`406` :pr:`467`
 
 
 Version 2.3.1
