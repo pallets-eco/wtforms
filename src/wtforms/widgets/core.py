@@ -203,8 +203,9 @@ class HiddenInput(Input):
 
     input_type = "hidden"
 
-    def field_flags(self):
-        return {"hidden": True}
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.field_flags = {"hidden": True}
 
 
 class CheckboxInput(Input):

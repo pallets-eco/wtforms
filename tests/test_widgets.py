@@ -105,7 +105,7 @@ class TestBasicWidgets:
 
     def test_hidden_input(self, basic_widget_dummy_field):
         assert 'type="hidden"' in HiddenInput()(basic_widget_dummy_field)
-        assert "hidden" in HiddenInput().field_flags()
+        assert "hidden" in HiddenInput().field_flags
 
     def test_checkbox_input(self, basic_widget_dummy_field):
         assert (
