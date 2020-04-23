@@ -429,7 +429,7 @@ class Flags:
     def __getattr__(self, name):
         if name.startswith("_"):
             return super().__getattr__(name)
-        return False
+        return None
 
     def __contains__(self, name):
         return getattr(self, name)

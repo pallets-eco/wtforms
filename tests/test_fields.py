@@ -119,7 +119,7 @@ class TestFlags:
     def test_existing_values(self, flags):
         assert flags.required is True
         assert "required" in flags
-        assert flags.optional is False
+        assert flags.optional is None
         assert "optional" not in flags
 
     def test_assignment(self, flags):
