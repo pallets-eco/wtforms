@@ -46,6 +46,8 @@ class BaseForm:
             field = meta.bind_field(self, unbound_field, options)
             self._fields[name] = field
 
+        self.form_errors = []
+
     def __iter__(self):
         """Iterate form fields in creation order."""
         return iter(self._fields.values())
@@ -140,7 +142,10 @@ class BaseForm:
 
     @property
     def errors(self):
-        return {name: f.errors for name, f in self._fields.items() if f.errors}
+        errors = {name: f.errors for name, f in self._fields.items() if f.errors}
+        if self.form_errors:
+            errors[None] = self.form_errors
+        return errors
 
 
 class FormMeta(type):

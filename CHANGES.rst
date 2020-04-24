@@ -25,6 +25,7 @@ Unreleased
     :pr:`608`
 -   Choices shortcut for :class:`~fields.core.SelectMultipleField`.
     :issue:`603` :pr:`605`
+-   Forms can have form-level errors. :issue:`55` :pr:`595`
 
 
 Version 2.3.1

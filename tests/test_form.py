@@ -174,6 +174,31 @@ class TestForm:
         form = F2(test="nope", other="extra")
         assert not form.validate(extra_validators={"other": [extra]})
 
+    def test_form_level_errors(self):
+        class F(Form):
+            a = IntegerField()
+            b = IntegerField()
+
+            def validate(self):
+                if not super().validate():
+                    return False
+
+                if (self.a.data + self.b.data) % 2 != 0:
+                    self.form_errors.append("a + b should be even")
+                    return False
+
+                return True
+
+        f = F(a=1, b=1)
+        assert f.validate()
+        assert not f.form_errors
+        assert not f.errors
+
+        f = F(a=0, b=1)
+        assert not f.validate()
+        assert ["a + b should be even"] == f.form_errors
+        assert ["a + b should be even"] == f.errors[None]
+
     def test_field_adding_disabled(self):
         form = self.F()
         with pytest.raises(TypeError):
