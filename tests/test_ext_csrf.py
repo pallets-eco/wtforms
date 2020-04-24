@@ -29,7 +29,7 @@ class StupidObject(object):
     csrf_token = None
 
 
-class SecureFormTest(TestCase):
+class TestSecureForm(TestCase):
     def test_base_class(self):
         self.assertRaises(NotImplementedError, SecureForm)
 
@@ -70,7 +70,7 @@ class SecureFormTest(TestCase):
         self.assertEqual(form.csrf_token._value(), 'test')
 
 
-class SessionSecureFormTest(TestCase):
+class TestSessionSecureForm(TestCase):
     class SSF(SessionSecureForm):
         SECRET_KEY = 'abcdefghijklmnop'.encode('ascii')
 

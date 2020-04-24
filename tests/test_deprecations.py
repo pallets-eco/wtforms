@@ -5,7 +5,7 @@ from wtforms.widgets import HTMLString, escape_html
 import markupsafe
 
 
-class DeprecationTest(unittest.TestCase):
+class TestDeprecation(unittest.TestCase):
     def test_htmlstring(self):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")

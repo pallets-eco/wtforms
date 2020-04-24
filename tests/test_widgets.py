@@ -23,7 +23,7 @@ class DummyField(object):
     iter_choices = lambda x: iter(x.data)
 
 
-class HTMLParamsTest(TestCase):
+class TestHTMLParams(TestCase):
     def test_basic(self):
         self.assertEqual(html_params(foo=9, k='wuuu'), 'foo="9" k="wuuu"')
         self.assertEqual(html_params(class_='foo'), 'class="foo"')
@@ -43,7 +43,7 @@ class HTMLParamsTest(TestCase):
         self.assertEqual(html_params(foo='hi&bye"quot'), 'foo="hi&amp;bye&#34;quot"')
 
 
-class ListWidgetTest(TestCase):
+class TestListWidget(TestCase):
     def test(self):
         # ListWidget just expects an iterable of field-like objects as its
         # 'field' so that is what we will give it
@@ -55,7 +55,7 @@ class ListWidgetTest(TestCase):
         self.assertEqual(w(field), '<ol id="hai"><li>foo lfoo</li><li>bar lbar</li></ol>')
 
 
-class TableWidgetTest(TestCase):
+class TestTableWidget(TestCase):
     def test(self):
         inner_fields = [
             DummyField('hidden1', type='HiddenField'),
@@ -70,7 +70,7 @@ class TableWidgetTest(TestCase):
         )
 
 
-class BasicWidgetsTest(TestCase):
+class TestBasicWidgets(TestCase):
     """Test most of the basic input widget types"""
 
     def setUp(self):
@@ -121,7 +121,7 @@ class BasicWidgetsTest(TestCase):
         self.assertEqual(FileInput(multiple=True)(self.field), '<input id="id" multiple name="bar" type="file">')
 
 
-class SelectTest(TestCase):
+class TestSelect(TestCase):
     field = DummyField([('foo', 'lfoo', True), ('bar', 'lbar', False)])
 
     def test(self):
@@ -154,7 +154,7 @@ class SelectTest(TestCase):
         )
 
 
-class HTML5Test(TestCase):
+class TestHTML5(TestCase):
     field = DummyField('42', name='bar', id='id')
 
     def test_number(self):

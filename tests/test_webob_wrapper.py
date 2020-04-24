@@ -45,7 +45,7 @@ class SneakyField(Field):
         self.sneaky_callable(formdata)
 
 
-class WebobWrapperTest(TestCase):
+class TestWebobWrapper(TestCase):
     def setUp(self):
         w_cls = MultiDict if has_webob else MockMultiDict
 

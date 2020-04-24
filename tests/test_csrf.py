@@ -49,7 +49,7 @@ class SimplePopulateObject(object):
     csrf_token = None
 
 
-class DummyCSRFTest(TestCase):
+class TestDummyCSRF(TestCase):
     class F(Form):
         class Meta:
             csrf = True
@@ -84,7 +84,7 @@ class DummyCSRFTest(TestCase):
         self.assertEqual(obj.a, 'test')
 
 
-class SessionCSRFTest(TestCase):
+class TestSessionCSRF(TestCase):
     class F(Form):
         class Meta:
             csrf = True

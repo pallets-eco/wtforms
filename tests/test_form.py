@@ -9,7 +9,7 @@ from wtforms.validators import ValidationError, DataRequired
 from tests.common import DummyPostData
 
 
-class BaseFormTest(TestCase):
+class TestBaseForm(TestCase):
     def get_form(self, **kwargs):
         def validate_test(form, field):
             if field.data != 'foobar':
@@ -82,7 +82,7 @@ class BaseFormTest(TestCase):
         self.assertRaises(TypeError, form.process, [])
 
 
-class FormMetaTest(TestCase):
+class TestFormMeta(TestCase):
     def test_monkeypatch(self):
         class F(Form):
             a = TextField()
@@ -136,7 +136,7 @@ class FormMetaTest(TestCase):
         assert issubclass(F._wtforms_meta, MetaB)
 
 
-class FormTest(TestCase):
+class TestForm(TestCase):
     class F(Form):
         test = TextField()
 
@@ -244,7 +244,7 @@ class FormTest(TestCase):
         self.assertEqual({"foo": ["bar"]}, form.errors)
 
 
-class MetaTest(TestCase):
+class TestMeta(TestCase):
     class F(Form):
         class Meta:
             foo = 9

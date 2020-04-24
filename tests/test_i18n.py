@@ -31,7 +31,7 @@ class Python2_Translator(object):
     ungettext = ngettext_lower
 
 
-class I18NTest(TestCase):
+class TestI18N(TestCase):
     def test_failure(self):
         self.assertRaises(IOError, get_translations, [])
 
@@ -59,7 +59,7 @@ class I18NTest(TestCase):
         assert translations is translator
 
 
-class ClassicI18nFormTest(TestCase):
+class TestClassicI18nForm(TestCase):
     class F(i18n_form.Form):
         LANGUAGES = ['en_US', 'en']
         a = TextField(validators=[validators.Required()])
@@ -81,7 +81,7 @@ class ClassicI18nFormTest(TestCase):
         self.assertEqual(form.a.errors[0], 'Este campo es obligatorio.')
 
 
-class CoreFormTest(TestCase):
+class TestCoreForm(TestCase):
     class F(form.Form):
         class Meta:
             locales = ['en_US', 'en']
@@ -141,7 +141,7 @@ class CoreFormTest(TestCase):
         assert form2.meta.get_translations(form2) is not form3.meta.get_translations(form3)
 
 
-class TranslationsTest(TestCase):
+class TestTranslations(TestCase):
     class F(form.Form):
         a = TextField(validators=[validators.Length(max=5)])
 

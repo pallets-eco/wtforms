@@ -8,7 +8,7 @@ from wtforms.ext.dateutil.fields import DateTimeField, DateField
 from tests.common import DummyPostData
 
 
-class DateutilTest(TestCase):
+class TestDateutil(TestCase):
     class F(Form):
         a = DateTimeField()
         b = DateField(default=lambda: date(2004, 9, 12))

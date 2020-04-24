@@ -79,7 +79,7 @@ def lazy_select(field, **kwargs):
     return tuple(output)
 
 
-class TemplateTagsTest(TestCase):
+class TestTemplateTags(TestCase):
     load_tag = '{% load wtforms %}'
 
     class F(Form):
@@ -122,7 +122,7 @@ class TemplateTagsTest(TestCase):
             self._render('{% form_field foo=bar baz= quux=hello %}')
 
 
-class ModelFormTest(TestCase):
+class TestModelForm(TestCase):
     F = model_form(test_models.User, exclude=['id'], field_args={
         'posts': {
             'validators': [validators.NumberRange(min=4, max=7)],
@@ -184,7 +184,7 @@ class ModelFormTest(TestCase):
             assert form.nullbool.data is expected
 
 
-class QuerySetSelectFieldTest(DjangoTestCase):
+class TestQuerySetSelectField(DjangoTestCase):
     fixtures = ['ext_django.json']
 
     def setUp(self):
@@ -230,7 +230,7 @@ class QuerySetSelectFieldTest(DjangoTestCase):
         self.assertEqual(form.a(), ('N:1:USERS', 'N:2:ADMINS'))
 
 
-class ModelSelectFieldTest(DjangoTestCase):
+class TestModelSelectField(DjangoTestCase):
     fixtures = ['ext_django.json']
 
     class F(Form):
@@ -241,7 +241,7 @@ class ModelSelectFieldTest(DjangoTestCase):
         self.assertEqual(form.a(), ('N:1:Users(1)', 'N:2:Admins(2)'))
 
 
-class DateTimeFieldTimezoneTest(DjangoTestCase):
+class TestDateTimeFieldTimezone(DjangoTestCase):
 
     class F(Form):
         a = DateTimeField()
@@ -267,7 +267,7 @@ class DateTimeFieldTimezoneTest(DjangoTestCase):
         self.assertTrue('2013-09-24 19:15:00' in form.a())
 
 
-class I18NTest(DjangoTestCase):
+class TestI18N(DjangoTestCase):
     def test_django_translations(self):
         trans = i18n.DjangoTranslations()
         self.assertEqual(trans.gettext('Username'), u'Nombre de usuario')

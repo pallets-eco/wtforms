@@ -16,7 +16,7 @@ class DummyForm(dict):
     pass
 
 
-class ValidatorsTest(TestCase):
+class TestValidators(TestCase):
     def setUp(self):
         self.form = DummyForm()
 
@@ -277,7 +277,7 @@ class ValidatorsTest(TestCase):
         self.assertRaises(ValueError, NoneOf(['a', 'b', 'c']), self.form, DummyField('a'))
 
 
-class IPAddreesTest(TestCase):
+class TestIPAddrees(TestCase):
     def test_ip4address_passes(self):
         for address in [
             u"147.230.23.25",

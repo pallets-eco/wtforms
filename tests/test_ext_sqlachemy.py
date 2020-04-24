@@ -182,7 +182,7 @@ class QuerySelectMultipleFieldTest(TestBase):
         self.assertTrue(form.validate())
 
 
-class ModelFormTest(TestCase):
+class TestModelForm(TestCase):
     def setUp(self):
         Model = declarative_base()
 
@@ -294,7 +294,7 @@ class ModelFormTest(TestCase):
         self.assertEqual(len(list(F())), 7)
 
 
-class ModelFormColumnDefaultTest(TestCase):
+class TestModelFormColumnDefault(TestCase):
     def setUp(self):
         Model = declarative_base()
 
