@@ -1,8 +1,10 @@
 from __future__ import unicode_literals
 
+import pytest
 # This needs to stay as the first import, it sets up paths.
-from gaetest_common import DummyPostData, fill_authors
+from .gaetest_common import DummyPostData, fill_authors
 
+pytest.importorskip('google.appengine.ext')
 from google.appengine.ext import ndb
 from unittest import TestCase
 from wtforms import Form, TextField, IntegerField, BooleanField

@@ -10,10 +10,13 @@ nosetests --with-gae --without-sandbox
 """
 from __future__ import unicode_literals
 
+import pytest
+
 # This needs to stay as the first import, it sets up paths.
-from gaetest_common import DummyPostData
+from .gaetest_common import DummyPostData
 
 from unittest import TestCase
+pytest.importorskip('google.appengine.ext')
 from google.appengine.ext import db
 
 from wtforms import Form, fields as f, validators

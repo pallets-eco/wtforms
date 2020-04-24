@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, absolute_import
 
+import pytest
 import sys
 import os
 TESTS_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
@@ -13,6 +14,7 @@ sys.path.insert(0, TESTS_DIR)
 # control the order in which tests are run, so making a throwaway test won't
 # work either.
 
+pytest.importorskip('django', minversion="1.8")
 from django.conf import settings
 settings.configure(
     INSTALLED_APPS=[
