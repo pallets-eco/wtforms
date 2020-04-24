@@ -295,7 +295,7 @@ class Field:
         """
         pass
 
-    def process(self, formdata, data=unset_value):
+    def process(self, formdata, data=unset_value, extra_filters=None):
         """
         Process incoming data, calling process_data, process_formdata as needed,
         and run filters.
@@ -307,6 +307,8 @@ class Field:
         process_formdata and process_data methods. Only override this for
         special advanced processing, such as when a field encapsulates many
         inputs.
+
+        :param extra_filters: A sequence of extra filters to run.
         """
         self.process_errors = []
         if data is unset_value:
@@ -334,7 +336,7 @@ class Field:
                 self.process_errors.append(e.args[0])
 
         try:
-            for filter in self.filters:
+            for filter in itertools.chain(self.filters, extra_filters or []):
                 self.data = filter(self.data)
         except ValueError as e:
             self.process_errors.append(e.args[0])
@@ -940,7 +942,13 @@ class FormField(Field):
                 " define them on the enclosed form."
             )
 
-    def process(self, formdata, data=unset_value):
+    def process(self, formdata, data=unset_value, extra_filters=None):
+        if extra_filters:
+            raise TypeError(
+                "FormField cannot take filters, as the encapsulated"
+                "data is not mutable."
+            )
+
         if data is unset_value:
             try:
                 data = self.default()
@@ -1041,7 +1049,13 @@ class FieldList(Field):
         self.last_index = -1
         self._prefix = kwargs.get("_prefix", "")
 
-    def process(self, formdata, data=unset_value):
+    def process(self, formdata, data=unset_value, extra_filters=None):
+        if extra_filters:
+            raise TypeError(
+                "FieldList does not accept any filters. Instead, define"
+                " them on the enclosed field."
+            )
+
         self.entries = []
         if data is unset_value or not data:
             try:

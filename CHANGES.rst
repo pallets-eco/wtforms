@@ -27,6 +27,8 @@ Unreleased
     :issue:`603` :pr:`605`
 -   Forms can have form-level errors. :issue:`55` :pr:`595`
 -   Implemented :class:`~wtforms.fields.core.MonthField`. :pr:`530` :pr:`593`
+-   Filters can be inline. :meth:`form.BaseForm.process` takes a
+    *extra_filters* parameter. :issue:`128` :pr:`592`
 
 
 Version 2.3.1

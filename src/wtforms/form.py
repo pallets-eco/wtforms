@@ -79,7 +79,7 @@ class BaseForm:
         for name, field in self._fields.items():
             field.populate_obj(obj, name)
 
-    def process(self, formdata=None, obj=None, data=None, **kwargs):
+    def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
         """
         Take form, object data, and keyword arg input and have the fields
         process them.
@@ -95,6 +95,10 @@ class BaseForm:
             If provided, must be a dictionary of data. This is only used if
             `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as the field.
+        :param extra_filters: A dict mapping field names to lists of
+            extra filters functions to run. Extra filters run after
+            filters passed when creating the field. If the form has
+            ``filter_<fieldname>``, it is the last extra filter.
         :param `**kwargs`:
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
@@ -107,13 +111,23 @@ class BaseForm:
             #     Temporarily, this can simply be merged with kwargs.
             kwargs = dict(data, **kwargs)
 
+        filters = extra_filters.copy() if extra_filters is not None else {}
+
         for name, field in self._fields.items():
+            field_extra_filters = filters.get(name, [])
+
+            inline_filter = getattr(self, "filter_%s" % name, None)
+            if inline_filter is not None:
+                field_extra_filters.append(inline_filter)
+
             if obj is not None and hasattr(obj, name):
-                field.process(formdata, getattr(obj, name))
+                field.process(
+                    formdata, getattr(obj, name), extra_filters=field_extra_filters
+                )
             elif name in kwargs:
-                field.process(formdata, kwargs[name])
+                field.process(formdata, kwargs[name], extra_filters=field_extra_filters)
             else:
-                field.process(formdata)
+                field.process(formdata, extra_filters=field_extra_filters)
 
     def validate(self, extra_validators=None):
         """
@@ -228,7 +242,7 @@ class Form(BaseForm, metaclass=FormMeta):
     Meta = DefaultMeta
 
     def __init__(
-        self, formdata=None, obj=None, prefix="", data=None, meta=None, **kwargs
+        self, formdata=None, obj=None, prefix="", data=None, meta=None, **kwargs,
     ):
         """
         :param formdata:

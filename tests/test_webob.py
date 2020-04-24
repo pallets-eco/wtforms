@@ -43,7 +43,7 @@ class SneakyField(Field):
         super().__init__(*args, **kwargs)
         self.sneaky_callable = sneaky_callable
 
-    def process(self, formdata, data=unset_value):
+    def process(self, formdata, data=unset_value, **kwargs):
         self.sneaky_callable(formdata)
 
 

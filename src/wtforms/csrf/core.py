@@ -39,8 +39,8 @@ class CSRFTokenField(HiddenField):
         """
         self.csrf_impl.validate_csrf_token(form, self)
 
-    def process(self, *args):
-        super().process(*args)
+    def process(self, *args, **kwargs):
+        super().process(*args, **kwargs)
         self.current_token = self.csrf_impl.generate_csrf_token(self)
 
 
