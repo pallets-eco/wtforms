@@ -73,6 +73,14 @@ class TimeField(core.TimeField):
     widget = widgets.TimeInput()
 
 
+class MonthField(core.MonthField):
+    """
+    Represents an ``<input type="month">``.
+    """
+
+    widget = widgets.MonthInput()
+
+
 class DateTimeLocalField(core.DateTimeField):
     """
     Represents an ``<input type="datetime-local">``.

@@ -26,6 +26,7 @@ __all__ = (
     "SelectMultipleField",
     "StringField",
     "TimeField",
+    "MonthField",
 )
 
 
@@ -896,6 +897,16 @@ class TimeField(DateTimeField):
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext("Not a valid time value"))
+
+
+class MonthField(DateField):
+    """
+    Same as DateField, except represents a month, stores a `datetime.date`
+    with `day = 1`.
+    """
+
+    def __init__(self, label=None, validators=None, format="%Y-%m", **kwargs):
+        super().__init__(label, validators, format, **kwargs)
 
 
 class FormField(Field):

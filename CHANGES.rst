@@ -26,6 +26,7 @@ Unreleased
 -   Choices shortcut for :class:`~fields.core.SelectMultipleField`.
     :issue:`603` :pr:`605`
 -   Forms can have form-level errors. :issue:`55` :pr:`595`
+-   Implemented :class:`~wtforms.fields.core.MonthField`. :pr:`530` :pr:`593`
 
 
 Version 2.3.1

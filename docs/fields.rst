@@ -583,6 +583,8 @@ namespace and can be overridden or modified just like any other widget.
 
 .. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
 
+.. autoclass:: MonthField(default field arguments, format='%Y-%m')
+
 .. autoclass:: TimeField(default field arguments, format='%H:%M')
 
 .. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
