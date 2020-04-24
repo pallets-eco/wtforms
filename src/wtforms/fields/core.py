@@ -421,9 +421,9 @@ class UnboundField:
 
 class Flags:
     """
-    Holds a set of boolean flags as attributes.
+    Holds a set of flags as attributes.
 
-    Accessing a non-existing attribute returns False for its value.
+    Accessing a non-existing attribute returns None for its value.
     """
 
     def __getattr__(self, name):

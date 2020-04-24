@@ -114,6 +114,8 @@ class Length:
         Error message to raise in case of a validation error. Can be
         interpolated using `%(min)d` and `%(max)d` if desired. Useful defaults
         are provided depending on the existence of min and max.
+
+    When supported, sets the `minlength` and `maxlength` attributes on widgets.
     """
 
     def __init__(self, min=-1, max=-1, message=None):
@@ -179,6 +181,8 @@ class NumberRange:
         Error message to raise in case of a validation error. Can be
         interpolated using `%(min)s` and `%(max)s` if desired. Useful defaults
         are provided depending on the existence of min and max.
+
+    When supported, sets the `min` and `max` attributes on widgets.
     """
 
     def __init__(self, min=None, max=None, message=None):
@@ -225,6 +229,8 @@ class Optional:
     :param strip_whitespace:
         If True (the default) also stop the validation chain on input which
         consists of only whitespace.
+
+    Sets the `optional` attribute on widgets.
     """
 
     def __init__(self, strip_whitespace=True):
@@ -266,6 +272,8 @@ class DataRequired:
 
     :param message:
         Error message to raise in case of a validation error.
+
+    Sets the `required` attribute on widgets.
     """
 
     def __init__(self, message=None):
@@ -290,6 +298,8 @@ class InputRequired:
     Note there is a distinction between this and DataRequired in that
     InputRequired looks that form-input data was provided, and DataRequired
     looks at the post-coercion data.
+
+    Sets the `required` attribute on widgets.
     """
 
     def __init__(self, message=None):
