@@ -398,7 +398,7 @@ class UnboundField:
 
     def __repr__(self):
         return "<UnboundField({}, {!r}, {!r})>".format(
-            self.field_class.__name__, self.args, self.kwargs,
+            self.field_class.__name__, self.args, self.kwargs
         )
 
 

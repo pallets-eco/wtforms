@@ -1154,7 +1154,7 @@ class TestHTML5Fields:
             data = form_input
         if expected_html.startswith("type="):
             expected_html = '<input id="{}" name="{}" {} value="{}">'.format(
-                key, key, expected_html, form_input,
+                key, key, expected_html, form_input
             )
         return {
             "key": key,
