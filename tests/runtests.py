@@ -3,9 +3,12 @@ import os
 import sys
 from unittest import defaultTestLoader, TextTestRunner, TestSuite
 
-TESTS = ('form', 'fields', 'validators', 'widgets', 'webob_wrapper', 'csrf', 'ext_csrf', 'i18n', 'deprecations')
+TESTS = ('test_form', 'test_fields', 'test_validators', 'test_widgets',
+         'test_webob_wrapper', 'test_csrf', 'test_ext_csrf', 'test_i18n',
+         'test_deprecations')
 
-OPTIONAL_TESTS = ('ext_django.tests', 'ext_sqlalchemy', 'ext_dateutil', 'locale_babel')
+OPTIONAL_TESTS = ('ext_django.test_ext_django', 'test_ext_sqlalchemy',
+                  'test_ext_dateutil', 'test_locale_babel')
 
 
 def make_suite(prefix='', extra=(), force_all=False):
