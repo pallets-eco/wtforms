@@ -31,6 +31,9 @@ Unreleased
     *extra_filters* parameter. :issue:`128` :pr:`592`
 -   Fields can be passed the ``name`` argument to use a HTML name
     different than their Python name. :issue:`205`, :pr:`601`
+-   Render attribute names like ``for_`` and ``class_`` are normalized
+    consistently so later values override those specified earlier.
+    :issue:`449`, :pr:`596`
 
 
 Version 2.3.1
