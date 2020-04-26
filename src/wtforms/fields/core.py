@@ -538,7 +538,7 @@ class SelectField(SelectFieldBase):
             raise TypeError(self.gettext("Choices cannot be None"))
 
         if self.validate_choice:
-            for v, _, match in self.iter_choices():
+            for _, _, match in self.iter_choices():
                 if match:
                     break
             else:
