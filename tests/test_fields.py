@@ -52,8 +52,8 @@ class AttrDict:
         self.__dict__.update(*args, **kw)
 
 
-def make_form(_name="F", **fields):
-    return type(str(_name), (Form,), fields)
+def make_form(name="F", **fields):
+    return type(str(name), (Form,), fields)
 
 
 class TestDefaults:
@@ -244,12 +244,12 @@ class TestField:
 
         # Can we pass in meta via _meta?
         form_meta = meta.DefaultMeta()
-        field = StringField(_name="Foo", _form=None, _meta=form_meta)
+        field = StringField(name="Foo", _form=None, _meta=form_meta)
         assert field.meta is form_meta
 
         # Do we fail if both _meta and _form are None?
         with pytest.raises(TypeError):
-            StringField(_name="foo", _form=None)
+            StringField(name="foo", _form=None)
 
     def test_render_kw(self):
         form = self.F()
@@ -1142,7 +1142,7 @@ class TestFieldList:
 
     def test_no_filters(self):
         with pytest.raises(TypeError):
-            FieldList(self.t, filters=[lambda x: x], _form=Form(), _name="foo")
+            FieldList(self.t, filters=[lambda x: x], _form=Form(), name="foo")
 
     def test_process_prefilled(self):
         data = ["foo", "hi", "rawr"]
