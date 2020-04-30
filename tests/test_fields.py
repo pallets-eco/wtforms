@@ -309,6 +309,43 @@ class TestField:
         ):
             Field(validators=[v2])
 
+    def test_custom_name(self):
+        class F(Form):
+            foo = StringField(name="bar", default="defaultvalue")
+
+        class Objfoo:
+            foo = "Objfoo"
+
+        class Objbar:
+            bar = "Objbar"
+
+        f = F()
+        assert "defaultvalue" == f.foo.data
+        assert (
+            """<input id="bar" name="bar" type="text" value="defaultvalue">"""
+            == f.foo()
+        )
+
+        f = F(bar="formvalue")
+        assert "formvalue" == f.foo.data
+        assert (
+            """<input id="bar" name="bar" type="text" value="formvalue">""" == f.foo()
+        )
+
+        f = F(foo="formvalue")
+        assert "defaultvalue" == f.foo.data
+        assert (
+            """<input id="bar" name="bar" type="text" value="defaultvalue">"""
+            == f.foo()
+        )
+
+        f = F(None, Objbar())
+        assert "defaultvalue" == f.foo.data
+        assert (
+            """<input id="bar" name="bar" type="text" value="defaultvalue">"""
+            == f.foo()
+        )
+
 
 class PrePostTestField(StringField):
     def pre_validate(self, form):
@@ -1086,6 +1123,24 @@ class TestFieldList:
         obj2 = AttrDict(a=42)
         with pytest.raises(TypeError):
             form.populate_obj(obj2)
+
+    def test_enclosed_subform_custom_name(self):
+        class Inside(Form):
+            foo = StringField(name="bar", default="defaultvalue")
+
+        class Outside(Form):
+            subforms = FieldList(FormField(Inside), min_entries=1)
+
+        o = Outside()
+        assert "defaultvalue" == o.subforms[0].foo.data
+
+        pdata = DummyPostData({"subforms-0-bar": "formvalue"})
+        o = Outside(pdata)
+        assert "formvalue" == o.subforms[0].foo.data
+
+        pdata = DummyPostData({"subforms-0-foo": "formvalue"})
+        o = Outside(pdata)
+        assert "defaultvalue" == o.subforms[0].foo.data
 
     def test_entry_management(self):
         F = make_form(a=FieldList(self.t))

@@ -42,7 +42,8 @@ class BaseForm:
             extra_fields.extend(self._csrf.setup_form(self))
 
         for name, unbound_field in itertools.chain(fields, extra_fields):
-            options = dict(name=name, prefix=prefix, translations=translations)
+            field_name = unbound_field.name or name
+            options = dict(name=field_name, prefix=prefix, translations=translations)
             field = meta.bind_field(self, unbound_field, options)
             self._fields[name] = field
 
@@ -124,8 +125,12 @@ class BaseForm:
                 field.process(
                     formdata, getattr(obj, name), extra_filters=field_extra_filters
                 )
-            elif name in kwargs:
-                field.process(formdata, kwargs[name], extra_filters=field_extra_filters)
+            elif field.short_name in kwargs:
+                field.process(
+                    formdata,
+                    kwargs[field.short_name],
+                    extra_filters=field_extra_filters,
+                )
             else:
                 field.process(formdata, extra_filters=field_extra_filters)
 

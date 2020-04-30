@@ -89,8 +89,8 @@ class Field:
             If provided, a dictionary which provides default keywords that
             will be given to the widget at render time.
         :param name:
-            The name of this field, passed by the enclosing form during its
-            construction. You should never pass this value yourself.
+            The HTML name of this field. The default value is the python
+            field name.
         :param _form:
             The form holding this field. It is passed by the form itself during
             construction. You should never pass this value yourself.
@@ -378,10 +378,11 @@ class UnboundField:
     _formfield = True
     creation_counter = 0
 
-    def __init__(self, field_class, *args, **kwargs):
+    def __init__(self, field_class, *args, name=None, **kwargs):
         UnboundField.creation_counter += 1
         self.field_class = field_class
         self.args = args
+        self.name = name
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
         validators = kwargs.get("validators")
