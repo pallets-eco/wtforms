@@ -45,7 +45,7 @@ class Field:
     do_not_call_in_templates = True  # Allow Django 1.4 traversal
 
     def __new__(cls, *args, **kwargs):
-        if "_form" in kwargs and "name" in kwargs:
+        if "_form" in kwargs:
             return super().__new__(cls)
         else:
             return UnboundField(cls, *args, **kwargs)
@@ -105,7 +105,7 @@ class Field:
             If provided, this is the 'meta' instance from the form. You usually
             don't pass this yourself.
 
-        If `_form` and `name` isn't provided, an :class:`UnboundField` will be
+        If `_form` isn't provided, an :class:`UnboundField` will be
         returned instead. Call its :func:`bind` method with a form instance and
         a name to construct the field.
         """
