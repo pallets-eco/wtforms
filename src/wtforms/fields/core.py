@@ -576,14 +576,15 @@ class SelectMultipleField(SelectField):
             )
 
     def pre_validate(self, form):
-        if self.data:
-            values = list(c[0] for c in self.choices)
-            for d in self.data:
-                if d not in values:
-                    raise ValidationError(
-                        self.gettext("'%(value)s' is not a valid choice for this field")
-                        % dict(value=d)
-                    )
+        if self.validate_choice:
+            if self.data:
+                values = list(c[0] for c in self.choices)
+                for d in self.data:
+                    if d not in values:
+                        raise ValidationError(
+                            self.gettext("'%(value)s' is not a valid choice for this field")
+                            % dict(value=d)
+                        )
 
 
 class RadioField(SelectField):
