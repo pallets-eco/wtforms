@@ -20,6 +20,9 @@ Unreleased
     :class:`~validators.ValidationError` or
     :class:`~validators.StopValidation` to make a validation fail.
     :issue:`445`
+-   :class:`~fields.SelectField`, :class:`~fields.SelectMultipleField` and
+    :class:`~fields.RadioField` *choices* parameter can be a callable.
+    :pr:`608`
 
 
 Version 2.3.1

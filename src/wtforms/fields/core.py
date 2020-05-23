@@ -505,6 +505,8 @@ class SelectField(SelectFieldBase):
     ):
         super().__init__(label, validators, **kwargs)
         self.coerce = coerce
+        if callable(choices):
+            choices = choices()
         self.choices = list(choices) if choices is not None else None
         self.validate_choice = validate_choice
 
