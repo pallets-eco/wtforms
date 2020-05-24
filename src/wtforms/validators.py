@@ -521,7 +521,7 @@ class UUID:
         if message is None:
             message = field.gettext("Invalid UUID.")
         try:
-            uuid.UUID(field.data)
+            uuid.UUID(str(field.data))
         except ValueError:
             raise ValidationError(message)
 

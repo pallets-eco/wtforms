@@ -1,5 +1,6 @@
 import decimal
 import re
+import uuid
 
 import pytest
 
@@ -300,7 +301,11 @@ def test_bad_mac_raises(mac_addr_val, dummy_form, dummy_field):
 
 @pytest.mark.parametrize(
     "uuid_val",
-    ["2bc1c94f-0deb-43e9-92a1-4775189ec9f8", "2bc1c94f0deb43e992a14775189ec9f8"],
+    [
+        "2bc1c94f-0deb-43e9-92a1-4775189ec9f8",
+        "2bc1c94f0deb43e992a14775189ec9f8",
+        uuid.uuid4(),
+    ],
 )
 def test_valid_uuid_passes(uuid_val, dummy_form, dummy_field):
     """
