@@ -265,7 +265,10 @@ class DataRequired:
 
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, str) and not field.data.strip():
-            if self.message is None:
+            ## Handles the case where time 00:00:00 is not recoginizd as a valid time
+            if field.data == time(hour=0, minute=0, second=0):
+                message = self.message
+            elif self.message is None:
                 message = field.gettext("This field is required.")
             else:
                 message = self.message
