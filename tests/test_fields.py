@@ -171,6 +171,38 @@ class TestFilters:
         assert len(form.b.process_errors) == 1
         assert not form.validate()
 
+    def test_extra(self):
+        class F(Form):
+            a = StringField(default=" hello ")
+            b = StringField(default="42")
+
+        def filter_a(value):
+            return value.strip()
+
+        def filter_b(value):
+            return -int(value)
+
+        form = F(extra_filters={"a": [filter_a], "b": [filter_b]})
+        assert "hello" == form.a.data
+        assert -42 == form.b.data
+        assert form.validate()
+
+    def test_inline(self):
+        class F(Form):
+            a = StringField(default=" hello ")
+            b = StringField(default="42")
+
+            def filter_a(self, value):
+                return value.strip()
+
+            def filter_b(self, value):
+                return -int(value)
+
+        form = F()
+        assert "hello" == form.a.data
+        assert -42 == form.b.data
+        assert form.validate()
+
 
 class TestField:
     class F(Form):

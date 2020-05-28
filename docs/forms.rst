@@ -132,8 +132,8 @@ name re-used on a subclass causes the new definition to obscure the original.
 
 .. _inline-validators:
 
-In-line Validators
-~~~~~~~~~~~~~~~~~~
+In-line Validators and Filters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to provide custom validation for a single field without needing to
 write a one-time-use validator, validation can be defined inline by defining a
@@ -146,6 +146,16 @@ method with the convention `validate_fieldname`::
             if field.data < 13:
                 raise ValidationError("We're sorry, you must be 13 or older to register")
 
+The same principle applies for filters with the convention `filter_fieldname`::
+
+    class SignupForm(Form):
+        name = StringField('name')
+
+        def filter_name(form, field):
+            return field.strip()
+
+Note that filters are applied after processing the default and incoming data,
+but before validation.
 
 .. _using-forms:
 
