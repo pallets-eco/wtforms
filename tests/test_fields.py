@@ -28,6 +28,7 @@ from wtforms.fields import HiddenField
 from wtforms.fields import IntegerField
 from wtforms.fields import IntegerRangeField
 from wtforms.fields import Label
+from wtforms.fields import MonthField
 from wtforms.fields import MultipleFileField
 from wtforms.fields import PasswordField
 from wtforms.fields import RadioField
@@ -809,6 +810,29 @@ class TestDateField:
         assert len(form.a.errors) == 1
         assert len(form.b.errors) == 1
         assert form.a.process_errors[0] == "Not a valid date value"
+
+
+class TestMonthField:
+    class F(Form):
+        a = MonthField()
+        b = MonthField(format="%m/%Y")
+
+    def test_basic(self):
+        d = date(2008, 5, 1)
+        form = self.F(DummyPostData(a=["2008-05"], b=["05/2008"]))
+
+        assert d == form.a.data
+        assert "2008-05" == form.a._value()
+
+        assert d == form.b.data
+
+    def test_failure(self):
+        form = self.F(DummyPostData(a=["2008-bb"]))
+
+        assert not form.validate()
+        assert 1 == len(form.a.process_errors)
+        assert 1 == len(form.a.errors)
+        assert "Not a valid date value" == form.a.process_errors[0]
 
 
 class TestTimeField:

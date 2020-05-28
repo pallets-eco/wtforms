@@ -1,6 +1,5 @@
 Widgets
 =======
-.. module:: wtforms.widgets
 
 Widgets are classes whose purpose are to render a field to its usable
 representation, usually XHTML.  When a field is called, the default behaviour
@@ -15,17 +14,36 @@ recognize as not needing to be auto-escaped.
 Built-in widgets
 ----------------
 
-.. autoclass:: ListWidget
-.. autoclass:: TableWidget
-.. autoclass:: Input
-.. autoclass:: TextInput()
-.. autoclass:: PasswordInput
-.. autoclass:: HiddenInput()
-.. autoclass:: CheckboxInput()
-.. autoclass:: FileInput()
-.. autoclass:: SubmitInput()
-.. autoclass:: TextArea
-.. autoclass:: Select
+.. autoclass:: wtforms.widgets.ListWidget
+.. autoclass:: wtforms.widgets.TableWidget
+.. autoclass:: wtforms.widgets.Input
+.. autoclass:: wtforms.widgets.TextInput()
+.. autoclass:: wtforms.widgets.PasswordInput
+.. autoclass:: wtforms.widgets.HiddenInput()
+.. autoclass:: wtforms.widgets.CheckboxInput()
+.. autoclass:: wtforms.widgets.FileInput()
+.. autoclass:: wtforms.widgets.SubmitInput()
+.. autoclass:: wtforms.widgets.TextArea
+.. autoclass:: wtforms.widgets.Select
+
+HTML5 widgets
+-------------
+
+.. module:: wtforms.widgets.html5
+
+.. autoclass:: wtforms.widgets.html5.ColorInput
+.. autoclass:: wtforms.widgets.html5.DateTimeInput
+.. autoclass:: wtforms.widgets.html5.DateTimeLocalInput
+.. autoclass:: wtforms.widgets.html5.DateInput
+.. autoclass:: wtforms.widgets.html5.EmailInput
+.. autoclass:: wtforms.widgets.html5.MonthInput
+.. autoclass:: wtforms.widgets.html5.NumberInput
+.. autoclass:: wtforms.widgets.html5.RangeInput
+.. autoclass:: wtforms.widgets.html5.SearchInput
+.. autoclass:: wtforms.widgets.html5.TelInput
+.. autoclass:: wtforms.widgets.html5.TimeInput
+.. autoclass:: wtforms.widgets.html5.URLInput
+.. autoclass:: wtforms.widgets.html5.WeekInput
 
 Widget-Building Utilities
 -------------------------
@@ -34,7 +52,7 @@ These utilities are used in WTForms widgets to help render HTML and also in
 order to work along with HTML templating frameworks. They can be imported for
 use in building custom widgets as well.
 
-.. autofunction:: html_params
+.. autofunction:: wtforms.widgets.html_params
 
 WTForms uses `MarkupSafe`_ to escape unsafe HTML characters before
 rendering. You can mark a string using :class:`markupsafe.Markup` to
