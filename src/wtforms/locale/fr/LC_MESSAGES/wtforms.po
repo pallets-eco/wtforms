@@ -46,8 +46,8 @@ msgstr[1] "Le champ ne peut pas contenir plus de %(max)d caractères."
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] "Le doit contenir exactement %(max)d caractère."
-msgstr[1] "Le doit contenir exactement %(max)d caractères."
+msgstr[0] "Le champ doit contenir exactement %(max)d caractère."
+msgstr[1] "Le champ doit contenir exactement %(max)d caractères."
 
 #: src/wtforms/validators.py:152
 #, python-format
