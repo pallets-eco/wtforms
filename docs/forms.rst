@@ -47,6 +47,15 @@ The Form class
         A dict containing a list of errors for each field. Empty if the form
         hasn't been validated, or there were no errors.
 
+        If present, the key ``None`` contains the content of
+        :attr:`~wtforms.forms.Form.form_errors`.
+
+    .. attribute:: form_errors
+
+        A list of form-level errors. Those are errors that does not concern a
+        particuliar field, but the whole form consistency. Those errors are
+        often set when overriding :meth:`~wtforms.forms.Form.validate`.
+
     .. attribute:: meta
 
         This is an object which contains various configuration options and also
