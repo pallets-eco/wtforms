@@ -23,6 +23,8 @@ Unreleased
 -   :class:`~fields.SelectField`, :class:`~fields.SelectMultipleField` and
     :class:`~fields.RadioField` *choices* parameter can be a callable.
     :pr:`608`
+-   Choices shortcut for :class:`~fields.core.SelectMultipleField`.
+    :issue:`603` :pr:`605`
 
 
 Version 2.3.1

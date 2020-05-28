@@ -557,7 +557,14 @@ class SelectMultipleField(SelectField):
     widget = widgets.Select(multiple=True)
 
     def iter_choices(self):
-        for value, label in self.choices:
+        if not self.choices:
+            choices = []
+        elif isinstance(self.choices[0], (list, tuple)):
+            choices = self.choices
+        else:
+            choices = zip(self.choices, self.choices)
+
+        for value, label in choices:
             selected = self.data is not None and self.coerce(value) in self.data
             yield (value, label, selected)
 

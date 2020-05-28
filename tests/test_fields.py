@@ -486,6 +486,19 @@ class TestSelectMultipleField:
             '<option selected value="bar">bar</option>',
         ]
 
+    def test_choice_shortcut(self):
+        F = make_form(
+            a=SelectMultipleField(choices=["foo", "bar"], validate_choice=False)
+        )
+        form = F(a="bar")
+        assert '<option value="foo">foo</option>' in form.a()
+
+    @pytest.mark.parametrize("choices", [[], None])
+    def test_empty_choice(self, choices):
+        F = make_form(a=SelectMultipleField(choices=choices, validate_choice=False))
+        form = F(a="bar")
+        assert form.a() == '<select id="a" multiple name="a"></select>'
+
 
 class TestRadioField:
     class F(Form):
