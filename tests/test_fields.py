@@ -419,6 +419,18 @@ class TestSelectField:
         form = F(a="bar")
         assert form.a() == '<select id="a" name="a"></select>'
 
+    def test_callable_choices(self):
+        def choices():
+            return ["foo", "bar"]
+
+        F = make_form(a=SelectField(choices=choices))
+        form = F(a="bar")
+
+        assert list(str(x) for x in form.a) == [
+            '<option value="foo">foo</option>',
+            '<option selected value="bar">bar</option>',
+        ]
+
 
 class TestSelectMultipleField:
     class F(Form):
@@ -461,6 +473,18 @@ class TestSelectMultipleField:
         form = self.F(DummyPostData(b=["fake"]))
         assert not form.validate()
         assert form.b.data == [1, 3]
+
+    def test_callable_choices(self):
+        def choices():
+            return ["foo", "bar"]
+
+        F = make_form(a=SelectField(choices=choices))
+        form = F(a="bar")
+
+        assert list(str(x) for x in form.a) == [
+            '<option value="foo">foo</option>',
+            '<option selected value="bar">bar</option>',
+        ]
 
 
 class TestRadioField:
@@ -509,6 +533,24 @@ class TestRadioField:
             '<label for="a-0">yes</label></li>'
             '<li><input id="a-1" name="a" type="radio" value="False"> '
             '<label for="a-1">no</label></li>'
+            "</ul>"
+        )
+
+    def test_callable_choices(self):
+        def choices():
+            return [("a", "hello"), ("b", "bye")]
+
+        class F(Form):
+            a = RadioField(choices=choices, default="a")
+
+        form = self.F()
+        assert form.a.data == "a"
+        assert form.a() == (
+            '<ul id="a">'
+            '<li><input checked id="a-0" name="a" type="radio" value="a"> '
+            '<label for="a-0">hello</label></li>'
+            '<li><input id="a-1" name="a" type="radio" value="b"> '
+            '<label for="a-1">bye</label></li>'
             "</ul>"
         )
 
