@@ -81,35 +81,30 @@ class BaseForm:
             field.populate_obj(obj, name)
 
     def process(self, formdata=None, obj=None, data=None, extra_filters=None, **kwargs):
-        """
-        Take form, object data, and keyword arg input and have the fields
-        process them.
+        """Process default and input data with each field.
 
-        :param formdata:
-            Used to pass data coming from the enduser, usually `request.POST` or
-            equivalent.
-        :param obj:
-            If `formdata` is empty or not provided, this object is checked for
-            attributes matching form field names, which will be used for field
-            values.
-        :param data:
-            If provided, must be a dictionary of data. This is only used if
-            `formdata` is empty or not provided and `obj` does not contain
-            an attribute named the same as the field.
-        :param extra_filters: A dict mapping field names to lists of
-            extra filters functions to run. Extra filters run after
-            filters passed when creating the field. If the form has
-            ``filter_<fieldname>``, it is the last extra filter.
-        :param `**kwargs`:
-            If `formdata` is empty or not provided and `obj` does not contain
-            an attribute named the same as a field, form will assign the value
-            of a matching keyword argument to the field, if one exists.
+        :param formdata: Input data coming from the client, usually
+            ``request.form`` or equivalent. Should provide a "multi
+            dict" interface to get a list of values for a given key,
+            such as what Werkzeug, Django, and WebOb provide.
+        :param obj: Take existing data from attributes on this object
+            matching form field attributes. Only used if ``formdata`` is
+            not passed.
+        :param data: Take existing data from keys in this dict matching
+            form field attributes. ``obj`` takes precedence if it also
+            has a matching attribute. Only used if ``formdata`` is not
+            passed.
+        :param extra_filters: A dict mapping field attribute names to
+            lists of extra filter functions to run. Extra filters run
+            after filters passed when creating the field. If the form
+            has ``filter_<fieldname>``, it is the last extra filter.
+        :param kwargs: Merged with ``data`` to allow passing existing
+            data as parameters. Overwrites any duplicate keys in
+            ``data``. Only used if ``formdata`` is not passed.
         """
         formdata = self.meta.wrap_formdata(self, formdata)
 
         if data is not None:
-            # XXX we want to eventually process 'data' as a new entity.
-            #     Temporarily, this can simply be merged with kwargs.
             kwargs = dict(data, **kwargs)
 
         filters = extra_filters.copy() if extra_filters is not None else {}
@@ -248,28 +243,31 @@ class Form(BaseForm, metaclass=FormMeta):
         self, formdata=None, obj=None, prefix="", data=None, meta=None, **kwargs,
     ):
         """
-        :param formdata:
-            Used to pass data coming from the enduser, usually `request.POST` or
-            equivalent. formdata should be some sort of request-data wrapper which
-            can get multiple parameters from the form input, and values are unicode
-            strings, e.g. a Werkzeug/Django/WebOb MultiDict
-        :param obj:
-            If `formdata` is empty or not provided, this object is checked for
-            attributes matching form field names, which will be used for field
-            values.
-        :param prefix:
-            If provided, all fields will have their name prefixed with the
-            value.
-        :param data:
-            Accept a dictionary of data. This is only used if `formdata` and
-            `obj` are not present.
-        :param meta:
-            If provided, this is a dictionary of values to override attributes
-            on this form's meta instance.
-        :param `**kwargs`:
-            If `formdata` is empty or not provided and `obj` does not contain
-            an attribute named the same as a field, form will assign the value
-            of a matching keyword argument to the field, if one exists.
+        :param formdata: Input data coming from the client, usually
+            ``request.form`` or equivalent. Should provide a "multi
+            dict" interface to get a list of values for a given key,
+            such as what Werkzeug, Django, and WebOb provide.
+        :param obj: Take existing data from attributes on this object
+            matching form field attributes. Only used if ``formdata`` is
+            not passed.
+        :param prefix: If provided, all fields will have their name
+            prefixed with the value. This is for distinguishing multiple
+            forms on a single page. This only affects the HTML name for
+            matching input data, not the Python name for matching
+            existing data.
+        :param data: Take existing data from keys in this dict matching
+            form field attributes. ``obj`` takes precedence if it also
+            has a matching attribute. Only used if ``formdata`` is not
+            passed.
+        :param meta: A dict of attributes to override on this form's
+            :attr:`meta` instance.
+        :param extra_filters: A dict mapping field attribute names to
+            lists of extra filter functions to run. Extra filters run
+            after filters passed when creating the field. If the form
+            has ``filter_<fieldname>``, it is the last extra filter.
+        :param kwargs: Merged with ``data`` to allow passing existing
+            data as parameters. Overwrites any duplicate keys in
+            ``data``. Only used if ``formdata`` is not passed.
         """
         meta_obj = self._wtforms_meta()
         if meta is not None and isinstance(meta, dict):
