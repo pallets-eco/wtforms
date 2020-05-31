@@ -28,8 +28,8 @@ class TestLocaleDecimal:
             form = self.F()
             DecimalField(
                 use_locale=True,
+                name="a",
                 _form=form,
-                _name="a",
                 _translations=form.meta.get_translations(form),
                 **kw
             )

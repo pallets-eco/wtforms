@@ -45,7 +45,7 @@ class Field:
     do_not_call_in_templates = True  # Allow Django 1.4 traversal
 
     def __new__(cls, *args, **kwargs):
-        if "_form" in kwargs and "_name" in kwargs:
+        if "_form" in kwargs:
             return super().__new__(cls)
         else:
             return UnboundField(cls, *args, **kwargs)
@@ -60,8 +60,8 @@ class Field:
         default=None,
         widget=None,
         render_kw=None,
+        name=None,
         _form=None,
-        _name=None,
         _prefix="",
         _translations=None,
         _meta=None,
@@ -88,11 +88,11 @@ class Field:
         :param dict render_kw:
             If provided, a dictionary which provides default keywords that
             will be given to the widget at render time.
+        :param name:
+            The HTML name of this field. The default value is the Python
+            attribute name.
         :param _form:
             The form holding this field. It is passed by the form itself during
-            construction. You should never pass this value yourself.
-        :param _name:
-            The name of this field, passed by the enclosing form during its
             construction. You should never pass this value yourself.
         :param _prefix:
             The prefix to prepend to the form name of this field, passed by
@@ -105,7 +105,7 @@ class Field:
             If provided, this is the 'meta' instance from the form. You usually
             don't pass this yourself.
 
-        If `_form` and `_name` isn't provided, an :class:`UnboundField` will be
+        If `_form` isn't provided, an :class:`UnboundField` will be
         returned instead. Call its :func:`bind` method with a form instance and
         a name to construct the field.
         """
@@ -124,8 +124,8 @@ class Field:
         self.render_kw = render_kw
         self.filters = filters
         self.flags = Flags()
-        self.name = _prefix + _name
-        self.short_name = _name
+        self.name = _prefix + name
+        self.short_name = name
         self.type = type(self).__name__
 
         self.check_validators(validators)
@@ -136,7 +136,7 @@ class Field:
             self.id,
             label
             if label is not None
-            else self.gettext(_name.replace("_", " ").title()),
+            else self.gettext(name.replace("_", " ").title()),
         )
 
         if widget is not None:
@@ -378,10 +378,11 @@ class UnboundField:
     _formfield = True
     creation_counter = 0
 
-    def __init__(self, field_class, *args, **kwargs):
+    def __init__(self, field_class, *args, name=None, **kwargs):
         UnboundField.creation_counter += 1
         self.field_class = field_class
         self.args = args
+        self.name = name
         self.kwargs = kwargs
         self.creation_counter = UnboundField.creation_counter
         validators = kwargs.get("validators")
@@ -391,9 +392,9 @@ class UnboundField:
     def bind(self, form, name, prefix="", translations=None, **kwargs):
         kw = dict(
             self.kwargs,
+            name=name,
             _form=form,
             _prefix=prefix,
-            _name=name,
             _translations=translations,
             **kwargs,
         )
@@ -479,7 +480,7 @@ class SelectFieldBase(Field):
 
     def __iter__(self):
         opts = dict(
-            widget=self.option_widget, _name=self.name, _form=None, _meta=self.meta
+            widget=self.option_widget, name=self.name, _form=None, _meta=self.meta
         )
         for i, (value, label, checked) in enumerate(self.iter_choices()):
             opt = self._Option(label=label, id="%s-%d" % (self.id, i), **opts)

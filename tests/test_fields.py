@@ -52,8 +52,8 @@ class AttrDict:
         self.__dict__.update(*args, **kw)
 
 
-def make_form(_name="F", **fields):
-    return type(str(_name), (Form,), fields)
+def make_form(name="F", **fields):
+    return type(str(name), (Form,), fields)
 
 
 class TestDefaults:
@@ -244,12 +244,12 @@ class TestField:
 
         # Can we pass in meta via _meta?
         form_meta = meta.DefaultMeta()
-        field = StringField(_name="Foo", _form=None, _meta=form_meta)
+        field = StringField(name="Foo", _form=None, _meta=form_meta)
         assert field.meta is form_meta
 
         # Do we fail if both _meta and _form are None?
         with pytest.raises(TypeError):
-            StringField(_name="foo", _form=None)
+            StringField(name="foo", _form=None)
 
     def test_render_kw(self):
         form = self.F()
@@ -308,6 +308,41 @@ class TestField:
             "instance".format(v2),
         ):
             Field(validators=[v2])
+
+    def test_custom_name(self):
+        class F(Form):
+            foo = StringField(name="bar", default="default")
+            x = StringField()
+
+        class ObjFoo:
+            foo = "obj"
+
+        class ObjBar:
+            bar = "obj"
+
+        f = F(DummyPostData(foo="data"))
+        assert f.foo.data == "default"
+        assert 'value="default"' in f.foo()
+
+        f = F(DummyPostData(bar="data"))
+        assert f.foo.data == "data"
+        assert 'value="data"' in f.foo()
+
+        f = F(foo="kwarg")
+        assert f.foo.data == "kwarg"
+        assert 'value="kwarg"' in f.foo()
+
+        f = F(bar="kwarg")
+        assert f.foo.data == "default"
+        assert 'value="default"' in f.foo()
+
+        f = F(obj=ObjFoo())
+        assert f.foo.data == "obj"
+        assert 'value="obj"' in f.foo()
+
+        f = F(obj=ObjBar())
+        assert f.foo.data == "default"
+        assert 'value="default"' in f.foo()
 
 
 class PrePostTestField(StringField):
@@ -1087,6 +1122,24 @@ class TestFieldList:
         with pytest.raises(TypeError):
             form.populate_obj(obj2)
 
+    def test_enclosed_subform_custom_name(self):
+        class Inside(Form):
+            foo = StringField(name="bar", default="default")
+
+        class Outside(Form):
+            subforms = FieldList(FormField(Inside), min_entries=1)
+
+        o = Outside()
+        assert o.subforms[0].foo.data == "default"
+
+        pdata = DummyPostData({"subforms-0-bar": "form"})
+        o = Outside(pdata)
+        assert o.subforms[0].foo.data == "form"
+
+        pdata = DummyPostData({"subforms-0-foo": "form"})
+        o = Outside(pdata)
+        assert o.subforms[0].foo.data == "default"
+
     def test_entry_management(self):
         F = make_form(a=FieldList(self.t))
         a = F(a=["hello", "bye"]).a
@@ -1142,7 +1195,7 @@ class TestFieldList:
 
     def test_no_filters(self):
         with pytest.raises(TypeError):
-            FieldList(self.t, filters=[lambda x: x], _form=Form(), _name="foo")
+            FieldList(self.t, filters=[lambda x: x], _form=Form(), name="foo")
 
     def test_process_prefilled(self):
         data = ["foo", "hi", "rawr"]
