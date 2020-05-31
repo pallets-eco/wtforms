@@ -220,9 +220,13 @@ refer to a single input from the form.
 
 .. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
-    For better date/time fields, see the :mod:`dateutil extension <wtforms.ext.dateutil.fields>`
+.. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
 .. autoclass:: DecimalField(default field arguments, places=2, rounding=None, use_locale=False, number_format=None)
+
+.. autoclass:: DecimalRangeField(default field arguments)
+
+.. autoclass:: EmailField(default field arguments)
 
 .. autoclass:: FileField(default field arguments)
 
@@ -251,6 +255,8 @@ refer to a single input from the form.
    value.
 
 .. autoclass:: IntegerField(default field arguments)
+
+.. autoclass:: IntegerRangeField(default field arguments)
 
 .. autoclass:: RadioField(default field arguments, choices=[], coerce=str)
 
@@ -323,6 +329,8 @@ refer to a single input from the form.
     a list of fields each representing an option. The rendering of this can be
     further controlled by specifying `option_widget=`.
 
+.. autoclass:: SearchField(default field arguments)
+
 .. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=str, option_widget=None)
 
    The data on the SelectMultipleField is stored as a list of objects, each of
@@ -337,6 +345,13 @@ refer to a single input from the form.
    .. code-block:: jinja
 
         {{ form.username(size=30, maxlength=50) }}
+
+.. autoclass:: TelField(default field arguments)
+
+.. autoclass:: TimeField(default field arguments, format='%H:%M')
+
+.. autoclass:: URLField(default field arguments)
+
 
 Convenience Fields
 ------------------
@@ -559,40 +574,3 @@ Additional Helper Classes
     .. attribute:: text
 
         The original label text passed to the field's constructor.
-
-HTML5 Fields
-------------
-
-In addition to basic HTML fields, WTForms also supplies fields for the HTML5
-standard. These fields can be accessed under the :mod:`wtforms.fields.html5` namespace.
-In reality, these fields are just convenience fields that extend basic fields
-and implement HTML5 specific widgets. These widgets are located in the :mod:`wtforms.widgets.html5`
-namespace and can be overridden or modified just like any other widget.
-
-.. module:: wtforms.fields.html5
-
-.. autoclass:: SearchField(default field arguments)
-
-.. autoclass:: TelField(default field arguments)
-
-.. autoclass:: URLField(default field arguments)
-
-.. autoclass:: EmailField(default field arguments)
-
-.. autoclass:: DateTimeField(default field arguments,  format='%Y-%m-%d %H:%M:%S')
-
-.. autoclass:: DateField(default field arguments, format='%Y-%m-%d')
-
-.. autoclass:: MonthField(default field arguments, format='%Y-%m')
-
-.. autoclass:: TimeField(default field arguments, format='%H:%M')
-
-.. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
-
-.. autoclass:: IntegerField(default field arguments)
-
-.. autoclass:: DecimalField(default field arguments)
-
-.. autoclass:: IntegerRangeField(default field arguments)
-
-.. autoclass:: DecimalRangeField(default field arguments)
