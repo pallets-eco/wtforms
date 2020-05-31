@@ -311,40 +311,38 @@ class TestField:
 
     def test_custom_name(self):
         class F(Form):
-            foo = StringField(name="bar", default="defaultvalue")
+            foo = StringField(name="bar", default="default")
+            x = StringField()
 
-        class Objfoo:
-            foo = "Objfoo"
+        class ObjFoo:
+            foo = "obj"
 
-        class Objbar:
-            bar = "Objbar"
+        class ObjBar:
+            bar = "obj"
 
-        f = F()
-        assert "defaultvalue" == f.foo.data
-        assert (
-            """<input id="bar" name="bar" type="text" value="defaultvalue">"""
-            == f.foo()
-        )
+        f = F(DummyPostData(foo="data"))
+        assert f.foo.data == "default"
+        assert 'value="default"' in f.foo()
 
-        f = F(bar="formvalue")
-        assert "formvalue" == f.foo.data
-        assert (
-            """<input id="bar" name="bar" type="text" value="formvalue">""" == f.foo()
-        )
+        f = F(DummyPostData(bar="data"))
+        assert f.foo.data == "data"
+        assert 'value="data"' in f.foo()
 
-        f = F(foo="formvalue")
-        assert "defaultvalue" == f.foo.data
-        assert (
-            """<input id="bar" name="bar" type="text" value="defaultvalue">"""
-            == f.foo()
-        )
+        f = F(foo="kwarg")
+        assert f.foo.data == "kwarg"
+        assert 'value="kwarg"' in f.foo()
 
-        f = F(None, Objbar())
-        assert "defaultvalue" == f.foo.data
-        assert (
-            """<input id="bar" name="bar" type="text" value="defaultvalue">"""
-            == f.foo()
-        )
+        f = F(bar="kwarg")
+        assert f.foo.data == "default"
+        assert 'value="default"' in f.foo()
+
+        f = F(obj=ObjFoo())
+        assert f.foo.data == "obj"
+        assert 'value="obj"' in f.foo()
+
+        f = F(obj=ObjBar())
+        assert f.foo.data == "default"
+        assert 'value="default"' in f.foo()
 
 
 class PrePostTestField(StringField):
@@ -1126,21 +1124,21 @@ class TestFieldList:
 
     def test_enclosed_subform_custom_name(self):
         class Inside(Form):
-            foo = StringField(name="bar", default="defaultvalue")
+            foo = StringField(name="bar", default="default")
 
         class Outside(Form):
             subforms = FieldList(FormField(Inside), min_entries=1)
 
         o = Outside()
-        assert "defaultvalue" == o.subforms[0].foo.data
+        assert o.subforms[0].foo.data == "default"
 
-        pdata = DummyPostData({"subforms-0-bar": "formvalue"})
+        pdata = DummyPostData({"subforms-0-bar": "form"})
         o = Outside(pdata)
-        assert "formvalue" == o.subforms[0].foo.data
+        assert o.subforms[0].foo.data == "form"
 
-        pdata = DummyPostData({"subforms-0-foo": "formvalue"})
+        pdata = DummyPostData({"subforms-0-foo": "form"})
         o = Outside(pdata)
-        assert "defaultvalue" == o.subforms[0].foo.data
+        assert o.subforms[0].foo.data == "default"
 
     def test_entry_management(self):
         F = make_form(a=FieldList(self.t))

@@ -29,8 +29,8 @@ Unreleased
 -   Implemented :class:`~wtforms.fields.core.MonthField`. :pr:`530` :pr:`593`
 -   Filters can be inline. :meth:`form.BaseForm.process` takes a
     *extra_filters* parameter. :issue:`128` :pr:`592`
--   Fields can have a HTML name different than their python name.
-    :issue:`205` :pr:`601`
+-   Fields can be passed the ``name`` argument to use a HTML name
+    different than their Python name. :issue:`205`, :pr:`601`
 
 
 Version 2.3.1

@@ -125,11 +125,9 @@ class BaseForm:
                 field.process(
                     formdata, getattr(obj, name), extra_filters=field_extra_filters
                 )
-            elif field.short_name in kwargs:
+            elif name in kwargs:
                 field.process(
-                    formdata,
-                    kwargs[field.short_name],
-                    extra_filters=field_extra_filters,
+                    formdata, kwargs[name], extra_filters=field_extra_filters,
                 )
             else:
                 field.process(formdata, extra_filters=field_extra_filters)
