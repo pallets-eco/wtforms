@@ -266,6 +266,42 @@ class TestField:
             'type="text" value="hello">'
         )
 
+    def test_render_special(self):
+        class F(Form):
+            s = StringField(render_kw={"class_": "foo"})
+
+        assert F().s() == '<input class="foo" id="s" name="s" type="text" value="">'
+        assert (
+            F().s(**{"class": "bar"})
+            == '<input class="bar" id="s" name="s" type="text" value="">'
+        )
+        assert (
+            F().s(**{"class_": "bar"})
+            == '<input class="bar" id="s" name="s" type="text" value="">'
+        )
+
+        class G(Form):
+            s = StringField(render_kw={"class__": "foo"})
+
+        assert G().s() == '<input class="foo" id="s" name="s" type="text" value="">'
+        assert (
+            G().s(**{"class__": "bar"})
+            == '<input class="bar" id="s" name="s" type="text" value="">'
+        )
+
+        class H(Form):
+            s = StringField(render_kw={"for_": "foo"})
+
+        assert H().s() == '<input for="foo" id="s" name="s" type="text" value="">'
+        assert (
+            H().s(**{"for": "bar"})
+            == '<input for="bar" id="s" name="s" type="text" value="">'
+        )
+        assert (
+            H().s(**{"for_": "bar"})
+            == '<input for="bar" id="s" name="s" type="text" value="">'
+        )
+
     def test_select_field_copies_choices(self):
         class F(Form):
             items = SelectField(choices=[])

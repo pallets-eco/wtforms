@@ -17,6 +17,13 @@ __all__ = (
 )
 
 
+def clean_key(key):
+    key = key.rstrip("_")
+    if key.startswith("data_") or key.startswith("aria_"):
+        key = key.replace("_", "-")
+    return key
+
+
 def html_params(**kwargs):
     """
     Generate HTML attribute syntax from inputted keyword arguments.
@@ -53,10 +60,7 @@ def html_params(**kwargs):
     """
     params = []
     for k, v in sorted(kwargs.items()):
-        if k in ("class_", "class__", "for_"):
-            k = k[:-1]
-        elif k.startswith("data_") or k.startswith("aria_"):
-            k = k.replace("_", "-")
+        k = clean_key(k)
         if v is True:
             params.append(k)
         elif v is False:

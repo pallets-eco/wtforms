@@ -21,7 +21,7 @@ class TestHTMLParams:
     def test_basic(self):
         assert html_params(foo=9, k="wuuu") == 'foo="9" k="wuuu"'
         assert html_params(class_="foo") == 'class="foo"'
-        assert html_params(class__="foo") == 'class_="foo"'
+        assert html_params(class__="foo") == 'class="foo"'
         assert html_params(for_="foo") == 'for="foo"'
         assert html_params(readonly=False, foo=9) == 'foo="9"'
         assert (

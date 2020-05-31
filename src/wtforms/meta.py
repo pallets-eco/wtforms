@@ -1,5 +1,6 @@
 from wtforms import i18n
 from wtforms.utils import WebobInputWrapper
+from wtforms.widgets.core import clean_key
 
 
 class DefaultMeta:
@@ -53,8 +54,12 @@ class DefaultMeta:
 
         The default implementation calls ``field.widget(field, **render_kw)``
         """
+
+        render_kw = {clean_key(k): v for k, v in render_kw.items()}
+
         other_kw = getattr(field, "render_kw", None)
         if other_kw is not None:
+            other_kw = {clean_key(k): v for k, v in other_kw.items()}
             render_kw = dict(other_kw, **render_kw)
         return field.widget(field, **render_kw)
 
