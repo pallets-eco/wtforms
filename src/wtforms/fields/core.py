@@ -500,7 +500,11 @@ class SelectFieldBase(Field):
 
     def __iter__(self):
         opts = dict(
-            widget=self.option_widget, name=self.name, _form=None, _meta=self.meta
+            widget=self.option_widget,
+            validators=self.validators,
+            name=self.name,
+            _form=None,
+            _meta=self.meta,
         )
         for i, (value, label, checked) in enumerate(self.iter_choices()):
             opt = self._Option(label=label, id="%s-%d" % (self.id, i), **opts)
