@@ -36,6 +36,8 @@ Unreleased
     :issue:`449`, :pr:`596`
 -   Flags can take non-boolean values. :issue:`406` :pr:`467`
 -   Widgets are HTML5 by default. :issue:`594` :pr:`614`
+-   Fixed a bug when the :class:`~wtforms.fields.core.SelectField` choices
+    are list of strings. :pr:`598`
 
 Version 2.3.1
 -------------
