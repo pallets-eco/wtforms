@@ -31,7 +31,7 @@ def test_data_required(dummy_form, dummy_field):
     validator = data_required()
     dummy_field.data = "foobar"
     validator(dummy_form, dummy_field)
-    assert validator.field_flags == ("required",)
+    assert validator.field_flags == {"required": True}
 
 
 @pytest.mark.parametrize("bad_val", [None, "", " ", "\t\t"])
@@ -85,7 +85,7 @@ def test_input_required(dummy_form, dummy_field):
     dummy_field.raw_data = ["foobar"]
 
     validator(dummy_form, dummy_field)
-    assert validator.field_flags == ("required",)
+    assert validator.field_flags == {"required": True}
 
 
 def test_input_required_raises(dummy_form, dummy_field):
@@ -141,7 +141,7 @@ def test_input_optional_raises(data_v, raw_data_v, dummy_form, dummy_field):
 
     with pytest.raises(StopValidation):
         validator(dummy_form, dummy_field)
-        assert validator.field_flags == ("optional",)
+        assert validator.field_flags == {"optional": True}
 
     dummy_field.errors = ["Invalid Integer Value"]
     assert len(dummy_field.errors) == 1

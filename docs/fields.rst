@@ -182,10 +182,10 @@ The Field base class
 
     .. attribute:: flags
 
-        An object containing boolean flags set either by the field itself, or
+        An object containing flags set either by the field itself, or
         by validators on the field. For example, the built-in
         :class:`~wtforms.validators.InputRequired` validator sets the `required` flag.
-        An unset flag will result in :const:`False`.
+        An unset flag will result in :const:`None`.
 
         .. code-block:: html+django
 

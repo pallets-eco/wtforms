@@ -177,22 +177,21 @@ which will then be available on the :attr:`field's flags object
 
 To specify flags on your validator, set the ``field_flags`` attribute on your
 validator. When the Field is constructed, the flags with the same name will be
-set to True on your field. For example, let's imagine a validator that
+set on your field. For example, let's imagine a validator that
 validates that input is valid BBCode. We can set a flag on the field then to
 signify that the field accepts BBCode::
 
     # class implementation
     class ValidBBCode(object):
-        field_flags = ('accepts_bbcode', )
-
-        pass # validator implementation here
+        def __init__(self):
+            self.field_flags = {'accepts_bbcode': True}
 
     # factory implementation
     def valid_bbcode():
         def _valid_bbcode(form, field):
             pass # validator implementation here
 
-        _valid_bbcode.field_flags = ('accepts_bbcode', )
+        _valid_bbcode.field_flags = {'accepts_bbcode': True}
         return _valid_bbcode
 
 Then we can check it in our template, so we can then place a note to the user:
@@ -206,7 +205,10 @@ Then we can check it in our template, so we can then place a note to the user:
 
 Some considerations on using flags:
 
-* Flags can only set boolean values, and another validator cannot unset them.
-* If multiple fields set the same flag, its value is still True.
+* Boolean flags will set HTML valueless attributes (e.g. `{required: True}`
+  will give `<input type="text" required>`). Other flag types will set regular
+  HTML attributes (e.g. `{maxlength: 8}` will give `<input type="text" maxlength="8">`).
+* If multiple validators set the same flag, the flag will have the value set
+  by the first validator.
 * Flags are set from validators only in :meth:`Field.__init__`, so inline
   validators and extra passed-in validators cannot set them.

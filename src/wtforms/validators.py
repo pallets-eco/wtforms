@@ -114,6 +114,8 @@ class Length:
         Error message to raise in case of a validation error. Can be
         interpolated using `%(min)d` and `%(max)d` if desired. Useful defaults
         are provided depending on the existence of min and max.
+
+    When supported, sets the `minlength` and `maxlength` attributes on widgets.
     """
 
     def __init__(self, min=-1, max=-1, message=None):
@@ -124,6 +126,11 @@ class Length:
         self.min = min
         self.max = max
         self.message = message
+        self.field_flags = {}
+        if self.min != -1:
+            self.field_flags["minlength"] = self.min
+        if self.max != -1:
+            self.field_flags["maxlength"] = self.max
 
     def __call__(self, form, field):
         length = field.data and len(field.data) or 0
@@ -174,12 +181,19 @@ class NumberRange:
         Error message to raise in case of a validation error. Can be
         interpolated using `%(min)s` and `%(max)s` if desired. Useful defaults
         are provided depending on the existence of min and max.
+
+    When supported, sets the `min` and `max` attributes on widgets.
     """
 
     def __init__(self, min=None, max=None, message=None):
         self.min = min
         self.max = max
         self.message = message
+        self.field_flags = {}
+        if self.min is not None:
+            self.field_flags["min"] = self.min
+        if self.max is not None:
+            self.field_flags["max"] = self.max
 
     def __call__(self, form, field):
         data = field.data
@@ -215,15 +229,17 @@ class Optional:
     :param strip_whitespace:
         If True (the default) also stop the validation chain on input which
         consists of only whitespace.
-    """
 
-    field_flags = ("optional",)
+    Sets the `optional` attribute on widgets.
+    """
 
     def __init__(self, strip_whitespace=True):
         if strip_whitespace:
             self.string_check = lambda s: s.strip()
         else:
             self.string_check = lambda s: s
+
+        self.field_flags = {"optional": True}
 
     def __call__(self, form, field):
         if (
@@ -256,12 +272,13 @@ class DataRequired:
 
     :param message:
         Error message to raise in case of a validation error.
-    """
 
-    field_flags = ("required",)
+    Sets the `required` attribute on widgets.
+    """
 
     def __init__(self, message=None):
         self.message = message
+        self.field_flags = {"required": True}
 
     def __call__(self, form, field):
         if not field.data or isinstance(field.data, str) and not field.data.strip():
@@ -281,12 +298,13 @@ class InputRequired:
     Note there is a distinction between this and DataRequired in that
     InputRequired looks that form-input data was provided, and DataRequired
     looks at the post-coercion data.
-    """
 
-    field_flags = ("required",)
+    Sets the `required` attribute on widgets.
+    """
 
     def __init__(self, message=None):
         self.message = message
+        self.field_flags = {"required": True}
 
     def __call__(self, form, field):
         if not field.raw_data or not field.raw_data[0]:

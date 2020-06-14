@@ -119,7 +119,7 @@ class TestFlags:
     def test_existing_values(self, flags):
         assert flags.required is True
         assert "required" in flags
-        assert flags.optional is False
+        assert flags.optional is None
         assert "optional" not in flags
 
     def test_assignment(self, flags):
@@ -1373,3 +1373,111 @@ class TestHTML5Fields:
             if field.data != item["data"]:
                 tmpl = "Field {key} data mismatch: {field.data!r} != {data!r}"
                 raise AssertionError(tmpl.format(field=field, **item))
+
+
+class TestFieldValidatorsTest:
+    class F(Form):
+        v1 = [validators.Length(min=1)]
+        v2 = [validators.Length(min=1, max=3)]
+        string1 = StringField(validators=v1)
+        string2 = StringField(validators=v2)
+        password1 = PasswordField(validators=v1)
+        password2 = PasswordField(validators=v2)
+        textarea1 = TextAreaField(validators=v1)
+        textarea2 = TextAreaField(validators=v2)
+        search1 = SearchField(validators=v1)
+        search2 = SearchField(validators=v2)
+
+        v3 = [validators.NumberRange(min=1)]
+        v4 = [validators.NumberRange(min=1, max=3)]
+        integer1 = IntegerField(validators=v3)
+        integer2 = IntegerField(validators=v4)
+        integerrange1 = IntegerRangeField(validators=v3)
+        integerrange2 = IntegerRangeField(validators=v4)
+        decimal1 = DecimalField(validators=v3)
+        decimal2 = DecimalField(validators=v4)
+        decimalrange1 = DecimalRangeField(validators=v3)
+        decimalrange2 = DecimalRangeField(validators=v4)
+
+    def test_minlength_maxlength(self):
+        form = self.F()
+        assert (
+            form.string1()
+            == '<input id="string1" minlength="1" name="string1" type="text" value="">'
+        )
+
+        assert (
+            form.string2() == '<input id="string2" maxlength="3" minlength="1"'
+            ' name="string2" type="text" value="">'
+        )
+
+        assert (
+            form.password1() == '<input id="password1" minlength="1"'
+            ' name="password1" type="password" value="">'
+        )
+
+        assert (
+            form.password2() == '<input id="password2" maxlength="3" minlength="1"'
+            ' name="password2" type="password" value="">'
+        )
+
+        assert (
+            form.textarea1() == '<textarea id="textarea1" minlength="1"'
+            ' name="textarea1">\r\n</textarea>'
+        )
+
+        assert (
+            form.textarea2() == '<textarea id="textarea2" maxlength="3" minlength="1"'
+            ' name="textarea2">\r\n</textarea>'
+        )
+
+        assert (
+            form.search1() == '<input id="search1" minlength="1"'
+            ' name="search1" type="search" value="">'
+        )
+
+        assert (
+            form.search2() == '<input id="search2" maxlength="3" minlength="1"'
+            ' name="search2" type="search" value="">'
+        )
+
+    def test_min_max(self):
+        form = self.F()
+        assert (
+            form.integer1()
+            == '<input id="integer1" min="1" name="integer1" type="number" value="">'
+        )
+        assert (
+            form.integer2() == '<input id="integer2" max="3" min="1"'
+            ' name="integer2" type="number" value="">'
+        )
+
+        assert (
+            form.integerrange1() == '<input id="integerrange1" min="1"'
+            ' name="integerrange1" type="range" value="">'
+        )
+
+        assert (
+            form.integerrange2() == '<input id="integerrange2" max="3" min="1"'
+            ' name="integerrange2" type="range" value="">'
+        )
+
+        assert (
+            form.decimal1() == '<input id="decimal1" min="1"'
+            ' name="decimal1" step="any" type="number" value="">'
+        )
+
+        assert (
+            form.decimal2() == '<input id="decimal2" max="3" min="1"'
+            ' name="decimal2" step="any" type="number" value="">'
+        )
+
+        assert (
+            form.decimalrange1() == '<input id="decimalrange1" min="1"'
+            ' name="decimalrange1" step="any" type="range" value="">'
+        )
+
+        assert (
+            form.decimalrange2() == '<input id="decimalrange2" max="3" min="1"'
+            ' name="decimalrange2" step="any" type="range" value="">'
+        )

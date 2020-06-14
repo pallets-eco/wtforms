@@ -2,6 +2,7 @@ import datetime
 import decimal
 import inspect
 import itertools
+import warnings
 
 from markupsafe import escape
 from markupsafe import Markup
@@ -143,9 +144,21 @@ class Field:
             self.widget = widget
 
         for v in itertools.chain(self.validators, [self.widget]):
-            flags = getattr(v, "field_flags", ())
-            for f in flags:
-                setattr(self.flags, f, True)
+            flags = getattr(v, "field_flags", {})
+
+            # check for legacy format, remove eventually
+            if isinstance(flags, tuple):
+                warnings.warn(
+                    "Flags should be stored in dicts and not in tuples. "
+                    "The next version of WTForms will abandon support "
+                    "for flags in tuples.",
+                    DeprecationWarning,
+                    stacklevel=2,
+                )
+                flags = {flag_name: True for flag_name in flags}
+
+            for k, v in flags.items():
+                setattr(self.flags, k, v)
 
     def __str__(self):
         """
@@ -408,15 +421,15 @@ class UnboundField:
 
 class Flags:
     """
-    Holds a set of boolean flags as attributes.
+    Holds a set of flags as attributes.
 
-    Accessing a non-existing attribute returns False for its value.
+    Accessing a non-existing attribute returns None for its value.
     """
 
     def __getattr__(self, name):
         if name.startswith("_"):
             return super().__getattr__(name)
-        return False
+        return None
 
     def __contains__(self, name):
         return getattr(self, name)

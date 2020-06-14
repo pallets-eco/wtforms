@@ -23,6 +23,7 @@ class SearchInput(Input):
     """
 
     input_type = "search"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
 
 
 class TelInput(Input):
@@ -31,6 +32,7 @@ class TelInput(Input):
     """
 
     input_type = "tel"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
 
 
 class URLInput(Input):
@@ -39,6 +41,7 @@ class URLInput(Input):
     """
 
     input_type = "url"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
 
 
 class EmailInput(Input):
@@ -47,6 +50,7 @@ class EmailInput(Input):
     """
 
     input_type = "email"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
 
 
 class DateTimeInput(Input):
@@ -55,6 +59,7 @@ class DateTimeInput(Input):
     """
 
     input_type = "datetime"
+    validation_attrs = ["required", "max", "min", "step"]
 
 
 class DateInput(Input):
@@ -63,6 +68,7 @@ class DateInput(Input):
     """
 
     input_type = "date"
+    validation_attrs = ["required", "max", "min", "step"]
 
 
 class MonthInput(Input):
@@ -71,6 +77,7 @@ class MonthInput(Input):
     """
 
     input_type = "month"
+    validation_attrs = ["required", "max", "min", "step"]
 
 
 class WeekInput(Input):
@@ -79,6 +86,7 @@ class WeekInput(Input):
     """
 
     input_type = "week"
+    validation_attrs = ["required", "max", "min", "step"]
 
 
 class TimeInput(Input):
@@ -87,6 +95,7 @@ class TimeInput(Input):
     """
 
     input_type = "time"
+    validation_attrs = ["required", "max", "min", "step"]
 
 
 class DateTimeLocalInput(Input):
@@ -95,6 +104,7 @@ class DateTimeLocalInput(Input):
     """
 
     input_type = "datetime-local"
+    validation_attrs = ["required", "max", "min", "step"]
 
 
 class NumberInput(Input):
@@ -103,6 +113,7 @@ class NumberInput(Input):
     """
 
     input_type = "number"
+    validation_attrs = ["required", "max", "min", "step"]
 
     def __init__(self, step=None, min=None, max=None):
         self.step = step
@@ -125,6 +136,7 @@ class RangeInput(Input):
     """
 
     input_type = "range"
+    validation_attrs = ["required", "max", "min", "step"]
 
     def __init__(self, step=None):
         self.step = step
