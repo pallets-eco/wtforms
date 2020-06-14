@@ -35,6 +35,7 @@ Unreleased
     consistently so later values override those specified earlier.
     :issue:`449`, :pr:`596`
 -   Flags can take non-boolean values. :issue:`406` :pr:`467`
+-   Widgets are HTML5 by default. :issue:`594` :pr:`614`
 
 Version 2.3.1
 -------------
