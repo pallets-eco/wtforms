@@ -3,17 +3,30 @@ from markupsafe import Markup
 
 __all__ = (
     "CheckboxInput",
+    "ColorInput",
+    "DateInput",
+    "DateTimeInput",
+    "DateTimeLocalInput",
+    "EmailInput",
     "FileInput",
     "HiddenInput",
     "ListWidget",
+    "MonthInput",
+    "NumberInput",
+    "Option",
     "PasswordInput",
     "RadioInput",
+    "RangeInput",
+    "SearchInput",
     "Select",
     "SubmitInput",
     "TableWidget",
     "TextArea",
     "TextInput",
-    "Option",
+    "TelInput",
+    "TimeInput",
+    "URLInput",
+    "WeekInput",
 )
 
 
@@ -355,3 +368,141 @@ class Option:
         return Select.render_option(
             field._value(), field.label.text, field.checked, **kwargs
         )
+
+
+class SearchInput(Input):
+    """
+    Renders an input with type "search".
+    """
+
+    input_type = "search"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+
+
+class TelInput(Input):
+    """
+    Renders an input with type "tel".
+    """
+
+    input_type = "tel"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+
+
+class URLInput(Input):
+    """
+    Renders an input with type "url".
+    """
+
+    input_type = "url"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+
+
+class EmailInput(Input):
+    """
+    Renders an input with type "email".
+    """
+
+    input_type = "email"
+    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+
+
+class DateTimeInput(Input):
+    """
+    Renders an input with type "datetime".
+    """
+
+    input_type = "datetime"
+    validation_attrs = ["required", "max", "min", "step"]
+
+
+class DateInput(Input):
+    """
+    Renders an input with type "date".
+    """
+
+    input_type = "date"
+    validation_attrs = ["required", "max", "min", "step"]
+
+
+class MonthInput(Input):
+    """
+    Renders an input with type "month".
+    """
+
+    input_type = "month"
+    validation_attrs = ["required", "max", "min", "step"]
+
+
+class WeekInput(Input):
+    """
+    Renders an input with type "week".
+    """
+
+    input_type = "week"
+    validation_attrs = ["required", "max", "min", "step"]
+
+
+class TimeInput(Input):
+    """
+    Renders an input with type "time".
+    """
+
+    input_type = "time"
+    validation_attrs = ["required", "max", "min", "step"]
+
+
+class DateTimeLocalInput(Input):
+    """
+    Renders an input with type "datetime-local".
+    """
+
+    input_type = "datetime-local"
+    validation_attrs = ["required", "max", "min", "step"]
+
+
+class NumberInput(Input):
+    """
+    Renders an input with type "number".
+    """
+
+    input_type = "number"
+    validation_attrs = ["required", "max", "min", "step"]
+
+    def __init__(self, step=None, min=None, max=None):
+        self.step = step
+        self.min = min
+        self.max = max
+
+    def __call__(self, field, **kwargs):
+        if self.step is not None:
+            kwargs.setdefault("step", self.step)
+        if self.min is not None:
+            kwargs.setdefault("min", self.min)
+        if self.max is not None:
+            kwargs.setdefault("max", self.max)
+        return super().__call__(field, **kwargs)
+
+
+class RangeInput(Input):
+    """
+    Renders an input with type "range".
+    """
+
+    input_type = "range"
+    validation_attrs = ["required", "max", "min", "step"]
+
+    def __init__(self, step=None):
+        self.step = step
+
+    def __call__(self, field, **kwargs):
+        if self.step is not None:
+            kwargs.setdefault("step", self.step)
+        return super().__call__(field, **kwargs)
+
+
+class ColorInput(Input):
+    """
+    Renders an input with type "color".
+    """
+
+    input_type = "color"

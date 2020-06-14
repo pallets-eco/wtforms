@@ -14,36 +14,30 @@ recognize as not needing to be auto-escaped.
 Built-in widgets
 ----------------
 
-.. autoclass:: wtforms.widgets.ListWidget
-.. autoclass:: wtforms.widgets.TableWidget
+.. autoclass:: wtforms.widgets.ColorInput
+.. autoclass:: wtforms.widgets.CheckboxInput
+.. autoclass:: wtforms.widgets.DateTimeInput
+.. autoclass:: wtforms.widgets.DateTimeLocalInput
+.. autoclass:: wtforms.widgets.DateInput
+.. autoclass:: wtforms.widgets.EmailInput
+.. autoclass:: wtforms.widgets.FileInput
+.. autoclass:: wtforms.widgets.HiddenInput
 .. autoclass:: wtforms.widgets.Input
-.. autoclass:: wtforms.widgets.TextInput()
+.. autoclass:: wtforms.widgets.ListWidget
+.. autoclass:: wtforms.widgets.MonthInput
+.. autoclass:: wtforms.widgets.NumberInput
 .. autoclass:: wtforms.widgets.PasswordInput
-.. autoclass:: wtforms.widgets.HiddenInput()
-.. autoclass:: wtforms.widgets.CheckboxInput()
-.. autoclass:: wtforms.widgets.FileInput()
-.. autoclass:: wtforms.widgets.SubmitInput()
-.. autoclass:: wtforms.widgets.TextArea
+.. autoclass:: wtforms.widgets.RangeInput
+.. autoclass:: wtforms.widgets.SubmitInput
+.. autoclass:: wtforms.widgets.SearchInput
 .. autoclass:: wtforms.widgets.Select
-
-HTML5 widgets
--------------
-
-.. module:: wtforms.widgets.html5
-
-.. autoclass:: wtforms.widgets.html5.ColorInput
-.. autoclass:: wtforms.widgets.html5.DateTimeInput
-.. autoclass:: wtforms.widgets.html5.DateTimeLocalInput
-.. autoclass:: wtforms.widgets.html5.DateInput
-.. autoclass:: wtforms.widgets.html5.EmailInput
-.. autoclass:: wtforms.widgets.html5.MonthInput
-.. autoclass:: wtforms.widgets.html5.NumberInput
-.. autoclass:: wtforms.widgets.html5.RangeInput
-.. autoclass:: wtforms.widgets.html5.SearchInput
-.. autoclass:: wtforms.widgets.html5.TelInput
-.. autoclass:: wtforms.widgets.html5.TimeInput
-.. autoclass:: wtforms.widgets.html5.URLInput
-.. autoclass:: wtforms.widgets.html5.WeekInput
+.. autoclass:: wtforms.widgets.TableWidget
+.. autoclass:: wtforms.widgets.TelInput
+.. autoclass:: wtforms.widgets.TextArea
+.. autoclass:: wtforms.widgets.TextInput
+.. autoclass:: wtforms.widgets.TimeInput
+.. autoclass:: wtforms.widgets.URLInput
+.. autoclass:: wtforms.widgets.WeekInput
 
 Widget-Building Utilities
 -------------------------

@@ -16,18 +16,25 @@ from wtforms.validators import ValidationError
 __all__ = (
     "BooleanField",
     "DecimalField",
+    "DecimalRangeField",
     "DateField",
     "DateTimeField",
+    "DateTimeLocalField",
+    "EmailField",
     "FieldList",
     "FloatField",
     "FormField",
     "IntegerField",
+    "IntegerRangeField",
     "RadioField",
+    "SearchField",
     "SelectField",
     "SelectMultipleField",
     "StringField",
+    "TelField",
     "TimeField",
     "MonthField",
+    "URLField",
 )
 
 
@@ -683,7 +690,7 @@ class IntegerField(Field):
     is ignored and will not be accepted as a value.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.NumberInput()
 
     def __init__(self, label=None, validators=None, **kwargs):
         super().__init__(label, validators, **kwargs)
@@ -734,7 +741,7 @@ class DecimalField(LocaleAwareNumberField):
         format for the locale.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.NumberInput(step="any")
 
     def __init__(
         self, label=None, validators=None, places=unset_value, rounding=None, **kwargs
@@ -855,7 +862,7 @@ class DateTimeField(Field):
     A text field which stores a `datetime.datetime` matching a format.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.DateTimeInput()
 
     def __init__(
         self, label=None, validators=None, format="%Y-%m-%d %H:%M:%S", **kwargs
@@ -884,6 +891,8 @@ class DateField(DateTimeField):
     Same as DateTimeField, except stores a `datetime.date`.
     """
 
+    widget = widgets.DateInput()
+
     def __init__(self, label=None, validators=None, format="%Y-%m-%d", **kwargs):
         super().__init__(label, validators, format, **kwargs)
 
@@ -901,6 +910,8 @@ class TimeField(DateTimeField):
     """
     Same as DateTimeField, except stores a `time`.
     """
+
+    widget = widgets.TimeInput()
 
     def __init__(self, label=None, validators=None, format="%H:%M", **kwargs):
         super().__init__(label, validators, format, **kwargs)
@@ -920,6 +931,8 @@ class MonthField(DateField):
     Same as DateField, except represents a month, stores a `datetime.date`
     with `day = 1`.
     """
+
+    widget = widgets.MonthInput()
 
     def __init__(self, label=None, validators=None, format="%Y-%m", **kwargs):
         super().__init__(label, validators, format, **kwargs)
@@ -1202,3 +1215,59 @@ class FieldList(Field):
     @property
     def data(self):
         return [f.data for f in self.entries]
+
+
+class SearchField(StringField):
+    """
+    Represents an ``<input type="search">``.
+    """
+
+    widget = widgets.SearchInput()
+
+
+class TelField(StringField):
+    """
+    Represents an ``<input type="tel">``.
+    """
+
+    widget = widgets.TelInput()
+
+
+class URLField(StringField):
+    """
+    Represents an ``<input type="url">``.
+    """
+
+    widget = widgets.URLInput()
+
+
+class EmailField(StringField):
+    """
+    Represents an ``<input type="email">``.
+    """
+
+    widget = widgets.EmailInput()
+
+
+class DateTimeLocalField(DateTimeField):
+    """
+    Represents an ``<input type="datetime-local">``.
+    """
+
+    widget = widgets.DateTimeLocalInput()
+
+
+class IntegerRangeField(IntegerField):
+    """
+    Represents an ``<input type="range">``.
+    """
+
+    widget = widgets.RangeInput()
+
+
+class DecimalRangeField(DecimalField):
+    """
+    Represents an ``<input type="range">``.
+    """
+
+    widget = widgets.RangeInput(step="any")

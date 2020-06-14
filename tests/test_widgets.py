@@ -7,14 +7,14 @@ from wtforms.widgets.core import HiddenInput
 from wtforms.widgets.core import html_params
 from wtforms.widgets.core import Input
 from wtforms.widgets.core import ListWidget
+from wtforms.widgets.core import NumberInput
 from wtforms.widgets.core import PasswordInput
 from wtforms.widgets.core import RadioInput
+from wtforms.widgets.core import RangeInput
 from wtforms.widgets.core import Select
 from wtforms.widgets.core import TableWidget
 from wtforms.widgets.core import TextArea
 from wtforms.widgets.core import TextInput
-from wtforms.widgets.html5 import NumberInput
-from wtforms.widgets.html5 import RangeInput
 
 
 class TestHTMLParams:
