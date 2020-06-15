@@ -40,7 +40,7 @@ After working on the catalog, verify that it compiles and produces the
 correct translations.
 
 ```
-$ setup.py compile_catalog
+$ python setup.py compile_catalog
 ```
 
 Try loading your translations into some sample code to verify they look
