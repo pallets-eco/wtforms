@@ -614,7 +614,9 @@ class SelectMultipleField(SelectField):
             for d in self.data:
                 if d not in values:
                     raise ValidationError(
-                        self.gettext("'%(value)s' is not a valid choice for this field.")
+                        self.gettext(
+                            "'%(value)s' is not a valid choice for this field."
+                        )
                         % dict(value=d)
                     )
 
