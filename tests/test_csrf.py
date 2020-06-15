@@ -140,7 +140,7 @@ class TestSessionCSRF:
         with TimePin.pin_time(dt(8, 43)):
             form = self._test_phase2(self.Pinned, session, token, False)
             assert not form.validate()
-            assert form.csrf_token.errors == ["CSRF token expired"]
+            assert form.csrf_token.errors == ["CSRF token expired."]
 
             # We can succeed with a slightly newer token
             self._test_phase2(self.Pinned, session, new_token)

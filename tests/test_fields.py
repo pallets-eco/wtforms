@@ -481,7 +481,7 @@ class TestSelectField:
         assert not form.validate()
         assert form.a.data is None
         assert len(form.a.errors) == 1
-        assert form.a.errors[0] == "Not a valid choice"
+        assert form.a.errors[0] == "Not a valid choice."
 
     def test_validate_choices(self):
         F = make_form(a=SelectField(choices=[("a", "Foo")]))
@@ -489,7 +489,7 @@ class TestSelectField:
         assert not form.validate()
         assert form.a.data == "b"
         assert len(form.a.errors) == 1
-        assert form.a.errors[0] == "Not a valid choice"
+        assert form.a.errors[0] == "Not a valid choice."
 
     def test_validate_choices_when_empty(self):
         F = make_form(a=SelectField(choices=[]))
@@ -497,7 +497,7 @@ class TestSelectField:
         assert not form.validate()
         assert form.a.data == "b"
         assert len(form.a.errors) == 1
-        assert form.a.errors[0] == "Not a valid choice"
+        assert form.a.errors[0] == "Not a valid choice."
 
     def test_validate_choices_when_none(self):
         F = make_form(a=SelectField())
@@ -919,7 +919,7 @@ class TestDateField:
         assert len(form.a.process_errors) == 1
         assert len(form.a.errors) == 1
         assert len(form.b.errors) == 1
-        assert form.a.process_errors[0] == "Not a valid date value"
+        assert form.a.process_errors[0] == "Not a valid date value."
 
 
 class TestMonthField:
@@ -942,7 +942,7 @@ class TestMonthField:
         assert not form.validate()
         assert 1 == len(form.a.process_errors)
         assert 1 == len(form.a.errors)
-        assert "Not a valid date value" == form.a.process_errors[0]
+        assert "Not a valid date value." == form.a.process_errors[0]
 
 
 class TestTimeField:
@@ -963,7 +963,7 @@ class TestTimeField:
         # Test with a missing input
         form = self.F(DummyPostData(a=["04"]))
         assert not form.validate()
-        assert form.a.errors[0] == "Not a valid time value"
+        assert form.a.errors[0] == "Not a valid time value."
 
 
 class TestDateTimeField:
@@ -992,7 +992,7 @@ class TestDateTimeField:
         # Test with a missing input
         form = self.F(DummyPostData(a=["2008-05-05"]))
         assert not form.validate()
-        assert form.a.errors[0] == "Not a valid datetime value"
+        assert form.a.errors[0] == "Not a valid datetime value."
 
         form = self.F(a=d, b=d)
         assert form.validate()
