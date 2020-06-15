@@ -110,62 +110,62 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Valeur non valide, ne peut contenir : %(values)s."
 
 #: src/wtforms/csrf/core.py:96
-msgid "Invalid CSRF Token"
+msgid "Invalid CSRF Token."
 msgstr "Jeton CSRF non valide"
 
 #: src/wtforms/csrf/session.py:63
-msgid "CSRF token missing"
+msgid "CSRF token missing."
 msgstr "Jeton CSRF manquant"
 
 #: src/wtforms/csrf/session.py:71
-msgid "CSRF failed"
+msgid "CSRF failed."
 msgstr "CSRF a échoué"
 
 #: src/wtforms/csrf/session.py:76
-msgid "CSRF token expired"
+msgid "CSRF token expired."
 msgstr "Jeton CSRF expiré"
 
 #: src/wtforms/fields/core.py:534
-msgid "Invalid Choice: could not coerce"
+msgid "Invalid Choice: could not coerce."
 msgstr "Choix non valide, ne peut pas être converti"
 
 #: src/wtforms/fields/core.py:538
-msgid "Choices cannot be None"
+msgid "Choices cannot be None."
 msgstr ""
 
 #: src/wtforms/fields/core.py:545
-msgid "Not a valid choice"
+msgid "Not a valid choice."
 msgstr "N'est pas un choix valide"
 
 #: src/wtforms/fields/core.py:573
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "Choix incorrect, une ou plusieurs saisies ne peuvent pas être converties"
 
 #: src/wtforms/fields/core.py:584
 #, python-format
-msgid "'%(value)s' is not a valid choice for this field"
+msgid "'%(value)s' is not a valid choice for this field."
 msgstr "« %(value)s » n'est pas un choix valide pour ce champ"
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
-msgid "Not a valid integer value"
+msgid "Not a valid integer value."
 msgstr "N'est pas un entier valide"
 
 #: src/wtforms/fields/core.py:760
-msgid "Not a valid decimal value"
+msgid "Not a valid decimal value."
 msgstr "N'est pas une valeur décimale valide"
 
 #: src/wtforms/fields/core.py:788
-msgid "Not a valid float value"
+msgid "Not a valid float value."
 msgstr "N'est pas un flottant valide"
 
 #: src/wtforms/fields/core.py:853
-msgid "Not a valid datetime value"
+msgid "Not a valid datetime value."
 msgstr "N'est pas une date/heure valide"
 
 #: src/wtforms/fields/core.py:871
-msgid "Not a valid date value"
+msgid "Not a valid date value."
 msgstr "N'est pas une date valide"
 
 #: src/wtforms/fields/core.py:889
-msgid "Not a valid time value"
+msgid "Not a valid time value."
 msgstr "N'est pas un horaire valide"

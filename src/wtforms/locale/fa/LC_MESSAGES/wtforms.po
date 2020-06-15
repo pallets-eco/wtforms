@@ -107,62 +107,62 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "ورودی اشتباه است. نباید یکی از %(values)s باشد."
 
 #: src/wtforms/csrf/core.py:96
-msgid "Invalid CSRF Token"
+msgid "Invalid CSRF Token."
 msgstr "مقدار کلید امنیتی اشتباه است."
 
 #: src/wtforms/csrf/session.py:63
-msgid "CSRF token missing"
+msgid "CSRF token missing."
 msgstr "مقدار کلید امنیتی در درخواست شما نیست."
 
 #: src/wtforms/csrf/session.py:71
-msgid "CSRF failed"
+msgid "CSRF failed."
 msgstr "کلید امنیتی با خطا مواجه شد."
 
 #: src/wtforms/csrf/session.py:76
-msgid "CSRF token expired"
+msgid "CSRF token expired."
 msgstr "زمان استفاده از کلید امنیتی به اتمام رسیده است."
 
 #: src/wtforms/fields/core.py:534
-msgid "Invalid Choice: could not coerce"
+msgid "Invalid Choice: could not coerce."
 msgstr "انتخاب شما اشتباه است. ورودی قابل بررسی نیست."
 
 #: src/wtforms/fields/core.py:538
-msgid "Choices cannot be None"
+msgid "Choices cannot be None."
 msgstr ""
 
 #: src/wtforms/fields/core.py:545
-msgid "Not a valid choice"
+msgid "Not a valid choice."
 msgstr "انتخاب درستی نیست."
 
 #: src/wtforms/fields/core.py:573
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "انتخاب شما اشتباه است. یک یا چند تا از ورودی ها قابل بررسی نیست."
 
 #: src/wtforms/fields/core.py:584
 #, python-format
-msgid "'%(value)s' is not a valid choice for this field"
+msgid "'%(value)s' is not a valid choice for this field."
 msgstr "'%(value)s انتخاب مناسبی برای این فیلد نیست."
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
-msgid "Not a valid integer value"
+msgid "Not a valid integer value."
 msgstr "یک عدد درست نیست."
 
 #: src/wtforms/fields/core.py:760
-msgid "Not a valid decimal value"
+msgid "Not a valid decimal value."
 msgstr "یک عدد اعشاری درست نیست."
 
 #: src/wtforms/fields/core.py:788
-msgid "Not a valid float value"
+msgid "Not a valid float value."
 msgstr "یک عدد اعشاری درست نیست."
 
 #: src/wtforms/fields/core.py:853
-msgid "Not a valid datetime value"
+msgid "Not a valid datetime value."
 msgstr "مقداری که وارد کردید، تاریخ نیست."
 
 #: src/wtforms/fields/core.py:871
-msgid "Not a valid date value"
+msgid "Not a valid date value."
 msgstr "مقداری که وارد کردید، تاریخ نیست."
 
 #: src/wtforms/fields/core.py:889
-msgid "Not a valid time value"
+msgid "Not a valid time value."
 msgstr ""

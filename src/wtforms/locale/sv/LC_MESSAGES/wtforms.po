@@ -108,62 +108,62 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Felaktigt värde, får inte vara något av: %(values)s."
 
 #: src/wtforms/csrf/core.py:96
-msgid "Invalid CSRF Token"
+msgid "Invalid CSRF Token."
 msgstr "Felaktigt CSRF-token"
 
 #: src/wtforms/csrf/session.py:63
-msgid "CSRF token missing"
+msgid "CSRF token missing."
 msgstr "CSRF-token saknas"
 
 #: src/wtforms/csrf/session.py:71
-msgid "CSRF failed"
+msgid "CSRF failed."
 msgstr "CSRF misslyckades"
 
 #: src/wtforms/csrf/session.py:76
-msgid "CSRF token expired"
+msgid "CSRF token expired."
 msgstr "CSRF-token utdaterat"
 
 #: src/wtforms/fields/core.py:534
-msgid "Invalid Choice: could not coerce"
+msgid "Invalid Choice: could not coerce."
 msgstr "Felaktigt val; kunde inte ceorce:a"
 
 #: src/wtforms/fields/core.py:538
-msgid "Choices cannot be None"
+msgid "Choices cannot be None."
 msgstr ""
 
 #: src/wtforms/fields/core.py:545
-msgid "Not a valid choice"
+msgid "Not a valid choice."
 msgstr "Inte ett giltigt val"
 
 #: src/wtforms/fields/core.py:573
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "Felaktigt val; ett eller flera inputfält kunde inte coerca:s"
 
 #: src/wtforms/fields/core.py:584
 #, python-format
-msgid "'%(value)s' is not a valid choice for this field"
+msgid "'%(value)s' is not a valid choice for this field."
 msgstr "'%(value)s' är inte ett giltigt värde för det här fältet"
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
-msgid "Not a valid integer value"
+msgid "Not a valid integer value."
 msgstr "Inte ett giltigt heltal"
 
 #: src/wtforms/fields/core.py:760
-msgid "Not a valid decimal value"
+msgid "Not a valid decimal value."
 msgstr "Inte ett giltigt decimaltal"
 
 #: src/wtforms/fields/core.py:788
-msgid "Not a valid float value"
+msgid "Not a valid float value."
 msgstr "Inte ett giltigt flyttal"
 
 #: src/wtforms/fields/core.py:853
-msgid "Not a valid datetime value"
+msgid "Not a valid datetime value."
 msgstr "Inte ett giltigt datum-/tidsvärde"
 
 #: src/wtforms/fields/core.py:871
-msgid "Not a valid date value"
+msgid "Not a valid date value."
 msgstr "Inte ett giltigt datum"
 
 #: src/wtforms/fields/core.py:889
-msgid "Not a valid time value"
+msgid "Not a valid time value."
 msgstr ""
