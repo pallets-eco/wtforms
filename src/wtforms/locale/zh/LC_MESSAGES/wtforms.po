@@ -108,62 +108,62 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "无效的值，不能是下列任何一个: %(values)s。"
 
 #: src/wtforms/csrf/core.py:96
-msgid "Invalid CSRF Token"
-msgstr "无效的 CSRF 验证令牌"
+msgid "Invalid CSRF Token."
+msgstr "无效的 CSRF 验证令牌。"
 
 #: src/wtforms/csrf/session.py:63
-msgid "CSRF token missing"
-msgstr "缺失 CSRF 验证令牌"
+msgid "CSRF token missing."
+msgstr "缺失 CSRF 验证令牌。"
 
 #: src/wtforms/csrf/session.py:71
-msgid "CSRF failed"
-msgstr "CSRF 验证失败"
+msgid "CSRF failed."
+msgstr "CSRF 验证失败。"
 
 #: src/wtforms/csrf/session.py:76
-msgid "CSRF token expired"
-msgstr "CSRF 验证令牌过期"
+msgid "CSRF token expired."
+msgstr "CSRF 验证令牌过期。"
 
 #: src/wtforms/fields/core.py:534
-msgid "Invalid Choice: could not coerce"
-msgstr "选择无效：无法转化类型"
+msgid "Invalid Choice: could not coerce."
+msgstr "选择无效：无法转化类型。"
 
 #: src/wtforms/fields/core.py:538
-msgid "Choices cannot be None"
+msgid "Choices cannot be None."
 msgstr ""
 
 #: src/wtforms/fields/core.py:545
-msgid "Not a valid choice"
-msgstr "不是有效的选择"
+msgid "Not a valid choice."
+msgstr "不是有效的选择。"
 
 #: src/wtforms/fields/core.py:573
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "选择无效：至少一个数据输入无法被转化类型"
+msgid "Invalid choice(s): one or more data inputs could not be coerced."
+msgstr "选择无效：至少一个数据输入无法被转化类型。"
 
 #: src/wtforms/fields/core.py:584
 #, python-format
-msgid "'%(value)s' is not a valid choice for this field"
-msgstr "“%(value)s” 对该字段而言是无效选项"
+msgid "'%(value)s' is not a valid choice for this field."
+msgstr "“%(value)s” 对该字段而言是无效选项。"
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
-msgid "Not a valid integer value"
-msgstr "不是有效的整数"
+msgid "Not a valid integer value."
+msgstr "不是有效的整数。"
 
 #: src/wtforms/fields/core.py:760
-msgid "Not a valid decimal value"
-msgstr "不是有效的小数"
+msgid "Not a valid decimal value."
+msgstr "不是有效的小数。"
 
 #: src/wtforms/fields/core.py:788
-msgid "Not a valid float value"
-msgstr "不是有效的浮点数"
+msgid "Not a valid float value."
+msgstr "不是有效的浮点数。"
 
 #: src/wtforms/fields/core.py:853
-msgid "Not a valid datetime value"
-msgstr "不是有效的日期与时间值"
+msgid "Not a valid datetime value."
+msgstr "不是有效的日期与时间值。"
 
 #: src/wtforms/fields/core.py:871
-msgid "Not a valid date value"
-msgstr "不是有效的日期值"
+msgid "Not a valid date value."
+msgstr "不是有效的日期值。"
 
 #: src/wtforms/fields/core.py:889
-msgid "Not a valid time value"
+msgid "Not a valid time value."
 msgstr ""

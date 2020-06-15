@@ -105,62 +105,62 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "無效的資料，不得為以下任一：%(values)s。"
 
 #: src/wtforms/csrf/core.py:96
-msgid "Invalid CSRF Token"
-msgstr "無效的 CSRF 憑證"
+msgid "Invalid CSRF Token."
+msgstr "無效的 CSRF 憑證。"
 
 #: src/wtforms/csrf/session.py:63
-msgid "CSRF token missing"
-msgstr "CSRF 憑證不存在"
+msgid "CSRF token missing."
+msgstr "CSRF 憑證不存在。"
 
 #: src/wtforms/csrf/session.py:71
-msgid "CSRF failed"
-msgstr "CSRF 驗證失敗"
+msgid "CSRF failed."
+msgstr "CSRF 驗證失敗。"
 
 #: src/wtforms/csrf/session.py:76
-msgid "CSRF token expired"
-msgstr "CSRF 憑證過期"
+msgid "CSRF token expired."
+msgstr "CSRF 憑證過期。"
 
 #: src/wtforms/fields/core.py:534
-msgid "Invalid Choice: could not coerce"
-msgstr "無效的選擇：無法強制轉化"
+msgid "Invalid Choice: could not coerce."
+msgstr "無效的選擇：無法強制轉化。"
 
 #: src/wtforms/fields/core.py:538
-msgid "Choices cannot be None"
+msgid "Choices cannot be None."
 msgstr ""
 
 #: src/wtforms/fields/core.py:545
-msgid "Not a valid choice"
-msgstr "不是有效的選擇"
+msgid "Not a valid choice."
+msgstr "不是有效的選擇。"
 
 #: src/wtforms/fields/core.py:573
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "無效的選擇：至少有一筆資料無法被強制轉化"
+msgid "Invalid choice(s): one or more data inputs could not be coerced."
+msgstr "無效的選擇：至少有一筆資料無法被強制轉化。"
 
 #: src/wtforms/fields/core.py:584
 #, python-format
-msgid "'%(value)s' is not a valid choice for this field"
-msgstr "'%(value)s' 對此欄位為無效的選項"
+msgid "'%(value)s' is not a valid choice for this field."
+msgstr "'%(value)s' 對此欄位為無效的選項。"
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
-msgid "Not a valid integer value"
-msgstr "不是有效的整數值"
+msgid "Not a valid integer value."
+msgstr "不是有效的整數值。"
 
 #: src/wtforms/fields/core.py:760
-msgid "Not a valid decimal value"
-msgstr "不是有效的十進位數值"
+msgid "Not a valid decimal value."
+msgstr "不是有效的十進位數值。"
 
 #: src/wtforms/fields/core.py:788
-msgid "Not a valid float value"
-msgstr "不是有效的浮點數值"
+msgid "Not a valid float value."
+msgstr "不是有效的浮點數值。"
 
 #: src/wtforms/fields/core.py:853
-msgid "Not a valid datetime value"
-msgstr "不是有效的日期與時間"
+msgid "Not a valid datetime value."
+msgstr "不是有效的日期與時間。"
 
 #: src/wtforms/fields/core.py:871
-msgid "Not a valid date value"
-msgstr "不是有效的日期"
+msgid "Not a valid date value."
+msgstr "不是有效的日期。"
 
 #: src/wtforms/fields/core.py:889
-msgid "Not a valid time value"
+msgid "Not a valid time value."
 msgstr ""
