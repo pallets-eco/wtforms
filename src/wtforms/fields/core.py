@@ -557,18 +557,18 @@ class SelectField(SelectFieldBase):
             try:
                 self.data = self.coerce(valuelist[0])
             except ValueError:
-                raise ValueError(self.gettext("Invalid Choice: could not coerce"))
+                raise ValueError(self.gettext("Invalid Choice: could not coerce."))
 
     def pre_validate(self, form):
         if self.choices is None:
-            raise TypeError(self.gettext("Choices cannot be None"))
+            raise TypeError(self.gettext("Choices cannot be None."))
 
         if self.validate_choice:
             for _, _, match in self.iter_choices():
                 if match:
                     break
             else:
-                raise ValidationError(self.gettext("Not a valid choice"))
+                raise ValidationError(self.gettext("Not a valid choice."))
 
 
 class SelectMultipleField(SelectField):
@@ -604,7 +604,7 @@ class SelectMultipleField(SelectField):
         except ValueError:
             raise ValueError(
                 self.gettext(
-                    "Invalid choice(s): one or more data inputs could not be coerced"
+                    "Invalid choice(s): one or more data inputs could not be coerced."
                 )
             )
 
@@ -614,7 +614,7 @@ class SelectMultipleField(SelectField):
             for d in self.data:
                 if d not in values:
                     raise ValidationError(
-                        self.gettext("'%(value)s' is not a valid choice for this field")
+                        self.gettext("'%(value)s' is not a valid choice for this field.")
                         % dict(value=d)
                     )
 
@@ -709,7 +709,7 @@ class IntegerField(Field):
                 self.data = int(value)
             except (ValueError, TypeError):
                 self.data = None
-                raise ValueError(self.gettext("Not a valid integer value"))
+                raise ValueError(self.gettext("Not a valid integer value."))
         else:
             self.data = None
 
@@ -719,7 +719,7 @@ class IntegerField(Field):
                 self.data = int(valuelist[0])
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext("Not a valid integer value"))
+                raise ValueError(self.gettext("Not a valid integer value."))
 
 
 class DecimalField(LocaleAwareNumberField):
@@ -790,7 +790,7 @@ class DecimalField(LocaleAwareNumberField):
                     self.data = decimal.Decimal(valuelist[0])
             except (decimal.InvalidOperation, ValueError):
                 self.data = None
-                raise ValueError(self.gettext("Not a valid decimal value"))
+                raise ValueError(self.gettext("Not a valid decimal value."))
 
 
 class FloatField(Field):
@@ -818,7 +818,7 @@ class FloatField(Field):
                 self.data = float(valuelist[0])
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext("Not a valid float value"))
+                raise ValueError(self.gettext("Not a valid float value."))
 
 
 class BooleanField(Field):
@@ -883,7 +883,7 @@ class DateTimeField(Field):
                 self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext("Not a valid datetime value"))
+                raise ValueError(self.gettext("Not a valid datetime value."))
 
 
 class DateField(DateTimeField):
@@ -903,7 +903,7 @@ class DateField(DateTimeField):
                 self.data = datetime.datetime.strptime(date_str, self.format).date()
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext("Not a valid date value"))
+                raise ValueError(self.gettext("Not a valid date value."))
 
 
 class TimeField(DateTimeField):
@@ -923,7 +923,7 @@ class TimeField(DateTimeField):
                 self.data = datetime.datetime.strptime(time_str, self.format).time()
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext("Not a valid time value"))
+                raise ValueError(self.gettext("Not a valid time value."))
 
 
 class MonthField(DateField):

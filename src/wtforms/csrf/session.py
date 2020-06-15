@@ -60,7 +60,7 @@ class SessionCSRF(CSRF):
     def validate_csrf_token(self, form, field):
         meta = self.form_meta
         if not field.data or "##" not in field.data:
-            raise ValidationError(field.gettext("CSRF token missing"))
+            raise ValidationError(field.gettext("CSRF token missing."))
 
         expires, hmac_csrf = field.data.split("##", 1)
 
@@ -68,12 +68,12 @@ class SessionCSRF(CSRF):
 
         hmac_compare = hmac.new(meta.csrf_secret, check_val, digestmod=sha1)
         if hmac_compare.hexdigest() != hmac_csrf:
-            raise ValidationError(field.gettext("CSRF failed"))
+            raise ValidationError(field.gettext("CSRF failed."))
 
         if self.time_limit:
             now_formatted = self.now().strftime(self.TIME_FORMAT)
             if now_formatted > expires:
-                raise ValidationError(field.gettext("CSRF token expired"))
+                raise ValidationError(field.gettext("CSRF token expired."))
 
     def now(self):
         """
