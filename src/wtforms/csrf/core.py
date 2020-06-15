@@ -93,4 +93,4 @@ class CSRF:
         :param field: The CSRF token field.
         """
         if field.current_token != field.data:
-            raise ValidationError(field.gettext("Invalid CSRF Token"))
+            raise ValidationError(field.gettext("Invalid CSRF Token."))

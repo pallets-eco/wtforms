@@ -97,70 +97,70 @@ msgstr "無効なUUIDです。"
 #: src/wtforms/validators.py:553
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr "無効な値です, 次のうちの１つでなければいけません: %(values)s."
+msgstr "無効な値です, 次のうちの１つでなければいけません: %(values)s。"
 
 #: src/wtforms/validators.py:588
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr "無効な値です、次に含まれるものは使えません: %(values)s."
+msgstr "無効な値です、次に含まれるものは使えません: %(values)s。"
 
 #: src/wtforms/csrf/core.py:96
-msgid "Invalid CSRF Token"
-msgstr "不正なCSRFトークンです"
+msgid "Invalid CSRF Token."
+msgstr "不正なCSRFトークンです。"
 
 #: src/wtforms/csrf/session.py:63
-msgid "CSRF token missing"
-msgstr "CSRFトークンがありません"
+msgid "CSRF token missing."
+msgstr "CSRFトークンがありません。"
 
 #: src/wtforms/csrf/session.py:71
-msgid "CSRF failed"
-msgstr "CSRF認証に失敗しました"
+msgid "CSRF failed."
+msgstr "CSRF認証に失敗しました。"
 
 #: src/wtforms/csrf/session.py:76
-msgid "CSRF token expired"
-msgstr "CSRFトークンの期限が切れました"
+msgid "CSRF token expired."
+msgstr "CSRFトークンの期限が切れました。"
 
 #: src/wtforms/fields/core.py:534
-msgid "Invalid Choice: could not coerce"
-msgstr "無効な選択: 型変換できません"
+msgid "Invalid Choice: could not coerce."
+msgstr "無効な選択: 型変換できません。"
 
 #: src/wtforms/fields/core.py:538
-msgid "Choices cannot be None"
+msgid "Choices cannot be None."
 msgstr ""
 
 #: src/wtforms/fields/core.py:545
-msgid "Not a valid choice"
-msgstr "選択肢が正しくありません"
+msgid "Not a valid choice."
+msgstr "選択肢が正しくありません。"
 
 #: src/wtforms/fields/core.py:573
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "無効な選択: １つ以上の値を型変換できません"
+msgid "Invalid choice(s): one or more data inputs could not be coerced."
+msgstr "無効な選択: １つ以上の値を型変換できません。"
 
 #: src/wtforms/fields/core.py:584
 #, python-format
-msgid "'%(value)s' is not a valid choice for this field"
-msgstr "'%(value)s' はこのフィールドでは有効ではありません"
+msgid "'%(value)s' is not a valid choice for this field."
+msgstr "'%(value)s' はこのフィールドでは有効ではありません。"
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
-msgid "Not a valid integer value"
-msgstr "無効な整数です"
+msgid "Not a valid integer value."
+msgstr "無効な整数です。"
 
 #: src/wtforms/fields/core.py:760
-msgid "Not a valid decimal value"
-msgstr "無効な少数です"
+msgid "Not a valid decimal value."
+msgstr "無効な少数です。"
 
 #: src/wtforms/fields/core.py:788
-msgid "Not a valid float value"
-msgstr "無効なfloat値です"
+msgid "Not a valid float value."
+msgstr "無効なfloat値です。"
 
 #: src/wtforms/fields/core.py:853
-msgid "Not a valid datetime value"
-msgstr "無効な時間型です"
+msgid "Not a valid datetime value."
+msgstr "無効な時間型です。"
 
 #: src/wtforms/fields/core.py:871
-msgid "Not a valid date value"
-msgstr "無効な日付型です"
+msgid "Not a valid date value."
+msgstr "無効な日付型です。"
 
 #: src/wtforms/fields/core.py:889
-msgid "Not a valid time value"
-msgstr "無効な時間型です"
+msgid "Not a valid time value."
+msgstr "無効な時間型です。"
