@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-04-25 11:34-0700\n"
 "PO-Revision-Date: 2012-01-31 13:03-0700\n"
-"Last-Translator: wuxqing <wuxqing@gmail.com>\n"
+"Last-Translator: Grey Li <withlihui@gmail.com>\n"
 "Language: zh\n"
 "Language-Team: zh_CN <james+i18n@simplecodes.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -46,8 +46,8 @@ msgstr[1] "字段长度不能超过 %(max)d 个字符。"
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "字段长度必须为 %(max)d 个字符。"
+msgstr[1] "字段长度必须为 %(max)d 个字符。"
 
 #: src/wtforms/validators.py:152
 #, python-format
@@ -129,7 +129,7 @@ msgstr "选择无效：无法转化类型。"
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "选择不能是空值。"
 
 #: src/wtforms/fields/core.py:545
 msgid "Not a valid choice."
@@ -166,4 +166,4 @@ msgstr "不是有效的日期值。"
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr ""
+msgstr "不是有效的时间值。"

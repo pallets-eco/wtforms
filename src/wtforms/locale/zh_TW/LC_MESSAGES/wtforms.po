@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: wtforms@simplecodes.com\n"
 "POT-Creation-Date: 2020-04-25 11:34-0700\n"
 "PO-Revision-Date: 2013-04-14 00:26+0800\n"
-"Last-Translator: Ron Huang <ron@hng.tw>\n"
+"Last-Translator: Grey Li <withlihui@gmail.com>\n"
 "Language: zh_TW\n"
 "Language-Team: zh_TW <ron@hng.tw>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -44,7 +44,7 @@ msgstr[0] "欄位必須少於 %(max)d 個字元。"
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
+msgstr[0] "欄位必須為 %(max)d 個字元。"
 
 #: src/wtforms/validators.py:152
 #, python-format
@@ -126,7 +126,7 @@ msgstr "無效的選擇：無法強制轉化。"
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "選擇不能為空值。"
 
 #: src/wtforms/fields/core.py:545
 msgid "Not a valid choice."
@@ -163,4 +163,4 @@ msgstr "不是有效的日期。"
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr ""
+msgstr "不是有效的時間。"
