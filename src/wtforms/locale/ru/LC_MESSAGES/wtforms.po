@@ -113,54 +113,54 @@ msgstr "Неверное значение, не должно быть одним
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
-msgstr "Неверный CSRF токен"
+msgstr "Неверный CSRF токен."
 
 #: src/wtforms/csrf/session.py:63
 msgid "CSRF token missing."
-msgstr "CSRF токен отсутствует"
+msgstr "CSRF токен отсутствует."
 
 #: src/wtforms/csrf/session.py:71
 msgid "CSRF failed."
-msgstr "Ошибка CSRF"
+msgstr "Ошибка CSRF."
 
 #: src/wtforms/csrf/session.py:76
 msgid "CSRF token expired."
-msgstr "CSRF токен просрочен"
+msgstr "CSRF токен просрочен."
 
 #: src/wtforms/fields/core.py:534
 msgid "Invalid Choice: could not coerce."
-msgstr "Неверный вариант: невозможно преобразовать"
+msgstr "Неверный вариант: невозможно преобразовать."
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
 msgstr ""
 
 #: src/wtforms/fields/core.py:545
-msgid "Not a valid choic.e"
-msgstr "Неверный вариант"
+msgid "Not a valid choice."
+msgstr "Неверный вариант."
 
 #: src/wtforms/fields/core.py:573
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
 "Неверный вариант(варианты): одно или несколько значений невозможно "
-"преобразовать"
+"преобразовать."
 
 #: src/wtforms/fields/core.py:584
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
-msgstr "'%(value)s' - неверный вариант для этого поля"
+msgstr "'%(value)s' - неверный вариант для этого поля."
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
 msgid "Not a valid integer value."
-msgstr "Неверное целое число"
+msgstr "Неверное целое число."
 
 #: src/wtforms/fields/core.py:760
 msgid "Not a valid decimal value."
-msgstr "Неверное десятичное число"
+msgstr "Неверное десятичное число."
 
 #: src/wtforms/fields/core.py:788
 msgid "Not a valid float value."
-msgstr "Неверное десятичное число"
+msgstr "Неверное десятичное число."
 
 #: src/wtforms/fields/core.py:853
 msgid "Not a valid datetime value."
