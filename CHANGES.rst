@@ -38,7 +38,7 @@ Unreleased
 -   Widgets are HTML5 by default. :issue:`594` :pr:`614`
 -   Fixed a bug when the :class:`~wtforms.fields.core.SelectField` choices
     are list of strings. :pr:`598`
--   Error messages standardization. :issue:`613` :pr:`620` :pr:`626`
+-   Error messages standardization. :issue:`613` :pr:`620` :pr:`626` :pr:`627`
 
 Version 2.3.1
 -------------
