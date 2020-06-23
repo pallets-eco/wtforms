@@ -503,6 +503,7 @@ class SelectFieldBase(Field):
             widget=self.option_widget,
             validators=self.validators,
             name=self.name,
+            render_kw=self.render_kw,
             _form=None,
             _meta=self.meta,
         )
