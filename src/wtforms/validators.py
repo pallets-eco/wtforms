@@ -468,7 +468,7 @@ class IPAddress:
         return True
 
 
-class NetworkAddress(object):
+class NetworkAddress:
     """
     Validates a Network address. Requires ipaddress package to be instaled for Python 2 support.
 
@@ -479,11 +479,14 @@ class NetworkAddress(object):
     :param message:
         Error message to raise in case of a validation error.
     """
+
     def __init__(self, ipv4=True, ipv6=False, message=None):
         if ipaddress is None:
             raise Exception("Install 'ipaddress' for Python 2 support.")
         if not ipv4 and not ipv6:
-            raise ValueError('Network Address Validator must have at least one of ipv4 or ipv6 enabled.')
+            raise ValueError(
+                "Network Address Validator must have at least one of ipv4 or ipv6 enabled."
+            )
         self.ipv4 = ipv4
         self.ipv6 = ipv6
         self.message = message
@@ -492,12 +495,14 @@ class NetworkAddress(object):
         value = field.data
         valid = False
         if value:
-            valid = (self.ipv4 and self.check_ipv4(value)) or (self.ipv6 and self.check_ipv6(value))
+            valid = (self.ipv4 and self.check_ipv4(value)) or (
+                self.ipv6 and self.check_ipv6(value)
+            )
 
         if not valid:
             message = self.message
             if message is None:
-                message = field.gettext('Invalid Network address.')
+                message = field.gettext("Invalid Network address.")
             raise ValidationError(message)
 
     @classmethod
