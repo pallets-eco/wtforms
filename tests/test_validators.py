@@ -12,6 +12,7 @@ from wtforms.validators import email
 from wtforms.validators import equal_to
 from wtforms.validators import input_required
 from wtforms.validators import ip_address
+from wtforms.validators import network_address
 from wtforms.validators import length
 from wtforms.validators import mac_address
 from wtforms.validators import NoneOf
@@ -151,6 +152,8 @@ def test_input_optional_raises(data_v, raw_data_v, dummy_form, dummy_field):
         assert len(dummy_field.errors) == 0
 
 
+#############################################################
+
 @pytest.mark.parametrize("address", ["147.230.23.25", "147.230.23.0", "127.0.0.1"])
 def test_ip4address_passes(address, dummy_form, dummy_field):
     adr = ip_address()
@@ -209,6 +212,39 @@ def test_bad_ip4address_raises(address, dummy_form, dummy_field):
     with pytest.raises(ValidationError):
         adr(dummy_form, dummy_field)
 
+
+########################################################################################
+
+@pytest.mark.parametrize("address", ["10.0.0.0/8", "172.16.0.0/16", "192.168.10.0/24"])
+def test_network4address_passes(address, dummy_form, dummy_field):
+    adr = network_address()
+    dummy_field.data = address
+    adr(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("address", ["2001:db8:1234::/48", "2001:db8:a::/64"])
+def test_good_network6address_passes(address, dummy_form, dummy_field):
+    adr = network_address(ipv6=True)
+    dummy_field.data = address
+    adr(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("address", ["2001:718:1C01:1111::1111","2001:718:1C01:1111::","abc.0.0.1"])
+def test_bad_network6address_raises(address, dummy_form, dummy_field):
+    adr = network_address()
+    dummy_field.data = address
+    with pytest.raises(ValidationError):
+        adr(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("address", ["147.230.1000.25/24", "2001:718::::/64", "abc.0.0.1/33"])
+def test_bad_network4address_raises(address, dummy_form, dummy_field):
+    adr = network_address()
+    dummy_field.data = address
+    with pytest.raises(ValidationError):
+        adr(dummy_form, dummy_field)
+
+########################################################################################
 
 @pytest.mark.parametrize(
     "email_address",
