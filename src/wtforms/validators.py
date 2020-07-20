@@ -16,9 +16,9 @@ __all__ = (
     "EqualTo",
     "equal_to",
     "IPAddress",
+    "ip_address",
     "NetworkAddress",
     "network_address",
-    "ip_address",
     "InputRequired",
     "input_required",
     "Length",
@@ -521,6 +521,8 @@ class NetworkAddress(object):
 
         if not isinstance(address, ipaddress.IPv6Network):
             return False
+
+        return True
 
 
 class MacAddress(Regexp):
