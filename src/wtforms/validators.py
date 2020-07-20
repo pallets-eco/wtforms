@@ -16,6 +16,8 @@ __all__ = (
     "EqualTo",
     "equal_to",
     "IPAddress",
+    "NetworkAddress",
+    "network_address",
     "ip_address",
     "InputRequired",
     "input_required",
@@ -466,6 +468,61 @@ class IPAddress:
         return True
 
 
+class NetworkAddress(object):
+    """
+    Validates a Network address. Requires ipaddress package to be instaled for Python 2 support.
+
+    :param ipv4:
+        If True, accept IPv4 network addresses as valid (default True)
+    :param ipv6:
+        If True, accept IPv6 network addresses as valid (default False)
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+    def __init__(self, ipv4=True, ipv6=False, message=None):
+        if ipaddress is None:
+            raise Exception("Install 'ipaddress' for Python 2 support.")
+        if not ipv4 and not ipv6:
+            raise ValueError('Network Address Validator must have at least one of ipv4 or ipv6 enabled.')
+        self.ipv4 = ipv4
+        self.ipv6 = ipv6
+        self.message = message
+
+    def __call__(self, form, field):
+        value = field.data
+        valid = False
+        if value:
+            valid = (self.ipv4 and self.check_ipv4(value)) or (self.ipv6 and self.check_ipv6(value))
+
+        if not valid:
+            message = self.message
+            if message is None:
+                message = field.gettext('Invalid Network address.')
+            raise ValidationError(message)
+
+    @classmethod
+    def check_ipv4(cls, value):
+        try:
+            address = ipaddress.ip_network(value)
+        except ValueError:
+            return False
+
+        if not isinstance(address, ipaddress.IPv4Network):
+            return False
+
+        return True
+
+    @classmethod
+    def check_ipv6(cls, value):
+        try:
+            address = ipaddress.ip_network(value)
+        except ValueError:
+            return False
+
+        if not isinstance(address, ipaddress.IPv6Network):
+            return False
+
+
 class MacAddress(Regexp):
     """
     Validates a MAC address.
@@ -664,6 +721,7 @@ class HostnameValidation:
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
+network_address = NetworkAddress
 mac_address = MacAddress
 length = Length
 number_range = NumberRange
