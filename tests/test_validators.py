@@ -214,18 +214,14 @@ def test_bad_ip4address_raises(address, dummy_form, dummy_field):
         adr(dummy_form, dummy_field)
 
 
-@pytest.mark.parametrize(
-    "address", ["10.0.0.0/8", "172.16.0.0/16", "192.168.10.0/24"])
-)
+@pytest.mark.parametrize("address", ["10.0.0.0/8", "172.16.0.0/16", "192.168.10.0/24"])
 def test_network4address_passes(address, dummy_form, dummy_field):
     adr = network_address()
     dummy_field.data = address
     adr(dummy_form, dummy_field)
 
 
-@pytest.mark.parametrize(
-    "address", ["2001:db8:1234::/48", "2001:db8:a::/64"]
-)
+@pytest.mark.parametrize("address", ["2001:db8:1234::/48", "2001:db8:a::/64"])
 def test_good_network6address_passes(address, dummy_form, dummy_field):
     adr = network_address(ipv6=True)
     dummy_field.data = address
