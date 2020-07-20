@@ -470,7 +470,8 @@ class IPAddress:
 
 class NetworkAddress:
     """
-    Validates a Network address. Requires ipaddress package to be instaled for Python 2 support.
+    Validates a Network address. Requires ipaddress package to be instaled for
+    Python 2 support.
 
     :param ipv4:
         If True, accept IPv4 network addresses as valid (default True)
@@ -485,7 +486,8 @@ class NetworkAddress:
             raise Exception("Install 'ipaddress' for Python 2 support.")
         if not ipv4 and not ipv6:
             raise ValueError(
-                "Network Address Validator must have at least one of ipv4 or ipv6 enabled."
+                """Network Address Validator must have at least one of ipv4 or
+                ipv6 enabled."""
             )
         self.ipv4 = ipv4
         self.ipv6 = ipv6
