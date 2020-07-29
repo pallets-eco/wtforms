@@ -342,6 +342,13 @@ class SelectFieldTest(TestCase):
         form = F(a="bar")
         self.assertEqual(form.a(), """<select id="a" name="a"><option value="foo">foo</option><option selected value="bar">bar</option></select>""")
 
+    def test_choice_shortcut_post(self):
+        F = make_form(a=SelectField(choices=["foo", "bar"]))
+        form = F(DummyPostData(a=["foo"]))
+        assert form.validate()
+        assert form.a.data == "foo"
+        assert len(form.a.errors) == 0
+
     def test_empty_choice(self):
         F = make_form(a=SelectField(choices=[], validate_choice=False))
         form = F(a="bar")
