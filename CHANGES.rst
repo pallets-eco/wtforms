@@ -40,6 +40,16 @@ Unreleased
     are list of strings. :pr:`598`
 -   Error messages standardization. :issue:`613` :pr:`620` :pr:`626` :pr:`627`
 
+
+Version 2.3.2
+-------------
+
+Released 2020-07-29
+
+-   Fixed a bug with :class:`~fields.SelectField` choices shortcut at
+    form submission. :pr:`598, 639`
+
+
 Version 2.3.1
 -------------
 
