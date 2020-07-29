@@ -1,8 +1,10 @@
 .. currentmodule:: wtforms
 
 
-Unreleased
-----------
+Version 2.3.2
+-------------
+
+Released 2020-07-29
 
 -   Fixed a bug with :class:`~fields.SelectField` choices shortcut at
     form submission. :pr:`598, 639`
