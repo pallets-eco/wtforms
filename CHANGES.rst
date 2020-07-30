@@ -41,6 +41,15 @@ Unreleased
 -   Error messages standardization. :issue:`613` :pr:`620` :pr:`626` :pr:`627`
 
 
+Version 2.3.3
+-------------
+
+Released 2020-07-30
+
+-   This release includes the translation files that were missing in the
+    2.3.2 release. :issue:`641`
+
+
 Version 2.3.2
 -------------
 
