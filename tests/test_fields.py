@@ -625,7 +625,9 @@ class TestSelectMultipleField:
             form.validate()
 
     def test_dont_validate_choices(self):
-        F = make_form(a=SelectMultipleField(choices=[("a", "Foo")], validate_choice=False))
+        F = make_form(
+            a=SelectMultipleField(choices=[("a", "Foo")], validate_choice=False)
+        )
         form = F(DummyPostData(a=["b"]))
         assert form.validate()
         assert form.a.data == ["b"]
