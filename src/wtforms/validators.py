@@ -357,7 +357,7 @@ class Email:
 
     :param message:
         Error message to raise in case of a validation error.
-    :param granular_messsage:
+    :param granular_message:
         Use validation failed message from email_validator library
         (Default False).
     :param check_deliverability:
