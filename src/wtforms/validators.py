@@ -2,6 +2,7 @@ import ipaddress
 import math
 import re
 import uuid
+import wtforms.fields.core
 
 try:
     import email_validator
@@ -307,7 +308,7 @@ class InputRequired:
         self.field_flags = {"required": True}
 
     def __call__(self, form, field):
-        if not field.raw_data or not field.raw_data[0]:
+        if (isinstance(field, wtforms.fields.core.BooleanField) and field.raw_data not in [True, False] and field.raw_data and field.raw_data[0] not in [True, False]) or (not isinstance(field, wtforms.fields.core.BooleanField) and (not field.raw_data or not field.raw_data[0])):
             if self.message is None:
                 message = field.gettext("This field is required.")
             else:
