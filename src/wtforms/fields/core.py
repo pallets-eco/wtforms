@@ -879,7 +879,7 @@ class DateTimeField(Field):
         d["hours"] = "%.2d" % dh
         d["minutes"] = "%.2d" % dm
         d["seconds"] = "%.2d" % ds
-        return(fmt.format**)
+        return fmt.format(**d)
 
     def _value(self):
         if self.raw_data:
