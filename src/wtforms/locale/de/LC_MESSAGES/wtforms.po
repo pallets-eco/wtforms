@@ -79,7 +79,7 @@ msgstr "Ungültige Eingabe."
 
 #: src/wtforms/validators.py:387
 msgid "Invalid email address."
-msgstr "Ungültige Email-Adresse."
+msgstr "Ungültige E-Mail-Adresse."
 
 #: src/wtforms/validators.py:423
 msgid "Invalid IP address."
