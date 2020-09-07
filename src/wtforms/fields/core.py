@@ -874,11 +874,11 @@ class DateTimeField(Field):
 
     def _value(self):
         if self.raw_data:
-            return ' '.join(self.raw_data)
-        elif type(self.data) == datetime.timedelta: # MINE
-            return self.data and self.strfdelta(self.data) or '' # MINE        
+            return " ".join(self.raw_data)
+        elif type(self.data) == datetime.timedelta:
+            return self.data and self.strfdelta(self.data) or ""        
         else:
-            return self.data and self.data.strftime(self.format) or ''
+            return self.data and self.data.strftime(self.format) or ""
 
     def process_formdata(self, valuelist):
         if valuelist:
