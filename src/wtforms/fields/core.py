@@ -872,6 +872,17 @@ class DateTimeField(Field):
         super().__init__(label, validators, **kwargs)
         self.format = format
 
+    
+    def strfdelta(self, tdelta, fmt="{hours}:{minutes}:{seconds}"):
+        d = {"days": tdelta.days}
+        dh, rem = divmod(tdelta.seconds, 3600)
+        dm, ds = divmod(rem, 60)
+        d["hours"] = "%.2d" % dh
+        d["minutes"] = "%.2d" % dm
+        d["seconds"] = "%.2d" % ds
+    
+        return fmt.format(**d)
+
     def _value(self):
         if self.raw_data:
             return " ".join(self.raw_data)
