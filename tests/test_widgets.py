@@ -233,3 +233,23 @@ class TestHTML5:
             i2(html5_dummy_field, step=3)
             == '<input id="id" name="bar" step="3" type="range" value="42">'
         )
+
+        i3 = RangeInput(min=10)
+        assert (
+            i3(html5_dummy_field)
+            == '<input id="id" min="10" name="bar" type="range" value="42">'
+        )
+        assert (
+            i3(html5_dummy_field, min=5)
+            == '<input id="id" min="5" name="bar" type="range" value="42">'
+        )
+
+        i4 = RangeInput(max=100)
+        assert (
+            i4(html5_dummy_field)
+            == '<input id="id" max="100" name="bar" type="range" value="42">'
+        )
+        assert (
+            i4(html5_dummy_field, max=50)
+            == '<input id="id" max="50" name="bar" type="range" value="42">'
+        )
