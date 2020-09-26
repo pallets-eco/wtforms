@@ -929,6 +929,7 @@ class TimeDeltaField(Field):
                     self.gettext("Not a valid timedelta, nor datetime value.")
                 )
 
+
 class DateField(DateTimeField):
     """
     Same as DateTimeField, except stores a `datetime.date`.
