@@ -888,17 +888,20 @@ class DateTimeField(Field):
                 raise ValueError(self.gettext("Not a valid datetime value."))
 
 
-class TimeDeltaField(DateTimeField):
+class TimeDeltaField(Field):
     """
-    Same as DateTimeField, except stores a `datetime.timedelta`.
+    A text field which stores a `datetime.timedelta` matching a format
+    and if not then defaults to 'datetime.datetime'.
     """
 
     widget = widgets.TextInput()
 
-    def __init__(self, label=None, validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs):
+    def __init__(
+        self, label=None, validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs
+    ):
         super().__init__(label, validators, **kwargs)
         self.format = format
-    
+
     def strfdelta(self, tdelta, fmt="{hours}:{minutes}:{seconds}"):
         d = {"days": tdelta.days}
         dh, rem = divmod(tdelta.seconds, 3600)
@@ -906,23 +909,23 @@ class TimeDeltaField(DateTimeField):
         d["hours"] = "%.2d" % dh
         d["minutes"] = "%.2d" % dm
         d["seconds"] = "%.2d" % ds
-    
+
         return fmt.format(**d)
 
     def _value(self):
         if self.raw_data:
-            return ' '.join(self.raw_data)
+            return " ".join(self.raw_data)
         else:
-            return self.data and self.strfdelta(self.data) or ''        
-        
+            return self.data and self.strfdelta(self.data) or ""
+
     def process_formdata(self, valuelist):
         if valuelist:
-            date_str = ' '.join(valuelist)
+            date_str = " ".join(valuelist)
             try:
                 self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Not a valid datetime value'))
+                raise ValueError(self.gettext("Not a valid timedelta, nor datetime value."))
 
 class DateField(DateTimeField):
     """
