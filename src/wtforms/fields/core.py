@@ -897,7 +897,7 @@ class TimeDeltaField(Field):
     widget = widgets.TextInput()
 
     def __init__(
-        self, label=None, validators=None, format='%Y-%m-%d %H:%M:%S', **kwargs
+        self, label=None, validators=None, format="%Y-%m-%d %H:%M:%S", **kwargs
     ):
         super().__init__(label, validators, **kwargs)
         self.format = format
@@ -925,7 +925,9 @@ class TimeDeltaField(Field):
                 self.data = datetime.datetime.strptime(date_str, self.format)
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext("Not a valid timedelta, nor datetime value."))
+                raise ValueError(
+                    self.gettext("Not a valid timedelta, nor datetime value.")
+                )
 
 class DateField(DateTimeField):
     """
