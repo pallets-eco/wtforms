@@ -610,6 +610,29 @@ class TestSelectMultipleField:
         form = F(a="bar")
         assert form.a() == '<select id="a" multiple name="a"></select>'
 
+    def test_validate_choices_when_empty(self):
+        F = make_form(a=SelectMultipleField(choices=[]))
+        form = F(DummyPostData(a=["b"]))
+        assert not form.validate()
+        assert form.a.data == ["b"]
+        assert len(form.a.errors) == 1
+        assert form.a.errors[0] == "'b' is not a valid choice for this field."
+
+    def test_validate_choices_when_none(self):
+        F = make_form(a=SelectMultipleField())
+        form = F(DummyPostData(a="b"))
+        with pytest.raises(TypeError, match="Choices cannot be None"):
+            form.validate()
+
+    def test_dont_validate_choices(self):
+        F = make_form(
+            a=SelectMultipleField(choices=[("a", "Foo")], validate_choice=False)
+        )
+        form = F(DummyPostData(a=["b"]))
+        assert form.validate()
+        assert form.a.data == ["b"]
+        assert len(form.a.errors) == 0
+
 
 class TestRadioField:
     class F(Form):

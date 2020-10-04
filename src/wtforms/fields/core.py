@@ -609,7 +609,10 @@ class SelectMultipleField(SelectField):
             )
 
     def pre_validate(self, form):
-        if self.data:
+        if self.choices is None:
+            raise TypeError(self.gettext("Choices cannot be None."))
+
+        if self.validate_choice and self.data:
             values = list(c[0] for c in self.choices)
             for d in self.data:
                 if d not in values:
