@@ -7,7 +7,7 @@ def messages_path():
     """
     module_path = os.path.abspath(__file__)
     locale_path = os.path.join(os.path.dirname(module_path), "locale")
-    if not os.path.exists(locale_path):
+    if not os.path.exists(locale_path):  # pragma: no cover
         locale_path = "/usr/share/locale"
     return locale_path
 
