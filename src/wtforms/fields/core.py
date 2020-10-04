@@ -765,26 +765,28 @@ class DecimalField(LocaleAwareNumberField):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
-        elif self.data is not None:
-            if self.use_locale:
-                return str(self._format_decimal(self.data))
-            elif self.places is not None:
-                if hasattr(self.data, "quantize"):
-                    exp = decimal.Decimal(".1") ** self.places
-                    if self.rounding is None:
-                        quantized = self.data.quantize(exp)
-                    else:
-                        quantized = self.data.quantize(exp, rounding=self.rounding)
-                    return str(quantized)
-                else:
-                    # If for some reason, data is a float or int, then format
-                    # as we would for floats using string formatting.
-                    format = "%%0.%df" % self.places
-                    return format % self.data
-            else:
-                return str(self.data)
-        else:
+
+        elif self.data is None:
             return ""
+
+        if self.use_locale:
+            return str(self._format_decimal(self.data))
+
+        elif self.places is None:
+            return str(self.data)
+
+        if hasattr(self.data, "quantize"):
+            exp = decimal.Decimal(".1") ** self.places
+            if self.rounding is None:
+                quantized = self.data.quantize(exp)
+            else:
+                quantized = self.data.quantize(exp, rounding=self.rounding)
+            return str(quantized)
+
+        # If for some reason, data is a float or int, then format
+        # as we would for floats using string formatting.
+        format = "%%0.%df" % self.places
+        return format % self.data
 
     def process_formdata(self, valuelist):
         if valuelist:
