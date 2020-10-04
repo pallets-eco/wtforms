@@ -553,22 +553,26 @@ class SelectField(SelectFieldBase):
             self.data = None
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            try:
-                self.data = self.coerce(valuelist[0])
-            except ValueError:
-                raise ValueError(self.gettext("Invalid Choice: could not coerce."))
+        if not valuelist:
+            return
+
+        try:
+            self.data = self.coerce(valuelist[0])
+        except ValueError:
+            raise ValueError(self.gettext("Invalid Choice: could not coerce."))
 
     def pre_validate(self, form):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        if self.validate_choice:
-            for _, _, match in self.iter_choices():
-                if match:
-                    break
-            else:
-                raise ValidationError(self.gettext("Not a valid choice."))
+        if not self.validate_choice:
+            return
+
+        for _, _, match in self.iter_choices():
+            if match:
+                break
+        else:
+            raise ValidationError(self.gettext("Not a valid choice."))
 
 
 class SelectMultipleField(SelectField):
@@ -703,28 +707,30 @@ class IntegerField(Field):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
-        elif self.data is not None:
+        if self.data is not None:
             return str(self.data)
-        else:
-            return ""
+        return ""
 
     def process_data(self, value):
-        if value is not None and value is not unset_value:
-            try:
-                self.data = int(value)
-            except (ValueError, TypeError):
-                self.data = None
-                raise ValueError(self.gettext("Not a valid integer value."))
-        else:
+        if value is None or value is unset_value:
             self.data = None
+            return
+
+        try:
+            self.data = int(value)
+        except (ValueError, TypeError):
+            self.data = None
+            raise ValueError(self.gettext("Not a valid integer value."))
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            try:
-                self.data = int(valuelist[0])
-            except ValueError:
-                self.data = None
-                raise ValueError(self.gettext("Not a valid integer value."))
+        if not valuelist:
+            return
+
+        try:
+            self.data = int(valuelist[0])
+        except ValueError:
+            self.data = None
+            raise ValueError(self.gettext("Not a valid integer value."))
 
 
 class DecimalField(LocaleAwareNumberField):
@@ -766,38 +772,40 @@ class DecimalField(LocaleAwareNumberField):
         if self.raw_data:
             return self.raw_data[0]
 
-        elif self.data is None:
+        if self.data is None:
             return ""
 
         if self.use_locale:
             return str(self._format_decimal(self.data))
 
-        elif self.places is None:
+        if self.places is None:
             return str(self.data)
 
-        if hasattr(self.data, "quantize"):
-            exp = decimal.Decimal(".1") ** self.places
-            if self.rounding is None:
-                quantized = self.data.quantize(exp)
-            else:
-                quantized = self.data.quantize(exp, rounding=self.rounding)
-            return str(quantized)
+        if not hasattr(self.data, "quantize"):
+            # If for some reason, data is a float or int, then format
+            # as we would for floats using string formatting.
+            format = "%%0.%df" % self.places
+            return format % self.data
 
-        # If for some reason, data is a float or int, then format
-        # as we would for floats using string formatting.
-        format = "%%0.%df" % self.places
-        return format % self.data
+        exp = decimal.Decimal(".1") ** self.places
+        if self.rounding is None:
+            quantized = self.data.quantize(exp)
+        else:
+            quantized = self.data.quantize(exp, rounding=self.rounding)
+        return str(quantized)
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            try:
-                if self.use_locale:
-                    self.data = self._parse_decimal(valuelist[0])
-                else:
-                    self.data = decimal.Decimal(valuelist[0])
-            except (decimal.InvalidOperation, ValueError):
-                self.data = None
-                raise ValueError(self.gettext("Not a valid decimal value."))
+        if not valuelist:
+            return
+
+        try:
+            if self.use_locale:
+                self.data = self._parse_decimal(valuelist[0])
+            else:
+                self.data = decimal.Decimal(valuelist[0])
+        except (decimal.InvalidOperation, ValueError):
+            self.data = None
+            raise ValueError(self.gettext("Not a valid decimal value."))
 
 
 class FloatField(Field):
@@ -814,18 +822,19 @@ class FloatField(Field):
     def _value(self):
         if self.raw_data:
             return self.raw_data[0]
-        elif self.data is not None:
+        if self.data is not None:
             return str(self.data)
-        else:
-            return ""
+        return ""
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            try:
-                self.data = float(valuelist[0])
-            except ValueError:
-                self.data = None
-                raise ValueError(self.gettext("Not a valid float value."))
+        if not valuelist:
+            return
+
+        try:
+            self.data = float(valuelist[0])
+        except ValueError:
+            self.data = None
+            raise ValueError(self.gettext("Not a valid float value."))
 
 
 class BooleanField(Field):
@@ -860,8 +869,7 @@ class BooleanField(Field):
     def _value(self):
         if self.raw_data:
             return str(self.raw_data[0])
-        else:
-            return "y"
+        return "y"
 
 
 class DateTimeField(Field):
@@ -880,17 +888,18 @@ class DateTimeField(Field):
     def _value(self):
         if self.raw_data:
             return " ".join(self.raw_data)
-        else:
-            return self.data and self.data.strftime(self.format) or ""
+        return self.data and self.data.strftime(self.format) or ""
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            date_str = " ".join(valuelist)
-            try:
-                self.data = datetime.datetime.strptime(date_str, self.format)
-            except ValueError:
-                self.data = None
-                raise ValueError(self.gettext("Not a valid datetime value."))
+        if not valuelist:
+            return
+
+        date_str = " ".join(valuelist)
+        try:
+            self.data = datetime.datetime.strptime(date_str, self.format)
+        except ValueError:
+            self.data = None
+            raise ValueError(self.gettext("Not a valid datetime value."))
 
 
 class DateField(DateTimeField):
@@ -904,13 +913,15 @@ class DateField(DateTimeField):
         super().__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            date_str = " ".join(valuelist)
-            try:
-                self.data = datetime.datetime.strptime(date_str, self.format).date()
-            except ValueError:
-                self.data = None
-                raise ValueError(self.gettext("Not a valid date value."))
+        if not valuelist:
+            return
+
+        date_str = " ".join(valuelist)
+        try:
+            self.data = datetime.datetime.strptime(date_str, self.format).date()
+        except ValueError:
+            self.data = None
+            raise ValueError(self.gettext("Not a valid date value."))
 
 
 class TimeField(DateTimeField):
@@ -924,13 +935,15 @@ class TimeField(DateTimeField):
         super().__init__(label, validators, format, **kwargs)
 
     def process_formdata(self, valuelist):
-        if valuelist:
-            time_str = " ".join(valuelist)
-            try:
-                self.data = datetime.datetime.strptime(time_str, self.format).time()
-            except ValueError:
-                self.data = None
-                raise ValueError(self.gettext("Not a valid time value."))
+        if not valuelist:
+            return
+
+        time_str = " ".join(valuelist)
+        try:
+            self.data = datetime.datetime.strptime(time_str, self.format).time()
+        except ValueError:
+            self.data = None
+            raise ValueError(self.gettext("Not a valid time value."))
 
 
 class MonthField(DateField):
