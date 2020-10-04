@@ -378,7 +378,7 @@ class Email:
         allow_smtputf8=True,
         allow_empty_local=False,
     ):
-        if email_validator is None:
+        if email_validator is None:  # pragma: no cover
             raise Exception("Install 'email_validator' for email validation support.")
         self.message = message
         self.granular_message = granular_message
