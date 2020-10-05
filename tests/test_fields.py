@@ -542,6 +542,35 @@ class TestSelectField:
             '<option selected value="bar">bar</option>',
         ]
 
+    def test_requried_flag(self):
+        F = make_form(
+            c=SelectField(
+                choices=[("a", "hello"), ("b", "bye")],
+                validators=[validators.InputRequired()],
+            )
+        )
+        form = F(DummyPostData(c="a"))
+        assert form.c() == (
+            '<select id="c" name="c" required>'
+            '<option selected value="a">hello</option>'
+            '<option value="b">bye</option>'
+            "</select>"
+        )
+
+    def test_required_validator(self):
+        F = make_form(
+            c=SelectField(
+                choices=[("a", "hello"), ("b", "bye")],
+                validators=[validators.InputRequired()],
+            )
+        )
+        form = F(DummyPostData(c="b"))
+        assert form.validate()
+        assert form.c.errors == []
+        form = F()
+        assert form.validate() is False
+        assert form.c.errors == ["This field is required."]
+
 
 class TestSelectMultipleField:
     class F(Form):
@@ -633,13 +662,42 @@ class TestSelectMultipleField:
         assert form.a.data == ["b"]
         assert len(form.a.errors) == 0
 
+    def test_requried_flag(self):
+        F = make_form(
+            c=SelectMultipleField(
+                choices=[("a", "hello"), ("b", "bye")],
+                validators=[validators.InputRequired()],
+            )
+        )
+        form = F(DummyPostData(c=["a"]))
+        assert form.c() == (
+            '<select id="c" multiple name="c" required>'
+            '<option selected value="a">hello</option>'
+            '<option value="b">bye</option>'
+            "</select>"
+        )
+
+    def test_required_validator(self):
+        F = make_form(
+            c=SelectMultipleField(
+                choices=[("a", "hello"), ("b", "bye")],
+                validators=[validators.InputRequired()],
+            )
+        )
+        form = F(DummyPostData(c=["a"]))
+        assert form.validate()
+        assert form.c.errors == []
+        form = F()
+        assert form.validate() is False
+        assert form.c.errors == ["This field is required."]
+
 
 class TestRadioField:
     class F(Form):
         a = RadioField(choices=[("a", "hello"), ("b", "bye")], default="a")
         b = RadioField(choices=[(1, "Item 1"), (2, "Item 2")], coerce=int)
         c = RadioField(
-            choices=[("a", "hello"), ("b", "bye")],
+            choices=[("a", "Item 1"), ("b", "Item 2")],
             validators=[validators.InputRequired()],
         )
 
@@ -710,11 +768,19 @@ class TestRadioField:
         assert form.c() == (
             '<ul id="c">'
             '<li><input id="c-0" name="c" required type="radio" value="a"> '
-            '<label for="c-0">hello</label></li>'
+            '<label for="c-0">Item 1</label></li>'
             '<li><input id="c-1" name="c" required type="radio" value="b"> '
-            '<label for="c-1">bye</label></li>'
+            '<label for="c-1">Item 2</label></li>'
             "</ul>"
         )
+
+    def test_required_validator(self):
+        form = self.F(DummyPostData(b=1, c="a"))
+        assert form.validate()
+        assert form.c.errors == []
+        form = self.F(DummyPostData(b=1))
+        assert form.validate() is False
+        assert form.c.errors == ["This field is required."]
 
 
 class TestStringField:
