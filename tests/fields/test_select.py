@@ -1,6 +1,7 @@
 import pytest
 from tests.common import DummyPostData
 
+from wtforms import validators
 from wtforms import widgets
 from wtforms.fields import SelectField
 from wtforms.form import Form
@@ -163,3 +164,34 @@ def test_callable_choices():
         '<option value="foo">foo</option>',
         '<option selected value="bar">bar</option>',
     ]
+
+
+def test_requried_flag():
+    F = make_form(
+        c=SelectField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c="a"))
+    assert form.c() == (
+        '<select id="c" name="c" required>'
+        '<option selected value="a">hello</option>'
+        '<option value="b">bye</option>'
+        "</select>"
+    )
+
+
+def test_required_validator():
+    F = make_form(
+        c=SelectField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c="b"))
+    assert form.validate()
+    assert form.c.errors == []
+    form = F()
+    assert form.validate() is False
+    assert form.c.errors == ["This field is required."]
