@@ -30,6 +30,13 @@ def test_integer_field():
     assert form.b.data == 9
     assert form.a._value() == ""
     assert form.b._value() == "9"
+    form = F(a=3.5)
+    assert form.a.data is None
+    assert form.a._value() == ""
+    assert form.b._value() == "48"
+    assert not form.validate()
+    assert len(form.a.process_errors) == 1
+    assert len(form.a.errors) == 1
     form = F(DummyPostData(), data=dict(b="v"))
     assert form.b.data is None
     assert form.a._value() == ""

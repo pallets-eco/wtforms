@@ -43,6 +43,12 @@ Unreleased
     bugfix. :issue:`606` :pr:`642`
 
 
+Unreleased
+-------------
+
+-   :class:`~fields.IntegerField` no longer accept literal floats as input.
+
+
 Version 2.3.3
 -------------
 

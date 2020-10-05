@@ -717,7 +717,7 @@ class IntegerField(Field):
             return
 
         try:
-            self.data = int(value)
+            self.data = int(str(value))
         except (ValueError, TypeError):
             self.data = None
             raise ValueError(self.gettext("Not a valid integer value."))
