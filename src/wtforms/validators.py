@@ -86,18 +86,20 @@ class EqualTo:
             raise ValidationError(
                 field.gettext("Invalid field name '%s'.") % self.fieldname
             )
-        if field.data != other.data:
-            d = {
-                "other_label": hasattr(other, "label")
-                and other.label.text
-                or self.fieldname,
-                "other_name": self.fieldname,
-            }
-            message = self.message
-            if message is None:
-                message = field.gettext("Field must be equal to %(other_name)s.")
+        if field.data == other.data:
+            return
 
-            raise ValidationError(message % d)
+        d = {
+            "other_label": hasattr(other, "label")
+            and other.label.text
+            or self.fieldname,
+            "other_name": self.fieldname,
+        }
+        message = self.message
+        if message is None:
+            message = field.gettext("Field must be equal to %(other_name)s.")
+
+        raise ValidationError(message % d)
 
 
 class Length:
@@ -134,35 +136,36 @@ class Length:
 
     def __call__(self, form, field):
         length = field.data and len(field.data) or 0
-        if length < self.min or self.max != -1 and length > self.max:
-            message = self.message
-            if message is None:
-                if self.max == -1:
-                    message = field.ngettext(
-                        "Field must be at least %(min)d character long.",
-                        "Field must be at least %(min)d characters long.",
-                        self.min,
-                    )
-                elif self.min == -1:
-                    message = field.ngettext(
-                        "Field cannot be longer than %(max)d character.",
-                        "Field cannot be longer than %(max)d characters.",
-                        self.max,
-                    )
-                elif self.min == self.max:
-                    message = field.ngettext(
-                        "Field must be exactly %(max)d character long.",
-                        "Field must be exactly %(max)d characters long.",
-                        self.max,
-                    )
-                else:
-                    message = field.gettext(
-                        "Field must be between %(min)d and %(max)d characters long."
-                    )
+        if length >= self.min and (self.max == -1 or length <= self.max):
+            return
 
-            raise ValidationError(
-                message % dict(min=self.min, max=self.max, length=length)
+        if self.message is not None:
+            message = self.message
+
+        elif self.max == -1:
+            message = field.ngettext(
+                "Field must be at least %(min)d character long.",
+                "Field must be at least %(min)d characters long.",
+                self.min,
             )
+        elif self.min == -1:
+            message = field.ngettext(
+                "Field cannot be longer than %(max)d character.",
+                "Field cannot be longer than %(max)d characters.",
+                self.max,
+            )
+        elif self.min == self.max:
+            message = field.ngettext(
+                "Field must be exactly %(max)d character long.",
+                "Field must be exactly %(max)d characters long.",
+                self.max,
+            )
+        else:
+            message = field.gettext(
+                "Field must be between %(min)d and %(max)d characters long."
+            )
+
+        raise ValidationError(message % dict(min=self.min, max=self.max, length=length))
 
 
 class NumberRange:
@@ -198,25 +201,28 @@ class NumberRange:
     def __call__(self, form, field):
         data = field.data
         if (
-            data is None
-            or math.isnan(data)
-            or (self.min is not None and data < self.min)
-            or (self.max is not None and data > self.max)
+            data is not None
+            and not math.isnan(data)
+            and (self.min is None or data >= self.min)
+            and (self.max is None or data <= self.max)
         ):
-            message = self.message
-            if message is None:
-                # we use %(min)s interpolation to support floats, None, and
-                # Decimals without throwing a formatting exception.
-                if self.max is None:
-                    message = field.gettext("Number must be at least %(min)s.")
-                elif self.min is None:
-                    message = field.gettext("Number must be at most %(max)s.")
-                else:
-                    message = field.gettext(
-                        "Number must be between %(min)s and %(max)s."
-                    )
+            return
 
-            raise ValidationError(message % dict(min=self.min, max=self.max))
+        if self.message is not None:
+            message = self.message
+
+        # we use %(min)s interpolation to support floats, None, and
+        # Decimals without throwing a formatting exception.
+        elif self.max is None:
+            message = field.gettext("Number must be at least %(min)s.")
+
+        elif self.min is None:
+            message = field.gettext("Number must be at most %(max)s.")
+
+        else:
+            message = field.gettext("Number must be between %(min)s and %(max)s.")
+
+        raise ValidationError(message % dict(min=self.min, max=self.max))
 
 
 class Optional:
@@ -281,14 +287,16 @@ class DataRequired:
         self.field_flags = {"required": True}
 
     def __call__(self, form, field):
-        if not field.data or isinstance(field.data, str) and not field.data.strip():
-            if self.message is None:
-                message = field.gettext("This field is required.")
-            else:
-                message = self.message
+        if field.data and (not isinstance(field.data, str) or field.data.strip()):
+            return
 
-            field.errors[:] = []
-            raise StopValidation(message)
+        if self.message is None:
+            message = field.gettext("This field is required.")
+        else:
+            message = self.message
+
+        field.errors[:] = []
+        raise StopValidation(message)
 
 
 class InputRequired:
@@ -307,14 +315,16 @@ class InputRequired:
         self.field_flags = {"required": True}
 
     def __call__(self, form, field):
-        if not field.raw_data or not field.raw_data[0]:
-            if self.message is None:
-                message = field.gettext("This field is required.")
-            else:
-                message = self.message
+        if field.raw_data and field.raw_data[0]:
+            return
 
-            field.errors[:] = []
-            raise StopValidation(message)
+        if self.message is None:
+            message = field.gettext("This field is required.")
+        else:
+            message = self.message
+
+        field.errors[:] = []
+        raise StopValidation(message)
 
 
 class Regexp:
@@ -339,15 +349,16 @@ class Regexp:
 
     def __call__(self, form, field, message=None):
         match = self.regex.match(field.data or "")
-        if not match:
-            if message is None:
-                if self.message is None:
-                    message = field.gettext("Invalid input.")
-                else:
-                    message = self.message
+        if match:
+            return match
 
-            raise ValidationError(message)
-        return match
+        if message is None:
+            if self.message is None:
+                message = field.gettext("Invalid input.")
+            else:
+                message = self.message
+
+        raise ValidationError(message)
 
 
 class Email:
@@ -435,11 +446,13 @@ class IPAddress:
                 self.ipv6 and self.check_ipv6(value)
             )
 
-        if not valid:
-            message = self.message
-            if message is None:
-                message = field.gettext("Invalid IP address.")
-            raise ValidationError(message)
+        if valid:
+            return
+
+        message = self.message
+        if message is None:
+            message = field.gettext("Invalid IP address.")
+        raise ValidationError(message)
 
     @classmethod
     def check_ipv4(cls, value):
@@ -565,14 +578,14 @@ class AnyOf:
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
-        if field.data not in self.values:
-            message = self.message
-            if message is None:
-                message = field.gettext("Invalid value, must be one of: %(values)s.")
+        if field.data in self.values:
+            return
 
-            raise ValidationError(
-                message % dict(values=self.values_formatter(self.values))
-            )
+        message = self.message
+        if message is None:
+            message = field.gettext("Invalid value, must be one of: %(values)s.")
+
+        raise ValidationError(message % dict(values=self.values_formatter(self.values)))
 
     @staticmethod
     def default_values_formatter(values):
@@ -600,14 +613,14 @@ class NoneOf:
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
-        if field.data in self.values:
-            message = self.message
-            if message is None:
-                message = field.gettext("Invalid value, can't be any of: %(values)s.")
+        if field.data not in self.values:
+            return
 
-            raise ValidationError(
-                message % dict(values=self.values_formatter(self.values))
-            )
+        message = self.message
+        if message is None:
+            message = field.gettext("Invalid value, can't be any of: %(values)s.")
+
+        raise ValidationError(message % dict(values=self.values_formatter(self.values)))
 
     @staticmethod
     def default_values_formatter(v):
@@ -629,9 +642,10 @@ class HostnameValidation:
         self.allow_ip = allow_ip
 
     def __call__(self, hostname):
-        if self.allow_ip:
-            if IPAddress.check_ipv4(hostname) or IPAddress.check_ipv6(hostname):
-                return True
+        if self.allow_ip and (
+            IPAddress.check_ipv4(hostname) or IPAddress.check_ipv6(hostname)
+        ):
+            return True
 
         # Encode out IDNA hostnames. This makes further validation easier.
         try:
@@ -654,9 +668,8 @@ class HostnameValidation:
             if not self.hostname_part.match(part):
                 return False
 
-        if self.require_tld:
-            if len(parts) < 2 or not self.tld_part.match(parts[-1]):
-                return False
+        if self.require_tld and (len(parts) < 2 or not self.tld_part.match(parts[-1])):
+            return False
 
         return True
 
