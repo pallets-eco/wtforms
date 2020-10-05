@@ -2,6 +2,7 @@ import itertools
 from collections import OrderedDict
 
 from wtforms.meta import DefaultMeta
+from wtforms.utils import unset_value
 
 __all__ = ("BaseForm", "Form")
 
@@ -117,15 +118,13 @@ class BaseForm:
                 field_extra_filters.append(inline_filter)
 
             if obj is not None and hasattr(obj, name):
-                field.process(
-                    formdata, getattr(obj, name), extra_filters=field_extra_filters
-                )
+                data = getattr(obj, name)
             elif name in kwargs:
-                field.process(
-                    formdata, kwargs[name], extra_filters=field_extra_filters,
-                )
+                data = kwargs[name]
             else:
-                field.process(formdata, extra_filters=field_extra_filters)
+                data = unset_value
+
+            field.process(formdata, data, extra_filters=field_extra_filters)
 
     def validate(self, extra_validators=None):
         """
