@@ -69,14 +69,15 @@ def test_callable_choices():
 
 
 def test_choice_shortcut():
-    F = make_form(a=SelectMultipleField(choices=["foo", "bar"], validate_choice=False))
-    form = F(a="bar")
+    F = make_form(a=SelectMultipleField(choices=["foo", "bar"]))
+    form = F(a=["bar"])
+    assert form.validate()
     assert '<option value="foo">foo</option>' in form.a()
 
 
 @pytest.mark.parametrize("choices", [[], None])
 def test_empty_choice(choices):
-    F = make_form(a=SelectMultipleField(choices=choices, validate_choice=False))
+    F = make_form(a=SelectMultipleField(choices=choices))
     form = F(a="bar")
     assert form.a() == '<select id="a" multiple name="a"></select>'
 
