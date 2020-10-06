@@ -41,6 +41,8 @@ Unreleased
 -   Error messages standardization. :issue:`613` :pr:`620` :pr:`626` :pr:`627`
 -   :class:`~wtforms.fields.core.SelectMultipleField` `validate_choice`
     bugfix. :issue:`606` :pr:`642`
+-   Fixed SelectMultipleField validation when using choices list shortcut.
+    :issue:`612` :pr:`661`
 
 
 Version 2.3.3

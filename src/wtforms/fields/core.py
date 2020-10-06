@@ -616,16 +616,20 @@ class SelectMultipleField(SelectField):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        if self.validate_choice and self.data:
-            values = list(c[0] for c in self.choices)
-            for d in self.data:
-                if d not in values:
-                    raise ValidationError(
-                        self.gettext(
-                            "'%(value)s' is not a valid choice for this field."
-                        )
-                        % dict(value=d)
-                    )
+        if not self.validate_choice or not self.data:
+            return
+
+        acceptable = {c[0] for c in self.iter_choices()}
+        if any(d not in acceptable for d in self.data):
+            unacceptable = [str(d) for d in set(self.data) - acceptable]
+            raise ValidationError(
+                self.ngettext(
+                    "'%(value)s' is not a valid choice for this field.",
+                    "'%(value)s' are not valid choices for this field.",
+                    len(unacceptable),
+                )
+                % dict(value="', '".join(unacceptable))
+            )
 
 
 class RadioField(SelectField):
