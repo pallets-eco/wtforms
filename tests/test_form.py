@@ -255,7 +255,7 @@ class TestForm:
         assert form.test.data == "bar"
 
     def test_empty_formdata(self):
-        """"If formdata is empty, field.process_formdata should still
+        """If formdata is empty, field.process_formdata should still
         run to handle empty data.
         """
 

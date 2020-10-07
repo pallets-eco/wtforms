@@ -239,7 +239,13 @@ class Form(BaseForm, metaclass=FormMeta):
     Meta = DefaultMeta
 
     def __init__(
-        self, formdata=None, obj=None, prefix="", data=None, meta=None, **kwargs,
+        self,
+        formdata=None,
+        obj=None,
+        prefix="",
+        data=None,
+        meta=None,
+        **kwargs,
     ):
         """
         :param formdata: Input data coming from the client, usually

@@ -49,5 +49,7 @@ if BaseBDistWheel:
 
 # Metadata goes in setup.cfg. These are here for GitHub's dependency graph.
 setup(
-    name="WTForms", install_requires=["MarkupSafe"], cmdclass=command_classes,
+    name="WTForms",
+    install_requires=["MarkupSafe"],
+    cmdclass=command_classes,
 )

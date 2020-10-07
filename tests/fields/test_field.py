@@ -124,7 +124,8 @@ def test_check_validators():
     v2 = validators.DataRequired
 
     with pytest.raises(
-        TypeError, match=fr"{v1} is not a valid validator because it is not callable",
+        TypeError,
+        match=fr"{v1} is not a valid validator because it is not callable",
     ):
         Field(validators=[v1])
 
