@@ -43,6 +43,9 @@ Unreleased
     bugfix. :issue:`606` :pr:`642`
 -   Fixed SelectMultipleField validation when using choices list shortcut.
     :issue:`612` :pr:`661`
+-   :class:`~wtforms.fields.core.DateTimeField`, :class:`~wtforms.fields.core.DateField`,
+    :class:`~wtforms.fields.core.TimeField` and :class:`~wtforms.fields.core.MonthField`
+    can take a list of formats to match. :issue:`175` :pr:`664`
 
 
 Version 2.3.3
