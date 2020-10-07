@@ -878,7 +878,8 @@ class BooleanField(Field):
 
 class DateTimeField(Field):
     """
-    A text field which stores a `datetime.datetime` matching a format.
+    A text field which stores a `datetime.datetime` matching a format,
+    or a list of formats.
     """
 
     widget = widgets.DateTimeInput()
@@ -892,18 +893,22 @@ class DateTimeField(Field):
     def _value(self):
         if self.raw_data:
             return " ".join(self.raw_data)
-        return self.data and self.data.strftime(self.format) or ""
+        formats = self.format if isinstance(self.format, list) else [self.format]
+        return self.data and self.data.strftime(formats[0]) or ""
 
     def process_formdata(self, valuelist):
         if not valuelist:
             return
 
         date_str = " ".join(valuelist)
-        try:
-            self.data = datetime.datetime.strptime(date_str, self.format)
-        except ValueError:
-            self.data = None
-            raise ValueError(self.gettext("Not a valid datetime value."))
+        formats = self.format if isinstance(self.format, list) else [self.format]
+        for f in formats:
+            try:
+                self.data = datetime.datetime.strptime(date_str, f)
+                return
+            except ValueError:
+                self.data = None
+        raise ValueError(self.gettext("Not a valid datetime value."))
 
 
 class DateField(DateTimeField):
@@ -921,11 +926,14 @@ class DateField(DateTimeField):
             return
 
         date_str = " ".join(valuelist)
-        try:
-            self.data = datetime.datetime.strptime(date_str, self.format).date()
-        except ValueError:
-            self.data = None
-            raise ValueError(self.gettext("Not a valid date value."))
+        formats = self.format if isinstance(self.format, list) else [self.format]
+        for f in formats:
+            try:
+                self.data = datetime.datetime.strptime(date_str, f).date()
+                return
+            except ValueError:
+                self.data = None
+        raise ValueError(self.gettext("Not a valid date value."))
 
 
 class TimeField(DateTimeField):
@@ -943,11 +951,14 @@ class TimeField(DateTimeField):
             return
 
         time_str = " ".join(valuelist)
-        try:
-            self.data = datetime.datetime.strptime(time_str, self.format).time()
-        except ValueError:
-            self.data = None
-            raise ValueError(self.gettext("Not a valid time value."))
+        formats = self.format if isinstance(self.format, list) else [self.format]
+        for f in formats:
+            try:
+                self.data = datetime.datetime.strptime(time_str, f).time()
+                return
+            except ValueError:
+                self.data = None
+        raise ValueError(self.gettext("Not a valid time value."))
 
 
 class MonthField(DateField):

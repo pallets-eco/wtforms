@@ -27,3 +27,11 @@ def test_failure():
     assert len(form.a.errors) == 1
     assert len(form.b.errors) == 1
     assert form.a.process_errors[0] == "Not a valid date value."
+
+
+def test_multiple():
+    class F(Form):
+        a = DateField(format=["%d/%m/%y", "%Y-%m-%d"])
+
+    assert F(DummyPostData(a=["2011-05-07"])).validate()
+    assert F(DummyPostData(a=["07/05/11"])).validate()

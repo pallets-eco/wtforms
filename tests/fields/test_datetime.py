@@ -46,3 +46,9 @@ def test_microseconds():
     F = make_form(a=DateTimeField(format="%Y-%m-%d %H:%M:%S.%f"))
     form = F(DummyPostData(a=["2011-05-07 03:23:14.4242"]))
     assert d == form.a.data
+
+
+def test_multiple():
+    F = make_form(a=DateTimeField(format=["%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d"]))
+    assert F(DummyPostData(a=["2011-05-07 03:23:14.4242"])).validate()
+    assert F(DummyPostData(a=["2011-05-07"])).validate()

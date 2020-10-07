@@ -25,3 +25,11 @@ def test_basic():
     form = F(DummyPostData(a=["04"]))
     assert not form.validate()
     assert form.a.errors[0] == "Not a valid time value."
+
+
+def test_multiple():
+    class F(Form):
+        a = TimeField(format=["%H:%M", "%H %M"])
+
+    assert F(DummyPostData(a=["05:07"])).validate()
+    assert F(DummyPostData(a=["05 07"])).validate()
