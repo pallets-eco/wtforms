@@ -1,7 +1,10 @@
 import re
 
 import pytest
+from tests.common import DummyPostData
 
+from wtforms.fields import MultipleFileField
+from wtforms.form import Form
 from wtforms.validators import regexp
 from wtforms.validators import ValidationError
 
@@ -55,3 +58,11 @@ def test_regexp_message(dummy_form, dummy_field, grab_error_message):
     validator = regexp("^a", message="foo")
     dummy_field.data = "f"
     assert grab_error_message(validator, dummy_form, dummy_field) == "foo"
+
+
+def test_multiple_file_field():
+    class F(Form):
+        foo = MultipleFileField(validators=[regexp(r".*\.jpg$")])
+
+    assert F(DummyPostData({"foo": ["foo.jpg", "bar.jpg"]})).validate()
+    assert not F(DummyPostData({"foo": ["foo.jpg", "bar.png"]})).validate()

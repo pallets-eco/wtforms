@@ -348,9 +348,15 @@ class Regexp:
         self.message = message
 
     def __call__(self, form, field, message=None):
-        match = self.regex.match(field.data or "")
-        if match:
-            return match
+        if not isinstance(field.data, list):
+            match = self.regex.match(field.data or "")
+            if match:
+                return match
+
+        else:
+            matches = [self.regex.match(x or "") for x in field.data]
+            if all(matches):
+                return matches
 
         if message is None:
             if self.message is None:
