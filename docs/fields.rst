@@ -274,7 +274,7 @@ refer to a single input from the form.
 
 .. class:: SelectField(default field arguments, choices=[], coerce=str, option_widget=None, validate_choice=True)
 
-    Select fields take a ``choices`` parameter which is eitherr a list of
+    Select fields take a ``choices`` parameter which is either a list of
     ``(value, label)`` pairs, or a function taking no argument, and returning
     a list of ``(value, label)`` pairs. It can also be a list of only values, in
     which case the value is used as the label. The value can be any
