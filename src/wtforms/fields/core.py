@@ -154,7 +154,7 @@ class Field:
             flags = getattr(v, "field_flags", {})
 
             # check for legacy format, remove eventually
-            if isinstance(flags, tuple):
+            if isinstance(flags, tuple):  # pragma: no cover
                 warnings.warn(
                     "Flags should be stored in dicts and not in tuples. "
                     "The next version of WTForms will abandon support "
