@@ -24,13 +24,6 @@ class Lower_Translator:
     ngettext = ngettext_lower
 
 
-class Python2_Translator:
-    """A mock translator which implements python2 ugettext methods."""
-
-    ugettext = gettext_lower
-    ungettext = ngettext_lower
-
-
 class TestI18N:
     def test_failure(self):
         with pytest.raises(IOError):
@@ -46,11 +39,6 @@ class TestI18N:
         assert translations.ngettext("Foo", "Foos", 1) == "foo"
         assert translations.ngettext("Foo", "Foos", 2) == "foos"
         return translations
-
-    def test_python2_wrap(self):
-        translator = Python2_Translator()
-        translations = self._test_converter(translator)
-        assert translations is not translator
 
     def test_python3_nowrap(self):
         translator = Lower_Translator()

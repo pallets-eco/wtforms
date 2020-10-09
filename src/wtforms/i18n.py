@@ -35,13 +35,7 @@ def get_translations(languages=None, getter=get_builtin_gnu_translations):
     :param getter:
         A single-argument callable which returns a low-level translations object.
     """
-    translations = getter(languages)
-
-    if hasattr(translations, "ugettext"):
-        return DefaultTranslations(translations)
-    else:
-        # Python 3 has no ugettext/ungettext, so just return the translations object.
-        return translations
+    return getter(languages)
 
 
 class DefaultTranslations:
