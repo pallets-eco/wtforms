@@ -880,6 +880,10 @@ class DateTimeField(Field):
     """
     A text field which stores a `datetime.datetime` matching a format,
     or a list of formats.
+
+    :param format: A string representing a time format to parse. Only
+        inputs matching this format will be validated.
+        If a list is passed, any format in the list can be matched.
     """
 
     widget = widgets.DateTimeInput()
@@ -913,7 +917,8 @@ class DateTimeField(Field):
 
 class DateField(DateTimeField):
     """
-    Same as DateTimeField, except stores a `datetime.date`.
+    Same as :class:`~wtforms.fields.DateTimeField`, except stores a
+    :class:`datetime.date`.
     """
 
     widget = widgets.DateInput()
@@ -938,7 +943,8 @@ class DateField(DateTimeField):
 
 class TimeField(DateTimeField):
     """
-    Same as DateTimeField, except stores a `time`.
+    Same as :class:`~wtforms.fields.DateTimeField`, except stores a
+    :class:`datetime.time`.
     """
 
     widget = widgets.TimeInput()
@@ -963,8 +969,8 @@ class TimeField(DateTimeField):
 
 class MonthField(DateField):
     """
-    Same as DateField, except represents a month, stores a `datetime.date`
-    with `day = 1`.
+    Same as :class:`~wtforms.fields.DateField`, except represents a month,
+    stores a :class:`datetime.time` with `day = 1`.
     """
 
     widget = widgets.MonthInput()
@@ -1286,7 +1292,8 @@ class EmailField(StringField):
 
 class DateTimeLocalField(DateTimeField):
     """
-    Represents an ``<input type="datetime-local">``.
+    Same as :class:`~wtforms.fields.DateTimeField`, except use a
+    :class:`~wtforms.widgets.DateTimeLocalInput` widget.
     """
 
     widget = widgets.DateTimeLocalInput()
