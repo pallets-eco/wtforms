@@ -281,6 +281,11 @@ refer to a single input from the form.
     type, but because form data is sent to the browser as strings, you
     will need to provide a ``coerce`` function that converts a string
     back to the expected type.
+    You can pass a dictionary to the ``choices`` parameter, in that case
+    the default widget will use each key to render an ``<optgroup>`` 
+    element. The values of this dictionary must be a list of 
+    ``(value, label)`` or only values as described above.
+
 
     **Select fields with static choice values**::
 

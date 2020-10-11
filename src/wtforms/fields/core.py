@@ -531,6 +531,10 @@ class SelectField(SelectFieldBase):
         self.coerce = coerce
         if callable(choices):
             choices = choices()
+        if isinstance(choices, dict):
+            self.groups = choices
+        else:
+            self.groups = {}
         self.choices = list(choices) if choices is not None else None
         self.validate_choice = validate_choice
 
@@ -544,6 +548,20 @@ class SelectField(SelectFieldBase):
 
         for value, label in choices:
             yield (value, label, self.coerce(value) == self.data)
+
+    def iter_groups(self):
+        for group_label, options in self.groups.items():
+            if not options:
+                choices = []
+            elif isinstance(options[0], (list, tuple)):
+                choices = options
+            else:
+                choices = zip(options, options)
+
+            _choices = []
+            for value, label in choices:
+                _choices.append((value, label, self.coerce(value) == self.data))
+            yield (group_label, _choices)
 
     def process_data(self, value):
         try:
@@ -595,6 +613,21 @@ class SelectMultipleField(SelectField):
         for value, label in choices:
             selected = self.data is not None and self.coerce(value) in self.data
             yield (value, label, selected)
+
+    def iter_groups(self):
+        for group_label, options in self.groups.items():
+            if not options:
+                choices = []
+            elif isinstance(options[0], (list, tuple)):
+                choices = options
+            else:
+                choices = zip(options, options)
+            
+            _choices = []
+            for value, label in choices:
+                selected = self.data is not None and self.coerce(value) in self.data
+                _choices.append((value, label, selected))
+            yield (group_label, _choices)
 
     def process_data(self, value):
         try:
