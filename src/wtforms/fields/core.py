@@ -532,10 +532,13 @@ class SelectField(SelectFieldBase):
         if callable(choices):
             choices = choices()
         if isinstance(choices, dict):
+            self.choices = []
+            for options in choices.values():
+                self.choices += options
             self.groups = choices
         else:
-            self.groups = {}
-        self.choices = list(choices) if choices is not None else None
+            self.choices = list(choices) if choices is not None else None
+            self.groups = None
         self.validate_choice = validate_choice
 
     def iter_choices(self):
