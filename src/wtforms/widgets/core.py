@@ -342,7 +342,6 @@ class Select:
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
         html = ["<select %s>" % html_params(name=field.name, **kwargs)]
-        if field.groups:
         if field.groups is not None:
             for group_label, options in field.iter_groups():
                 html.append(self.render_optgroup(group_label, options))
