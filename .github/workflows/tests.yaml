@@ -1,3 +1,4 @@
+---
 name: tests
 on:
   push:
@@ -16,13 +17,14 @@ jobs:
       fail-fast: false
       matrix:
         python:
+          - '3.9'
           - '3.8'
           - '3.7'
           - '3.6'
           - pypy3
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
       - uses: actions/cache@v1
@@ -35,9 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - uses: actions/cache@v1
         with:
           path: ~/.cache/pip
@@ -52,9 +54,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.9'
       - uses: actions/cache@v1
         with:
           path: ~/.cache/pip
