@@ -39,8 +39,8 @@ with frameworks even better.
 -   `WTForms-Django`_ provides ORM-backed fields and form generation
     from Django models, as well as integration with Django's I18N
     support.
--   `Starlette-WTF`_ integrates with Starlette/FastAPI framework.It is 
-    modeled on the excellent Flask-WTF library.
+-   `Starlette-WTF`_ integrates with Starlette and the FastAPI
+    framework, based on the features of Flask-WTF.
 
 .. _Flask-WTF: https://flask-wtf.readthedocs.io/
 .. _WTForms-Alchemy: https://wtforms-alchemy.readthedocs.io/
