@@ -1,10 +1,14 @@
 .. currentmodule:: wtforms
 
-
 Version 3.0.0
 -------------
 
 Unreleased
+
+Version 3.0.0a1
+---------------
+
+Released 2020-11-23
 
 -   Drop support for Python < 3.6. :pr:`554`
 -   :class:`~fields.StringField` sets ``data`` to ``None`` when form
