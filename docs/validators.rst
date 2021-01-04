@@ -73,6 +73,45 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.NoneOf
 
+.. autoclass:: wtforms.validators.DigitRequired
+
+    This validator ensure that the incoming data must contain a specified minimum number of digit.
+
+    :param min:
+        The minimum required digit in the string.
+        min default value is 1 digit at least.
+    :param message:
+        Error message to raise in case of a validation error.
+
+.. autoclass:: wtforms.validators.UppercaseRequired
+
+    This validator ensure that the incoming data must contain a specified minimum number of uppercase letter.
+
+    :param min:
+        The minimum required uppercase letter in the string.
+        min default value is 1 uppercase letter at least.
+    :param message:
+        Error message to raise in case of a validation error.
+
+.. autoclass:: wtforms.validators.LowercaseRequired
+
+    This validator ensure that the incoming data must contain a specified minimum number of lowercase letter.
+
+    :param min:
+        The minimum required lowercase letter in the string.
+        min default value is 1 lowercase letter at least.
+    :param message:
+        Error message to raise in case of a validation error.
+
+.. autoclass:: wtforms.validators.SymbolRequired
+
+    This validator ensure that the incoming data must contain a specified minimum number of symbol.
+
+    :param min:
+        The minimum required symbol in the string.
+        min default value is 1 symbol at least.
+    :param message:
+        Error message to raise in case of a validation error.
 
 .. _custom-validators:
 
