@@ -38,6 +38,14 @@ __all__ = (
     "UUID",
     "ValidationError",
     "StopValidation",
+    "DigitRequired",
+    "digit_required",
+    "UppercaseRequired",
+    "uppercase_required",
+    "LowercaseRequired",
+    "lowercase_required",
+    "SymbolRequired",
+    "symbol_required",
 )
 
 
@@ -674,6 +682,114 @@ class HostnameValidation:
         return True
 
 
+class DigitRequired:
+    """
+    Check if the incoming data contain a digit.
+
+    :param min:
+        The minimum required digit in the string.
+        min default value is 1 digit at least.
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+
+    def __init__(self, min=1, message=None):
+        self.min = min
+        self.message = message
+
+    def __call__(self, form, field):
+        digit = len(re.findall(r"\d", field.data))
+
+        if digit < self.min:
+            message = self.message
+            if not message:
+                message = field.gettext("Field must contain at least %(min)d digit.")
+
+            raise ValidationError(message % dict(min=self.min))
+
+
+class UppercaseRequired:
+    """
+    Check if the incoming data contain an uppercase letter.
+
+    :param min:
+        The minimum required uppercase letter in the string.
+        min default value is 1 uppercase letter at least.
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+
+    def __init__(self, min=1, message=None):
+        self.min = min
+        self.message = message
+
+    def __call__(self, form, field):
+        uppercase = len(re.findall("[A-Z]", field.data))
+
+        if uppercase < self.min:
+            message = self.message
+            if not message:
+                message = field.gettext(
+                    "Field must contain at least %(min)d uppercase letter."
+                )
+
+            raise ValidationError(message % dict(min=self.min))
+
+
+class LowercaseRequired:
+    """
+    Check if the incoming data contain a lowercase letter.
+
+    :param min:
+        The minimum required lowercase letter in the string.
+        min default value is 1 lowercase letter at least.
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+
+    def __init__(self, min=1, message=None):
+        self.min = min
+        self.message = message
+
+    def __call__(self, form, field):
+        lowercase = len(re.findall("[a-z]", field.data))
+
+        if lowercase < self.min:
+            message = self.message
+            if not message:
+                message = field.gettext(
+                    "Field must contain at least %(min)d lowercase letter."
+                )
+
+            raise ValidationError(message % dict(min=self.min))
+
+
+class SymbolRequired:
+    """
+    Check if the incoming data contain a symbol.
+
+    :param min:
+        The minimum required symbol in the string.
+        min default value is 1 symbol at least.
+    :param message:
+        Error message to raise in case of a validation error.
+    """
+
+    def __init__(self, min=1, message=None):
+        self.min = min
+        self.message = message
+
+    def __call__(self, form, field):
+        symbol = len(re.findall(r"\W", field.data))
+
+        if symbol < self.min:
+            message = self.message
+            if not message:
+                message = field.gettext("Field must contain at least %(min)d symbol.")
+
+            raise ValidationError(message % dict(min=self.min))
+
+
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
@@ -687,3 +803,7 @@ regexp = Regexp
 url = URL
 any_of = AnyOf
 none_of = NoneOf
+digit_required = DigitRequired
+uppercase_required = UppercaseRequired
+lowercase_required = LowercaseRequired
+symbol_required = SymbolRequired
