@@ -47,7 +47,8 @@ Released 2020-11-23
     bugfix. :issue:`606` :pr:`642`
 -   Fixed SelectMultipleField validation when using choices list shortcut.
     :issue:`612` :pr:`661`
-
+-   Added ``DigitRequired``, ``UppercaseRequired``, ``LowercaseRequired``
+    and ``SymbolRequired`` validators.
 
 Version 2.3.3
 -------------
