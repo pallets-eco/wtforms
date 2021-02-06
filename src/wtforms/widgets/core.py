@@ -411,7 +411,7 @@ class DateTimeInput(Input):
     Renders an input with type "datetime".
     """
 
-    input_type = "datetime"
+    input_type = "datetime-local"
     validation_attrs = ["required", "max", "min", "step"]
 
 
