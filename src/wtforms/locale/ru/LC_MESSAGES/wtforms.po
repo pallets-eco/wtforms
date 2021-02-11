@@ -49,9 +49,9 @@ msgstr[2] "Значение не должно содержать более %(ma
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Значение должно быть точно %(max)d символа."
+msgstr[1] "Значение должно быть %(max)d символов."
+msgstr[2] "Значение должно быть %(max)d символов."
 
 #: src/wtforms/validators.py:152
 #, python-format
@@ -133,7 +133,7 @@ msgstr "Неверный вариант: невозможно преобразо
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "Выбор не может быть None"
 
 #: src/wtforms/fields/core.py:545
 msgid "Not a valid choice."
@@ -164,12 +164,12 @@ msgstr "Неверное десятичное число."
 
 #: src/wtforms/fields/core.py:853
 msgid "Not a valid datetime value."
-msgstr ""
+msgstr "Не верное значение даты и времени."
 
 #: src/wtforms/fields/core.py:871
 msgid "Not a valid date value."
-msgstr ""
+msgstr "Не верное значение даты."
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr ""
+msgstr "Не верное значение времени."
