@@ -287,7 +287,7 @@ class DataRequired:
         self.field_flags = {"required": True}
 
     def __call__(self, form, field):
-        if field.data and (not isinstance(field.data, str) or field.data.strip()):
+        if field.data is not None and (not isinstance(field.data, str) or field.data.strip()):
             return
 
         if self.message is None:
