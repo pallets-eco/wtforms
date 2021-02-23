@@ -603,6 +603,9 @@ class SelectMultipleField(SelectField):
             self.data = None
 
     def process_formdata(self, valuelist):
+        if not valuelist:
+            return
+
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError:
