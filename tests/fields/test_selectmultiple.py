@@ -38,7 +38,7 @@ def test_with_data():
         ("c", "something", True),
     ]
     # b should be set to the default value
-    assert form.b.data == [1,3]
+    assert form.b.data == [1, 3]
     form = F(DummyPostData(b=["1", "2"]))
     assert form.b.data == [1, 2]
     assert form.validate()
