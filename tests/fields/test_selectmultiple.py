@@ -46,7 +46,8 @@ def test_with_data():
     assert form.b.data == [1, 2, 4]
     assert not form.validate()
     form = F(formdata=DummyPostData(b=["1", "2"]), a=["a", "b"])
-    # Using formdata and key-word arguments should combine both, with formdata taking precedence
+    # Using formdata and key-word arguments should combine both
+    # with formdata taking precedence
     assert form.a.data == ["a", "b"]
     assert form.b.data == [1, 2]
     assert form.validate()
