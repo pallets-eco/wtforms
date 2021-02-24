@@ -37,13 +37,19 @@ def test_with_data():
         ("b", "bye", False),
         ("c", "something", True),
     ]
-    assert form.b.data == []
+    # b should be set to the default value
+    assert form.b.data == [1,3]
     form = F(DummyPostData(b=["1", "2"]))
     assert form.b.data == [1, 2]
     assert form.validate()
     form = F(DummyPostData(b=["1", "2", "4"]))
     assert form.b.data == [1, 2, 4]
     assert not form.validate()
+    form = F(formdata=DummyPostData(b=["1", "2"]), a=["a", "b"])
+    # Using formdata and key-word arguments should combine both, with formdata taking precedence
+    assert form.a.data == ["a", "b"]
+    assert form.b.data == [1, 2]
+    assert form.validate()
 
 
 def test_coerce_fail():
