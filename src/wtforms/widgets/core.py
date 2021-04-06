@@ -323,6 +323,7 @@ class Select:
     `(value, label, selected)`.
     """
 
+    html_params = staticmethod(html_params)
     validation_attrs = ["required"]
 
     def __init__(self, multiple=False):
@@ -336,7 +337,7 @@ class Select:
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
-        html = ["<select %s>" % html_params(name=field.name, **kwargs)]
+        html = ["<select %s>" % self.html_params(name=field.name, **kwargs)]
         for val, label, selected in field.iter_choices():
             html.append(self.render_option(val, label, selected))
         html.append("</select>")
@@ -352,7 +353,7 @@ class Select:
         if selected:
             options["selected"] = True
         return Markup(
-            "<option {}>{}</option>".format(html_params(**options), escape(label))
+            "<option {}>{}</option>".format(self.html_params(**options), escape(label))
         )
 
 
