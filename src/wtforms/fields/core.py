@@ -1036,9 +1036,9 @@ class FormField(Field):
                     " the provided obj or input data/defaults"
                 )
             candidate = self._obj
-            setattr(obj, name, candidate)
 
         self.form.populate_obj(candidate)
+        setattr(obj, name, candidate)
 
     def __iter__(self):
         return iter(self.form)
