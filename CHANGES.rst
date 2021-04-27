@@ -9,6 +9,8 @@ Unreleased
 -   :meth:`~fields.FormField.populate_obj` always calls :func:`setattr`
     :pr:`675`
 -   WTForms has a new logo. :issue:`569` :pr:`689`
+-   Fixed :class:`~fields.RadioField` `render_kw` rendering. :issue:`490`
+    :pr:`628` :pr:`688`
 
 Version 3.0.0a1
 ---------------
