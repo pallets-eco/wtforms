@@ -5,6 +5,8 @@ Version 3.0.0
 
 Unreleased
 
+-   Fixed :class:`~fields.RadioField` validators. :issue:`477` :pr:`615`
+
 Version 3.0.0a1
 ---------------
 
