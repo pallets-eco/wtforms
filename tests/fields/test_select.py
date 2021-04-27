@@ -195,3 +195,16 @@ def test_required_validator():
     form = F()
     assert form.validate() is False
     assert form.c.errors == ["This field is required."]
+
+
+def test_render_kw_preserved():
+    F = make_form(
+        a=SelectField(choices=[("foo"), ("bar")], render_kw=dict(disabled=True))
+    )
+    form = F()
+    assert form.a() == (
+        '<select disabled id="a" name="a">'
+        '<option value="foo">foo</option>'
+        '<option value="bar">bar</option>'
+        "</select>"
+    )
