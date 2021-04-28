@@ -8,6 +8,7 @@ Unreleased
 -   Fixed :class:`~fields.RadioField` validators. :issue:`477` :pr:`615`
 -   :meth:`~fields.FormField.populate_obj` always calls :func:`setattr`
     :pr:`675`
+-   WTForms has a new logo. :issue:`569` :pr:`689`
 
 Version 3.0.0a1
 ---------------
