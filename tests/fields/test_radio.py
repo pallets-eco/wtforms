@@ -102,3 +102,19 @@ def test_required_validator():
     form = F(DummyPostData(b=1))
     assert form.validate() is False
     assert form.c.errors == ["This field is required."]
+
+
+def test_render_kw_preserved():
+    F = make_form(
+        a=RadioField(
+            choices=[(True, "yes"), (False, "no")], render_kw=dict(disabled=True)
+        )
+    )
+    form = F()
+    assert form.a() == (
+        '<ul disabled id="a">'
+        '<li><input disabled id="a-0" name="a" type="radio" value="True"> '
+        '<label for="a-0">yes</label></li><li>'
+        '<input disabled id="a-1" name="a" type="radio" value="False"> '
+        '<label for="a-1">no</label></li></ul>'
+    )
