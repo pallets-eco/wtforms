@@ -214,7 +214,7 @@ def test_optgroup():
     form = F(a="a")
 
     assert '<optgroup label="hello"><option selected value="a">Foo</option></optgroup>' in form.a()
-    assert form.a.choices == [("a", "Foo")]
+    assert list(form.a.iter_choices()) == [("a", "Foo", True)]
 
 
 def test_optgroup_shortcut():
@@ -222,7 +222,7 @@ def test_optgroup_shortcut():
     form = F(a="bar")
 
     assert '<optgroup label="hello"><option value="foo">foo</option><option selected value="bar">bar</option></optgroup>' in form.a()
-    assert form.a.choices == ["foo", "bar"]
+    assert list(form.a.iter_choices()) == [("foo", "foo", False), ("bar", "bar", True)]
 
 
 @pytest.mark.parametrize("choices", [[], ()])
@@ -230,4 +230,4 @@ def test_empty_optgroup(choices):
     F = make_form(a=SelectField(choices={"hello": choices}))
     form = F(a="bar")
     assert '<optgroup label="hello"></optgroup>' in form.a()
-    assert form.a.choices == []
+    assert list(form.a.iter_choices()) == []

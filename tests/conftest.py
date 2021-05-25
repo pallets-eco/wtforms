@@ -110,6 +110,12 @@ class DummyField:
     def iter_choices(self):
         return iter(self.data)
 
+    def iter_groups(self):
+        return []
+
+    def has_groups(self):
+        return False
+
     def gettext(self, string):
         return self._translations.gettext(string)
 

@@ -498,6 +498,12 @@ class SelectFieldBase(Field):
         """
         raise NotImplementedError()
 
+    def has_groups(self):
+        return False
+
+    def iter_groups(self):
+        raise NotImplementedError()
+
     def __iter__(self):
         opts = dict(
             widget=self.option_widget,
@@ -536,40 +542,41 @@ class SelectField(SelectFieldBase):
         self.coerce = coerce
         if callable(choices):
             choices = choices()
-        if isinstance(choices, dict):
-            self.choices = []
-            for options in choices.values():
-                self.choices += options
-            self.groups = choices
+        if choices is not None:
+            self.choices = choices if isinstance(choices, dict) else list(choices)
         else:
-            self.choices = list(choices) if choices is not None else None
-            self.groups = None
+            self.choices = None
         self.validate_choice = validate_choice
 
     def iter_choices(self):
         if not self.choices:
             choices = []
-        elif isinstance(self.choices[0], (list, tuple)):
-            choices = self.choices
+        elif isinstance(self.choices, dict):
+            choices = list(itertools.chain.from_iterable(self.choices.values()))
         else:
-            choices = zip(self.choices, self.choices)
+            choices = self.choices
 
-        for value, label in choices:
-            yield (value, label, self.coerce(value) == self.data)
+        return self._choices_generator(choices)
+    
+    def has_groups(self):
+        return isinstance(self.choices, dict)
 
     def iter_groups(self):
-        for group_label, options in self.groups.items():
-            if not options:
-                choices = []
-            elif isinstance(options[0], (list, tuple)):
-                choices = options
-            else:
-                choices = zip(options, options)
+        if isinstance(self.choices, dict):
+            for label, choices in self.choices.items():
+                yield (label, self._choices_generator(choices))
 
+    def _choices_generator(self, choices):
+        if choices:
+            if isinstance(choices[0], (list, tuple)):
+                _choices = choices
+            else:
+                _choices = zip(choices, choices)
+        else:
             _choices = []
-            for value, label in choices:
-                _choices.append((value, label, self.coerce(value) == self.data))
-            yield (group_label, _choices)
+
+        for value, label in _choices:
+            yield (value, label, self.coerce(value) == self.data)
 
     def process_data(self, value):
         try:
@@ -610,32 +617,18 @@ class SelectMultipleField(SelectField):
 
     widget = widgets.Select(multiple=True)
 
-    def iter_choices(self):
-        if not self.choices:
-            choices = []
-        elif isinstance(self.choices[0], (list, tuple)):
-            choices = self.choices
+    def _choices_generator(self, choices):
+        if choices:
+            if isinstance(choices[0], (list, tuple)):
+                _choices = choices
+            else:
+                _choices = zip(choices, choices)
         else:
-            choices = zip(self.choices, self.choices)
+            _choices = []
 
-        for value, label in choices:
+        for value, label in _choices:
             selected = self.data is not None and self.coerce(value) in self.data
             yield (value, label, selected)
-
-    def iter_groups(self):
-        for group_label, options in self.groups.items():
-            if not options:
-                choices = []
-            elif isinstance(options[0], (list, tuple)):
-                choices = options
-            else:
-                choices = zip(options, options)
-            
-            _choices = []
-            for value, label in choices:
-                selected = self.data is not None and self.coerce(value) in self.data
-                _choices.append((value, label, selected))
-            yield (group_label, _choices)
 
     def process_data(self, value):
         try:
