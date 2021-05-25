@@ -274,13 +274,16 @@ refer to a single input from the form.
 
 .. class:: SelectField(default field arguments, choices=[], coerce=str, option_widget=None, validate_choice=True)
 
-    Select fields take a ``choices`` parameter which is either a list of
-    ``(value, label)`` pairs, or a function taking no argument, and returning
-    a list of ``(value, label)`` pairs. It can also be a list of only values, in
-    which case the value is used as the label. The value can be any
-    type, but because form data is sent to the browser as strings, you
-    will need to provide a ``coerce`` function that converts a string
-    back to the expected type.
+    Select fields take a ``choices`` parameter which is either:
+
+    * a list of ``(value, label)`` pairs. It can also be a list of only values, in
+      which case the value is used as the label. The value can be of any
+      type, but because form data is sent to the browser as strings, you
+      will need to provide a ``coerce`` function that converts a string
+      back to the expected type.
+    * a dictionary of ``{label: list}`` pairs defining groupings of options.
+    * a function taking no argument, and returning either a list or a dictionary.
+
 
     **Select fields with static choice values**::
 
