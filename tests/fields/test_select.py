@@ -136,7 +136,7 @@ def test_choice_shortcut():
     F = make_form(a=SelectField(choices=["foo", "bar"], validate_choice=False))
     form = F(a="bar")
     assert '<option value="foo">foo</option>' in form.a()
-    
+
 
 def test_choice_shortcut_post():
     F = make_form(a=SelectField(choices=["foo", "bar"]))
@@ -164,6 +164,7 @@ def test_callable_choices():
         '<option value="foo">foo</option>',
         '<option selected value="bar">bar</option>',
     ]
+
 
 def test_requried_flag():
     F = make_form(
@@ -213,7 +214,11 @@ def test_optgroup():
     F = make_form(a=SelectField(choices={"hello": [("a", "Foo")]}))
     form = F(a="a")
 
-    assert '<optgroup label="hello"><option selected value="a">Foo</option></optgroup>' in form.a()
+    assert (
+        '<optgroup label="hello">'
+        '<option selected value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
     assert list(form.a.iter_choices()) == [("a", "Foo", True)]
 
 
@@ -221,7 +226,12 @@ def test_optgroup_shortcut():
     F = make_form(a=SelectField(choices={"hello": ["foo", "bar"]}))
     form = F(a="bar")
 
-    assert '<optgroup label="hello"><option value="foo">foo</option><option selected value="bar">bar</option></optgroup>' in form.a()
+    assert (
+        '<optgroup label="hello">'
+        '<option value="foo">foo</option>'
+        '<option selected value="bar">bar</option>'
+        "</optgroup>" in form.a()
+    )
     assert list(form.a.iter_choices()) == [("foo", "foo", False), ("bar", "bar", True)]
 
 

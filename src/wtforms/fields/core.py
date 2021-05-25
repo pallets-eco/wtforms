@@ -557,7 +557,7 @@ class SelectField(SelectFieldBase):
             choices = self.choices
 
         return self._choices_generator(choices)
-    
+
     def has_groups(self):
         return isinstance(self.choices, dict)
 
