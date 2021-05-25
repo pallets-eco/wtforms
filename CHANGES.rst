@@ -1,10 +1,21 @@
 .. currentmodule:: wtforms
 
-
 Version 3.0.0
 -------------
 
 Unreleased
+
+-   Fixed :class:`~fields.RadioField` validators. :issue:`477` :pr:`615`
+-   :meth:`~fields.FormField.populate_obj` always calls :func:`setattr`
+    :pr:`675`
+-   WTForms has a new logo. :issue:`569` :pr:`689`
+-   Fixed :class:`~fields.RadioField` `render_kw` rendering. :issue:`490`
+    :pr:`628` :pr:`688`
+
+Version 3.0.0a1
+---------------
+
+Released 2020-11-23
 
 -   Drop support for Python < 3.6. :pr:`554`
 -   :class:`~fields.StringField` sets ``data`` to ``None`` when form

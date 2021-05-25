@@ -1,6 +1,7 @@
 import pytest
 from tests.common import DummyPostData
 
+from wtforms import validators
 from wtforms import widgets
 from wtforms.fields import SelectField
 from wtforms.form import Form
@@ -164,6 +165,50 @@ def test_callable_choices():
         '<option selected value="bar">bar</option>',
     ]
 
+def test_requried_flag():
+    F = make_form(
+        c=SelectField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c="a"))
+    assert form.c() == (
+        '<select id="c" name="c" required>'
+        '<option selected value="a">hello</option>'
+        '<option value="b">bye</option>'
+        "</select>"
+    )
+
+
+def test_required_validator():
+    F = make_form(
+        c=SelectField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c="b"))
+    assert form.validate()
+    assert form.c.errors == []
+    form = F()
+    assert form.validate() is False
+    assert form.c.errors == ["This field is required."]
+
+
+def test_render_kw_preserved():
+    F = make_form(
+        a=SelectField(choices=[("foo"), ("bar")], render_kw=dict(disabled=True))
+    )
+    form = F()
+    assert form.a() == (
+        '<select disabled id="a" name="a">'
+        '<option value="foo">foo</option>'
+        '<option value="bar">bar</option>'
+        "</select>"
+    )
+
+
 def test_optgroup():
     F = make_form(a=SelectField(choices={"hello": [("a", "Foo")]}))
     form = F(a="a")
@@ -171,12 +216,14 @@ def test_optgroup():
     assert '<optgroup label="hello"><option selected value="a">Foo</option></optgroup>' in form.a()
     assert form.a.choices == [("a", "Foo")]
 
+
 def test_optgroup_shortcut():
     F = make_form(a=SelectField(choices={"hello": ["foo", "bar"]}))
     form = F(a="bar")
 
     assert '<optgroup label="hello"><option value="foo">foo</option><option selected value="bar">bar</option></optgroup>' in form.a()
     assert form.a.choices == ["foo", "bar"]
+
 
 @pytest.mark.parametrize("choices", [[], ()])
 def test_empty_optgroup(choices):

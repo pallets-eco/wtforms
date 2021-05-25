@@ -12,6 +12,16 @@ class AttrDict:
         self.__dict__.update(*args, **kw)
 
 
+class ClassWithProperty(AttrDict):
+    @property
+    def a(self):
+        return AttrDict(self.a_) if getattr(self, "a_", None) else AttrDict()
+
+    @a.setter
+    def a(self, value):
+        self.a_ = vars(value)
+
+
 def make_form(name="F", **fields):
     return type(str(name), (Form,), fields)
 
@@ -106,3 +116,13 @@ def test_populate_missing_obj(F1):
     with pytest.raises(TypeError):
         form.populate_obj(obj)
     form.populate_obj(obj2)
+
+
+def test_populate_property(F1):
+    obj1 = ClassWithProperty(a_={"a": "old_a", "b": "old_b"})
+    form = F1(DummyPostData({"a-a": "new_a", "a-b": "new_b"}))
+    form.populate_obj(obj1)
+    assert obj1.a_ == {"a": "new_a", "b": "new_b"}
+    obj2 = ClassWithProperty()
+    form.populate_obj(obj2)
+    assert obj1.a_ == {"a": "new_a", "b": "new_b"}

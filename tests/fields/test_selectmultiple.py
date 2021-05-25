@@ -1,6 +1,7 @@
 import pytest
 from tests.common import DummyPostData
 
+from wtforms import validators
 from wtforms.fields import SelectField
 from wtforms.fields import SelectMultipleField
 from wtforms.form import Form
@@ -104,3 +105,47 @@ def test_dont_validate_choices():
     assert form.validate()
     assert form.a.data == ["b"]
     assert len(form.a.errors) == 0
+
+
+def test_requried_flag():
+    F = make_form(
+        c=SelectMultipleField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c=["a"]))
+    assert form.c() == (
+        '<select id="c" multiple name="c" required>'
+        '<option selected value="a">hello</option>'
+        '<option value="b">bye</option>'
+        "</select>"
+    )
+
+
+def test_required_validator():
+    F = make_form(
+        c=SelectMultipleField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c=["a"]))
+    assert form.validate()
+    assert form.c.errors == []
+    form = F()
+    assert form.validate() is False
+    assert form.c.errors == ["This field is required."]
+
+
+def test_render_kw_preserved():
+    F = make_form(
+        a=SelectMultipleField(choices=[("foo"), ("bar")], render_kw=dict(disabled=True))
+    )
+    form = F()
+    assert form.a() == (
+        '<select disabled id="a" multiple name="a">'
+        '<option value="foo">foo</option>'
+        '<option value="bar">bar</option>'
+        "</select>"
+    )

@@ -500,7 +500,12 @@ class SelectFieldBase(Field):
 
     def __iter__(self):
         opts = dict(
-            widget=self.option_widget, name=self.name, _form=None, _meta=self.meta
+            widget=self.option_widget,
+            validators=self.validators,
+            name=self.name,
+            render_kw=self.render_kw,
+            _form=None,
+            _meta=self.meta,
         )
         for i, (value, label, checked) in enumerate(self.iter_choices()):
             opt = self._Option(label=label, id="%s-%d" % (self.id, i), **opts)
@@ -1068,9 +1073,9 @@ class FormField(Field):
                     " the provided obj or input data/defaults"
                 )
             candidate = self._obj
-            setattr(obj, name, candidate)
 
         self.form.populate_obj(candidate)
+        setattr(obj, name, candidate)
 
     def __iter__(self):
         return iter(self.form)

@@ -44,7 +44,8 @@ html_sidebars = {
 }
 singlehtml_sidebars = {"index": ["project.html", "localtoc.html"]}
 html_static_path = ["_static"]
-html_logo = "_static/wtforms.png"
+html_logo = "_static/logo_joined.svg"
+html_favicon = "_static/logo_square.svg"
 html_title = f"WTForms Documentation ({version})"
 html_show_sourcelink = False
 
