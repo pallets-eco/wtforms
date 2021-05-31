@@ -1105,6 +1105,9 @@ class FieldList(Field):
     :param max_entries:
         accept no more than this many entries as input, even if more exist in
         formdata.
+    :param separator:
+        A string which will be suffixed to this field's name to create the
+        prefix to enclosed list entries. The default is fine for most uses.
     """
 
     widget = widgets.ListWidget()
@@ -1116,6 +1119,7 @@ class FieldList(Field):
         validators=None,
         min_entries=0,
         max_entries=None,
+        separator="-",
         default=(),
         **kwargs,
     ):
@@ -1133,6 +1137,8 @@ class FieldList(Field):
         self.max_entries = max_entries
         self.last_index = -1
         self._prefix = kwargs.get("_prefix", "")
+        self._separator = separator
+        self._field_separator = unbound_field.kwargs.get("separator", "-")
 
     def process(self, formdata, data=unset_value, extra_filters=None):
         if extra_filters:
@@ -1175,12 +1181,12 @@ class FieldList(Field):
 
         formdata must be an object which will produce keys when iterated.  For
         example, if field 'foo' contains keys 'foo-0-bar', 'foo-1-baz', then
-        the numbers 0 and 1 will be yielded, but not neccesarily in order.
+        the numbers 0 and 1 will be yielded, but not necessarily in order.
         """
         offset = len(prefix) + 1
         for k in formdata:
             if k.startswith(prefix):
-                k = k[offset:].split("-", 1)[0]
+                k = k[offset:].split(self._field_separator, 1)[0]
                 if k.isdigit():
                     yield int(k)
 
@@ -1232,8 +1238,8 @@ class FieldList(Field):
         if index is None:
             index = self.last_index + 1
         self.last_index = index
-        name = "%s-%d" % (self.short_name, index)
-        id = "%s-%d" % (self.id, index)
+        name = self.short_name + self._separator + str(index)
+        id = self.id + self._separator + str(index)
         field = self.unbound_field.bind(
             form=None,
             name=name,

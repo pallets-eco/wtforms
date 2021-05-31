@@ -414,7 +414,7 @@ complex data structures such as lists and nested objects can be represented.
     :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the
     `errors` property encapsulate the forms' errors.
 
-.. autoclass:: FieldList(unbound_field, default field arguments, min_entries=0, max_entries=None)
+.. autoclass:: FieldList(unbound_field, default field arguments, min_entries=0, max_entries=None, separator='-')
 
     **Note**: Due to a limitation in how HTML sends values, FieldList cannot enclose
     :class:`BooleanField` or :class:`SubmitField` instances.
