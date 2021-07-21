@@ -315,7 +315,7 @@ class InputRequired:
         self.field_flags = {"required": True}
 
     def __call__(self, form, field):
-        if field.raw_data and field.raw_data[0]:
+        if field.data and field.data[0]:
             return
 
         if self.message is None:
