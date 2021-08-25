@@ -164,12 +164,12 @@ msgstr "Неверное десятичное число."
 
 #: src/wtforms/fields/core.py:853
 msgid "Not a valid datetime value."
-msgstr "Не верное значение даты и времени."
+msgstr "Неверное значение даты и времени."
 
 #: src/wtforms/fields/core.py:871
 msgid "Not a valid date value."
-msgstr "Не верное значение даты."
+msgstr "Неверное значение даты."
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr "Не верное значение времени."
+msgstr "Неверное значение времени."
