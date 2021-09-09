@@ -146,7 +146,7 @@ def test_choice_shortcut_post():
     assert len(form.a.errors) == 0
 
 
-@pytest.mark.parametrize("choices", [[], None])
+@pytest.mark.parametrize("choices", [[], None, {}])
 def test_empty_choice(choices):
     F = make_form(a=SelectField(choices=choices, validate_choice=False))
     form = F(a="bar")
@@ -208,3 +208,36 @@ def test_render_kw_preserved():
         '<option value="bar">bar</option>'
         "</select>"
     )
+
+
+def test_optgroup():
+    F = make_form(a=SelectField(choices={"hello": [("a", "Foo")]}))
+    form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option selected value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [("a", "Foo", True)]
+
+
+def test_optgroup_shortcut():
+    F = make_form(a=SelectField(choices={"hello": ["foo", "bar"]}))
+    form = F(a="bar")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option value="foo">foo</option>'
+        '<option selected value="bar">bar</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [("foo", "foo", False), ("bar", "bar", True)]
+
+
+@pytest.mark.parametrize("choices", [[], ()])
+def test_empty_optgroup(choices):
+    F = make_form(a=SelectField(choices={"hello": choices}))
+    form = F(a="bar")
+    assert '<optgroup label="hello"></optgroup>' in form.a()
+    assert list(form.a.iter_choices()) == []

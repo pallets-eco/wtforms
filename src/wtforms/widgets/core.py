@@ -321,6 +321,10 @@ class Select:
     The field must provide an `iter_choices()` method which the widget will
     call on rendering; this method must yield tuples of
     `(value, label, selected)`.
+    It also must provide a `has_groups()` method which tells whether choices
+    are divided into groups, and if they do, the field must have an
+    `iter_groups()` method that yields tuples of `(label, choices)`, where
+    `choices` is a iterable of `(value, label, selected)` tuples.
     """
 
     validation_attrs = ["required"]
@@ -337,8 +341,15 @@ class Select:
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
         html = ["<select %s>" % html_params(name=field.name, **kwargs)]
-        for val, label, selected in field.iter_choices():
-            html.append(self.render_option(val, label, selected))
+        if field.has_groups():
+            for group, choices in field.iter_groups():
+                html.append("<optgroup %s>" % html_params(label=group))
+                for val, label, selected in choices:
+                    html.append(self.render_option(val, label, selected))
+                html.append("</optgroup>")
+        else:
+            for val, label, selected in field.iter_choices():
+                html.append(self.render_option(val, label, selected))
         html.append("</select>")
         return Markup("".join(html))
 
