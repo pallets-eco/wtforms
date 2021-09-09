@@ -11,6 +11,8 @@ Unreleased
 -   WTForms has a new logo. :issue:`569` :pr:`689`
 -   Fixed :class:`~fields.RadioField` `render_kw` rendering. :issue:`490`
     :pr:`628` :pr:`688`
+-   Support for optgroups in :class:`~fields.SelectField` and
+    :class:`~fields.SelectMultipleField`. :issue:`656` :pr:`667`
 
 Version 3.0.0a1
 ---------------
