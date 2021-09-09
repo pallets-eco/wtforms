@@ -14,6 +14,7 @@ Unreleased
 -   Support for optgroups in :class:`~fields.SelectField` and
     :class:`~fields.SelectMultipleField`. :issue:`656` :pr:`667`
 -   Minor documentation fix. :issue:`701`
+-   Custom separators for :class:`~fields.FieldList`. :issue:`681` :pr:`694`
 
 Version 3.0.0a1
 ---------------
