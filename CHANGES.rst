@@ -13,6 +13,7 @@ Unreleased
     :pr:`628` :pr:`688`
 -   Support for optgroups in :class:`~fields.SelectField` and
     :class:`~fields.SelectMultipleField`. :issue:`656` :pr:`667`
+-   Minor documentation fix. :issue:`701`
 
 Version 3.0.0a1
 ---------------

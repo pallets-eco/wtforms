@@ -488,7 +488,7 @@ Custom fields can also override the default field constructor if needed to
 provide additional customization::
 
     class BetterTagListField(TagListField):
-        def __init__(self, label='', validators=None, remove_duplicates=True, **kwargs):
+        def __init__(self, label=None, validators=None, remove_duplicates=True, **kwargs):
             super(BetterTagListField, self).__init__(label, validators, **kwargs)
             self.remove_duplicates = remove_duplicates
 
