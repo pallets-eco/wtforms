@@ -1238,8 +1238,8 @@ class FieldList(Field):
         if index is None:
             index = self.last_index + 1
         self.last_index = index
-        name = self.short_name + self._separator + str(index)
-        id = self.id + self._separator + str(index)
+        name = f"{self.short_name}{self._separator}{index}"
+        id = f"{self.id}{self._separator}{index}"
         field = self.unbound_field.bind(
             form=None,
             name=name,
