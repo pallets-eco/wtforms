@@ -134,7 +134,9 @@ def test_enclosed_subform_uniform_separators():
         foo = StringField(default="default")
 
     class Outside(Form):
-        subforms = FieldList(FormField(Inside, separator="_"), min_entries=1, separator="_")
+        subforms = FieldList(
+            FormField(Inside, separator="_"), min_entries=1, separator="_"
+        )
 
     o = Outside()
     assert o.subforms[0].foo.data == "default"
