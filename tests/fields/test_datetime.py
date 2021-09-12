@@ -13,12 +13,15 @@ def make_form(name="F", **fields):
 class F(Form):
     a = DateTimeField()
     b = DateTimeField(format="%Y-%m-%d %H:%M")
+    c = DateTimeField(format="%-m/%-d/%Y %-I:%M")
 
 
 def test_basic():
     d = datetime(2008, 5, 5, 4, 30, 0, 0)
     # Basic test with both inputs
-    form = F(DummyPostData(a=["2008-05-05", "04:30:00"], b=["2008-05-05 04:30"]))
+    form = F(DummyPostData(a=["2008-05-05", "04:30:00"],
+                           b=["2008-05-05 04:30"],
+                           c=["5/5/2008 4:30"]))
     assert form.a.data == d
     assert (
         form.a()
@@ -29,6 +32,11 @@ def test_basic():
         form.b()
         == """<input id="b" name="b" type="datetime" value="2008-05-05 04:30">"""
     )
+    assert form.c.data == d
+    assert (
+        form.c()
+        == """<input id="c" name="c" type="datetime" value="5/5/2008 4:30">"""
+    )
     assert form.validate()
 
     # Test with a missing input
@@ -36,9 +44,11 @@ def test_basic():
     assert not form.validate()
     assert form.a.errors[0] == "Not a valid datetime value."
 
-    form = F(a=d, b=d)
+    form = F(a=d, b=d, c=d)
     assert form.validate()
     assert form.a._value() == "2008-05-05 04:30:00"
+    assert form.b._value() == "2008-05-05 04:30"
+    assert form.c._value() == "5/5/2008 4:30"
 
 
 def test_microseconds():

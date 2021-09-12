@@ -1,3 +1,33 @@
+import re
+
+
+# https://docs.python.org/3/library/datetime.html#technical-detail (see NOTE #9)
+_DATETIME_STRIP_ZERO_PADDING_FORMATS_RE = re.compile(
+    '%-['
+    'd'  # day of month
+    'm'  # month
+    'H'  # hour (24-hour)
+    'I'  # hour (12-hour)
+    'M'  # minutes
+    'S'  # seconds
+    'U'  # week of year (Sunday first day of week)
+    'W'  # week of year (Monday first day of week)
+    'V'  # week of year (ISO 8601)
+    ']',
+    re.MULTILINE,
+)
+
+
+def clean_datetime_format_for_strptime(format):
+    """
+    Remove dashes used to disable zero-padding with strftime formats (for
+    compatibiltity with strptime).
+    """
+    return re.sub(_DATETIME_STRIP_ZERO_PADDING_FORMATS_RE,
+                  lambda m: m[0].replace('-', ''),
+                  format)
+
+
 class UnsetValue:
     """
     An unset value.

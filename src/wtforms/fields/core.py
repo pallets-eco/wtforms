@@ -9,7 +9,7 @@ from markupsafe import Markup
 
 from wtforms import widgets
 from wtforms.i18n import DummyTranslations
-from wtforms.utils import unset_value
+from wtforms.utils import clean_datetime_format_for_strptime, unset_value
 from wtforms.validators import StopValidation
 from wtforms.validators import ValidationError
 
@@ -923,6 +923,7 @@ class DateTimeField(Field):
     ):
         super().__init__(label, validators, **kwargs)
         self.format = format
+        self.strptime_format = clean_datetime_format_for_strptime(format)
 
     def _value(self):
         if self.raw_data:
@@ -935,7 +936,7 @@ class DateTimeField(Field):
 
         date_str = " ".join(valuelist)
         try:
-            self.data = datetime.datetime.strptime(date_str, self.format)
+            self.data = datetime.datetime.strptime(date_str, self.strptime_format)
         except ValueError:
             self.data = None
             raise ValueError(self.gettext("Not a valid datetime value."))
@@ -957,7 +958,7 @@ class DateField(DateTimeField):
 
         date_str = " ".join(valuelist)
         try:
-            self.data = datetime.datetime.strptime(date_str, self.format).date()
+            self.data = datetime.datetime.strptime(date_str, self.strptime_format).date()
         except ValueError:
             self.data = None
             raise ValueError(self.gettext("Not a valid date value."))
@@ -979,7 +980,7 @@ class TimeField(DateTimeField):
 
         time_str = " ".join(valuelist)
         try:
-            self.data = datetime.datetime.strptime(time_str, self.format).time()
+            self.data = datetime.datetime.strptime(time_str, self.strptime_format).time()
         except ValueError:
             self.data = None
             raise ValueError(self.gettext("Not a valid time value."))
