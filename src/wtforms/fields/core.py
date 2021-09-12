@@ -958,7 +958,9 @@ class DateField(DateTimeField):
 
         date_str = " ".join(valuelist)
         try:
-            self.data = datetime.datetime.strptime(date_str, self.strptime_format).date()
+            self.data = datetime.datetime.strptime(
+                date_str, self.strptime_format
+            ).date()
         except ValueError:
             self.data = None
             raise ValueError(self.gettext("Not a valid date value."))
@@ -980,7 +982,9 @@ class TimeField(DateTimeField):
 
         time_str = " ".join(valuelist)
         try:
-            self.data = datetime.datetime.strptime(time_str, self.strptime_format).time()
+            self.data = datetime.datetime.strptime(
+                time_str, self.strptime_format
+            ).time()
         except ValueError:
             self.data = None
             raise ValueError(self.gettext("Not a valid time value."))
@@ -1264,7 +1268,7 @@ class FieldList(Field):
         return self._add_entry(data=data)
 
     def pop_entry(self):
-        """ Removes the last entry from the list and returns it. """
+        """Removes the last entry from the list and returns it."""
         entry = self.entries.pop()
         self.last_index -= 1
         return entry

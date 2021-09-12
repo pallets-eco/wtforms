@@ -55,19 +55,19 @@ class BaseForm:
         return iter(self._fields.values())
 
     def __contains__(self, name):
-        """ Returns `True` if the named field is a member of this form. """
+        """Returns `True` if the named field is a member of this form."""
         return name in self._fields
 
     def __getitem__(self, name):
-        """ Dict-style access to this form's fields."""
+        """Dict-style access to this form's fields."""
         return self._fields[name]
 
     def __setitem__(self, name, value):
-        """ Bind a field to this form. """
+        """Bind a field to this form."""
         self._fields[name] = value.bind(form=self, name=name, prefix=self._prefix)
 
     def __delitem__(self, name):
-        """ Remove a field from this form. """
+        """Remove a field from this form."""
         del self._fields[name]
 
     def populate_obj(self, obj):
