@@ -15,6 +15,9 @@ Unreleased
     :class:`~fields.SelectMultipleField`. :issue:`656` :pr:`667`
 -   Minor documentation fix. :issue:`701`
 -   Custom separators for :class:`~fields.FieldList`. :issue:`681` :pr:`694`
+-   :class:`~fields.DateTimeField`, :class:`~fields.DateField` and
+    :class:`~fields.TimeField` support time formats that removes leading
+    zeros. :pr:`703`
 
 Version 3.0.0a1
 ---------------
