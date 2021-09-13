@@ -9,7 +9,8 @@ from markupsafe import Markup
 
 from wtforms import widgets
 from wtforms.i18n import DummyTranslations
-from wtforms.utils import clean_datetime_format_for_strptime, unset_value
+from wtforms.utils import clean_datetime_format_for_strptime
+from wtforms.utils import unset_value
 from wtforms.validators import StopValidation
 from wtforms.validators import ValidationError
 

@@ -19,9 +19,11 @@ class F(Form):
 def test_basic():
     d = datetime(2008, 5, 5, 4, 30, 0, 0)
     # Basic test with both inputs
-    form = F(DummyPostData(a=["2008-05-05", "04:30:00"],
-                           b=["2008-05-05 04:30"],
-                           c=["5/5/2008 4:30"]))
+    form = F(
+        DummyPostData(
+            a=["2008-05-05", "04:30:00"], b=["2008-05-05 04:30"], c=["5/5/2008 4:30"]
+        )
+    )
     assert form.a.data == d
     assert (
         form.a()
@@ -34,8 +36,7 @@ def test_basic():
     )
     assert form.c.data == d
     assert (
-        form.c()
-        == """<input id="c" name="c" type="datetime" value="5/5/2008 4:30">"""
+        form.c() == """<input id="c" name="c" type="datetime" value="5/5/2008 4:30">"""
     )
     assert form.validate()
 
