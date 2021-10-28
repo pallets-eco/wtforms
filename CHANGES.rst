@@ -18,6 +18,7 @@ Unreleased
 -   :class:`~fields.DateTimeField`, :class:`~fields.DateField` and
     :class:`~fields.TimeField` support time formats that removes leading
     zeros. :pr:`703`
+-   Refactoring: split `fields/core.py` and `fields/simple.py` :pr:`710`
 
 Version 3.0.0a1
 ---------------
