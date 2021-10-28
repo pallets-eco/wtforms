@@ -13,9 +13,11 @@ def test_float_field():
     form = F(DummyPostData(a=["v"], b=["-15.0"]))
     assert form.a.data is None
     assert form.a.raw_data == ["v"]
-    assert form.a() == """<input id="a" name="a" type="text" value="v">"""
+    assert form.a() == """<input id="a" name="a" step="any" type="number" value="v">"""
     assert form.b.data == -15.0
-    assert form.b() == """<input id="b" name="b" type="text" value="-15.0">"""
+    assert (
+        form.b() == """<input id="b" name="b" step="any" type="number" value="-15.0">"""
+    )
     assert not form.a.validate(form)
     assert form.b.validate(form)
     form = F(DummyPostData(a=[], b=[""]))
