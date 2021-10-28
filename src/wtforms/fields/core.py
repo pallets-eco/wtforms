@@ -593,8 +593,8 @@ class SelectField(SelectFieldBase):
 
         try:
             self.data = self.coerce(valuelist[0])
-        except ValueError:
-            raise ValueError(self.gettext("Invalid Choice: could not coerce."))
+        except ValueError as exc:
+            raise ValueError(self.gettext("Invalid Choice: could not coerce.")) from exc
 
     def pre_validate(self, form):
         if self.choices is None:
@@ -641,12 +641,12 @@ class SelectMultipleField(SelectField):
     def process_formdata(self, valuelist):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
-        except ValueError:
+        except ValueError as exc:
             raise ValueError(
                 self.gettext(
                     "Invalid choice(s): one or more data inputs could not be coerced."
                 )
-            )
+            ) from exc
 
     def pre_validate(self, form):
         if self.choices is None:
@@ -723,8 +723,10 @@ class LocaleAwareNumberField(Field):
             from babel import numbers
 
             self.babel_numbers = numbers
-        except ImportError:
-            raise ImportError("Using locale-aware decimals requires the babel library.")
+        except ImportError as exc:
+            raise ImportError(
+                "Using locale-aware decimals requires the babel library."
+            ) from exc
 
     def _parse_decimal(self, value):
         return self.babel_numbers.parse_decimal(value, self.locale)
@@ -758,9 +760,9 @@ class IntegerField(Field):
 
         try:
             self.data = int(value)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid integer value."))
+            raise ValueError(self.gettext("Not a valid integer value.")) from exc
 
     def process_formdata(self, valuelist):
         if not valuelist:
@@ -768,9 +770,9 @@ class IntegerField(Field):
 
         try:
             self.data = int(valuelist[0])
-        except ValueError:
+        except ValueError as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid integer value."))
+            raise ValueError(self.gettext("Not a valid integer value.")) from exc
 
 
 class DecimalField(LocaleAwareNumberField):
@@ -843,9 +845,9 @@ class DecimalField(LocaleAwareNumberField):
                 self.data = self._parse_decimal(valuelist[0])
             else:
                 self.data = decimal.Decimal(valuelist[0])
-        except (decimal.InvalidOperation, ValueError):
+        except (decimal.InvalidOperation, ValueError) as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid decimal value."))
+            raise ValueError(self.gettext("Not a valid decimal value.")) from exc
 
 
 class FloatField(Field):
@@ -872,9 +874,9 @@ class FloatField(Field):
 
         try:
             self.data = float(valuelist[0])
-        except ValueError:
+        except ValueError as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid float value."))
+            raise ValueError(self.gettext("Not a valid float value.")) from exc
 
 
 class BooleanField(Field):
@@ -938,9 +940,9 @@ class DateTimeField(Field):
         date_str = " ".join(valuelist)
         try:
             self.data = datetime.datetime.strptime(date_str, self.strptime_format)
-        except ValueError:
+        except ValueError as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid datetime value."))
+            raise ValueError(self.gettext("Not a valid datetime value.")) from exc
 
 
 class DateField(DateTimeField):
@@ -962,9 +964,9 @@ class DateField(DateTimeField):
             self.data = datetime.datetime.strptime(
                 date_str, self.strptime_format
             ).date()
-        except ValueError:
+        except ValueError as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid date value."))
+            raise ValueError(self.gettext("Not a valid date value.")) from exc
 
 
 class TimeField(DateTimeField):
@@ -986,9 +988,9 @@ class TimeField(DateTimeField):
             self.data = datetime.datetime.strptime(
                 time_str, self.strptime_format
             ).time()
-        except ValueError:
+        except ValueError as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid time value."))
+            raise ValueError(self.gettext("Not a valid time value.")) from exc
 
 
 class MonthField(DateField):

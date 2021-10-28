@@ -82,10 +82,10 @@ class EqualTo:
     def __call__(self, form, field):
         try:
             other = form[self.fieldname]
-        except KeyError:
+        except KeyError as exc:
             raise ValidationError(
                 field.gettext("Invalid field name '%s'.") % self.fieldname
-            )
+            ) from exc
         if field.data == other.data:
             return
 
@@ -414,7 +414,7 @@ class Email:
                     message = field.gettext(e)
                 else:
                     message = field.gettext("Invalid email address.")
-            raise ValidationError(message)
+            raise ValidationError(message) from e
 
 
 class IPAddress:
@@ -553,8 +553,8 @@ class UUID:
             message = field.gettext("Invalid UUID.")
         try:
             uuid.UUID(field.data)
-        except ValueError:
-            raise ValidationError(message)
+        except ValueError as exc:
+            raise ValidationError(message) from exc
 
 
 class AnyOf:

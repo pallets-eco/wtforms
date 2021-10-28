@@ -161,6 +161,6 @@ def assert_raises_text(e_type, text):
             raise AssertionError(
                 "Exception raised: %r but text %r did not match pattern %r"
                 % (e, e.args[0], text)
-            )
+            ) from e
     else:
         raise AssertionError(f"Expected Exception {e_type!r}, did not get it")
