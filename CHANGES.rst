@@ -1,9 +1,13 @@
 .. currentmodule:: wtforms
 
+Version x.x.x
+-------------
+Unreleased
+
 Version 3.0.0
 -------------
 
-Unreleased
+Released 2021-11-07
 
 -   Fixed :class:`~fields.RadioField` validators. :issue:`477` :pr:`615`
 -   :meth:`~fields.FormField.populate_obj` always calls :func:`setattr`
