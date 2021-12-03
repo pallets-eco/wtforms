@@ -4,13 +4,17 @@ from wtforms.validators import input_required
 from wtforms.validators import StopValidation
 
 
-def test_input_required(dummy_form, dummy_field):
+@pytest.mark.parametrize(
+    "raw_data",
+    (["foobar"], ["", "foobar"]),
+)
+def test_input_required(dummy_form, dummy_field, raw_data):
     """
     it should pass if the required value is present
     """
     validator = input_required()
-    dummy_field.data = "foobar"
-    dummy_field.raw_data = ["foobar"]
+    dummy_field.data = "".join(raw_data)
+    dummy_field.raw_data = raw_data
 
     validator(dummy_form, dummy_field)
     assert validator.field_flags == {"required": True}
