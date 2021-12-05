@@ -4,6 +4,9 @@ Version x.x.x
 -------------
 Unreleased
 
+- :class:`~validators.InputRequired` Validator interrogates data on entire
+  contents of field `raw_data`. :pr:`719`
+
 Version 3.0.0
 -------------
 

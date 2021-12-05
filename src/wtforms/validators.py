@@ -308,6 +308,9 @@ class InputRequired:
     looks at the post-coercion data.
 
     Sets the `required` attribute on widgets.
+
+    .. versionchanged:: 3.0,1
+        Validator interrogates data on entire contents of ``raw_data``.
     """
 
     def __init__(self, message=None):
