@@ -4,6 +4,8 @@ Version x.x.x
 -------------
 Unreleased
 
+-   Fixed documentation of inline filters. :pr:`717`
+
 Version 3.0.0
 -------------
 
