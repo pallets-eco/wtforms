@@ -151,8 +151,8 @@ The same principle applies for filters with the convention `filter_fieldname`::
     class SignupForm(Form):
         name = StringField('name')
 
-        def filter_name(form, field):
-            return field.strip()
+        def filter_name(data):
+            return data.strip()
 
 Note that filters are applied after processing the default and incoming data,
 but before validation.
