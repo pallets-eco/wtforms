@@ -6,6 +6,7 @@ Unreleased
 
 -   Fixed :class:`~fields.DateTimeField` and other similar fields can
     handle multiple formats. :issue:`720` :pr:`721`
+-   Stop support for python 3.6 :pr:`722`
 
 Version 3.0.0
 -------------
