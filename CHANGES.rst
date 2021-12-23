@@ -1,8 +1,9 @@
 .. currentmodule:: wtforms
 
-Version x.x.x
+Version 3.0.1
 -------------
-Unreleased
+
+Released 2021-12-23
 
 -   Fixed :class:`~fields.DateTimeField` and other similar fields can
     handle multiple formats. :issue:`720` :pr:`721`
