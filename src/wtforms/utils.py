@@ -18,14 +18,19 @@ _DATETIME_STRIP_ZERO_PADDING_FORMATS_RE = re.compile(
 )
 
 
-def clean_datetime_format_for_strptime(format):
+def clean_datetime_format_for_strptime(formats):
     """
     Remove dashes used to disable zero-padding with strftime formats (for
     compatibiltity with strptime).
     """
-    return re.sub(
-        _DATETIME_STRIP_ZERO_PADDING_FORMATS_RE, lambda m: m[0].replace("-", ""), format
-    )
+    return [
+        re.sub(
+            _DATETIME_STRIP_ZERO_PADDING_FORMATS_RE,
+            lambda m: m[0].replace("-", ""),
+            format,
+        )
+        for format in formats
+    ]
 
 
 class UnsetValue:

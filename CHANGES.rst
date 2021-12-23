@@ -4,6 +4,9 @@ Version x.x.x
 -------------
 Unreleased
 
+-   Fixed :class:`~fields.DateTimeField` and other similar fields can
+    handle multiple formats. :issue:`720` :pr:`721`
+
 Version 3.0.0
 -------------
 

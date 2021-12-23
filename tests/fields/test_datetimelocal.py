@@ -2,7 +2,7 @@ from datetime import datetime
 
 from tests.common import DummyPostData
 
-from wtforms.fields import DateTimeField
+from wtforms.fields import DateTimeLocalField
 from wtforms.form import Form
 
 
@@ -11,9 +11,9 @@ def make_form(name="F", **fields):
 
 
 class F(Form):
-    a = DateTimeField()
-    b = DateTimeField(format="%Y-%m-%d %H:%M")
-    c = DateTimeField(format="%-m/%-d/%Y %-I:%M")
+    a = DateTimeLocalField()
+    b = DateTimeLocalField(format="%Y-%m-%d %H:%M")
+    c = DateTimeLocalField(format="%-m/%-d/%Y %-I:%M")
 
 
 def test_basic():
@@ -27,16 +27,17 @@ def test_basic():
     assert form.a.data == d
     assert (
         form.a()
-        == """<input id="a" name="a" type="datetime" value="2008-05-05 04:30:00">"""
+        == '<input id="a" name="a" type="datetime-local" value="2008-05-05 04:30:00">'
     )
     assert form.b.data == d
     assert (
         form.b()
-        == """<input id="b" name="b" type="datetime" value="2008-05-05 04:30">"""
+        == '<input id="b" name="b" type="datetime-local" value="2008-05-05 04:30">'
     )
     assert form.c.data == d
     assert (
-        form.c() == """<input id="c" name="c" type="datetime" value="5/5/2008 4:30">"""
+        form.c()
+        == '<input id="c" name="c" type="datetime-local" value="5/5/2008 4:30">'
     )
     assert form.validate()
 
@@ -54,17 +55,18 @@ def test_basic():
 
 def test_microseconds():
     d = datetime(2011, 5, 7, 3, 23, 14, 424200)
-    F = make_form(a=DateTimeField(format="%Y-%m-%d %H:%M:%S.%f"))
+    F = make_form(a=DateTimeLocalField(format="%Y-%m-%d %H:%M:%S.%f"))
     form = F(DummyPostData(a=["2011-05-07 03:23:14.4242"]))
     assert d == form.a.data
 
 
-def test_multiple_formats():
-    d = datetime(2020, 3, 4, 5, 6)
-    F = make_form(a=DateTimeField(format=["%Y-%m-%d %H:%M", "%Y%m%d%H%M"]))
+def test_separators():
+    dt = datetime(2008, 5, 5, 4, 30, 0, 0)
 
-    form = F(DummyPostData(a=["2020-03-04 05:06"]))
-    assert d == form.a.data
+    form = F(DummyPostData(a=["2008-05-05 04:30:00"]))
+    assert form.a.data == dt
+    assert form.validate()
 
-    form = F(DummyPostData(a=["202003040506"]))
-    assert d == form.a.data
+    form = F(DummyPostData(a=["2008-05-05T04:30:00"]))
+    assert form.a.data == dt
+    assert form.validate()
