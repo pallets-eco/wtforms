@@ -258,6 +258,8 @@ refer to a single input from the form.
 
 .. autoclass:: IntegerRangeField(default field arguments)
 
+.. autoclass:: MonthField(default field arguments, format='%Y:%m')
+
 .. autoclass:: RadioField(default field arguments, choices=[], coerce=str)
 
     .. code-block:: jinja
