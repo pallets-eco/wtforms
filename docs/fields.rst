@@ -558,9 +558,8 @@ Additional Helper Classes
         >>> flags.required = True
         >>> 'required' in flags
         True
+        >>> flags.nonexistent
         >>> 'nonexistent' in flags
-        False
-        >>> flags.fake
         False
 
 
