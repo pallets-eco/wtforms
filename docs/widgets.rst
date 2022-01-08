@@ -95,6 +95,9 @@ class.  For example, here is a widget that renders a
             if checked:
                 options['checked'] = 'checked'
             html.append('<li><input %s /> ' % html_params(**options))
-            html.append('<label for="%s">%s</label></li>' % (field_id, label))
+            html.append('<label for="%s">%s</label></li>' % (choice_id, label))
         html.append('</ul>')
         return ''.join(html)
+
+    class TestForm(Form):
+        tester = SelectMultipleField(choices=my_choices, widget=select_multi_checkbox)
