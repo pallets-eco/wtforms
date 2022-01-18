@@ -1,5 +1,12 @@
 .. currentmodule:: wtforms
 
+Version 3.0.2
+-------------
+
+Unreleased
+
+-   Delayed import of ``email_validator``. :issue:`727`
+
 Version 3.0.1
 -------------
 
