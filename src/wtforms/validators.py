@@ -3,11 +3,6 @@ import math
 import re
 import uuid
 
-try:
-    import email_validator
-except ImportError:
-    email_validator = None
-
 __all__ = (
     "DataRequired",
     "data_required",
@@ -389,8 +384,6 @@ class Email:
         allow_smtputf8=True,
         allow_empty_local=False,
     ):
-        if email_validator is None:  # pragma: no cover
-            raise Exception("Install 'email_validator' for email validation support.")
         self.message = message
         self.granular_message = granular_message
         self.check_deliverability = check_deliverability
@@ -398,6 +391,13 @@ class Email:
         self.allow_empty_local = allow_empty_local
 
     def __call__(self, form, field):
+        try:
+            import email_validator
+        except ImportError as exc:  # pragma: no cover
+            raise Exception(
+                "Install 'email_validator' for email validation support."
+            ) from exc
+
         try:
             if field.data is None:
                 raise email_validator.EmailNotValidError()
