@@ -44,7 +44,7 @@ msgstr[0] "이 항목은 %(max)d자 보다 많을 수 없습니다."
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
+msgstr[0] "이 항목은 정확히 %(max)d자이어야 합니다"
 
 #: src/wtforms/validators.py:152
 #, python-format
@@ -126,7 +126,7 @@ msgstr "올바르지 않은 선택값입니다: 변환할 수 없습니다."
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "선택값이 None일 수 없습니다."
 
 #: src/wtforms/fields/core.py:545
 msgid "Not a valid choice."
@@ -163,4 +163,4 @@ msgstr "올바르지 않은 날짜 값입니다."
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr ""
+msgstr "올바르지 않은 시간 값입니다."
