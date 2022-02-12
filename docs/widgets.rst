@@ -27,6 +27,7 @@ Built-in widgets
 .. autoclass:: wtforms.widgets.MonthInput
 .. autoclass:: wtforms.widgets.NumberInput
 .. autoclass:: wtforms.widgets.PasswordInput
+.. autoclass:: wtforms.widgets.RadioInput
 .. autoclass:: wtforms.widgets.RangeInput
 .. autoclass:: wtforms.widgets.SubmitInput
 .. autoclass:: wtforms.widgets.SearchInput
