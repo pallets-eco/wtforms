@@ -139,7 +139,7 @@ msgstr "Opción inválida."
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
 "Opción(es) inválida(s): una o más entradas de datos no pueden ser coaccionadas."
-"ajustadas"
+""
 
 #: src/wtforms/fields/core.py:584
 #, python-format
