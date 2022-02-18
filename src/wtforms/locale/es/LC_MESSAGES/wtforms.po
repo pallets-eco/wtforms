@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: me@syrusakbary.com\n"
 "POT-Creation-Date: 2020-04-25 11:34-0700\n"
 "PO-Revision-Date: 2012-04-10 18:10+0100\n"
-"Last-Translator: Syrus Akbary <me@syrusakbary.com>\n"
+"Last-Translator: Joshua Han <josueisonfire@gmail.com>\n"
 "Language: es\n"
 "Language-Team: es <me@syrusakbary.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -46,8 +46,8 @@ msgstr[1] "El campo no puede tener más de %(max)d caracteres."
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "El campo debe ser exactamente %(max)d caracter."
+msgstr[1] "El campo debe ser exactamente %(max)d caracteres."
 
 #: src/wtforms/validators.py:152
 #, python-format
@@ -109,63 +109,63 @@ msgstr "Valor inválido, no puede ser ninguno de: %(values)s."
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
-msgstr "El token CSRF es incorrecto"
+msgstr "El token CSRF es incorrecto."
 
 #: src/wtforms/csrf/session.py:63
 msgid "CSRF token missing."
-msgstr "El token CSRF falta"
+msgstr "El token CSRF falta."
 
 #: src/wtforms/csrf/session.py:71
 msgid "CSRF failed."
-msgstr "Fallo CSRF"
+msgstr "Fallo CSRF."
 
 #: src/wtforms/csrf/session.py:76
 msgid "CSRF token expired."
-msgstr "El token CSRF ha expirado"
+msgstr "El token CSRF ha expirado."
 
 #: src/wtforms/fields/core.py:534
 msgid "Invalid Choice: could not coerce."
-msgstr "Elección inválida: no se puede ajustar"
+msgstr "Elección inválida: no se puede ajustar."
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "La elección no puede ser None."
 
 #: src/wtforms/fields/core.py:545
 msgid "Not a valid choice."
-msgstr "Opción inválida"
+msgstr "Opción inválida."
 
 #: src/wtforms/fields/core.py:573
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
-"Opción(es) inválida(s): una o más entradas de datos no pueden ser "
+"Opción(es) inválida(s): una o más entradas de datos no pueden ser coaccionadas."
 "ajustadas"
 
 #: src/wtforms/fields/core.py:584
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
-msgstr "'%(value)s' no es una opción válida para este campo"
+msgstr "'%(value)s' no es una opción válida para este campo."
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
 msgid "Not a valid integer value."
-msgstr "No es un valor entero válido"
+msgstr "No es un valor entero válido."
 
 #: src/wtforms/fields/core.py:760
 msgid "Not a valid decimal value."
-msgstr "No es un numero decimal válido"
+msgstr "No es un numero decimal válido."
 
 #: src/wtforms/fields/core.py:788
 msgid "Not a valid float value."
-msgstr "No es un número de punto flotante válido"
+msgstr "No es un número de punto flotante válido."
 
 #: src/wtforms/fields/core.py:853
 msgid "Not a valid datetime value."
-msgstr ""
+msgstr "No es una fecha y hora válida"
 
 #: src/wtforms/fields/core.py:871
 msgid "Not a valid date value."
-msgstr ""
+msgstr "No es una fecha válida."
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr ""
+msgstr "No es un tiempo válido."
