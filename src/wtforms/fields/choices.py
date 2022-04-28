@@ -49,8 +49,10 @@ class SelectFieldBase(Field):
             _form=None,
             _meta=self.meta,
         )
-        for i, (value, label, checked) in enumerate(self.iter_choices()):
-            opt = self._Option(label=label, id="%s-%d" % (self.id, i), **opts)
+        for i, (value, label, checked, render_kw) in enumerate(self.iter_choices()):
+            opt = self._Option(
+                label=label, id="%s-%d" % (self.id, i), **opts, **render_kw
+            )
             opt.process(None, value)
             opt.checked = checked
             yield opt
@@ -112,8 +114,9 @@ class SelectField(SelectFieldBase):
         else:
             _choices = zip(choices, choices)
 
-        for value, label in _choices:
-            yield (value, label, self.coerce(value) == self.data)
+        for value, label, *other_args in _choices:
+            render_kw = other_args[0] if len(other_args) else {}
+            yield (value, label, self.coerce(value) == self.data, render_kw)
 
     def process_data(self, value):
         try:
@@ -138,7 +141,7 @@ class SelectField(SelectFieldBase):
         if not self.validate_choice:
             return
 
-        for _, _, match in self.iter_choices():
+        for _, _, match, _ in self.iter_choices():
             if match:
                 break
         else:
@@ -163,9 +166,10 @@ class SelectMultipleField(SelectField):
         else:
             _choices = []
 
-        for value, label in _choices:
+        for value, label, *args in _choices:
             selected = self.data is not None and self.coerce(value) in self.data
-            yield (value, label, selected)
+            render_kw = args[0] if len(args) else {}
+            yield (value, label, selected, render_kw)
 
     def process_data(self, value):
         try:
