@@ -125,7 +125,7 @@ def test_check_validators():
 
     with pytest.raises(
         TypeError,
-        match=fr"{v1} is not a valid validator because it is not callable",
+        match=rf"{v1} is not a valid validator because it is not callable",
     ):
         Field(validators=[v1])
 
