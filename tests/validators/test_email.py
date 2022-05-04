@@ -33,6 +33,7 @@ def test_valid_email_passes(email_address, dummy_form, dummy_field):
         "foo.@bar.co",
         "foo@foo@bar.co",
         "fo o@bar.co",
+        "foo@bar.test",
     ],
 )
 def test_invalid_email_raises(email_address, dummy_form, dummy_field):
@@ -47,8 +48,33 @@ def test_invalid_email_raises(email_address, dummy_form, dummy_field):
     assert str(e.value) == "Invalid email address."
 
 
-@pytest.mark.parametrize("email_address", ["foo@"])
-def test_invalid_email_raises_granular_message(email_address, dummy_form, dummy_field):
+@pytest.mark.parametrize("email_address", ["foo@bar.test"])
+def test_invalid_email_passes_in_test_environment(
+    email_address, dummy_form, dummy_field
+):
+    """
+    When test_environment=True email addresses with test domain should pass
+    without raising
+    """
+    validator = email(test_environment=True)
+    dummy_field.data = email_address
+    validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize(
+    "email_address,message",
+    [
+        ("foo@", "There must be something after the @-sign."),
+        (
+            "foo@bar.test",
+            "The domain name bar.test is a special-use or reserved name"
+            " that cannot be used with email.",
+        ),
+    ],
+)
+def test_invalid_email_raises_granular_message(
+    email_address, message, dummy_form, dummy_field
+):
     """
     When granular_message=True uses message from email_validator library.
     """
@@ -57,4 +83,4 @@ def test_invalid_email_raises_granular_message(email_address, dummy_form, dummy_
     with pytest.raises(ValidationError) as e:
         validator(dummy_form, dummy_field)
 
-    assert str(e.value) == "There must be something after the @-sign."
+    assert str(e.value) == message
