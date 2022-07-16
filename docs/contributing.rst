@@ -48,7 +48,7 @@ Note on API compatibility
 WTForms is a very small library, but yet it's possible to break API
 compatibility pretty easily. We are okay with breaking API compatibility
 for compelling features or major changes that we feel are worthwhile
-inclusions to the WTForms core, but realize that any API compatiblity
+inclusions to the WTForms core, but realize that any API compatibility
 break will delay the inclusion of your ticket to the next major release.
 
 Some examples of API compatibility breaks include:
@@ -65,6 +65,6 @@ behaved the same as it did before. This could look something like:
 
 1. Add a keyword arg ``use_locale`` to the constructor
 2. Make the keyword default to ``False`` so the behavior without this arg is
-   identical to the previous bevhavior.
+   identical to the previous behavior.
 3. Add your functionality and make sure all existing DecimalField tests work
    unchanged (and of course add new tests for the new functionality).

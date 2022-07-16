@@ -17,7 +17,7 @@ def test_correct_length_passes(min_v, max_v, dummy_form, dummy_field):
 @pytest.mark.parametrize("min_v, max_v", [(7, -1), (-1, 5)])
 def test_bad_length_raises(min_v, max_v, dummy_form, dummy_field):
     """
-    It should raise ValidationError for string with incorect length
+    It should raise ValidationError for string with incorrect length
     """
     dummy_field.data = "foobar"
     validator = length(min_v, max_v)
@@ -49,7 +49,7 @@ def test_bad_length_init_raises(min_v, max_v):
 )
 def test_length_messages(dummy_form, dummy_field, validator, message):
     """
-    It should raise ValidationError for string with incorect length
+    It should raise ValidationError for string with incorrect length
     """
     dummy_field.data = "foobar"
 

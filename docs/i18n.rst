@@ -43,7 +43,7 @@ Translating built-in messages
 -----------------------------
 
 There are some messages in WTForms which are provided by the framework, namely
-default validator messages and errors occuring during the processing (data
+default validator messages and errors occurring during the processing (data
 coercion) stage. For example, in the case of the IntegerField above, if someone
 entered a value which was not valid as an integer, then a message like "Not a
 valid integer value" would be displayed.
