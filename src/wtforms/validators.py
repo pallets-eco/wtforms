@@ -374,12 +374,6 @@ class Email:
     :param allow_empty_local:
         Allow an empty local part (i.e. @example.com), e.g. for validating
         Postfix aliases (Default False).
-    :param test_environment:
-        DNS-based deliverability checks are disabled and the Special Use Domain
-        Name ``test`` is permitted.
-
-    .. versionadded:: 3.0.2
-       The *test_environment* parameter.
     """
 
     def __init__(
@@ -389,14 +383,12 @@ class Email:
         check_deliverability=False,
         allow_smtputf8=True,
         allow_empty_local=False,
-        test_environment=False,
     ):
         self.message = message
         self.granular_message = granular_message
         self.check_deliverability = check_deliverability
         self.allow_smtputf8 = allow_smtputf8
         self.allow_empty_local = allow_empty_local
-        self.test_environment = test_environment
 
     def __call__(self, form, field):
         try:
@@ -414,7 +406,6 @@ class Email:
                 check_deliverability=self.check_deliverability,
                 allow_smtputf8=self.allow_smtputf8,
                 allow_empty_local=self.allow_empty_local,
-                test_environment=self.test_environment,
             )
         except email_validator.EmailNotValidError as e:
             message = self.message

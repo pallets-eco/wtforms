@@ -6,7 +6,6 @@ Version 3.0.2
 Unreleased
 
 -   Delayed import of ``email_validator``. :issue:`727`
--   Pass ``test_environment`` flag to ``email_validator``.
 
 Version 3.0.1
 -------------
