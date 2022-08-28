@@ -2,6 +2,7 @@ import pytest
 from markupsafe import Markup
 
 from wtforms.widgets.core import CheckboxInput
+from wtforms.widgets.core import ColorInput
 from wtforms.widgets.core import FileInput
 from wtforms.widgets.core import HiddenInput
 from wtforms.widgets.core import html_params
@@ -145,6 +146,14 @@ class TestBasicWidgets:
         assert (
             FileInput(multiple=True)(basic_widget_dummy_field)
             == '<input id="id" multiple name="bar" type="file">'
+        )
+
+    def test_color_input(self, basic_widget_dummy_field):
+        assert 'type="color"' in ColorInput()(basic_widget_dummy_field)
+        assert 'value="foo"' in ColorInput()(basic_widget_dummy_field)
+        basic_widget_dummy_field.data = "#ff0000"
+        assert 'value="#ff0000"' in ColorInput()(
+            basic_widget_dummy_field
         )
 
 
