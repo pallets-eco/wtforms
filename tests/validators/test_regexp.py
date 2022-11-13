@@ -73,4 +73,4 @@ def test_regexp_pattern_html(dummy_form, dummy_field):
     validator = regexp("^[a-zA-Z0-9]+$")
     dummy_field.data = "foo bar"
 
-    assert validator.field_flags == {"pattern": '^[a-zA-Z0-9]+$'}
+    assert validator.field_flags == {"pattern": "^[a-zA-Z0-9]+$"}
