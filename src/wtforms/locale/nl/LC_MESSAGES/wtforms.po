@@ -46,8 +46,8 @@ msgstr[1] "Veld mag niet langer zijn dan %(max)d karakters."
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Veld moet exact %(min)d karakter lang zijn."
+msgstr[1] "Veld moet exact %(min)d karakters lang zijn."
 
 #: src/wtforms/validators.py:152
 #, python-format
@@ -57,7 +57,7 @@ msgstr "Veld moet tussen %(min)d en %(max)d karakters lang zijn."
 #: src/wtforms/validators.py:197
 #, python-format
 msgid "Number must be at least %(min)s."
-msgstr "Getal moet minstens %(min)s."
+msgstr "Getal moet minstens %(min)s zijn."
 
 #: src/wtforms/validators.py:199
 #, python-format
@@ -87,7 +87,7 @@ msgstr "Ongeldig IP-adres."
 
 #: src/wtforms/validators.py:466
 msgid "Invalid Mac address."
-msgstr "Ongeldig Mac-adres."
+msgstr "Ongeldig MAC-adres."
 
 #: src/wtforms/validators.py:501
 msgid "Invalid URL."
@@ -95,7 +95,7 @@ msgstr "Ongeldige URL."
 
 #: src/wtforms/validators.py:522
 msgid "Invalid UUID."
-msgstr "Ongeldige UUID"
+msgstr "Ongeldige UUID."
 
 #: src/wtforms/validators.py:553
 #, python-format
@@ -105,65 +105,65 @@ msgstr "Ongeldige waarde, moet een waarde zijn uit: %(values)s."
 #: src/wtforms/validators.py:588
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr "Ongeldige waarde, kan niet een waarde zijn in: %(values)s."
+msgstr "Ongeldige waarde, kan geen waarde zijn uit: %(values)s."
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
-msgstr "Ongeldig CSRF-token"
+msgstr "Ongeldig CSRF-token."
 
 #: src/wtforms/csrf/session.py:63
 msgid "CSRF token missing."
-msgstr "CSRF-token ontbreekt"
+msgstr "CSRF-token ontbreekt."
 
 #: src/wtforms/csrf/session.py:71
 msgid "CSRF failed."
-msgstr "CSRF gefaald"
+msgstr "CSRF is gefaald."
 
 #: src/wtforms/csrf/session.py:76
 msgid "CSRF token expired."
-msgstr "CSRF-token is verlopen"
+msgstr "CSRF-token is verlopen."
 
 #: src/wtforms/fields/core.py:534
 msgid "Invalid Choice: could not coerce."
-msgstr "Ongeldige keuze: kon niet omgezet worden"
+msgstr "Ongeldige keuze: kon niet omgezet worden."
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "Keuzes mogen niet None zijn."
 
 #: src/wtforms/fields/core.py:545
 msgid "Not a valid choice."
-msgstr "Ongeldige keuze"
+msgstr "Ongeldige keuze."
 
 #: src/wtforms/fields/core.py:573
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
-msgstr "Ongeldige keuze(s): een of meer van de invoeren kon niet omgezet worden"
+msgstr "Ongeldige keuze(s): een of meer van de invoeren kon niet omgezet worden."
 
 #: src/wtforms/fields/core.py:584
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
-msgstr "'%(value)s' is een ongeldige keuze voor dit veld"
+msgstr "'%(value)s' is een ongeldige keuze voor dit veld."
 
 #: src/wtforms/fields/core.py:679 src/wtforms/fields/core.py:689
 msgid "Not a valid integer value."
-msgstr "Ongeldig getal"
+msgstr "Ongeldig getal."
 
 #: src/wtforms/fields/core.py:760
 msgid "Not a valid decimal value."
-msgstr "Ongeldige decimale waarde"
+msgstr "Ongeldige decimale waarde."
 
 #: src/wtforms/fields/core.py:788
 msgid "Not a valid float value."
-msgstr "Ongeldige float-waarde"
+msgstr "Ongeldige float-waarde."
 
 #: src/wtforms/fields/core.py:853
 msgid "Not a valid datetime value."
-msgstr "Ongeldige datum/tijd"
+msgstr "Ongeldige datum/tijd."
 
 #: src/wtforms/fields/core.py:871
 msgid "Not a valid date value."
-msgstr "Ongeldige datum"
+msgstr "Ongeldige datum."
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr ""
+msgstr "Ongeldige waarde."
