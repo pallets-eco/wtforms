@@ -6,6 +6,7 @@ Version 3.0.2
 Unreleased
 
 -   Delayed import of ``email_validator``. :issue:`727`
+-   Python 3.11 support :pr:`763`
 
 Version 3.0.1
 -------------
