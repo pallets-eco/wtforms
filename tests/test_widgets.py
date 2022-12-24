@@ -152,9 +152,7 @@ class TestBasicWidgets:
         assert 'type="color"' in ColorInput()(basic_widget_dummy_field)
         assert 'value="foo"' in ColorInput()(basic_widget_dummy_field)
         basic_widget_dummy_field.data = "#ff0000"
-        assert 'value="#ff0000"' in ColorInput()(
-            basic_widget_dummy_field
-        )
+        assert 'value="#ff0000"' in ColorInput()(basic_widget_dummy_field)
 
 
 class TestSelect:

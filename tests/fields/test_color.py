@@ -4,9 +4,7 @@ from wtforms.form import Form
 
 
 class F(Form):
-    a = ColorField(
-        widget=widgets.ColorInput(), default="#ff0000"
-    )
+    a = ColorField(widget=widgets.ColorInput(), default="#ff0000")
     b = ColorField(default="#00ff00")
 
 
