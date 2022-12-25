@@ -380,6 +380,8 @@ Convenience Fields
 
         {{ form.textarea(rows=7, cols=90) }}
 
+.. autoclass:: ColorField(default field arguments)
+
 
 Field Enclosures
 ----------------

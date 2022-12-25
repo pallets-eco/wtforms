@@ -39,6 +39,8 @@ with frameworks even better.
 -   `WTForms-Django`_ provides ORM-backed fields and form generation
     from Django models, as well as integration with Django's I18N
     support.
+-   `WTForms-Bootstrap5`_ provides Bootstrap 5 favor renderer with
+    great customizability.
 -   `Starlette-WTF`_ integrates with Starlette and the FastAPI
     framework, based on the features of Flask-WTF.
 
@@ -47,6 +49,7 @@ with frameworks even better.
 .. _WTForms-SQLAlchemy: https://github.com/wtforms/wtforms-sqlalchemy
 .. _WTForms-AppEngine: https://github.com/wtforms/wtforms-appengine
 .. _WTForms-Django: https://github.com/wtforms/wtforms-django
+.. _WTForms-Bootstrap5: https://github.com/LaunchPlatform/wtforms-bootstrap5
 .. _Starlette-WTF: https://github.com/muicss/starlette-wtf
 
 
