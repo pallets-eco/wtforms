@@ -7,6 +7,8 @@ Unreleased
 
 -   Delayed import of ``email_validator``. :issue:`727`
 -   Python 3.11 support :pr:`763`
+-   Added shorter format to :class:`~fields.DateTimeLocalField`
+    defaults :pr:`761`
 
 Version 3.0.1
 -------------
