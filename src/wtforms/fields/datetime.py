@@ -123,5 +123,13 @@ class DateTimeLocalField(DateTimeField):
     widget = widgets.DateTimeLocalInput()
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault("format", ["%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S"])
+        kwargs.setdefault(
+            "format",
+            [
+                "%Y-%m-%d %H:%M:%S",
+                "%Y-%m-%dT%H:%M:%S",
+                "%Y-%m-%d %H:%M",
+                "%Y-%m-%dT%H:%M",
+            ],
+        )
         super().__init__(*args, **kwargs)
