@@ -10,6 +10,7 @@ __all__ = (
     "TimeField",
     "MonthField",
     "DateTimeLocalField",
+    "WeekField",
 )
 
 
@@ -112,6 +113,39 @@ class MonthField(DateField):
 
     def __init__(self, label=None, validators=None, format="%Y-%m", **kwargs):
         super().__init__(label, validators, format, **kwargs)
+
+
+class WeekField(DateField):
+    """
+    Same as :class:`~wtforms.fields.DateField`, except represents a week,
+    stores a :class:`datetime.date` of the monday of the given week.
+    """
+
+    widget = widgets.WeekInput()
+
+    def __init__(self, label=None, validators=None, format="%Y-W%W", **kwargs):
+        super().__init__(label, validators, format, **kwargs)
+
+    def process_formdata(self, valuelist):
+        if not valuelist:
+            return
+
+        time_str = " ".join(valuelist)
+        for format in self.strptime_format:
+            try:
+                if "%w" not in format:
+                    # The '%w' week starting day is needed. This defaults it to monday
+                    # like ISO 8601 indicates.
+                    self.data = datetime.datetime.strptime(
+                        f"{time_str}-1", f"{format}-%w"
+                    ).date()
+                else:
+                    self.data = datetime.datetime.strptime(time_str, format).date()
+                return
+            except ValueError:
+                self.data = None
+
+        raise ValueError(self.gettext("Not a valid week value."))
 
 
 class DateTimeLocalField(DateTimeField):
