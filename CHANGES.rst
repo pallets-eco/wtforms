@@ -219,7 +219,7 @@ Released 2018-06-02
 -   Widgets render the ``required`` attribute when using a validator
     that provides the ``'required'`` flag, such as
     :class:`~validators.DataRequired`. :pr:`361`
--   Fix a compatibility issue with SQLAlchemy 2.1 that caused
+-   Fix a compatibility issue with SQLAlchemy 1.2 that caused
     :class:`~ext.sqlalchemy.fields.QuerySelectField` to fail with
     ``ValueError: too many values to unpack``. :pr:`391`
 
