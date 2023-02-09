@@ -81,6 +81,8 @@ Released 2020-11-23
     bugfix. :issue:`606` :pr:`642`
 -   Fixed SelectMultipleField validation when using choices list shortcut.
     :issue:`612` :pr:`661`
+-   Removed :meth:`form._get_translations`. Use
+    :meth:`Meta.get_translations <wtforms.meta.DefaultMeta.get_translations>` instead.
 
 
 Version 2.3.3
@@ -274,6 +276,7 @@ Released 2014-05-20
 -   Passing ``attr=False`` to WTForms widgets causes the value to be
     ignored.
 -   ``Unique`` validator in ``wtforms.ext.sqlalchemy`` has been removed.
+-   Deprecate ``form._get_translations``. Use ``Meta.get_translations`` instead.
 
 
 Version 1.0.5
