@@ -1,4 +1,5 @@
 import pytest
+import uuid
 
 from wtforms.validators import UUID
 from wtforms.validators import ValidationError
@@ -6,7 +7,11 @@ from wtforms.validators import ValidationError
 
 @pytest.mark.parametrize(
     "uuid_val",
-    ["2bc1c94f-0deb-43e9-92a1-4775189ec9f8", "2bc1c94f0deb43e992a14775189ec9f8"],
+    [
+        "2bc1c94f-0deb-43e9-92a1-4775189ec9f8",
+        "2bc1c94f0deb43e992a14775189ec9f8",
+        UUID("2bc1c94f-0deb-43e9-92a1-4775189ec9f8"),
+    ],
 )
 def test_valid_uuid_passes(uuid_val, dummy_form, dummy_field):
     """
