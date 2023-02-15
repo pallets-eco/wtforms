@@ -9,6 +9,7 @@ Unreleased
 -   Python 3.11 support :pr:`763`
 -   Added shorter format to :class:`~fields.DateTimeLocalField`
     defaults :pr:`761`
+-   Fixed UUID validation :pr:`769`
 
 Version 3.0.1
 -------------
