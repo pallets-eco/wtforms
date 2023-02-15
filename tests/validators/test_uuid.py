@@ -1,5 +1,6 @@
-import pytest
 import uuid
+
+import pytest
 
 from wtforms.validators import UUID
 from wtforms.validators import ValidationError
