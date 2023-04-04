@@ -392,7 +392,10 @@ class Email:
 
     def __call__(self, form, field):
         # striping the email field for empty white space
-        field.data = field.data.strip()
+        if field.data:
+            field.data = field.data.strip()
+        
+        
         try:
             import email_validator
         except ImportError as exc:  # pragma: no cover
