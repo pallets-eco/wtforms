@@ -391,6 +391,8 @@ class Email:
         self.allow_empty_local = allow_empty_local
 
     def __call__(self, form, field):
+        # striping the email field for empty white space
+        field.data = field.data.strip()
         try:
             import email_validator
         except ImportError as exc:  # pragma: no cover
