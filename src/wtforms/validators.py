@@ -300,7 +300,9 @@ class InputRequired:
 
     Note there is a distinction between this and DataRequired in that
     InputRequired looks that form-input data was provided, and DataRequired
-    looks at the post-coercion data.
+    looks at the post-coercion data. This means that this validator only checks
+    whether non-empty data was sent, not whether non-empty data was coerced
+    from that data. Initially populated data is not considered sent.
 
     Sets the `required` attribute on widgets.
     """
