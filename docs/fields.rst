@@ -315,6 +315,7 @@ refer to a single input from the form.
     :func:`str()`.
     
     **Coerce function example**
+    
         def coerce_none(value):
             if value == 'None':
                 return None
