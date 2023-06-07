@@ -314,7 +314,7 @@ refer to a single input from the form.
     use :func:`int()` to coerce form data.  The default coerce is
     :func:`str()`.
     
-    **Coerce function example**
+    **Coerce function example**::
     
         def coerce_none(value):
             if value == 'None':
