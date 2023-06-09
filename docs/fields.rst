@@ -313,7 +313,7 @@ refer to a single input from the form.
     `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we
     use :func:`int()` to coerce form data.  The default coerce is
     :func:`str()`.
-    
+
     **Coerce function example**::
 
         def coerce_none(value):
