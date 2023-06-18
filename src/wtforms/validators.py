@@ -58,7 +58,41 @@ class StopValidation(Exception):
         Exception.__init__(self, message, *args, **kwargs)
 
 
-class EqualTo:
+class AbstractEquality:
+  """
+    An abstract class for equal_to and not_equal_to validators.
+  """
+
+
+  def __new__(cls):
+    raise TypeError("This class cannot be instantiated")
+
+  def __call__(self, form, field):
+    try:
+        other = form[self.fieldname]
+    except KeyError as exc:
+        raise ValidationError(
+            field.gettext("Invalid field name '%s'.") % self.fieldname
+        ) from exc
+    self.confirm_equality(field_data, other_data)
+
+    d = {
+        "other_label": hasattr(other, "label")
+        and other.label.text
+        or self.fieldname,
+        "other_name": self.fieldname,
+    }
+    message = self.message
+    if message is None:
+        message = field.gettext("Field must be equal to %(other_name)s.")
+
+    raise ValidationError(message % d)
+
+  def confirm_equality(self, field_data, other_data):
+    return raise TypeError("Must be implemented in a subclass")
+
+
+class EqualTo(AbstractEquality):
     """
     Compares the values of two fields.
 
@@ -74,27 +108,27 @@ class EqualTo:
         self.fieldname = fieldname
         self.message = message
 
-    def __call__(self, form, field):
-        try:
-            other = form[self.fieldname]
-        except KeyError as exc:
-            raise ValidationError(
-                field.gettext("Invalid field name '%s'.") % self.fieldname
-            ) from exc
-        if field.data == other.data:
-            return
+    def confirm_equality(self, field_data, other_data):
+      return field.data == other.data
 
-        d = {
-            "other_label": hasattr(other, "label")
-            and other.label.text
-            or self.fieldname,
-            "other_name": self.fieldname,
-        }
-        message = self.message
-        if message is None:
-            message = field.gettext("Field must be equal to %(other_name)s.")
+class NotEqualTo(AbstractEquality):
+    """
+    Compares the values of two fields.
 
-        raise ValidationError(message % d)
+    :param fieldname:
+        The name of the other field to compare to.
+    :param message:
+        Error message to raise in case of a validation error. Can be
+        interpolated with `%(other_label)s` and `%(other_name)s` to provide a
+        more helpful error.
+    """
+
+    def __init__(self, fieldname, message=None):
+        self.fieldname = fieldname
+        self.message = message
+
+    def confirm_equality(self, field_data, other_data):
+      return field.data != other.data
 
 
 class Length:
