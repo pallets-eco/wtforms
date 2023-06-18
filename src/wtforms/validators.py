@@ -712,6 +712,7 @@ class HostnameValidation:
 
 email = Email
 equal_to = EqualTo
+not_equal_to = NotEqualTo
 ip_address = IPAddress
 mac_address = MacAddress
 length = Length
