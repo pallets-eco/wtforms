@@ -72,7 +72,8 @@ Released 2020-11-23
 -   Render attribute names like ``for_`` and ``class_`` are normalized
     consistently so later values override those specified earlier.
     :issue:`449`, :pr:`596`
--   Flags can take non-boolean values. :issue:`406` :pr:`467`
+-   Flags should now be stored in dicts and can take non-boolean values.
+    A ``DeprecationWarning`` is issued when tuples are used. :issue:`406` :pr:`467`
 -   Widgets are HTML5 by default. :issue:`594` :pr:`614`
 -   Fixed a bug when the :class:`~wtforms.fields.core.SelectField` choices
     are list of strings. :pr:`598`
@@ -219,7 +220,7 @@ Released 2018-06-02
 -   Widgets render the ``required`` attribute when using a validator
     that provides the ``'required'`` flag, such as
     :class:`~validators.DataRequired`. :pr:`361`
--   Fix a compatibility issue with SQLAlchemy 2.1 that caused
+-   Fix a compatibility issue with SQLAlchemy 1.2 that caused
     :class:`~ext.sqlalchemy.fields.QuerySelectField` to fail with
     ``ValueError: too many values to unpack``. :pr:`391`
 
