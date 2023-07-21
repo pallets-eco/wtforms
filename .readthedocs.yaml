@@ -6,3 +6,6 @@ python:
     - requirements: docs/requirements.txt
 sphinx:
   builder: dirhtml
+formats:
+  - pdf
+  - epub
