@@ -9,6 +9,7 @@ Unreleased
 -   Python 3.11 support :pr:`763`
 -   Added shorter format to :class:`~fields.DateTimeLocalField`
     defaults :pr:`761`
+-   Stop support for python 3.7 :pr:`794`
 
 Version 3.0.1
 -------------
