@@ -73,6 +73,9 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.NoneOf
 
+.. autoclass:: wtforms.validators.ReadOnly
+
+.. autoclass:: wtforms.validators.Disabled
 
 .. _custom-validators:
 

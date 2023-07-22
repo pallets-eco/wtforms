@@ -161,7 +161,7 @@ class Input:
     """
 
     html_params = staticmethod(html_params)
-    validation_attrs = ["required"]
+    validation_attrs = ["required", "disabled"]
 
     def __init__(self, input_type=None):
         if input_type is not None:
@@ -185,7 +185,14 @@ class TextInput(Input):
     """
 
     input_type = "text"
-    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+    validation_attrs = [
+        "required",
+        "disabled",
+        "readonly",
+        "maxlength",
+        "minlength",
+        "pattern",
+    ]
 
 
 class PasswordInput(Input):
@@ -198,7 +205,14 @@ class PasswordInput(Input):
     """
 
     input_type = "password"
-    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+    validation_attrs = [
+        "required",
+        "disabled",
+        "readonly",
+        "maxlength",
+        "minlength",
+        "pattern",
+    ]
 
     def __init__(self, hide_value=True):
         self.hide_value = hide_value
@@ -259,7 +273,7 @@ class FileInput(Input):
     """
 
     input_type = "file"
-    validation_attrs = ["required", "accept"]
+    validation_attrs = ["required", "disabled", "accept"]
 
     def __init__(self, multiple=False):
         super().__init__()
@@ -297,7 +311,7 @@ class TextArea:
     `rows` and `cols` ought to be passed as keyword args when rendering.
     """
 
-    validation_attrs = ["required", "maxlength", "minlength"]
+    validation_attrs = ["required", "disabled", "readonly", "maxlength", "minlength"]
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault("id", field.id)
@@ -327,7 +341,7 @@ class Select:
     `choices` is a iterable of `(value, label, selected)` tuples.
     """
 
-    validation_attrs = ["required"]
+    validation_attrs = ["required", "disabled"]
 
     def __init__(self, multiple=False):
         self.multiple = multiple
@@ -385,7 +399,14 @@ class SearchInput(Input):
     """
 
     input_type = "search"
-    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+    validation_attrs = [
+        "required",
+        "disabled",
+        "readonly",
+        "maxlength",
+        "minlength",
+        "pattern",
+    ]
 
 
 class TelInput(Input):
@@ -394,7 +415,14 @@ class TelInput(Input):
     """
 
     input_type = "tel"
-    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+    validation_attrs = [
+        "required",
+        "disabled",
+        "readonly",
+        "maxlength",
+        "minlength",
+        "pattern",
+    ]
 
 
 class URLInput(Input):
@@ -403,7 +431,14 @@ class URLInput(Input):
     """
 
     input_type = "url"
-    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+    validation_attrs = [
+        "required",
+        "disabled",
+        "readonly",
+        "maxlength",
+        "minlength",
+        "pattern",
+    ]
 
 
 class EmailInput(Input):
@@ -412,7 +447,14 @@ class EmailInput(Input):
     """
 
     input_type = "email"
-    validation_attrs = ["required", "maxlength", "minlength", "pattern"]
+    validation_attrs = [
+        "required",
+        "disabled",
+        "readonly",
+        "maxlength",
+        "minlength",
+        "pattern",
+    ]
 
 
 class DateTimeInput(Input):
@@ -421,7 +463,7 @@ class DateTimeInput(Input):
     """
 
     input_type = "datetime"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class DateInput(Input):
@@ -430,7 +472,7 @@ class DateInput(Input):
     """
 
     input_type = "date"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class MonthInput(Input):
@@ -439,7 +481,7 @@ class MonthInput(Input):
     """
 
     input_type = "month"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class WeekInput(Input):
@@ -448,7 +490,7 @@ class WeekInput(Input):
     """
 
     input_type = "week"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class TimeInput(Input):
@@ -457,7 +499,7 @@ class TimeInput(Input):
     """
 
     input_type = "time"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class DateTimeLocalInput(Input):
@@ -466,7 +508,7 @@ class DateTimeLocalInput(Input):
     """
 
     input_type = "datetime-local"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class NumberInput(Input):
@@ -475,7 +517,7 @@ class NumberInput(Input):
     """
 
     input_type = "number"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
     def __init__(self, step=None, min=None, max=None):
         self.step = step
@@ -498,7 +540,7 @@ class RangeInput(Input):
     """
 
     input_type = "range"
-    validation_attrs = ["required", "max", "min", "step"]
+    validation_attrs = ["required", "disabled", "max", "min", "step"]
 
     def __init__(self, step=None):
         self.step = step

@@ -20,6 +20,8 @@ Unreleased
     defaults :pr:`765`
 -   Move to pyproject.toml :pr:`796`
 -   URL validator takes a ``allow_ip`` parameter :pr:`800`
+-   Implement :class:`~validators.ReadOnly` and
+    :class:`~validators.Disabled `:pr:`788`
 
 Version 3.0.1
 -------------
