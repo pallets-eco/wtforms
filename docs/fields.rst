@@ -314,6 +314,19 @@ refer to a single input from the form.
     use :func:`int()` to coerce form data.  The default coerce is
     :func:`str()`.
 
+    **Coerce function example**::
+
+        def coerce_none(value):
+            if value == 'None':
+                return None
+            return value
+
+        class NonePossible(Form):
+            my_select_field = SelectField('Select an option', choices=[('1', 'Option 1'), ('2', 'Option 2'), ('None', 'No option')], coerce=coerce_none)
+
+    Note when the option None is selected a 'None' str will be passed. By using a coerce
+    function the 'None' str will be converted to None.
+
     **Skipping choice validation**::
 
         class DynamicSelectForm(Form):
