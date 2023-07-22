@@ -99,7 +99,10 @@ class TestSessionCSRF:
     def test_various_failures(self):
         with pytest.raises(TypeError):
             self.F()
-        with pytest.raises(Exception):
+        with pytest.raises(
+            Exception,
+            match="must set `csrf_secret` on class Meta for SessionCSRF to work",
+        ):
             self.F(meta={"csrf_secret": None})
 
     def test_no_time_limit(self):

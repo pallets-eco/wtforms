@@ -37,4 +37,5 @@ def test_any_of_values_formatter(dummy_form, dummy_field):
     dummy_field.data = 4
     with pytest.raises(ValidationError) as e:
         validator(dummy_form, dummy_field)
-        assert str(e.value) == "test 9::8::7"
+
+    assert str(e.value) == "test 9::8::7"

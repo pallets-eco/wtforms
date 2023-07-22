@@ -55,4 +55,5 @@ def test_length_messages(dummy_form, dummy_field, validator, message):
 
     with pytest.raises(ValidationError) as e:
         validator(dummy_form, dummy_field)
-        assert str(e.value) == message
+
+    assert message in str(e.value)
