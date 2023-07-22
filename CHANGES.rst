@@ -18,6 +18,7 @@ Unreleased
 -   Stop support for python 3.7 :pr:`794`
 -   Added shorter format to :class:`~fields.WeekField`
     defaults :pr:`765`
+-   Move to pyproject.toml :pr:`796`
 
 Version 3.0.1
 -------------
