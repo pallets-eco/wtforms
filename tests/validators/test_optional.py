@@ -27,11 +27,13 @@ def test_input_optional_raises(data_v, raw_data_v, dummy_form, dummy_field):
 
     with pytest.raises(StopValidation):
         validator(dummy_form, dummy_field)
-        assert validator.field_flags == {"optional": True}
+
+    assert validator.field_flags == {"optional": True}
 
     dummy_field.errors = ["Invalid Integer Value"]
     assert len(dummy_field.errors) == 1
 
     with pytest.raises(StopValidation):
         validator(dummy_form, dummy_field)
-        assert len(dummy_field.errors) == 0
+
+    assert len(dummy_field.errors) == 0

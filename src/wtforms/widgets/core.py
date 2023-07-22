@@ -79,7 +79,7 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append(f'{str(k)}="{escape(v)}"')
+            params.append(f'{str(k)}="{escape(v)}"')  # noqa: B907
     return " ".join(params)
 
 

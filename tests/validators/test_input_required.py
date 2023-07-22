@@ -43,4 +43,5 @@ def test_input_required_error_message(dummy_form, dummy_field, validator, messag
 
     with pytest.raises(StopValidation) as e:
         validator(dummy_form, dummy_field)
-        assert str(e.value) == message
+
+    assert str(e.value) == message
