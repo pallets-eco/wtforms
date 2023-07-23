@@ -50,6 +50,7 @@ include = [
 exclude = [
     "docs/_build/",
 ]
+artifacts = ["src/wtforms/locale/**/*.mo"]
 
 [tool.hatch.build.hooks.custom]
 dependencies = [
