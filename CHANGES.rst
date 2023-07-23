@@ -5,7 +5,13 @@ Version 3.0.2
 
 Unreleased
 
+-   Documentation improvements :pr:`726` :pr:`733` :pr:`749`
+    :pr:`767` :pr:`788` :pr:`789` :pr:`793`
+-   Translation improvements :pr:`732` :pr:`734` :pr:`754`
+-   Implement :class:`~fields.ColorField` :pr:`755`
 -   Delayed import of ``email_validator``. :issue:`727`
+-   Use the standard datetime formats by default for
+    :class:`~fields.DateTimeLocalField`  :pr:`761`
 -   Python 3.11 support :pr:`763`
 -   Added shorter format to :class:`~fields.DateTimeLocalField`
     defaults :pr:`761`
