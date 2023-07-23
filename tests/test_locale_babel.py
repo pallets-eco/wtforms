@@ -31,7 +31,7 @@ class TestLocaleDecimal:
                 name="a",
                 _form=form,
                 _translations=form.meta.get_translations(form),
-                **kw
+                **kw,
             )
 
         with pytest.raises(TypeError):
