@@ -3,7 +3,7 @@ name = "WTForms"
 description = "Form validation and rendering for Python web development."
 readme = "README.rst"
 license = {file = "LICENSE.rst"}
-maintainers = [{name = "WTForms", email = "davidism@gmail.com"}]
+maintainers = [{name = "WTForms"}]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
