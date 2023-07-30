@@ -64,3 +64,4 @@ Links
 -   Code: https://github.com/wtforms/wtforms
 -   Issue tracker: https://github.com/wtforms/wtforms/issues
 -   Discord Chat: https://discord.gg/F65P7Z9
+-   Translation: https://hosted.weblate.org/projects/wtforms/wtforms/
