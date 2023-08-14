@@ -5,11 +5,20 @@ Version 3.0.2
 
 Unreleased
 
+-   Documentation improvements :pr:`726` :pr:`733` :pr:`749`
+    :pr:`767` :pr:`788` :pr:`789` :pr:`793`
+-   Translation improvements :pr:`732` :pr:`734` :pr:`754`
+-   Implement :class:`~fields.ColorField` :pr:`755`
 -   Delayed import of ``email_validator``. :issue:`727`
+-   Use the standard datetime formats by default for
+    :class:`~fields.DateTimeLocalField`  :pr:`761`
 -   Python 3.11 support :pr:`763`
 -   Added shorter format to :class:`~fields.DateTimeLocalField`
     defaults :pr:`761`
 -   Fixed UUID validation :pr:`769`
+-   Stop support for python 3.7 :pr:`794`
+-   Added shorter format to :class:`~fields.WeekField`
+    defaults :pr:`765`
 
 Version 3.0.1
 -------------
@@ -73,7 +82,8 @@ Released 2020-11-23
 -   Render attribute names like ``for_`` and ``class_`` are normalized
     consistently so later values override those specified earlier.
     :issue:`449`, :pr:`596`
--   Flags can take non-boolean values. :issue:`406` :pr:`467`
+-   Flags should now be stored in dicts and can take non-boolean values.
+    A ``DeprecationWarning`` is issued when tuples are used. :issue:`406` :pr:`467`
 -   Widgets are HTML5 by default. :issue:`594` :pr:`614`
 -   Fixed a bug when the :class:`~wtforms.fields.core.SelectField` choices
     are list of strings. :pr:`598`
@@ -220,7 +230,7 @@ Released 2018-06-02
 -   Widgets render the ``required`` attribute when using a validator
     that provides the ``'required'`` flag, such as
     :class:`~validators.DataRequired`. :pr:`361`
--   Fix a compatibility issue with SQLAlchemy 2.1 that caused
+-   Fix a compatibility issue with SQLAlchemy 1.2 that caused
     :class:`~ext.sqlalchemy.fields.QuerySelectField` to fail with
     ``ValueError: too many values to unpack``. :pr:`391`
 
