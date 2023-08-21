@@ -6,16 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 2.0dev\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2020-04-25 11:34-0700\n"
-"PO-Revision-Date: 2017-09-19 10:54+0200\n"
-"Last-Translator: Mats Blomdahl <mats.blomdahl@gmail.com>\n"
-"Language-Team: sv <LL@li.org>\n"
+"PO-Revision-Date: 2023-08-22 10:53+0000\n"
+"Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
+"Language-Team: Swedish <https://hosted.weblate.org/projects/wtforms/wtforms/"
+"sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.0-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:87
@@ -46,8 +48,8 @@ msgstr[1] "Fältet får inte vara längre än %(max)d tecken."
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Fält måste vara exakt %(max)d tecken långt."
+msgstr[1] "Fältet måste vara exakt %(max)d tecken långt."
 
 #: src/wtforms/validators.py:152
 #, python-format
@@ -129,7 +131,7 @@ msgstr "Felaktigt val; kunde inte ceorce:a"
 
 #: src/wtforms/fields/core.py:538
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "Val kan inte vara Inga."
 
 #: src/wtforms/fields/core.py:545
 msgid "Not a valid choice."
@@ -166,4 +168,4 @@ msgstr "Inte ett giltigt datum"
 
 #: src/wtforms/fields/core.py:889
 msgid "Not a valid time value."
-msgstr ""
+msgstr "Inte ett giltigt tidsvärde."
