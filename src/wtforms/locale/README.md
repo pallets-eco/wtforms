@@ -13,7 +13,7 @@ Create
 To create a translation, initialize a catalog in the new locale:
 
 ```
-$ python setup.py init_catalog --locale <your locale>
+$ pybabel init --input-file src/wtforms/locale/wtforms.pot --output-dir src/wtforms/locale --domain wtforms --locale <your locale>
 ```
 
 This will create some folders under the locale name and copy the
@@ -40,7 +40,7 @@ After working on the catalog, verify that it compiles and produces the
 correct translations.
 
 ```
-$ python setup.py compile_catalog
+$ pybabel compile --directory src/wtforms/locale --domain wtforms --statistics
 ```
 
 Try loading your translations into some sample code to verify they look

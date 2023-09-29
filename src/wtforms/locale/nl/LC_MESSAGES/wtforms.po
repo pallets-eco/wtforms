@@ -46,8 +46,8 @@ msgstr[1] "Veld mag niet langer zijn dan %(max)d karakters."
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] "Veld moet exact %(min)d karakter lang zijn."
-msgstr[1] "Veld moet exact %(min)d karakters lang zijn."
+msgstr[0] "Veld moet exact %(max)d karakter lang zijn."
+msgstr[1] "Veld moet exact %(max)d karakters lang zijn."
 
 #: src/wtforms/validators.py:152
 #, python-format

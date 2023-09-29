@@ -1,0 +1,105 @@
+[project]
+name = "WTForms"
+description = "Form validation and rendering for Python web development."
+readme = "README.rst"
+license = {file = "LICENSE.rst"}
+maintainers = [{name = "WTForms"}]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "MarkupSafe",
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://wtforms.readthedocs.io"
+Changes = "https://wtforms.readthedocs.io/changes"
+"Source Code" = "https://github.com/wtforms/wtforms/"
+"Issue Tracker" = "https://github.com/wtforms/wtforms/issues"
+Chat = "https://discord.gg/pallets"
+
+[project.optional-dependencies]
+email = ["email_validator"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/wtforms"]
+
+[tool.hatch.version]
+path = "src/wtforms/__init__.py"
+
+[tool.hatch.build]
+include = [
+    "src/",
+    "docs/",
+    "tests/",
+    "CHANGES.rst",
+    "tox.ini",
+]
+exclude = [
+    "docs/_build/",
+]
+artifacts = ["src/wtforms/locale/**/*.mo"]
+
+[tool.hatch.build.hooks.custom]
+dependencies = [
+    "Babel>=2.6.0"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["wtforms", "tests"]
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "except ImportError:",
+]
+
+[tool.flake8]
+# B = bugbear
+# E = pycodestyle errors
+# F = flake8 pyflakes
+# W = pycodestyle warnings
+# B9 = bugbear opinions
+# ISC = implicit-str-concat
+select = ["B", "E", "F", "W", "B9", "ISC"]
+ignore = [
+    # slice notation whitespace, invalid
+    "E203",
+    # line length, handled by bugbear B950
+    "E501",
+    # bare except, handled by bugbear B001
+    "E722",
+    # bin op line break, invalid
+    "W503",
+    # requires 'strict' argument for 'zip'
+    # that needs python >= 3.10
+    "B905",
+]
+# up to 88 allowed by bugbear B950
+max-line-length = 80
+per-file-ignores = [
+    # __init__ modules export names
+    "**/__init__.py: F401, F403",
+]
