@@ -1,21 +1,21 @@
 ---
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.9.0
+    rev: v3.13.0
     hooks:
       - id: pyupgrade
         args: ["--py38-plus"]
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v3.10.0
+    rev: v3.11.0
     hooks:
       - id: reorder-python-imports
         args: ["--application-directories", "src"]
   - repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 23.9.1
     hooks:
       - id: black
   - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
         additional_dependencies:
