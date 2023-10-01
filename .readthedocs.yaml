@@ -9,3 +9,7 @@ sphinx:
 formats:
   - pdf
   - epub
+build:
+  os: "ubuntu-22.04"
+  tools:
+    python: "3.11"
