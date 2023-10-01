@@ -511,11 +511,13 @@ class URL(Regexp):
         If true, then the domain-name portion of the URL must contain a .tld
         suffix.  Set this to false if you want to allow domains like
         `localhost`.
+    :param allow_ip:
+        If false, then give ip as host will fail validation
     :param message:
         Error message to raise in case of a validation error.
     """
 
-    def __init__(self, require_tld=True, message=None):
+    def __init__(self, require_tld=True, allow_ip=True, message=None):
         regex = (
             r"^[a-z]+://"
             r"(?P<host>[^\/\?:]+)"
@@ -525,7 +527,7 @@ class URL(Regexp):
         )
         super().__init__(regex, re.IGNORECASE, message)
         self.validate_hostname = HostnameValidation(
-            require_tld=require_tld, allow_ip=True
+            require_tld=require_tld, allow_ip=allow_ip
         )
 
     def __call__(self, form, field):
