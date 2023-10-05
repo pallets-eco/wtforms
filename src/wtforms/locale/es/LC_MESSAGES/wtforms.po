@@ -6,16 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 1.0\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2023-10-05 13:42+0200\n"
-"PO-Revision-Date: 2012-04-10 18:10+0100\n"
-"Last-Translator: Joshua Han <josueisonfire@gmail.com>\n"
-"Language-Team: es <me@syrusakbary.com>\n"
+"PO-Revision-Date: 2023-10-06 21:11+0000\n"
+"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/wtforms/wtforms/"
+"es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.1-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
@@ -108,14 +110,12 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Valor inválido, no puede ser ninguno de: %(values)s."
 
 #: src/wtforms/validators.py:698
-#, fuzzy
-#| msgid "This field is required."
 msgid "This field cannot be edited"
-msgstr "Este campo es obligatorio."
+msgstr "Este campo no se puede editar"
 
 #: src/wtforms/validators.py:714
 msgid "This field is disabled and cannot have a value"
-msgstr ""
+msgstr "Este campo está deshabilitado y no puede tener un valor"
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
@@ -152,16 +152,15 @@ msgstr ""
 "coaccionadas."
 
 #: src/wtforms/fields/choices.py:204
-#, fuzzy, python-format
-#| msgid "'%(value)s' is not a valid choice for this field."
+#, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
-msgstr[0] "'%(value)s' no es una opción válida para este campo."
-msgstr[1] "'%(value)s' no es una opción válida para este campo."
+msgstr[0] "%(value)s' no es una opción válida para este campo."
+msgstr[1] "%(value)s' no son opciones válidas para este campo."
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
-msgstr "No es una fecha y hora válida"
+msgstr "No es un valor para la fecha y la hora válido."
 
 #: src/wtforms/fields/datetime.py:77
 msgid "Not a valid date value."
@@ -172,10 +171,8 @@ msgid "Not a valid time value."
 msgstr "No es un tiempo válido."
 
 #: src/wtforms/fields/datetime.py:148
-#, fuzzy
-#| msgid "Not a valid date value."
 msgid "Not a valid week value."
-msgstr "No es una fecha válida."
+msgstr "No es un valor semanal válido."
 
 #: src/wtforms/fields/numeric.py:82 src/wtforms/fields/numeric.py:92
 msgid "Not a valid integer value."
