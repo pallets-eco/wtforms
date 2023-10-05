@@ -219,7 +219,7 @@ def test_optgroup():
         '<option selected value="a">Foo</option>'
         "</optgroup>" in form.a()
     )
-    assert list(form.a.iter_choices()) == [("a", "Foo", True)]
+    assert list(form.a.iter_choices()) == [("a", "Foo", True, {})]
 
 
 def test_optgroup_shortcut():
@@ -232,7 +232,10 @@ def test_optgroup_shortcut():
         '<option selected value="bar">bar</option>'
         "</optgroup>" in form.a()
     )
-    assert list(form.a.iter_choices()) == [("foo", "foo", False), ("bar", "bar", True)]
+    assert list(form.a.iter_choices()) == [
+        ("foo", "foo", False, {}),
+        ("bar", "bar", True, {}),
+    ]
 
 
 @pytest.mark.parametrize("choices", [[], ()])
@@ -241,3 +244,36 @@ def test_empty_optgroup(choices):
     form = F(a="bar")
     assert '<optgroup label="hello"></optgroup>' in form.a()
     assert list(form.a.iter_choices()) == []
+
+
+def test_option_render_kw():
+    F = make_form(
+        a=SelectField(choices=[("a", "Foo", {"title": "foobar", "data-foo": "bar"})])
+    )
+    form = F(a="a")
+
+    assert (
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
+    ]
+
+
+def test_optgroup_option_render_kw():
+    F = make_form(
+        a=SelectField(
+            choices={"hello": [("a", "Foo", {"title": "foobar", "data-foo": "bar"})]}
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
+    ]

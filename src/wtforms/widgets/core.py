@@ -358,12 +358,12 @@ class Select:
         if field.has_groups():
             for group, choices in field.iter_groups():
                 html.append("<optgroup %s>" % html_params(label=group))
-                for val, label, selected in choices:
-                    html.append(self.render_option(val, label, selected))
+                for val, label, selected, render_kw in choices:
+                    html.append(self.render_option(val, label, selected, **render_kw))
                 html.append("</optgroup>")
         else:
-            for val, label, selected in field.iter_choices():
-                html.append(self.render_option(val, label, selected))
+            for val, label, selected, render_kw in field.iter_choices():
+                html.append(self.render_option(val, label, selected, **render_kw))
         html.append("</select>")
         return Markup("".join(html))
 

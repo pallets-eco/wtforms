@@ -278,8 +278,10 @@ refer to a single input from the form.
 
     Select fields take a ``choices`` parameter which is either:
 
-    * a list of ``(value, label)`` pairs. It can also be a list of only values, in
-      which case the value is used as the label. The value can be of any
+    * a list of ``(value, label)`` or ``(value, label, render_kw)`` tuples.
+      It can also be a list of only values, in which case the value is used
+      as the label. If set, the ``render_kw`` dictionnary will be rendered as
+      HTML ``<option>`` parameters. The value can be of any
       type, but because form data is sent to the browser as strings, you
       will need to provide a ``coerce`` function that converts a string
       back to the expected type.

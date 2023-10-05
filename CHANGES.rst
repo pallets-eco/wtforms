@@ -10,6 +10,8 @@ Unreleased
 -   Translation improvements :pr:`732` :pr:`734` :pr:`754`
 -   Implement :class:`~fields.ColorField` :pr:`755`
 -   Delayed import of ``email_validator``. :issue:`727`
+-   ``<option>`` attributes can be passed by the :class:`~fields.SelectField`
+    ``choices`` parameter :issue:`692` :pr:`738`
 -   Use the standard datetime formats by default for
     :class:`~fields.DateTimeLocalField`  :pr:`761`
 -   Python 3.11 support :pr:`763`

@@ -27,16 +27,16 @@ def test_defaults():
     # Test for possible regression with null data
     form.a.data = None
     assert form.validate()
-    assert list(form.a.iter_choices()) == [(v, l, False) for v, l in form.a.choices]
+    assert list(form.a.iter_choices()) == [(v, l, False, {}) for v, l in form.a.choices]
 
 
 def test_with_data():
     form = F(DummyPostData(a=["a", "c"]))
     assert form.a.data == ["a", "c"]
     assert list(form.a.iter_choices()) == [
-        ("a", "hello", True),
-        ("b", "bye", False),
-        ("c", "something", True),
+        ("a", "hello", True, {}),
+        ("b", "bye", False, {}),
+        ("c", "something", True, {}),
     ]
     assert form.b.data == []
     form = F(DummyPostData(b=["1", "2"]))
@@ -149,3 +149,38 @@ def test_render_kw_preserved():
         '<option value="bar">bar</option>'
         "</select>"
     )
+
+
+def test_option_render_kw():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[("a", "Foo", {"title": "foobar", "data-foo": "bar"})]
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
+    ]
+
+
+def test_optgroup_option_render_kw():
+    F = make_form(
+        a=SelectMultipleField(
+            choices={"hello": [("a", "Foo", {"title": "foobar", "data-foo": "bar"})]}
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
+    ]
