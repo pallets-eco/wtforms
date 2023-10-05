@@ -19,6 +19,15 @@ $ pybabel init --input-file src/wtforms/locale/wtforms.pot --output-dir src/wtfo
 This will create some folders under the locale name and copy the
 template.
 
+Update
+------
+
+To add new translatable string to the catalog:
+
+```
+pybabel extract --copyright-holder="WTForms Team" --project="WTForms" --version="$(python -c 'import wtforms; print(wtforms.__version__)')" --output-file src/wtforms/locale/wtforms.pot src/wtforms
+```
+
 Edit
 ----
 
