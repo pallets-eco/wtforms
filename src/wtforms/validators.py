@@ -33,6 +33,10 @@ __all__ = (
     "UUID",
     "ValidationError",
     "StopValidation",
+    "readonly",
+    "ReadOnly",
+    "disabled",
+    "Disabled",
 )
 
 
@@ -678,6 +682,39 @@ class HostnameValidation:
         return True
 
 
+class ReadOnly:
+    """
+    Set a field readonly.
+
+    Validation fails if the form data is different than the
+    field object data, or if unset, from the field default data.
+    """
+
+    def __init__(self):
+        self.field_flags = {"readonly": True}
+
+    def __call__(self, form, field):
+        if field.data != field.object_data:
+            raise ValidationError(field.gettext("This field cannot be edited"))
+
+
+class Disabled:
+    """
+    Set a field disabled.
+
+    Validation fails if the form data has any value.
+    """
+
+    def __init__(self):
+        self.field_flags = {"disabled": True}
+
+    def __call__(self, form, field):
+        if field.raw_data is not None:
+            raise ValidationError(
+                field.gettext("This field is disabled and cannot have a value")
+            )
+
+
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
@@ -691,3 +728,5 @@ regexp = Regexp
 url = URL
 any_of = AnyOf
 none_of = NoneOf
+readonly = ReadOnly
+disabled = Disabled
