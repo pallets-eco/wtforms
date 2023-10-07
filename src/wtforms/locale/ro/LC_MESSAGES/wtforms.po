@@ -186,4 +186,3 @@ msgstr "Număr zecimal invalid."
 #: src/wtforms/fields/numeric.py:197
 msgid "Not a valid float value."
 msgstr "Număr cu virgulă invalid."
-
