@@ -12,6 +12,9 @@ Unreleased
 - Removed `required` flag support from :class:`~fields.HiddenWidget`,
   :class:`~fields.RangeWidget` and :class:`~fields.SelectWidget` to
   conform to W3C :pr:`810`
+- :class:`~wtforms.validators.NoneOf` and :class:`~wtforms.validators.AnyOf`
+  can validate multiple valued fields like :class:`~fields.SelectMultipleField`
+  :pr:`538` :pr:`807`
 
 Version 3.1.2
 -------------
