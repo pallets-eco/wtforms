@@ -1,9 +1,9 @@
 .. currentmodule:: wtforms
 
-Version 3.0.2
+Version 3.1.0
 -------------
 
-Unreleased
+Released 2023-10-10
 
 -   Documentation improvements :pr:`726` :pr:`733` :pr:`749`
     :pr:`767` :pr:`788` :pr:`789` :pr:`793`
