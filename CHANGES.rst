@@ -9,6 +9,9 @@ Unreleased
   dutch, kazakh, swedish, turkish, slovak, ukranian, spanish, french.
 - Move the repository to the pallets-eco organization.
 - Stop supporting Python 3.9 and start supporting Python 3.13 :pr:`855`
+- Removed `required` flag support from :class:`~fields.HiddenWidget`,
+  :class:`~fields.RangeWidget` and :class:`~fields.SelectWidget` to
+  conform to W3C :pr:`810`
 
 Version 3.1.2
 -------------
@@ -31,7 +34,6 @@ Released 2023-11-01
 - Python 3.12 support :pr:`818`
 - Restored support for 3-items tuple return value from `iter_choices`
   :pr:`816`
-
 
 Version 3.1.0
 -------------
