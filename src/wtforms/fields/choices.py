@@ -135,11 +135,11 @@ class SelectField(SelectFieldBase):
             raise ValueError(self.gettext("Invalid Choice: could not coerce.")) from exc
 
     def pre_validate(self, form):
-        if self.choices is None:
-            raise TypeError(self.gettext("Choices cannot be None."))
-
         if not self.validate_choice:
             return
+
+        if self.choices is None:
+            raise TypeError(self.gettext("Choices cannot be None."))
 
         for _, _, match, _ in self.iter_choices():
             if match:
@@ -188,11 +188,11 @@ class SelectMultipleField(SelectField):
             ) from exc
 
     def pre_validate(self, form):
-        if self.choices is None:
-            raise TypeError(self.gettext("Choices cannot be None."))
-
         if not self.validate_choice or not self.data:
             return
+
+        if self.choices is None:
+            raise TypeError(self.gettext("Choices cannot be None."))
 
         acceptable = {c[0] for c in self.iter_choices()}
         if any(d not in acceptable for d in self.data):

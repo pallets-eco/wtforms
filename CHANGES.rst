@@ -6,6 +6,8 @@ Version 3.x.x
 Unreleased
 
 - Display :class:`~wtforms.Flags` values in their repr. :pr:`808`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``choices`` can be `None` if `validate_choice` is `False` :pr:`809`
 
 Version 3.1.0
 -------------
