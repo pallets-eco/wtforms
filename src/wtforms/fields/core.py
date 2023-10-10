@@ -420,7 +420,11 @@ class Flags:
         return getattr(self, name)
 
     def __repr__(self):
-        flags = (name for name in dir(self) if not name.startswith("_"))
+        flags = (
+            f"{name}={getattr(self, name)}"
+            for name in dir(self)
+            if not name.startswith("_")
+        )
         return "<wtforms.fields.Flags: {%s}>" % ", ".join(flags)
 
 

@@ -5,6 +5,8 @@ Version 3.x.x
 
 Unreleased
 
+- Display :class:`~wtforms.Flags` values in their repr
+
 Version 3.1.0
 -------------
 

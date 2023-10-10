@@ -31,7 +31,7 @@ def test_unset(flags):
 
 
 def test_repr(flags):
-    assert repr(flags) == "<wtforms.fields.Flags: {required}>"
+    assert repr(flags) == "<wtforms.fields.Flags: {required=True}>"
 
 
 def test_underscore_property(flags):
