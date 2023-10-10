@@ -5,7 +5,7 @@ Version 3.x.x
 
 Unreleased
 
-- Display :class:`~wtforms.Flags` values in their repr
+- Display :class:`~wtforms.Flags` values in their repr. :pr:`808`
 
 Version 3.1.0
 -------------
