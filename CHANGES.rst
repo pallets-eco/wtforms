@@ -1,5 +1,10 @@
 .. currentmodule:: wtforms
 
+Version 3.x.x
+-------------
+
+Unreleased
+
 Version 3.1.0
 -------------
 
