@@ -334,7 +334,7 @@ class Select:
 
     The field must provide an `iter_choices()` method which the widget will
     call on rendering; this method must yield tuples of
-    `(value, label, selected)`.
+    `(value, label, selected, render_kw)`.
     It also must provide a `has_groups()` method which tells whether choices
     are divided into groups, and if they do, the field must have an
     `iter_groups()` method that yields tuples of `(label, choices)`, where
