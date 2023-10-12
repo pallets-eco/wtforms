@@ -347,6 +347,7 @@ class Regexp:
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message
+        self.field_flags = {"pattern": regex.pattern}
 
     def __call__(self, form, field, message=None):
         match = self.regex.match(field.data or "")

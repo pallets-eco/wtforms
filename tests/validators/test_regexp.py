@@ -48,6 +48,15 @@ def test_regex_raises(re_pattern, re_flags, test_v, dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
+def test_regexp_message_default(dummy_form, dummy_field, grab_error_message):
+    """
+    Regexp validator should return default message
+    """
+    validator = regexp("^a")
+    dummy_field.data = "f"
+    assert grab_error_message(validator, dummy_form, dummy_field) == "Invalid input."
+
+
 def test_regexp_message(dummy_form, dummy_field, grab_error_message):
     """
     Regexp validator should return given message
@@ -55,3 +64,13 @@ def test_regexp_message(dummy_form, dummy_field, grab_error_message):
     validator = regexp("^a", message="foo")
     dummy_field.data = "f"
     assert grab_error_message(validator, dummy_form, dummy_field) == "foo"
+
+
+def test_regexp_pattern_html(dummy_form, dummy_field):
+    """
+    Regexp validator should return given message
+    """
+    validator = regexp("^[a-zA-Z0-9]+$")
+    dummy_field.data = "foo bar"
+
+    assert validator.field_flags == {"pattern": "^[a-zA-Z0-9]+$"}
