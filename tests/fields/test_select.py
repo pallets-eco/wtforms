@@ -132,6 +132,12 @@ def test_dont_validate_choices():
     assert len(form.a.errors) == 0
 
 
+def test_choices_can_be_none_when_choice_validation_is_disabled():
+    F = make_form(a=SelectField(validate_choice=False))
+    form = F(DummyPostData(a="b"))
+    assert form.validate()
+
+
 def test_choice_shortcut():
     F = make_form(a=SelectField(choices=["foo", "bar"], validate_choice=False))
     form = F(a="bar")

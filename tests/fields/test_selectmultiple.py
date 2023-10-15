@@ -107,6 +107,12 @@ def test_dont_validate_choices():
     assert len(form.a.errors) == 0
 
 
+def test_choices_can_be_none_when_choice_validation_is_disabled():
+    F = make_form(a=SelectMultipleField(validate_choice=False))
+    form = F(DummyPostData(a="b"))
+    assert form.validate()
+
+
 def test_requried_flag():
     F = make_form(
         c=SelectMultipleField(
