@@ -6,6 +6,13 @@ from wtforms.validators import regexp
 from wtforms.validators import ValidationError
 
 
+def grab_error_message(callable, form, field):
+    try:
+        callable(form, field)
+    except ValidationError as e:
+        return e.args[0]
+
+
 @pytest.mark.parametrize(
     "re_pattern, re_flags, test_v, expected_v",
     [
@@ -48,7 +55,7 @@ def test_regex_raises(re_pattern, re_flags, test_v, dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
-def test_regexp_message(dummy_form, dummy_field, grab_error_message):
+def test_regexp_message(dummy_form, dummy_field):
     """
     Regexp validator should return given message
     """

@@ -73,7 +73,8 @@ source = ["src", "*/site-packages"]
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
-    "except ImportError:",
+    "except ImportError",
+    "pass",
 ]
 
 [tool.flake8]

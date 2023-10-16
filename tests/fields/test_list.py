@@ -223,7 +223,7 @@ def test_validators():
 
 def test_no_filters():
     with pytest.raises(TypeError):
-        FieldList(t, filters=[lambda x: x], _form=Form(), name="foo")
+        FieldList(t, filters=[str], _form=Form(), name="foo")
 
 
 def test_process_prefilled():
