@@ -93,7 +93,7 @@ def test_no_validators_or_filters(F1):
         A()
 
     class B(Form):
-        a = FormField(F1, filters=[lambda x: x])
+        a = FormField(F1, filters=[str])
 
     with pytest.raises(TypeError):
         B()
