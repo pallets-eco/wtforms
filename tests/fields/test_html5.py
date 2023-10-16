@@ -23,10 +23,6 @@ from wtforms.form import Form
 from wtforms.utils import unset_value
 
 
-def make_form(name="F", **fields):
-    return type(str(name), (Form,), fields)
-
-
 class F(Form):
     search = SearchField()
     telephone = TelField()
@@ -113,12 +109,13 @@ def test_simple():
     for item in VALUES:
         field = form[item["key"]]
         render_value = field()
-        if render_value != item["expected_html"]:
-            tmpl = "Field {key} render mismatch: {render_value!r} != {expected_html!r}"
-            raise AssertionError(tmpl.format(render_value=render_value, **item))
-        if field.data != item["data"]:
-            tmpl = "Field {key} data mismatch: {field.data!r} != {data!r}"
-            raise AssertionError(tmpl.format(field=field, **item))
+        assert (
+            render_value == item["expected_html"]
+        ), f"Field {item['key']} render mismatch: "
+        "{render_value} != {item['expected_html']}"
+        assert (
+            field.data == item["data"]
+        ), "Field {item['key']} data mismatch: {field.data} != {item['data']}"
 
 
 class G(Form):

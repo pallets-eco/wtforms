@@ -60,11 +60,9 @@ def _parse_test(raw_val, expected, locales=unset_value):
     if locales is not unset_value:
         meta = {"locales": locales}
     form = F(DummyPostData(a=raw_val), meta=meta)
-    if not form.validate():
-        raise AssertionError(
-            "Expected value %r to parse as a decimal, instead got %r"
-            % (raw_val, form.a.errors)
-        )
+    assert (
+        form.validate()
+    ), f"Expected value {raw_val} to parse as a decimal, instead got {form.a.errors}"
     assert form.a.data == expected
 
 
