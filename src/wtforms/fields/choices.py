@@ -49,7 +49,13 @@ class SelectFieldBase(Field):
             _form=None,
             _meta=self.meta,
         )
-        for i, (value, label, checked, render_kw) in enumerate(self.iter_choices()):
+        for i, choice in enumerate(self.iter_choices()):
+            if len(choice) == 4:
+                value, label, checked, render_kw = choice
+            else:
+                value, label, checked = choice
+                render_kw = {}
+
             opt = self._Option(
                 label=label, id="%s-%d" % (self.id, i), **opts, **render_kw
             )
@@ -141,7 +147,7 @@ class SelectField(SelectFieldBase):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        for _, _, match, _ in self.iter_choices():
+        for _, _, match, *_ in self.iter_choices():
             if match:
                 break
         else:
