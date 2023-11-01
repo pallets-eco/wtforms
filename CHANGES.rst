@@ -8,6 +8,9 @@ Unreleased
 - Display :class:`~wtforms.Flags` values in their repr. :pr:`808`
 - :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
   ``choices`` can be `None` if `validate_choice` is `False` :pr:`809`
+- Documentation improvements :pr:`812` :pr:`815` :pr:`817`
+- Unit tests improvements :pr:`813`
+- Python 3.12 support :pr:`818`
 
 Version 3.1.0
 -------------
