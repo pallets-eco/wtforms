@@ -11,6 +11,9 @@ Unreleased
 - Documentation improvements :pr:`812` :pr:`815` :pr:`817`
 - Unit tests improvements :pr:`813`
 - Python 3.12 support :pr:`818`
+- Restored support for 3-items tuple return value from `iter_choices`
+  :pr:`816`
+
 
 Version 3.1.0
 -------------
