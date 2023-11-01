@@ -1,3 +1,5 @@
+import warnings
+
 from markupsafe import escape
 from markupsafe import Markup
 
@@ -362,6 +364,12 @@ class Select:
                     if len(choice) == 4:
                         val, label, selected, render_kw = choice
                     else:
+                        warnings.warn(
+                            "'iter_groups' is expected to return 4 items tuple since "
+                            "wtforms 3.1, this will be mandatory in wtforms 3.2",
+                            DeprecationWarning,
+                            stacklevel=2,
+                        )
                         val, label, selected = choice
                         render_kw = {}
                     html.append(self.render_option(val, label, selected, **render_kw))
@@ -371,6 +379,12 @@ class Select:
                 if len(choice) == 4:
                     val, label, selected, render_kw = choice
                 else:
+                    warnings.warn(
+                        "'iter_groups' is expected to return 4 items tuple since "
+                        "wtforms 3.1, this will be mandatory in wtforms 3.2",
+                        DeprecationWarning,
+                        stacklevel=2,
+                    )
                     val, label, selected = choice
                     render_kw = {}
                 html.append(self.render_option(val, label, selected, **render_kw))

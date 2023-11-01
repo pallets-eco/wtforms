@@ -25,7 +25,7 @@ def basic_widget_dummy_field(dummy_field_class):
 
 @pytest.fixture
 def select_dummy_field(dummy_field_class):
-    return dummy_field_class([("foo", "lfoo", True), ("bar", "lbar", False)])
+    return dummy_field_class([("foo", "lfoo", True, {}), ("bar", "lbar", False, {})])
 
 
 @pytest.fixture
