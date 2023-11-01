@@ -1,9 +1,9 @@
 .. currentmodule:: wtforms
 
-Version 3.x.x
+Version 3.1.1
 -------------
 
-Unreleased
+Released 2023-11-01
 
 - Display :class:`~wtforms.Flags` values in their repr. :pr:`808`
 - :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
