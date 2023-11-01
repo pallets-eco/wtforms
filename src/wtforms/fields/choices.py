@@ -30,7 +30,7 @@ class SelectFieldBase(Field):
     def iter_choices(self):
         """
         Provides data for choice widget rendering. Must return a sequence or
-        iterable of (value, label, selected) tuples.
+        iterable of (value, label, selected, render_kw) tuples.
         """
         raise NotImplementedError()
 
