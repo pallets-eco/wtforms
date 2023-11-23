@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 2.0dev\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2023-10-05 13:42+0200\n"
-"PO-Revision-Date: 2023-08-22 10:53+0000\n"
-"Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
+"PO-Revision-Date: 2023-11-25 05:13+0000\n"
+"Last-Translator: bittin1ddc447d824349b2 <bittin@reimu.nl>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/wtforms/wtforms/"
 "sv/>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0-dev\n"
+"X-Generator: Weblate 5.2.1-rc\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
@@ -110,14 +110,12 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Felaktigt värde, får inte vara något av: %(values)s."
 
 #: src/wtforms/validators.py:698
-#, fuzzy
-#| msgid "This field is required."
 msgid "This field cannot be edited"
-msgstr "Det här fältet är obligatoriskt."
+msgstr "Detta fält kan inte redigeras"
 
 #: src/wtforms/validators.py:714
 msgid "This field is disabled and cannot have a value"
-msgstr ""
+msgstr "Det här fältet är inaktiverat och kan inte ha ett värde"
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
@@ -152,12 +150,11 @@ msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "Felaktigt val; ett eller flera inputfält kunde inte coerca:s"
 
 #: src/wtforms/fields/choices.py:204
-#, fuzzy, python-format
-#| msgid "'%(value)s' is not a valid choice for this field."
+#, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
-msgstr[0] "'%(value)s' är inte ett giltigt värde för det här fältet"
-msgstr[1] "'%(value)s' är inte ett giltigt värde för det här fältet"
+msgstr[0] "'%(value)s' är inte ett giltigt val för detta fält."
+msgstr[1] "'%(value)s' är inte giltiga val för detta fält."
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
@@ -172,10 +169,8 @@ msgid "Not a valid time value."
 msgstr "Inte ett giltigt tidsvärde."
 
 #: src/wtforms/fields/datetime.py:148
-#, fuzzy
-#| msgid "Not a valid date value."
 msgid "Not a valid week value."
-msgstr "Inte ett giltigt datum"
+msgstr "Inte ett giltigt veckovärde."
 
 #: src/wtforms/fields/numeric.py:82 src/wtforms/fields/numeric.py:92
 msgid "Not a valid integer value."
