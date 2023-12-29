@@ -121,8 +121,9 @@ class SelectField(SelectFieldBase):
             _choices = zip(choices, choices)
 
         for value, label, *other_args in _choices:
+            selected = self.coerce(value) == self.data
             render_kw = other_args[0] if len(other_args) else {}
-            yield (value, label, self.coerce(value) == self.data, render_kw)
+            yield (value, label, selected, render_kw)
 
     def process_data(self, value):
         try:
@@ -173,9 +174,9 @@ class SelectMultipleField(SelectField):
         else:
             _choices = zip(choices, choices)
 
-        for value, label, *args in _choices:
+        for value, label, *other_args in _choices:
             selected = self.data is not None and self.coerce(value) in self.data
-            render_kw = args[0] if len(args) else {}
+            render_kw = other_args[0] if len(other_args) else {}
             yield (value, label, selected, render_kw)
 
     def process_data(self, value):
@@ -201,9 +202,11 @@ class SelectMultipleField(SelectField):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        acceptable = {c[0] for c in self.iter_choices()}
-        if any(d not in acceptable for d in self.data):
-            unacceptable = [str(d) for d in set(self.data) - acceptable]
+        acceptable = [self.coerce(choice[0]) for choice in self.iter_choices()]
+        if any(data not in acceptable for data in self.data):
+            unacceptable = [
+                str(data) for data in set(self.data) if data not in acceptable
+            ]
             raise ValidationError(
                 self.ngettext(
                     "'%(value)s' is not a valid choice for this field.",

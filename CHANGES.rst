@@ -1,5 +1,11 @@
 .. currentmodule:: wtforms
 
+Unreleased
+----------
+
+- Fix :class:`~fields.SelectMultipleField` value coercion on validation.
+  :issue:`822` :pr:`823`
+
 Version 3.1.1
 -------------
 

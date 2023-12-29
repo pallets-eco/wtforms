@@ -190,3 +190,16 @@ def test_optgroup_option_render_kw():
     assert list(form.a.iter_choices()) == [
         ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
     ]
+
+
+def test_can_supply_coercable_values_as_options():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[("1", "One"), ("2", "Two")],
+            coerce=int,
+        )
+    )
+    post_data = DummyPostData(a=["1", "2"])
+    form = F(post_data)
+    assert form.validate()
+    assert form.a.data == [1, 2]
