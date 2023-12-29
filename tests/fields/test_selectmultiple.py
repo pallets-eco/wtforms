@@ -1,3 +1,5 @@
+import dataclasses
+
 import pytest
 from tests.common import DummyPostData
 
@@ -38,7 +40,7 @@ def test_with_data():
         ("b", "bye", False, {}),
         ("c", "something", True, {}),
     ]
-    assert form.b.data == []
+    assert form.b.data == [1, 3]
     form = F(DummyPostData(b=["1", "2"]))
     assert form.b.data == [1, 2]
     assert form.validate()
@@ -89,7 +91,7 @@ def test_validate_choices_when_empty():
     assert not form.validate()
     assert form.a.data == ["b"]
     assert len(form.a.errors) == 1
-    assert form.a.errors[0] == "'b' is not a valid choice for this field."
+    assert form.a.errors[0] == "Not a valid choice"
 
 
 def test_validate_choices_when_none():
@@ -190,3 +192,49 @@ def test_optgroup_option_render_kw():
     assert list(form.a.iter_choices()) == [
         ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
     ]
+
+
+def test_can_supply_coercable_values_as_options():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[("1", "One"), ("2", "Two")],
+            coerce=int,
+        )
+    )
+    post_data = DummyPostData(a=["1", "2"])
+    form = F(post_data)
+    assert form.validate()
+    assert form.a.data == [1, 2]
+
+
+def test_coerced_values_do_not_need_to_be_hashable():
+    @dataclasses.dataclass
+    class NotHashable:
+        pass
+
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[("1", "One"), ("2", "Two")],
+            coerce=lambda x: NotHashable(),
+        )
+    )
+    post_data = DummyPostData(a=["1", "2"])
+    form = F(post_data)
+    assert form.validate()
+
+
+def test_do_not_override_obj_data_when_form_data_not_provided():
+    class Obj:
+        pass
+
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[("1", "One"), ("2", "Two")],
+            coerce=int,
+        )
+    )
+    obj = Obj()
+    obj.a = [1]
+    post_data = DummyPostData(d=['1'])
+    form = F(post_data, obj)
+    assert form.a.data == [1]

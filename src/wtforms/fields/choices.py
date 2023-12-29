@@ -185,6 +185,9 @@ class SelectMultipleField(SelectField):
             self.data = None
 
     def process_formdata(self, valuelist):
+        if not valuelist:
+            return
+
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError as exc:
@@ -201,17 +204,9 @@ class SelectMultipleField(SelectField):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        acceptable = {c[0] for c in self.iter_choices()}
+        acceptable = [self.coerce(c[0]) for c in self.iter_choices()]
         if any(d not in acceptable for d in self.data):
-            unacceptable = [str(d) for d in set(self.data) - acceptable]
-            raise ValidationError(
-                self.ngettext(
-                    "'%(value)s' is not a valid choice for this field.",
-                    "'%(value)s' are not valid choices for this field.",
-                    len(unacceptable),
-                )
-                % dict(value="', '".join(unacceptable))
-            )
+            raise ValidationError('Not a valid choice')
 
 
 class RadioField(SelectField):
