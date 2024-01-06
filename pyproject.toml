@@ -54,7 +54,8 @@ artifacts = ["src/wtforms/locale/**/*.mo"]
 
 [tool.hatch.build.hooks.custom]
 dependencies = [
-    "Babel>=2.6.0"
+    "Babel>=2.6.0",
+    "setuptools; python_version>='3.12'",
 ]
 
 [tool.pytest.ini_options]
