@@ -6,17 +6,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 2.0dev\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2023-10-05 13:42+0200\n"
-"PO-Revision-Date: 2014-01-16 10:04+0100\n"
-"Last-Translator: Oleg Pidsadnyi <oleg.pidsadnyi@paylogic.eu>\n"
-"Language-Team: uk <oleg.pidsadnyi@paylogic.eu>\n"
+"PO-Revision-Date: 2024-01-07 19:06+0000\n"
+"Last-Translator: Сергій <sergiy.goncharuk.1@gmail.com>\n"
+"Language-Team: Ukrainian <https://hosted.weblate.org/projects/wtforms/"
+"wtforms/uk/>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.4-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
@@ -49,9 +51,9 @@ msgstr[2] "Значення поля має містити не більше н�
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Поле повинно мати довжину рівно %(max)d символі."
+msgstr[1] "Поле повинно мати довжину рівно %(max)d символи."
+msgstr[2] "Поле повинно мати довжину рівно %(max)d символів."
 
 #: src/wtforms/validators.py:163
 #, python-format
@@ -112,14 +114,12 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Значення невірне, не може бути одним з: %(values)s."
 
 #: src/wtforms/validators.py:698
-#, fuzzy
-#| msgid "This field is required."
 msgid "This field cannot be edited"
-msgstr "Це поле є обов'язковим."
+msgstr "Це поле не можна редагувати"
 
 #: src/wtforms/validators.py:714
 msgid "This field is disabled and cannot have a value"
-msgstr ""
+msgstr "Це поле неактивне і не може містити значення"
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
@@ -127,67 +127,64 @@ msgstr "Невірний CSRF токен."
 
 #: src/wtforms/csrf/session.py:63
 msgid "CSRF token missing."
-msgstr "CSRF токен відсутній"
+msgstr "CSRF токен відсутній."
 
 #: src/wtforms/csrf/session.py:71
 msgid "CSRF failed."
-msgstr "Помилка CSRF"
+msgstr "Помилка CSRF."
 
 #: src/wtforms/csrf/session.py:76
 msgid "CSRF token expired."
-msgstr "CSRF токен прострочений"
+msgstr "CSRF токен прострочений."
 
 #: src/wtforms/fields/choices.py:135
 msgid "Invalid Choice: could not coerce."
-msgstr "Недійсний варіант: перетворення неможливе"
+msgstr "Недійсний варіант: перетворення неможливе."
 
 #: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "Варіанти не можуть бути None."
 
 #: src/wtforms/fields/choices.py:148
 msgid "Not a valid choice."
-msgstr "Недійсний варіант"
+msgstr "Недійсний варіант."
 
 #: src/wtforms/fields/choices.py:185
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
-msgstr "Недійсний варіант: одне чи більше значень неможливо перетворити"
+msgstr "Недійсний варіант: одне чи більше значень неможливо перетворити."
 
 #: src/wtforms/fields/choices.py:204
-#, fuzzy, python-format
-#| msgid "'%(value)s' is not a valid choice for this field."
+#, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
-msgstr[0] "'%(value)s' не є дійсним варіантом для цього поля"
-msgstr[1] "'%(value)s' не є дійсним варіантом для цього поля"
-msgstr[2] "'%(value)s' не є дійсним варіантом для цього поля"
+msgstr[0] "'%(value)s' не є дійсним варіантом для цього поля."
+msgstr[1] "'%(value)s' не є дійсним варіантом для цього поля."
+msgstr[2] "'%(value)s' не є дійсним варіантом для цього поля."
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
-msgstr "Недійсне значення дати/часу"
+msgstr "Недійсне значення дати/часу."
 
 #: src/wtforms/fields/datetime.py:77
 msgid "Not a valid date value."
-msgstr "Не дійсне значення дати"
+msgstr "Не дійсне значення дати."
 
 #: src/wtforms/fields/datetime.py:103
 msgid "Not a valid time value."
-msgstr "Не дійсне значення часу"
+msgstr "Не дійсне значення часу."
 
 #: src/wtforms/fields/datetime.py:148
-#, fuzzy
-#| msgid "Not a valid date value."
 msgid "Not a valid week value."
-msgstr "Не дійсне значення дати"
+msgstr "Недійсне значення тижня."
 
 #: src/wtforms/fields/numeric.py:82 src/wtforms/fields/numeric.py:92
 msgid "Not a valid integer value."
-msgstr "Недійсне ціле число"
+msgstr "Недійсне ціле число."
 
 #: src/wtforms/fields/numeric.py:168
 msgid "Not a valid decimal value."
-msgstr "Не є дійсним десятичним числом"
+msgstr "Не є дійсним десятковим числом."
 
 #: src/wtforms/fields/numeric.py:197
 msgid "Not a valid float value."
-msgstr "Недійсне десятичне дробове число"
+msgstr "Недійсне число з рухомою комою."
