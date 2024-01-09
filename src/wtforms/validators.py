@@ -695,7 +695,7 @@ class ReadOnly:
 
     def __call__(self, form, field):
         if field.data != field.object_data:
-            raise ValidationError(field.gettext("This field cannot be edited"))
+            raise ValidationError(field.gettext("This field cannot be edited."))
 
 
 class Disabled:
@@ -711,7 +711,7 @@ class Disabled:
     def __call__(self, form, field):
         if field.raw_data is not None:
             raise ValidationError(
-                field.gettext("This field is disabled and cannot have a value")
+                field.gettext("This field is disabled and cannot have a value.")
             )
 
 
