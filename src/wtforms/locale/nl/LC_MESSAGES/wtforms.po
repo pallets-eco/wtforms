@@ -6,16 +6,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 2.0dev\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2023-10-05 13:42+0200\n"
-"PO-Revision-Date: 2014-01-16 09:56+0100\n"
-"Last-Translator: Dirk Zittersteyn <dirk.zittersteyn@paylogic.eu>\n"
-"Language-Team: nl <dirk.zittersteyn@paylogic.eu>\n"
+"PO-Revision-Date: 2024-01-10 20:06+0000\n"
+"Last-Translator: Pander <pander@users.sourceforge.net>\n"
+"Language-Team: Dutch <https://hosted.weblate.org/projects/wtforms/wtforms/nl/"
+">\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.4-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
@@ -108,14 +110,12 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Ongeldige waarde, kan geen waarde zijn uit: %(values)s."
 
 #: src/wtforms/validators.py:698
-#, fuzzy
-#| msgid "This field is required."
 msgid "This field cannot be edited"
-msgstr "Dit veld is vereist."
+msgstr "Dit veld kan niet worden bewerkt."
 
 #: src/wtforms/validators.py:714
 msgid "This field is disabled and cannot have a value"
-msgstr ""
+msgstr "Dit veld is uitgeschakeld en kan geen waarde hebben."
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
@@ -151,12 +151,11 @@ msgstr ""
 "Ongeldige keuze(s): een of meer van de invoeren kon niet omgezet worden."
 
 #: src/wtforms/fields/choices.py:204
-#, fuzzy, python-format
-#| msgid "'%(value)s' is not a valid choice for this field."
+#, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
 msgstr[0] "'%(value)s' is een ongeldige keuze voor dit veld."
-msgstr[1] "'%(value)s' is een ongeldige keuze voor dit veld."
+msgstr[1] "'%(value)s' zijn ongeldige keuzes voor dit veld."
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
@@ -171,10 +170,8 @@ msgid "Not a valid time value."
 msgstr "Ongeldige waarde."
 
 #: src/wtforms/fields/datetime.py:148
-#, fuzzy
-#| msgid "Not a valid date value."
 msgid "Not a valid week value."
-msgstr "Ongeldige datum."
+msgstr "Ongeldige waarde voor week."
 
 #: src/wtforms/fields/numeric.py:82 src/wtforms/fields/numeric.py:92
 msgid "Not a valid integer value."
