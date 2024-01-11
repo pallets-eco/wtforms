@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 1.0.3\n"
-"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
-"POT-Creation-Date: 2023-10-05 13:42+0200\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2023-10-06 21:11+0000\n"
 "Last-Translator: Éloi Rivard <eloi.rivard@nubla.fr>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/wtforms/wtforms/"
@@ -112,11 +112,15 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Valeur non valide, ne peut contenir : %(values)s."
 
 #: src/wtforms/validators.py:698
-msgid "This field cannot be edited"
+#, fuzzy
+#| msgid "This field cannot be edited"
+msgid "This field cannot be edited."
 msgstr "Ce champ n’est pas éditable"
 
 #: src/wtforms/validators.py:714
-msgid "This field is disabled and cannot have a value"
+#, fuzzy
+#| msgid "This field is disabled and cannot have a value"
+msgid "This field is disabled and cannot have a value."
 msgstr "Ce champ est désactivé et ne peut avoir de valeur"
 
 #: src/wtforms/csrf/core.py:96
@@ -135,24 +139,24 @@ msgstr "CSRF a échoué."
 msgid "CSRF token expired."
 msgstr "Jeton CSRF expiré."
 
-#: src/wtforms/fields/choices.py:135
+#: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
 msgstr "Choix non valide, ne peut pas être converti."
 
-#: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
+#: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
 msgstr "Vous devez choisir au moins un élément."
 
-#: src/wtforms/fields/choices.py:148
+#: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
 msgstr "N'est pas un choix valide."
 
-#: src/wtforms/fields/choices.py:185
+#: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
 "Choix incorrect, une ou plusieurs saisies ne peuvent pas être converties."
 
-#: src/wtforms/fields/choices.py:204
+#: src/wtforms/fields/choices.py:214
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."

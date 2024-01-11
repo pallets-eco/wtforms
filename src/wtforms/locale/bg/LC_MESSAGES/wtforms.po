@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 2.0dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-05 13:42+0200\n"
+"POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2017-02-16 11:59+0100\n"
 "Last-Translator: \n"
 "Language-Team: Vladimir Kolev <me@vkolev.net>\n"
@@ -110,11 +110,11 @@ msgstr "Невалидна стойност, не може да бъде едн�
 #: src/wtforms/validators.py:698
 #, fuzzy
 #| msgid "This field is required."
-msgid "This field cannot be edited"
+msgid "This field cannot be edited."
 msgstr "Това поле е задължително"
 
 #: src/wtforms/validators.py:714
-msgid "This field is disabled and cannot have a value"
+msgid "This field is disabled and cannot have a value."
 msgstr ""
 
 #: src/wtforms/csrf/core.py:96
@@ -133,25 +133,25 @@ msgstr "CSRF провален"
 msgid "CSRF token expired."
 msgstr "CSRF token изтече"
 
-#: src/wtforms/fields/choices.py:135
+#: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
 msgstr "Невалиден избор: не може да бъде преобразувана"
 
-#: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
+#: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:148
+#: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
 msgstr "Не е валиден избор"
 
-#: src/wtforms/fields/choices.py:185
+#: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
 "Невалиден(и) избор(и): една или повече въведени данни не могат да бъдат "
 "преобразувани"
 
-#: src/wtforms/fields/choices.py:204
+#: src/wtforms/fields/choices.py:214
 #, fuzzy, python-format
 #| msgid "'%(value)s' is not a valid choice for this field."
 msgid "'%(value)s' is not a valid choice for this field."

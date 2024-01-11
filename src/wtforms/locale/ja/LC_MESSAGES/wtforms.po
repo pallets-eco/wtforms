@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 2.0dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-05 13:42+0200\n"
+"POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2015-07-06 23:49+0900\n"
 "Last-Translator: yusuke furukawa <littlefive.jp@gmail.com>\n"
 "Language-Team: ja <littlefive.jp@gmail.com>\n"
@@ -107,11 +107,11 @@ msgstr "無効な値です、次に含まれるものは使えません: %(value
 #: src/wtforms/validators.py:698
 #, fuzzy
 #| msgid "This field is required."
-msgid "This field cannot be edited"
+msgid "This field cannot be edited."
 msgstr "このフィールドは必須です。"
 
 #: src/wtforms/validators.py:714
-msgid "This field is disabled and cannot have a value"
+msgid "This field is disabled and cannot have a value."
 msgstr ""
 
 #: src/wtforms/csrf/core.py:96
@@ -130,23 +130,23 @@ msgstr "CSRF認証に失敗しました。"
 msgid "CSRF token expired."
 msgstr "CSRFトークンの期限が切れました。"
 
-#: src/wtforms/fields/choices.py:135
+#: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
 msgstr "無効な選択: 型変換できません。"
 
-#: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
+#: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:148
+#: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
 msgstr "選択肢が正しくありません。"
 
-#: src/wtforms/fields/choices.py:185
+#: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "無効な選択: １つ以上の値を型変換できません。"
 
-#: src/wtforms/fields/choices.py:204
+#: src/wtforms/fields/choices.py:214
 #, fuzzy, python-format
 #| msgid "'%(value)s' is not a valid choice for this field."
 msgid "'%(value)s' is not a valid choice for this field."

@@ -6,15 +6,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 3.0.1\n"
-"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
-"POT-Creation-Date: 2023-10-05 13:42+0200\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2023-10-07 06:11+0000\n"
 "Last-Translator: Victor Buzdugan <buzdugan.victor@icloud.com>\n"
 "Language-Team: Romanian <https://hosted.weblate.org/projects/wtforms/wtforms/"
 "ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
@@ -114,11 +114,15 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Valoare invalidă, nu trebuie să fie una din: %(values)s."
 
 #: src/wtforms/validators.py:698
-msgid "This field cannot be edited"
+#, fuzzy
+#| msgid "This field cannot be edited"
+msgid "This field cannot be edited."
 msgstr "Câmpul nu poate fi editat"
 
 #: src/wtforms/validators.py:714
-msgid "This field is disabled and cannot have a value"
+#, fuzzy
+#| msgid "This field is disabled and cannot have a value"
+msgid "This field is disabled and cannot have a value."
 msgstr "Câmpul este dezactivat și nu poate conține o valoare"
 
 #: src/wtforms/csrf/core.py:96
@@ -137,24 +141,24 @@ msgstr "Validarea CSRF a eșuat."
 msgid "CSRF token expired."
 msgstr "Token-ul CSRF a expirat."
 
-#: src/wtforms/fields/choices.py:135
+#: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
 msgstr "Selecție invalidă: valoarea nu a putut fi transformată."
 
-#: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
+#: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
 msgstr "Selecția nu poate fi None."
 
-#: src/wtforms/fields/choices.py:148
+#: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
 msgstr "Selecție invalidă."
 
-#: src/wtforms/fields/choices.py:185
+#: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
 "Selecție(ii) invalidă: una sau mai multe valori nu au putut fi transformate."
 
-#: src/wtforms/fields/choices.py:204
+#: src/wtforms/fields/choices.py:214
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 1.0.4\n"
-"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
-"POT-Creation-Date: 2023-10-05 13:42+0200\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2023-11-05 19:46+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/wtforms/wtforms/"
@@ -110,11 +110,15 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Geçersiz değer, değerlerden biri olamaz: %(values)s."
 
 #: src/wtforms/validators.py:698
-msgid "This field cannot be edited"
+#, fuzzy
+#| msgid "This field cannot be edited"
+msgid "This field cannot be edited."
 msgstr "Bu alan düzenlenemez"
 
 #: src/wtforms/validators.py:714
-msgid "This field is disabled and cannot have a value"
+#, fuzzy
+#| msgid "This field is disabled and cannot have a value"
+msgid "This field is disabled and cannot have a value."
 msgstr "Bu alan devre dışıdır ve bir değere sahip olamaz"
 
 #: src/wtforms/csrf/core.py:96
@@ -133,23 +137,23 @@ msgstr "CSRF hatalı."
 msgid "CSRF token expired."
 msgstr "CSRF anahtarının süresi doldu."
 
-#: src/wtforms/fields/choices.py:135
+#: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
 msgstr "Geçersiz seçim: tip uyuşmazlığı."
 
-#: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
+#: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
 msgstr "Seçimler Hiçbiri olamaz."
 
-#: src/wtforms/fields/choices.py:148
+#: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
 msgstr "Geçerli bir seçenek değil."
 
-#: src/wtforms/fields/choices.py:185
+#: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "Geçersiz seçenek: bir yada daha fazla tip uyuşmazlığı."
 
-#: src/wtforms/fields/choices.py:204
+#: src/wtforms/fields/choices.py:214
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 1.0.6dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-05 13:42+0200\n"
+"POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2013-09-22 12:37+0300\n"
 "Last-Translator: Laur Mõtus <laur@povi.ee>\n"
 "Language-Team: Estonian <kde-i18n-doc@kde.org>\n"
@@ -110,11 +110,11 @@ msgstr "Vigane väärtus, ei tohi olla ükski järgnevatest: %(values)s."
 #: src/wtforms/validators.py:698
 #, fuzzy
 #| msgid "This field is required."
-msgid "This field cannot be edited"
+msgid "This field cannot be edited."
 msgstr "Kohustuslik väli."
 
 #: src/wtforms/validators.py:714
-msgid "This field is disabled and cannot have a value"
+msgid "This field is disabled and cannot have a value."
 msgstr ""
 
 #: src/wtforms/csrf/core.py:96
@@ -133,23 +133,23 @@ msgstr "CSRF nurjus"
 msgid "CSRF token expired."
 msgstr "CSRF tunnus on aegunud"
 
-#: src/wtforms/fields/choices.py:135
+#: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
 msgstr "Vigane valik: ei saa teisendada"
 
-#: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
+#: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:148
+#: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
 msgstr "Pole korrektne valik"
 
-#: src/wtforms/fields/choices.py:185
+#: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "Vigane valik: ühte või rohkemat andmesisendit ei saa teisendada"
 
-#: src/wtforms/fields/choices.py:204
+#: src/wtforms/fields/choices.py:214
 #, fuzzy, python-format
 #| msgid "'%(value)s' is not a valid choice for this field."
 msgid "'%(value)s' is not a valid choice for this field."
