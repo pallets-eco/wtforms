@@ -1,14 +1,14 @@
 # Translations template for WTForms.
-# Copyright (C) 2023 WTForms Team
+# Copyright (C) 2024 WTForms Team
 # This file is distributed under the same license as the WTForms project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: WTForms 3.0.1\n"
+"Project-Id-Version: WTForms 3.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-05 13:42+0200\n"
+"POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,11 +107,11 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr ""
 
 #: src/wtforms/validators.py:698
-msgid "This field cannot be edited"
+msgid "This field cannot be edited."
 msgstr ""
 
 #: src/wtforms/validators.py:714
-msgid "This field is disabled and cannot have a value"
+msgid "This field is disabled and cannot have a value."
 msgstr ""
 
 #: src/wtforms/csrf/core.py:96
@@ -130,23 +130,23 @@ msgstr ""
 msgid "CSRF token expired."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:135
+#: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:139 src/wtforms/fields/choices.py:192
+#: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:148
+#: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:185
+#: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
 
-#: src/wtforms/fields/choices.py:204
+#: src/wtforms/fields/choices.py:214
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
