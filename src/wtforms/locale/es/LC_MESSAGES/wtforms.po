@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 1.0\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
-"PO-Revision-Date: 2023-10-06 21:11+0000\n"
+"PO-Revision-Date: 2024-01-15 09:06+0000\n"
 "Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/wtforms/wtforms/"
 "es/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.1-dev\n"
+"X-Generator: Weblate 5.4-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
@@ -110,16 +110,12 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Valor inválido, no puede ser ninguno de: %(values)s."
 
 #: src/wtforms/validators.py:698
-#, fuzzy
-#| msgid "This field cannot be edited"
 msgid "This field cannot be edited."
-msgstr "Este campo no se puede editar"
+msgstr "Este campo no se puede editar."
 
 #: src/wtforms/validators.py:714
-#, fuzzy
-#| msgid "This field is disabled and cannot have a value"
 msgid "This field is disabled and cannot have a value."
-msgstr "Este campo está deshabilitado y no puede tener un valor"
+msgstr "Este campo está desactivado y no puede tener un valor."
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
