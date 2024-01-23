@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 2.0dev\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
-"PO-Revision-Date: 2023-11-25 05:13+0000\n"
+"PO-Revision-Date: 2024-01-24 11:01+0000\n"
 "Last-Translator: bittin1ddc447d824349b2 <bittin@reimu.nl>\n"
 "Language-Team: Swedish <https://hosted.weblate.org/projects/wtforms/wtforms/"
 "sv/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.2.1-rc\n"
+"X-Generator: Weblate 5.4-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
@@ -110,16 +110,12 @@ msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Felaktigt värde, får inte vara något av: %(values)s."
 
 #: src/wtforms/validators.py:698
-#, fuzzy
-#| msgid "This field cannot be edited"
 msgid "This field cannot be edited."
-msgstr "Detta fält kan inte redigeras"
+msgstr "Detta fält kan inte redigeras."
 
 #: src/wtforms/validators.py:714
-#, fuzzy
-#| msgid "This field is disabled and cannot have a value"
 msgid "This field is disabled and cannot have a value."
-msgstr "Det här fältet är inaktiverat och kan inte ha ett värde"
+msgstr "Det här fältet är inaktiverat och kan inte ha ett värde."
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
