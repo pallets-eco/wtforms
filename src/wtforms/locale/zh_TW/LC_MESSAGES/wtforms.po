@@ -6,22 +6,24 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 1.0.3\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
-"PO-Revision-Date: 2013-04-14 00:26+0800\n"
-"Last-Translator: Grey Li <withlihui@gmail.com>\n"
-"Language-Team: zh_TW <ron@hng.tw>\n"
+"PO-Revision-Date: 2024-06-30 03:38+0000\n"
+"Last-Translator: hugoalh <hugoalh@users.noreply.hosted.weblate.org>\n"
+"Language-Team: Chinese (Traditional) <https://hosted.weblate.org/projects/"
+"wtforms/wtforms/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.7-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
 #, python-format
 msgid "Invalid field name '%s'."
-msgstr "'%s' 是無效的欄位名。"
+msgstr "無效的欄位名稱「%s」。"
 
 #: src/wtforms/validators.py:99
 #, python-format
@@ -32,43 +34,43 @@ msgstr "欄位必須與 %(other_name)s 相同。"
 #, python-format
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "欄位必須超過 %(min)d 個字元。"
+msgstr[0] "欄位長度必須至少為 %(min)d 個字元。"
 
 #: src/wtforms/validators.py:151
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "欄位必須少於 %(max)d 個字元。"
+msgstr[0] "欄位長度不能超過 %(max)d 個字元。"
 
 #: src/wtforms/validators.py:157
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] "欄位必須為 %(max)d 個字元。"
+msgstr[0] "欄位長度必須剛好為 %(max)d 個字元。"
 
 #: src/wtforms/validators.py:163
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr "欄位必須介於 %(min)d 至 %(max)d 個字元。"
+msgstr "欄位長度必須介於 %(min)d 和 %(max)d 個字元之間。"
 
 #: src/wtforms/validators.py:216
 #, python-format
 msgid "Number must be at least %(min)s."
-msgstr "數字必須大於 %(min)s。"
+msgstr "數字必須至少為 %(min)s。"
 
 #: src/wtforms/validators.py:219
 #, python-format
 msgid "Number must be at most %(max)s."
-msgstr "數字必須小於 %(max)s。"
+msgstr "數字必須至多為 %(max)s。"
 
 #: src/wtforms/validators.py:222
 #, python-format
 msgid "Number must be between %(min)s and %(max)s."
-msgstr "數字必須介於 %(min)s 至 %(max)s 之間。"
+msgstr "數字必須介於 %(min)s 和 %(max)s 之間。"
 
 #: src/wtforms/validators.py:293 src/wtforms/validators.py:323
 msgid "This field is required."
-msgstr "此欄位為必填。"
+msgstr "此欄位是必需的。"
 
 #: src/wtforms/validators.py:358
 msgid "Invalid input."
@@ -88,7 +90,7 @@ msgstr "無效的 MAC 位址。"
 
 #: src/wtforms/validators.py:540
 msgid "Invalid URL."
-msgstr "無效的 URL。"
+msgstr "無效的網址。"
 
 #: src/wtforms/validators.py:561
 msgid "Invalid UUID."
@@ -97,22 +99,20 @@ msgstr "無效的 UUID。"
 #: src/wtforms/validators.py:594
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr "無效的資料，必須為以下任一：%(values)s。"
+msgstr "無效的值，必須為以下之一：%(values)s。"
 
 #: src/wtforms/validators.py:629
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr "無效的資料，不得為以下任一：%(values)s。"
+msgstr "無效的值，不能為以下之一：%(values)s。"
 
 #: src/wtforms/validators.py:698
-#, fuzzy
-#| msgid "This field is required."
 msgid "This field cannot be edited."
-msgstr "此欄位為必填。"
+msgstr "此欄位不能編輯。"
 
 #: src/wtforms/validators.py:714
 msgid "This field is disabled and cannot have a value."
-msgstr ""
+msgstr "此欄位被停用並且不能有值。"
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
@@ -147,29 +147,26 @@ msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr "無效的選擇：至少有一筆資料無法被強制轉化。"
 
 #: src/wtforms/fields/choices.py:214
-#, fuzzy, python-format
-#| msgid "'%(value)s' is not a valid choice for this field."
+#, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
-msgstr[0] "'%(value)s' 對此欄位為無效的選項。"
+msgstr[0] "「%(value)s」不是此欄位的有效選擇。"
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
-msgstr "不是有效的日期與時間。"
+msgstr "不是有效的日期與時間值。"
 
 #: src/wtforms/fields/datetime.py:77
 msgid "Not a valid date value."
-msgstr "不是有效的日期。"
+msgstr "不是有效的日期值。"
 
 #: src/wtforms/fields/datetime.py:103
 msgid "Not a valid time value."
-msgstr "不是有效的時間。"
+msgstr "不是有效的時間值。"
 
 #: src/wtforms/fields/datetime.py:148
-#, fuzzy
-#| msgid "Not a valid date value."
 msgid "Not a valid week value."
-msgstr "不是有效的日期。"
+msgstr "不是有效的週值。"
 
 #: src/wtforms/fields/numeric.py:82 src/wtforms/fields/numeric.py:92
 msgid "Not a valid integer value."
