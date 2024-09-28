@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: WTForms 1.0.3\n"
 "Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
-"PO-Revision-Date: 2024-05-04 04:07+0000\n"
-"Last-Translator: tabby <tabby4442@gmail.com>\n"
+"PO-Revision-Date: 2024-09-29 13:15+0000\n"
+"Last-Translator: simmon <simmon@nplob.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/wtforms/wtforms/"
 "ko/>\n"
 "Language: ko\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.5.3\n"
+"X-Generator: Weblate 5.8-dev\n"
 "Generated-By: Babel 2.8.0\n"
 
 #: src/wtforms/validators.py:86
@@ -46,7 +46,7 @@ msgstr[0] "이 항목은 %(max)d자 보다 많을 수 없습니다."
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] "이 항목은 정확히 %(max)d자이어야 합니다"
+msgstr[0] "이 항목은 정확히 %(max)d자이어야 합니다."
 
 #: src/wtforms/validators.py:163
 #, python-format
@@ -151,9 +151,9 @@ msgstr "올바르지 않은 선택값입니다: 한개 이상의 값을 변화�
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
 msgstr[0] ""
-"'%(value)s' is not a valid choice for this field.\n"
+"'%(value)s'는 이와 같은 부분을 위해 유효한 선택이 없습니다.\n"
 "\n"
-"'%(value)s' are not valid choices for this field."
+"'%(value)s'는 이와 같은 부분을 위해 유효한 선택들이 없습니다."
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
