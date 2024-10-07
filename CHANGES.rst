@@ -7,6 +7,7 @@ Released 2024-01-06
 
 - Fix :class:`~fields.SelectMultipleField` value coercion on validation.
   :issue:`822` :pr:`823`
+- Move the repository to the pallets-eco organization.
 
 Version 3.1.1
 -------------
