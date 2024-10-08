@@ -22,8 +22,8 @@ dynamic = ["version"]
 [project.urls]
 Documentation = "https://wtforms.readthedocs.io"
 Changes = "https://wtforms.readthedocs.io/changes"
-"Source Code" = "https://github.com/wtforms/wtforms/"
-"Issue Tracker" = "https://github.com/wtforms/wtforms/issues"
+"Source Code" = "https://github.com/pallets-eco/wtforms/"
+"Issue Tracker" = "https://github.com/pallets-eco/wtforms/issues"
 Chat = "https://discord.gg/pallets"
 
 [project.optional-dependencies]

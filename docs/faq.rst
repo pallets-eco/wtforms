@@ -37,10 +37,10 @@ but if it's not listed, it doesn't mean it won't work.
     Special support is there for `SQLAlchemy`_, `Google App Engine`_, and `Django`_
     collections via companion packages.
 
-.. _SQLAlchemy: https://github.com/wtforms/wtforms-sqlalchemy
-.. _Google App Engine: https://github.com/wtforms/wtforms-appengine
-.. _WTForms-Django: https://github.com/wtforms/wtforms-django
-.. _Django: https://github.com/wtforms/wtforms-django
+.. _SQLAlchemy: https://github.com/pallets-eco/wtforms-sqlalchemy
+.. _Google App Engine: https://github.com/pallets-eco/wtforms-appengine
+.. _WTForms-Django: https://github.com/pallets-eco/wtforms-django
+.. _Django: https://github.com/pallets-eco/wtforms-django
 
 Does WTForms support unicode?
 -----------------------------
@@ -67,7 +67,7 @@ WTForms is not that scary. Really. We try to keep it as succinct and readable as
 possible. For bugs and feature requests, you can file a
 ticket on the `project page`_.
 
-.. _project page: https://github.com/wtforms/wtforms
+.. _project page: https://github.com/pallets-eco/wtforms
 
 
 How do I mark in a template when a field is required?
