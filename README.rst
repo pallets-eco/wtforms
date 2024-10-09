@@ -64,4 +64,4 @@ Links
 -   Code: https://github.com/pallets-eco/wtforms
 -   Issue tracker: https://github.com/pallets-eco/wtforms/issues
 -   Discord Chat: https://discord.gg/F65P7Z9
--   Translation: https://hosted.weblate.org/projects/pallets-eco/wtforms/
+-   Translation: https://hosted.weblate.org/projects/wtforms/wtforms/
