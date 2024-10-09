@@ -27,7 +27,9 @@ def test_defaults():
     # Test for possible regression with null data
     form.a.data = None
     assert form.validate()
-    assert list(form.a.iter_choices()) == [(v, l, False, {}) for v, l in form.a.choices]
+    assert list(form.a.iter_choices()) == [
+        (value, label, False, {}) for value, label in form.a.choices
+    ]
 
 
 def test_with_data():
