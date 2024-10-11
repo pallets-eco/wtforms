@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from tests.common import DummyPostData
@@ -12,27 +13,29 @@ def make_form(name="F", **fields):
 class F(Form):
     a = DateTimeField()
     b = DateTimeField(format="%Y-%m-%d %H:%M")
-    c = DateTimeField(format="%-m/%-d/%Y %-I:%M")
+    c = DateTimeField(
+        format="%#m/%#d/%Y %#I:%M" if os.name == "nt" else "%-m/%-d/%Y %-I:%M"
+    )
 
 
 def test_basic():
     d = datetime(2008, 5, 5, 4, 30, 0, 0)
     # Basic test with both inputs
-    form = F(
-        DummyPostData(
-            a=["2008-05-05", "04:30:00"], b=["2008-05-05 04:30"], c=["5/5/2008 4:30"]
-        )
-    )
+    form = F(DummyPostData(a=["2008-05-05", "04:30:00"]))
     assert form.a.data == d
     assert (
         form.a()
         == """<input id="a" name="a" type="datetime" value="2008-05-05 04:30:00">"""
     )
+
+    form = F(DummyPostData(b=["2008-05-05 04:30"]))
     assert form.b.data == d
     assert (
         form.b()
         == """<input id="b" name="b" type="datetime" value="2008-05-05 04:30">"""
     )
+
+    form = F(DummyPostData(c=["5/5/2008 4:30"]))
     assert form.c.data == d
     assert (
         form.c() == """<input id="c" name="c" type="datetime" value="5/5/2008 4:30">"""
