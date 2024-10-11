@@ -34,7 +34,8 @@ class DateTimeField(Field):
     def _value(self):
         if self.raw_data:
             return " ".join(self.raw_data)
-        return self.data and self.data.strftime(self.format[0]) or ""
+        format = self.format[0]
+        return self.data and self.data.strftime(format) or ""
 
     def process_formdata(self, valuelist):
         if not valuelist:

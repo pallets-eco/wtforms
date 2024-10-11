@@ -1,66 +1,37 @@
----
-name: tests
+name: Tests
 on:
   push:
     branches:
       - main
       - '*.x'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
   pull_request:
-    branches:
-      - main
-      - '*.x'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
 jobs:
   tests:
-    name: ${{ matrix.python }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.name || matrix.python }}
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
-        python:
-          - '3.13'
-          - '3.12'
-          - '3.11'
-          - '3.10'
-          - '3.9'
-          - 'pypy-3.10'
+        include:
+          - {python: '3.13'}
+          - {python: '3.12'}
+          - {python: '3.11'}
+          - {python: '3.10'}
+          - {python: '3.9'}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
         with:
           python-version: ${{ matrix.python }}
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
+          allow-prereleases: true
+          cache: pip
       - run: pip install tox
-      - run: tox -e py
-  style:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.13'
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pre-commit
-          key: pre-commit|${{ hashFiles('.pre-commit-config.yaml') }}
-      - run: pip install tox
-      - run: tox -e style
-  docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.13'
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
-      - run: pip install tox
-      - run: tox -e docs
+      - run: tox run -e ${{ matrix.tox || format('py{0}', matrix.python) }}
