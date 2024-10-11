@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from tests.common import DummyPostData
-
 from wtforms.fields import DateTimeLocalField
 from wtforms.form import Form
 

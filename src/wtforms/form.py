@@ -113,7 +113,7 @@ class BaseForm:
         for name, field in self._fields.items():
             field_extra_filters = filters.get(name, [])
 
-            inline_filter = getattr(self, "filter_%s" % name, None)
+            inline_filter = getattr(self, f"filter_{name}", None)
             if inline_filter is not None:
                 field_extra_filters.append(inline_filter)
 

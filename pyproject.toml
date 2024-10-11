@@ -78,30 +78,22 @@ exclude_lines = [
     "pass",
 ]
 
-[tool.flake8]
-# B = bugbear
-# E = pycodestyle errors
-# F = flake8 pyflakes
-# W = pycodestyle warnings
-# B9 = bugbear opinions
-# ISC = implicit-str-concat
-select = ["B", "E", "F", "W", "B9", "ISC"]
-ignore = [
-    # slice notation whitespace, invalid
-    "E203",
-    # line length, handled by bugbear B950
-    "E501",
-    # bare except, handled by bugbear B001
-    "E722",
-    # bin op line break, invalid
-    "W503",
-    # requires 'strict' argument for 'zip'
-    # that needs python >= 3.10
-    "B905",
+[tool.ruff]
+src = ["src"]
+fix = true
+show-fixes = true
+output-format = "full"
+
+[tool.ruff.lint]
+select = [
+    "B",  # flake8-bugbear
+    "E",  # pycodestyle error
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycodestyle warning
 ]
-# up to 88 allowed by bugbear B950
-max-line-length = 80
-per-file-ignores = [
-    # __init__ modules export names
-    "**/__init__.py: F401, F403",
-]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+order-by-type = false

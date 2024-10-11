@@ -1,7 +1,7 @@
 import pytest
 
-from wtforms.fields import SelectFieldBase
 from wtforms.fields import StringField
+from wtforms.fields.choices import SelectFieldBase
 from wtforms.form import Form
 
 

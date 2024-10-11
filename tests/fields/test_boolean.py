@@ -1,5 +1,4 @@
 from tests.common import DummyPostData
-
 from wtforms.fields import BooleanField
 from wtforms.form import Form
 

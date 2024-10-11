@@ -1,5 +1,4 @@
 from tests.common import DummyPostData
-
 from wtforms import validators
 from wtforms.fields import RadioField
 from wtforms.form import Form

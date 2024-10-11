@@ -181,14 +181,14 @@ class Field:
             for validator in validators:
                 if not callable(validator):
                     raise TypeError(
-                        "{} is not a valid validator because it is not "
-                        "callable".format(validator)
+                        f"{validator} is not a valid validator because it is not "
+                        "callable"
                     )
 
                 if inspect.isclass(validator):
                     raise TypeError(
-                        "{} is not a valid validator because it is a class, "
-                        "it should be an instance".format(validator)
+                        f"{validator} is not a valid validator because it is a class, "
+                        "it should be an instance"
                     )
 
     def gettext(self, string):
@@ -399,8 +399,10 @@ class UnboundField:
         return self.field_class(*self.args, **kw)
 
     def __repr__(self):
-        return "<UnboundField({}, {!r}, {!r})>".format(
-            self.field_class.__name__, self.args, self.kwargs
+        return (
+            "<UnboundField("
+            f"{self.field_class.__name__}, {self.args!r}, {self.kwargs!r}"
+            ")>"
         )
 
 
@@ -425,7 +427,8 @@ class Flags:
             for name in dir(self)
             if not name.startswith("_")
         )
-        return "<wtforms.fields.Flags: {%s}>" % ", ".join(flags)
+        flags = ", ".join(flags)
+        return f"<wtforms.fields.Flags: {{{flags}}}>"
 
 
 class Label:

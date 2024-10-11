@@ -1,5 +1,4 @@
 from tests.common import DummyPostData
-
 from wtforms.fields import FileField
 from wtforms.fields import MultipleFileField
 from wtforms.form import Form

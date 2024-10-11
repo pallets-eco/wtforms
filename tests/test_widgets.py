@@ -80,7 +80,7 @@ def test_tablewidget(dummy_field_class):
 
 def test_input_type():
     with pytest.raises(AttributeError):
-        Input().input_type
+        Input().input_type  # noqa: B018
 
     test_input = Input(input_type="test")
     assert test_input.input_type == "test"

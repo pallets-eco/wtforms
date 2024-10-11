@@ -3,7 +3,6 @@ from datetime import datetime
 from decimal import Decimal
 
 from tests.common import DummyPostData
-
 from wtforms import validators
 from wtforms.fields import DateField
 from wtforms.fields import DateTimeField
@@ -41,8 +40,8 @@ def _build_value(key, form_input, expected_html, data=unset_value):
     if data is unset_value:
         data = form_input
     if expected_html.startswith("type="):
-        expected_html = '<input id="{}" name="{}" {} value="{}">'.format(
-            key, key, expected_html, form_input
+        expected_html = (
+            f'<input id="{key}" name="{key}" {expected_html} value="{form_input}">'
         )
     return {
         "key": key,

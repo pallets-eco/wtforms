@@ -111,7 +111,7 @@ class ListWidget:
                 html.append(f"<li>{subfield.label} {subfield()}</li>")
             else:
                 html.append(f"<li>{subfield()} {subfield.label}</li>")
-        html.append("</%s>" % self.html_tag)
+        html.append(f"</{self.html_tag}>")
         return Markup("".join(html))
 
 
@@ -134,15 +134,15 @@ class TableWidget:
         html = []
         if self.with_table_tag:
             kwargs.setdefault("id", field.id)
-            html.append("<table %s>" % html_params(**kwargs))
+            table_params = html_params(**kwargs)
+            html.append(f"<table {table_params}>")
         hidden = ""
         for subfield in field:
             if subfield.type in ("HiddenField", "CSRFTokenField"):
                 hidden += str(subfield)
             else:
                 html.append(
-                    "<tr><th>%s</th><td>%s%s</td></tr>"
-                    % (str(subfield.label), hidden, str(subfield))
+                    f"<tr><th>{subfield.label}</th><td>{hidden}{subfield}</td></tr>"
                 )
                 hidden = ""
         if self.with_table_tag:
@@ -178,7 +178,8 @@ class Input:
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
-        return Markup("<input %s>" % self.html_params(name=field.name, **kwargs))
+        input_params = self.html_params(name=field.name, **kwargs)
+        return Markup(f"<input {input_params}>")
 
 
 class TextInput(Input):
@@ -321,9 +322,10 @@ class TextArea:
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
+        textarea_params = html_params(name=field.name, **kwargs)
+        textarea_innerhtml = escape(field._value())
         return Markup(
-            "<textarea %s>\r\n%s</textarea>"
-            % (html_params(name=field.name, **kwargs), escape(field._value()))
+            f"<textarea {textarea_params}>\r\n{textarea_innerhtml}</textarea>"
         )
 
 
@@ -356,10 +358,12 @@ class Select:
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
-        html = ["<select %s>" % html_params(name=field.name, **kwargs)]
+        select_params = html_params(name=field.name, **kwargs)
+        html = [f"<select {select_params}>"]
         if field.has_groups():
             for group, choices in field.iter_groups():
-                html.append("<optgroup %s>" % html_params(label=group))
+                optgroup_params = html_params(label=group)
+                html.append(f"<optgroup {optgroup_params}>")
                 for choice in choices:
                     if len(choice) == 4:
                         val, label, selected, render_kw = choice
