@@ -1,5 +1,15 @@
 .. currentmodule:: wtforms
 
+Version 3.2.0
+-------------
+
+Unreleased
+
+- Translations update: korean, chinese (traditional), portugese, russian,
+  dutch, kazakh, swedish, turkish, slovak, ukranian, spanish, french.
+- Move the repository to the pallets-eco organization.
+- Stop supporting Python 3.9 and start supporting Python 3.13 :pr:`855`
+
 Version 3.1.2
 -------------
 
@@ -7,8 +17,6 @@ Released 2024-01-06
 
 - Fix :class:`~fields.SelectMultipleField` value coercion on validation.
   :issue:`822` :pr:`823`
-- Move the repository to the pallets-eco organization.
-- Stop supporting Python 3.9 and start supporting Python 3.13 :pr:`855`
 
 Version 3.1.1
 -------------
