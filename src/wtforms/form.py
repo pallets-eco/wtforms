@@ -30,6 +30,7 @@ class BaseForm:
             prefix += "-"
 
         self.meta = meta
+        self._form_error_key = ""
         self._prefix = prefix
         self._fields = OrderedDict()
 
@@ -155,7 +156,7 @@ class BaseForm:
     def errors(self):
         errors = {name: f.errors for name, f in self._fields.items() if f.errors}
         if self.form_errors:
-            errors[None] = self.form_errors
+            errors[self._form_error_key] = self.form_errors
         return errors
 
 
