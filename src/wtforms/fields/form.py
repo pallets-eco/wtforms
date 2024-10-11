@@ -1,6 +1,7 @@
+from wtforms.utils import unset_value
+
 from .. import widgets
 from .core import Field
-from wtforms.utils import unset_value
 
 __all__ = ("FormField",)
 

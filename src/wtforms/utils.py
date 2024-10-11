@@ -1,6 +1,5 @@
 import re
 
-
 # https://docs.python.org/3/library/datetime.html#technical-detail (see NOTE #9)
 _DATETIME_STRIP_ZERO_PADDING_FORMATS_RE = re.compile(
     "%-["

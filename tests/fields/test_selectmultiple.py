@@ -1,6 +1,6 @@
 import pytest
-from tests.common import DummyPostData
 
+from tests.common import DummyPostData
 from wtforms import validators
 from wtforms.fields import SelectField
 from wtforms.fields import SelectMultipleField

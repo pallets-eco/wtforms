@@ -3,7 +3,6 @@ from decimal import ROUND_DOWN
 from decimal import ROUND_UP
 
 from tests.common import DummyPostData
-
 from wtforms.fields import DecimalField
 from wtforms.form import Form
 
