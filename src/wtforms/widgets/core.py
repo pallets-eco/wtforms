@@ -1,5 +1,3 @@
-import warnings
-
 from markupsafe import escape
 from markupsafe import Markup
 
@@ -368,32 +366,12 @@ class Select:
                 optgroup_params = html_params(label=group)
                 html.append(f"<optgroup {optgroup_params}>")
                 for choice in choices:
-                    if len(choice) == 4:
-                        val, label, selected, render_kw = choice
-                    else:
-                        warnings.warn(
-                            "'iter_groups' is expected to return 4 items tuple since "
-                            "wtforms 3.1, this will be mandatory in wtforms 3.2",
-                            DeprecationWarning,
-                            stacklevel=2,
-                        )
-                        val, label, selected = choice
-                        render_kw = {}
+                    val, label, selected, render_kw = choice
                     html.append(self.render_option(val, label, selected, **render_kw))
                 html.append("</optgroup>")
         else:
             for choice in field.iter_choices():
-                if len(choice) == 4:
-                    val, label, selected, render_kw = choice
-                else:
-                    warnings.warn(
-                        "'iter_choices' is expected to return 4 items tuple since "
-                        "wtforms 3.1, this will be mandatory in wtforms 3.2",
-                        DeprecationWarning,
-                        stacklevel=2,
-                    )
-                    val, label, selected = choice
-                    render_kw = {}
+                val, label, selected, render_kw = choice
                 html.append(self.render_option(val, label, selected, **render_kw))
         html.append("</select>")
         return Markup("".join(html))

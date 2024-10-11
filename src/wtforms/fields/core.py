@@ -1,6 +1,5 @@
 import inspect
 import itertools
-import warnings
 
 from markupsafe import escape
 from markupsafe import Markup
@@ -130,17 +129,6 @@ class Field:
 
         for v in itertools.chain(self.validators, [self.widget]):
             flags = getattr(v, "field_flags", {})
-
-            # check for legacy format, remove eventually
-            if isinstance(flags, tuple):  # pragma: no cover
-                warnings.warn(
-                    "Flags should be stored in dicts and not in tuples. "
-                    "The next version of WTForms will abandon support "
-                    "for flags in tuples.",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
-                flags = {flag_name: True for flag_name in flags}
 
             for k, v in flags.items():
                 setattr(self.flags, k, v)
