@@ -15,8 +15,12 @@ Unreleased
 - :class:`~wtforms.validators.NoneOf` and :class:`~wtforms.validators.AnyOf`
   can validate multiple valued fields like :class:`~fields.SelectMultipleField`
   :pr:`538` :pr:`807`
+- ⚠️Breaking change⚠️: Some deprecated code was removed (:pr:`859`):
 
-- Breaking change: The key for form errors moved from :data:`None` to
+  - :class:`~wtforms.Flags` can no longer be tuples. :issue:`467`
+  - `iter_choices` needs a tuple of 4 items :issue:`816`
+
+- ⚠️Breaking change⚠️: The key for form errors moved from :data:`None` to
   empty string `""`. :issue:`829` :pr:`858`
 
 .. note::
