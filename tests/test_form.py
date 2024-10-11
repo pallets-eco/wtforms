@@ -204,7 +204,7 @@ def test_form_level_errors():
     f = F(a=0, b=1)
     assert not f.validate()
     assert ["a + b should be even"] == f.form_errors
-    assert ["a + b should be even"] == f.errors[None]
+    assert ["a + b should be even"] == f.errors[""]
 
 
 def test_field_adding_disabled():

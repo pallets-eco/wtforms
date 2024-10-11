@@ -16,6 +16,14 @@ Unreleased
   can validate multiple valued fields like :class:`~fields.SelectMultipleField`
   :pr:`538` :pr:`807`
 
+- Breaking change: The key for form errors moved from :data:`None` to
+  empty string `""`. :issue:`829` :pr:`858`
+
+.. note::
+   If you need to keep the old behavior you can set the ``_form_error_key``
+   parameter of you form to :data:`None`.
+
+
 Version 3.1.2
 -------------
 
