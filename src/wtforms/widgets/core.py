@@ -387,7 +387,7 @@ class Select:
                     val, label, selected, render_kw = choice
                 else:
                     warnings.warn(
-                        "'iter_groups' is expected to return 4 items tuple since "
+                        "'iter_choices' is expected to return 4 items tuple since "
                         "wtforms 3.1, this will be mandatory in wtforms 3.2",
                         DeprecationWarning,
                         stacklevel=2,
