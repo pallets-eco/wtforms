@@ -7,7 +7,7 @@ Unreleased
 
 - Translations update: korean, chinese (traditional), portugese, russian,
   dutch, kazakh, swedish, turkish, slovak, ukranian, spanish, french.
-- Move the repository to the pallets-eco organization.
+- Move the repository to the pallets-eco organization. :pr:`854`
 - Stop supporting Python 3.9 and start supporting Python 3.13 :pr:`855`
 - Removed `required` flag support from :class:`~fields.HiddenWidget`,
   :class:`~fields.RangeWidget` and :class:`~fields.SelectWidget` to
@@ -15,6 +15,7 @@ Unreleased
 - :class:`~wtforms.validators.NoneOf` and :class:`~wtforms.validators.AnyOf`
   can validate multiple valued fields like :class:`~fields.SelectMultipleField`
   :pr:`538` :pr:`807`
+- Use GHA and pre-commit workflows inspired from Flask. :pr:`856` :pr:`860`
 - ⚠️Breaking change⚠️: Some deprecated code was removed (:pr:`859`):
 
   - :class:`~wtforms.Flags` can no longer be tuples. :issue:`467`
