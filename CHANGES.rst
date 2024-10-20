@@ -3,7 +3,7 @@
 Version 3.2.0
 -------------
 
-Unreleased
+Released 2024-10-20
 
 - Translations update: korean, chinese (traditional), portugese, russian,
   dutch, kazakh, swedish, turkish, slovak, ukranian, spanish, french.
@@ -26,7 +26,7 @@ Unreleased
 
 .. note::
    If you need to keep the old behavior you can set the ``_form_error_key``
-   parameter of you form to :data:`None`.
+   parameter of your form to :data:`None`.
 
 
 Version 3.1.2
