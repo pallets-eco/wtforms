@@ -1,5 +1,12 @@
 .. currentmodule:: wtforms
 
+Version 3.2.1
+-------------
+
+Unreleased
+
+- Fix :class:`~fields.SelectMultipleBase` import. :issue:`861` :pr:`862`
+
 Version 3.2.0
 -------------
 
