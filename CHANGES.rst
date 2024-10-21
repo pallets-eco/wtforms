@@ -3,7 +3,7 @@
 Version 3.2.1
 -------------
 
-Unreleased
+Released 2024-10-21
 
 - Fix :class:`~fields.SelectMultipleBase` import. :issue:`861` :pr:`862`
 
