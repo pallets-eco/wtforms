@@ -34,11 +34,6 @@ with frameworks even better.
     validators.
 -   `WTForms-SQLAlchemy`_ provides ORM-backed fields and form generation
     from SQLAlchemy models.
--   `WTForms-AppEngine`_ provides ORM-backed fields and form generation
-    from AppEnding db/ndb schema
--   `WTForms-Django`_ provides ORM-backed fields and form generation
-    from Django models, as well as integration with Django's I18N
-    support.
 -   `WTForms-Bootstrap5`_ provides Bootstrap 5 favor renderer with
     great customizability.
 -   `Starlette-WTF`_ integrates with Starlette and the FastAPI
@@ -49,8 +44,6 @@ with frameworks even better.
 .. _Flask-WTF: https://flask-wtf.readthedocs.io/
 .. _WTForms-Alchemy: https://wtforms-alchemy.readthedocs.io/
 .. _WTForms-SQLAlchemy: https://github.com/pallets-eco/wtforms-sqlalchemy
-.. _WTForms-AppEngine: https://github.com/pallets-eco/wtforms-appengine
-.. _WTForms-Django: https://github.com/pallets-eco/wtforms-django
 .. _WTForms-Bootstrap5: https://github.com/LaunchPlatform/wtforms-bootstrap5
 .. _Starlette-WTF: https://github.com/muicss/starlette-wtf
 .. _Bootstrap-Flask: https://github.com/helloflask/bootstrap-flask
