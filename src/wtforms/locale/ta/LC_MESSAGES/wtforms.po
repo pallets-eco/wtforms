@@ -6,177 +6,182 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WTForms 3.0.0\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2024-11-04 22:11+0000\n"
+"Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
+"Language-Team: Tamil <https://hosted.weblate.org/projects/wtforms/wtforms/ta/"
+">\n"
 "Language: ta\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.8.2\n"
 "Generated-By: Babel 2.12.1\n"
 
 #: src/wtforms/validators.py:86
 #, python-format
 msgid "Invalid field name '%s'."
-msgstr ""
+msgstr "தவறான புலம் பெயர் '%s'."
 
 #: src/wtforms/validators.py:99
 #, python-format
 msgid "Field must be equal to %(other_name)s."
-msgstr ""
+msgstr "புலம் %(பிற_ பெயர்) கள் சமமாக இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:145
 #, python-format
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "புலம் குறைந்தது %(நிமிடம்) டி எழுத்துக்குறி நீளமாக இருக்க வேண்டும்."
+msgstr[1] "புலம் குறைந்தது %(நிமிடம்) டி எழுத்துக்கள் நீளமாக இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:151
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "புலம் %(அதிகபட்சம்) டி எழுத்தை விட நீளமாக இருக்க முடியாது."
+msgstr[1] "புலம் %(அதிகபட்சம்) டி எழுத்துக்களை விட நீளமாக இருக்க முடியாது."
 
 #: src/wtforms/validators.py:157
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "புலம் சரியாக %(அதிகபட்சம்) டி எழுத்து நீளமாக இருக்க வேண்டும்."
+msgstr[1] "புலம் சரியாக %(அதிகபட்சம்) டி எழுத்துக்கள் நீளமாக இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:163
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
 msgstr ""
+"புலம் %(நிமிடம்) டி மற்றும் %(அதிகபட்சம்) டி எழுத்துக்களுக்கு இடையில் இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:216
 #, python-format
 msgid "Number must be at least %(min)s."
-msgstr ""
+msgstr "எண் குறைந்தது %(நிமிடம்) கள் இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:219
 #, python-format
 msgid "Number must be at most %(max)s."
-msgstr ""
+msgstr "எண் அதிகபட்சம் %(அதிகபட்சம்) கள் இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:222
 #, python-format
 msgid "Number must be between %(min)s and %(max)s."
-msgstr ""
+msgstr "எண் %(நிமிடம்) கள் மற்றும் %(அதிகபட்சம்) கள் இடையே இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:293 src/wtforms/validators.py:323
 msgid "This field is required."
-msgstr ""
+msgstr "இந்த புலம் தேவை."
 
 #: src/wtforms/validators.py:358
 msgid "Invalid input."
-msgstr ""
+msgstr "தவறான உள்ளீடு."
 
 #: src/wtforms/validators.py:422
 msgid "Invalid email address."
-msgstr ""
+msgstr "தவறான மின்னஞ்சல் முகவரி."
 
 #: src/wtforms/validators.py:460
 msgid "Invalid IP address."
-msgstr ""
+msgstr "தவறான ஐபி முகவரி."
 
 #: src/wtforms/validators.py:503
 msgid "Invalid Mac address."
-msgstr ""
+msgstr "தவறான MAC முகவரி."
 
 #: src/wtforms/validators.py:540
 msgid "Invalid URL."
-msgstr ""
+msgstr "தவறான முகவரி."
 
 #: src/wtforms/validators.py:561
 msgid "Invalid UUID."
-msgstr ""
+msgstr "தவறான UUID."
 
 #: src/wtforms/validators.py:594
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr ""
+msgstr "தவறான மதிப்பு, அவற்றில் ஒன்றாக இருக்க வேண்டும்: %(மதிப்புகள்) கள்."
 
 #: src/wtforms/validators.py:629
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr ""
+msgstr "தவறான மதிப்பு, எதுவும் இருக்க முடியாது: %(மதிப்புகள்) கள்."
 
 #: src/wtforms/validators.py:698
 msgid "This field cannot be edited."
-msgstr ""
+msgstr "இந்த புலத்தைத் திருத்த முடியாது."
 
 #: src/wtforms/validators.py:714
 msgid "This field is disabled and cannot have a value."
-msgstr ""
+msgstr "இந்த புலம் முடக்கப்பட்டுள்ளது மற்றும் மதிப்பு இருக்க முடியாது."
 
 #: src/wtforms/csrf/core.py:96
 msgid "Invalid CSRF Token."
-msgstr ""
+msgstr "தவறான சி.எச்.ஆர்.எஃப் கிள்ளாக்கு."
 
 #: src/wtforms/csrf/session.py:63
 msgid "CSRF token missing."
-msgstr ""
+msgstr "சி.எச்.ஆர்.எஃப் கிள்ளாக்கு இல்லை."
 
 #: src/wtforms/csrf/session.py:71
 msgid "CSRF failed."
-msgstr ""
+msgstr "சி.எச்.ஆர்.எஃப் தோல்வியடைந்தது."
 
 #: src/wtforms/csrf/session.py:76
 msgid "CSRF token expired."
-msgstr ""
+msgstr "சி.எச்.ஆர்.எஃப் கிள்ளாக்கு காலாவதியானது."
 
 #: src/wtforms/fields/choices.py:142
 msgid "Invalid Choice: could not coerce."
-msgstr ""
+msgstr "தவறான தேர்வு: கட்டாயப்படுத்த முடியவில்லை."
 
 #: src/wtforms/fields/choices.py:149 src/wtforms/fields/choices.py:203
 msgid "Choices cannot be None."
-msgstr ""
+msgstr "தேர்வுகள் எதுவும் இருக்க முடியாது."
 
 #: src/wtforms/fields/choices.py:155
 msgid "Not a valid choice."
-msgstr ""
+msgstr "சரியான தேர்வு அல்ல."
 
 #: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
 msgstr ""
+"தவறான தேர்வு (கள்): ஒன்று அல்லது அதற்கு மேற்பட்ட தரவு உள்ளீடுகளை கட்டாயப்படுத்த முடியவில்லை."
 
 #: src/wtforms/fields/choices.py:214
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "'%(மதிப்பு) கள்' இந்த புலத்திற்கு சரியான தேர்வு அல்ல."
+msgstr[1] "'%(மதிப்பு) கள்' இந்த புலத்திற்கு சரியான தேர்வுகள் அல்ல."
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
-msgstr ""
+msgstr "சரியான தேதிநேர மதிப்பு அல்ல."
 
 #: src/wtforms/fields/datetime.py:77
 msgid "Not a valid date value."
-msgstr ""
+msgstr "சரியான தேதி மதிப்பு அல்ல."
 
 #: src/wtforms/fields/datetime.py:103
 msgid "Not a valid time value."
-msgstr ""
+msgstr "சரியான நேர மதிப்பு அல்ல."
 
 #: src/wtforms/fields/datetime.py:148
 msgid "Not a valid week value."
-msgstr ""
+msgstr "சரியான வார மதிப்பு அல்ல."
 
 #: src/wtforms/fields/numeric.py:82 src/wtforms/fields/numeric.py:92
 msgid "Not a valid integer value."
-msgstr ""
+msgstr "செல்லுபடியாகும் முழு மதிப்பு அல்ல."
 
 #: src/wtforms/fields/numeric.py:168
 msgid "Not a valid decimal value."
-msgstr ""
+msgstr "செல்லுபடியாகும் தசம மதிப்பு அல்ல."
 
 #: src/wtforms/fields/numeric.py:197
 msgid "Not a valid float value."
-msgstr ""
+msgstr "செல்லுபடியாகும் மிதவை மதிப்பு அல்ல."
