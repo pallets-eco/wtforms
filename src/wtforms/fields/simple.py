@@ -40,7 +40,7 @@ class BooleanField(Field):
 
     def process_data(self, value):
         # this will initialize the bool fields with false_values before setting it
-        self.process_formdata([value]) 
+        self.process_formdata([value])
         # self.data = bool(value)
 
     def process_formdata(self, valuelist):
