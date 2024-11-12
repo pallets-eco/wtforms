@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: WTForms 3.0.0\n"
 "Report-Msgid-Bugs-To: eloi.rivard@nubla.fr\n"
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
-"PO-Revision-Date: 2024-11-04 22:11+0000\n"
+"PO-Revision-Date: 2024-11-13 08:00+0000\n"
 "Last-Translator: தமிழ்நேரம் <anishprabu.t@gmail.com>\n"
 "Language-Team: Tamil <https://hosted.weblate.org/projects/wtforms/wtforms/ta/"
 ">\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.8.2\n"
+"X-Generator: Weblate 5.9-dev\n"
 "Generated-By: Babel 2.12.1\n"
 
 #: src/wtforms/validators.py:86
@@ -28,49 +28,48 @@ msgstr "தவறான புலம் பெயர் '%s'."
 #: src/wtforms/validators.py:99
 #, python-format
 msgid "Field must be equal to %(other_name)s."
-msgstr "புலம் %(பிற_ பெயர்) கள் சமமாக இருக்க வேண்டும்."
+msgstr "புலம் %(other_name)s சமமாக இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:145
 #, python-format
 msgid "Field must be at least %(min)d character long."
 msgid_plural "Field must be at least %(min)d characters long."
-msgstr[0] "புலம் குறைந்தது %(நிமிடம்) டி எழுத்துக்குறி நீளமாக இருக்க வேண்டும்."
-msgstr[1] "புலம் குறைந்தது %(நிமிடம்) டி எழுத்துக்கள் நீளமாக இருக்க வேண்டும்."
+msgstr[0] "புலம் குறைந்தது %(min)d எழுத்துக்குறி நீளமாக இருக்க வேண்டும்."
+msgstr[1] "புலம் குறைந்தது %(min)d எழுத்துக்கள் நீளமாக இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:151
 #, python-format
 msgid "Field cannot be longer than %(max)d character."
 msgid_plural "Field cannot be longer than %(max)d characters."
-msgstr[0] "புலம் %(அதிகபட்சம்) டி எழுத்தை விட நீளமாக இருக்க முடியாது."
-msgstr[1] "புலம் %(அதிகபட்சம்) டி எழுத்துக்களை விட நீளமாக இருக்க முடியாது."
+msgstr[0] "புலம் %(max)d எழுத்தை விட நீளமாக இருக்க முடியாது."
+msgstr[1] "புலம் %(max)d எழுத்துக்களை விட நீளமாக இருக்க முடியாது."
 
 #: src/wtforms/validators.py:157
 #, python-format
 msgid "Field must be exactly %(max)d character long."
 msgid_plural "Field must be exactly %(max)d characters long."
-msgstr[0] "புலம் சரியாக %(அதிகபட்சம்) டி எழுத்து நீளமாக இருக்க வேண்டும்."
-msgstr[1] "புலம் சரியாக %(அதிகபட்சம்) டி எழுத்துக்கள் நீளமாக இருக்க வேண்டும்."
+msgstr[0] "புலம் சரியாக %(max)d எழுத்து நீளமாக இருக்க வேண்டும்."
+msgstr[1] "புலம் சரியாக %(max)d எழுத்துக்கள் நீளமாக இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:163
 #, python-format
 msgid "Field must be between %(min)d and %(max)d characters long."
-msgstr ""
-"புலம் %(நிமிடம்) டி மற்றும் %(அதிகபட்சம்) டி எழுத்துக்களுக்கு இடையில் இருக்க வேண்டும்."
+msgstr "புலம் %(min)d மற்றும் %(max)d எழுத்துக்களுக்கு இடையில் இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:216
 #, python-format
 msgid "Number must be at least %(min)s."
-msgstr "எண் குறைந்தது %(நிமிடம்) கள் இருக்க வேண்டும்."
+msgstr "எண் குறைந்தது %(min)s இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:219
 #, python-format
 msgid "Number must be at most %(max)s."
-msgstr "எண் அதிகபட்சம் %(அதிகபட்சம்) கள் இருக்க வேண்டும்."
+msgstr "எண் அதிகபட்சம் %(max)s இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:222
 #, python-format
 msgid "Number must be between %(min)s and %(max)s."
-msgstr "எண் %(நிமிடம்) கள் மற்றும் %(அதிகபட்சம்) கள் இடையே இருக்க வேண்டும்."
+msgstr "எண் %(min)s மற்றும் %(max)s இடையே இருக்க வேண்டும்."
 
 #: src/wtforms/validators.py:293 src/wtforms/validators.py:323
 msgid "This field is required."
@@ -103,12 +102,12 @@ msgstr "தவறான UUID."
 #: src/wtforms/validators.py:594
 #, python-format
 msgid "Invalid value, must be one of: %(values)s."
-msgstr "தவறான மதிப்பு, அவற்றில் ஒன்றாக இருக்க வேண்டும்: %(மதிப்புகள்) கள்."
+msgstr "தவறான மதிப்பு, அவற்றில் ஒன்றாக இருக்க வேண்டும்: %(values)s."
 
 #: src/wtforms/validators.py:629
 #, python-format
 msgid "Invalid value, can't be any of: %(values)s."
-msgstr "தவறான மதிப்பு, எதுவும் இருக்க முடியாது: %(மதிப்புகள்) கள்."
+msgstr "தவறான மதிப்பு, எதுவும் இருக்க முடியாது: %(values)s."
 
 #: src/wtforms/validators.py:698
 msgid "This field cannot be edited."
@@ -155,8 +154,8 @@ msgstr ""
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
-msgstr[0] "'%(மதிப்பு) கள்' இந்த புலத்திற்கு சரியான தேர்வு அல்ல."
-msgstr[1] "'%(மதிப்பு) கள்' இந்த புலத்திற்கு சரியான தேர்வுகள் அல்ல."
+msgstr[0] "'%(value)s' இந்த புலத்திற்கு சரியான தேர்வு அல்ல."
+msgstr[1] "'%(value)s' இந்த புலத்திற்கு சரியான தேர்வுகள் அல்ல."
 
 #: src/wtforms/fields/datetime.py:51
 msgid "Not a valid datetime value."
