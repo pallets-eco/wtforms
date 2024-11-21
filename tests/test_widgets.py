@@ -175,6 +175,18 @@ def test_select(select_dummy_field):
     )
 
 
+def test_grouped_select(select_dummy_grouped_field):
+    select_dummy_grouped_field.name = "f"
+
+    assert (
+        Select()(select_dummy_grouped_field) == '<select id="" name="f">'
+        '<optgroup label="g1"><option selected value="foo">lfoo</option>'
+        '<option value="bar">lbar</option></optgroup>'
+        '<optgroup label="g2"><option value="baz">lbaz</option></optgroup>'
+        '<option value="abc">labc</option></select>'
+    )
+
+
 def test_render_option():
     # value, label, selected
     assert (
