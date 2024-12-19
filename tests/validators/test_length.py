@@ -58,6 +58,7 @@ def test_length_messages(dummy_form, dummy_field, validator, message):
 
     assert message in str(e.value)
 
+
 @pytest.mark.parametrize("min_v, max_v", [(-1, 5)])
 def test_null_str_pass(min_v, max_v, dummy_form, dummy_field):
     """
@@ -67,6 +68,7 @@ def test_null_str_pass(min_v, max_v, dummy_form, dummy_field):
     dummy_field.data = None
     validator = length(min_v, max_v)
     validator(dummy_form, dummy_field)
+
 
 @pytest.mark.parametrize("min_v, max_v", [(0, 5), (0, -1)])
 def test_null_str_fail(min_v, max_v, dummy_form, dummy_field):
@@ -78,6 +80,7 @@ def test_null_str_fail(min_v, max_v, dummy_form, dummy_field):
     validator = length(min_v, max_v)
     with pytest.raises(ValidationError):
         validator(dummy_form, dummy_field)
+
 
 @pytest.mark.parametrize("min_v, max_v", [(0, 5), (0, -1)])
 def test_empty_str_pass(min_v, max_v, dummy_form, dummy_field):
