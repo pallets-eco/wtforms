@@ -134,7 +134,11 @@ class Length:
             self.field_flags["maxlength"] = self.max
 
     def __call__(self, form, field):
-        length = field.data and len(field.data) or 0
+        if field.data is None:
+            length = -1
+        else:
+            length = len(field.data)
+
         if length >= self.min and (self.max == -1 or length <= self.max):
             return
 
