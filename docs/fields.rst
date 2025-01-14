@@ -233,7 +233,7 @@ refer to a single input from the form.
     Example usage::
 
         class UploadForm(Form):
-            image        = FileField('Image File', [validators.regexp('^[^/\\]\.jpg$')])
+            image        = FileField('Image File', [validators.regexp('^[^/\\]\.jpg$', mode='fullmatch')])
             description  = TextAreaField('Image Description')
 
             def validate_image(form, field):
