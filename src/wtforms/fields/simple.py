@@ -39,7 +39,9 @@ class BooleanField(Field):
             self.false_values = false_values
 
     def process_data(self, value):
-        self.data = bool(value)
+        # this will initialize the bool fields with false_values before setting it
+        self.process_formdata([value])
+        # self.data = bool(value)
 
     def process_formdata(self, valuelist):
         if not valuelist or valuelist[0] in self.false_values:
