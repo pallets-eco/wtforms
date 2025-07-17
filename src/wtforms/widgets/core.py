@@ -343,7 +343,11 @@ class Select:
     It also must provide a `has_groups()` method which tells whether choices
     are divided into groups, and if they do, the field must have an
     `iter_groups()` method that yields tuples of `(label, choices)`, where
-    `choices` is a iterable of `(value, label, selected)` tuples.
+    `choices` is a iterable of `(value, label, selected)` tuples. If `label`
+    is `None`, the choices are rendered next to the groups.
+
+    .. versionadded:: 3.2.1
+       Support for mixture of grouped and ungrouped options.
     """
 
     validation_attrs = ["required", "disabled"]
@@ -363,12 +367,14 @@ class Select:
         html = [f"<select {select_params}>"]
         if field.has_groups():
             for group, choices in field.iter_groups():
-                optgroup_params = html_params(label=group)
-                html.append(f"<optgroup {optgroup_params}>")
+                if group is not None:
+                    optgroup_params = html_params(label=group)
+                    html.append(f"<optgroup {optgroup_params}>")
                 for choice in choices:
                     val, label, selected, render_kw = choice
                     html.append(self.render_option(val, label, selected, **render_kw))
-                html.append("</optgroup>")
+                if group is not None:
+                    html.append("</optgroup>")
         else:
             for choice in field.iter_choices():
                 val, label, selected, render_kw = choice
