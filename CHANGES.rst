@@ -1,5 +1,12 @@
 .. currentmodule:: wtforms
 
+Unreleased
+-------------
+
+Unreleased
+
+- Fix :class:`~validators.Disabled` validation with provided formdata. :pr:`880`
+
 Version 3.2.1
 -------------
 

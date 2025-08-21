@@ -711,7 +711,7 @@ class Disabled:
         self.field_flags = {"disabled": True}
 
     def __call__(self, form, field):
-        if field.raw_data is not None:
+        if field.raw_data:
             raise ValidationError(
                 field.gettext("This field is disabled and cannot have a value.")
             )
