@@ -32,12 +32,22 @@ __all__ = (
     "mac_address",
     "UUID",
     "ValidationError",
+    "ValidatorSetupError",
     "StopValidation",
     "readonly",
     "ReadOnly",
     "disabled",
     "Disabled",
 )
+
+
+class ValidatorSetupError(ValueError):
+    """
+    Raised when a validator is configured improperly.
+    """
+
+    def __init__(self, message="", *args, **kwargs):
+        ValueError.__init__(self, message, *args, **kwargs)
 
 
 class ValidationError(ValueError):
@@ -340,16 +350,36 @@ class Regexp:
         `regex` is not a string.
     :param message:
         Error message to raise in case of a validation error.
+    :param mode:
+        The matching mode to use. Must be one of "search", "match", or
+        "fullmatch". Defaults to "match".
     """
 
-    def __init__(self, regex, flags=0, message=None):
+    _supported_modes = ("search", "match", "fullmatch")
+
+    def __init__(self, regex, flags=0, message=None, mode="match"):
+        self.mode = self._validate_mode(mode)
         if isinstance(regex, str):
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message
 
+    def _validate_mode(self, mode):
+        if mode not in self._supported_modes:
+            raise ValidatorSetupError(
+                "Invalid mode value '{}'. Supported values: {}".format(
+                    mode, ", ".join(self._supported_modes)
+                )
+            )
+        return mode
+
+    def _get_validator(self):
+        return getattr(self.regex, self.mode)
+
     def __call__(self, form, field, message=None):
-        match = self.regex.match(field.data or "")
+        validator = self._get_validator()
+
+        match = validator(field.data or "")
         if match:
             return match
 
