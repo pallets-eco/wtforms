@@ -13,6 +13,8 @@ Version 3.2.1
 Released 2024-10-21
 
 - Fix :class:`~fields.SelectMultipleBase` import. :issue:`861` :pr:`862`
+- Support for mixture of grouped and non-grouped choices in
+  :class:`~widgets.Select`. :pr:`870`
 
 Version 3.2.0
 -------------

@@ -19,6 +19,11 @@ def dummy_field_class():
 
 
 @pytest.fixture
+def dummy_grouped_field_class():
+    return DummyGroupedField
+
+
+@pytest.fixture
 def basic_widget_dummy_field(dummy_field_class):
     return dummy_field_class("foo", name="bar", label="label", id="id")
 
@@ -26,6 +31,17 @@ def basic_widget_dummy_field(dummy_field_class):
 @pytest.fixture
 def select_dummy_field(dummy_field_class):
     return dummy_field_class([("foo", "lfoo", True, {}), ("bar", "lbar", False, {})])
+
+
+@pytest.fixture
+def select_dummy_grouped_field(dummy_grouped_field_class):
+    return dummy_grouped_field_class(
+        {
+            "g1": [("foo", "lfoo", True, {}), ("bar", "lbar", False, {})],
+            "g2": [("baz", "lbaz", False, {})],
+            None: [("abc", "labc", False, {})],
+        }
+    )
 
 
 @pytest.fixture
@@ -85,6 +101,14 @@ class DummyField:
 
     def ngettext(self, singular, plural, n):
         return self._translations.ngettext(singular, plural, n)
+
+
+class DummyGroupedField(DummyField):
+    def iter_groups(self):
+        return self.data.items()
+
+    def has_groups(self):
+        return True
 
 
 class DummyForm(dict):
