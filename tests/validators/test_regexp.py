@@ -189,7 +189,7 @@ def test_regex_raises(re_pattern, re_flags, re_mode, test_v, dummy_form, dummy_f
     """
     kwargs = {
         "regex": re_pattern,
-        "flags": re_flags if re_flags else 0,
+        "flags": re_flags or 0,
         "message": None,
         "mode": re_mode,
     }
