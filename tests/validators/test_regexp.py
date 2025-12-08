@@ -87,7 +87,7 @@ def test_regex_passes(
     """
     kwargs = {
         "regex": re_pattern,
-        "flags": re_flags if re_flags else 0,
+        "flags": re_flags or 0,
         "message": None,
         "mode": re_mode,
     }
