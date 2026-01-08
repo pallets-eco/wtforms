@@ -144,7 +144,7 @@ class FieldList(Field):
         candidates = itertools.chain(ivalues, itertools.repeat(None))
         _fake = type("_fake", (object,), {})
         output = []
-        for field, data in zip(self.entries, candidates):
+        for field, data in zip(self.entries, candidates, strict=False):
             fake_obj = _fake()
             fake_obj.data = data
             field.populate_obj(fake_obj, "data")

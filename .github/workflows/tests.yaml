@@ -21,11 +21,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - {python: '3.14'}
           - {python: '3.13'}
           - {python: '3.12'}
           - {python: '3.11'}
           - {python: '3.10'}
-          - {python: '3.9'}
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
