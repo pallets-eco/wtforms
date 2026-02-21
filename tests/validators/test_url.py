@@ -22,6 +22,11 @@ from wtforms.validators import ValidationError
         "\u0625\u062e\u062a\u0628\u0627\u0631/foo.com",  # Arabic
         "http://उदाहरण.परीक्षा/",  # Hindi
         "http://실례.테스트",  # Hangul
+        "custom+scheme://foobar.dk",  # scheme with +
+        "my.app://foobar.dk",  # scheme with .
+        "my-app://foobar.dk",  # scheme with -
+        "h323://foobar.dk",  # scheme with digits
+        "com.example.app://foobar.dk",  # complex scheme (RFC 8252)
     ],
 )
 def test_valid_url_passes(url_val, dummy_form, dummy_field):
@@ -64,6 +69,7 @@ def test_valid_url_notld_passes(url_val, dummy_form, dummy_field):
         "http://foobar.d",
         "http://foobar.12",
         "http://localhost:abc/a",
+        "123://foobar.dk",  # scheme must start with a letter
     ],
 )
 def test_bad_url_raises(url_val, dummy_form, dummy_field):

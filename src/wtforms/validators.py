@@ -523,7 +523,7 @@ class URL(Regexp):
 
     def __init__(self, require_tld=True, allow_ip=True, message=None):
         regex = (
-            r"^[a-z]+://"
+            r"^[a-z][a-z0-9+\-.]*://"
             r"(?P<host>[^\/\?:]+)"
             r"(?P<port>:[0-9]+)?"
             r"(?P<path>\/.*?)?"

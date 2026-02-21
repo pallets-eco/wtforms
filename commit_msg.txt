@@ -1,0 +1,9 @@
+Fix URL validator scheme regex per RFC 1738
+
+The URL validator regex only accepted lowercase letters in the scheme
+(`^[a-z]+://`), but RFC 1738 allows digits, `+`, `.`, and `-` after
+the first letter. This caused valid URLs like `com.example.app://callback`
+to be rejected.
+
+Changed the regex to `^[a-z][a-z0-9+\-.]*://` to match the RFC spec.
+Added test cases for schemes containing these characters.
