@@ -267,7 +267,28 @@ refer to a single input from the form.
 
 .. autoclass:: MonthField(default field arguments, format='%Y-%m')
 
-.. autoclass:: RadioField(default field arguments, choices=[], coerce=str)
+.. autoclass:: SearchField(default field arguments)
+
+.. autoclass:: StringField(default field arguments)
+
+   .. code-block:: jinja
+
+        {{ form.username(size=30, maxlength=50) }}
+
+.. autoclass:: TelField(default field arguments)
+
+.. autoclass:: TimeField(default field arguments, format='%H:%M')
+
+.. autoclass:: URLField(default field arguments)
+
+Choice Fields
+-------------
+
+.. autoclass:: Choice
+
+.. autoclass:: SelectChoice
+
+.. autoclass:: RadioField(default field arguments, choices=None, coerce=str)
 
     .. code-block:: jinja
 
@@ -281,25 +302,29 @@ refer to a single input from the form.
     Simply outputting the field without iterating its subfields will result in
     a :mdn-tag:`ul` list of radio choices.
 
-.. class:: SelectField(default field arguments, choices=[], coerce=str, option_widget=None, validate_choice=True)
+
+.. class:: SelectField(default field arguments, choices=None, coerce=str, option_widget=None, validate_choice=True)
 
     Select fields take a ``choices`` parameter which is either:
 
-    * a list of ``(value, label)`` or ``(value, label, render_kw)`` tuples.
+    * a list of :class:`Choice`.
       It can also be a list of only values, in which case the value is used
-      as the label. If set, the ``render_kw`` dictionnary will be rendered as
+      as the label. The :class:`Choice` ``render_kw`` mapping is rendered as
       HTML :mdn-tag:`option` parameters. The value can be of any
       type, but because form data is sent to the browser as strings, you
       will need to provide a ``coerce`` function that converts a string
       back to the expected type.
-    * a dictionary of ``{label: list}`` pairs defining groupings of options.
-    * a function taking no argument, and returning either a list or a dictionary.
+    * a function taking no argument, and returning a list of :class:`Choice`.
 
 
     **Select fields with static choice values**::
 
         class PastebinEntry(Form):
-            language = SelectField('Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
+            language = SelectField('Programming Language', choices=[
+                Choice('cpp', 'C++'),
+                Choice('py', 'Python'),
+                Choice('text', 'Plain Text'),
+            ])
 
     Note that the `choices` keyword is evaluated each time the form is
     instantiated, so callables passed as `choices` are re-evaluated per instance.
@@ -309,14 +334,25 @@ refer to a single input from the form.
     option cannot be applied to your problem you may wish to skip choice
     validation (see below).
 
+    **Select fields with ``<optgroup>``**::
+
+        Use :class:`SelectChoice` to assign an option to an ``<optgroup>``.
+
+        class PastebinEntry(Form):
+            language = SelectField('Programming Language', choices=[
+                SelectChoice('cpp', 'C++', optgroup='Compiled'),
+                SelectChoice('rs', 'Rust', optgroup='Compiled'),
+                SelectChoice('py', 'Python', optgroup='Interpreted'),
+                SelectChoice('text', 'Plain Text'),
+            ])
+
     **Select fields with dynamic choice values**::
 
+        def available_groups():
+            return [Choice(g.id, g.name) for g in Group.query.order_by('name')]
+
         class UserDetails(Form):
-            group_id = SelectField(
-                'Group',
-                coerce=int,
-                choices=lambda: [(g.id, g.name) for g in Group.query.order_by('name')],
-            )
+            group_id = SelectField('Group', coerce=int, choices=available_groups)
 
         def edit_user(request, id):
             user = User.query.get(id)
@@ -337,7 +373,11 @@ refer to a single input from the form.
             return value
 
         class NonePossible(Form):
-            my_select_field = SelectField('Select an option', choices=[('1', 'Option 1'), ('2', 'Option 2'), ('None', 'No option')], coerce=coerce_none)
+            my_select_field = SelectField('Select an option', choices=[
+                Choice('1', 'Option 1'),
+                Choice('2', 'Option 2'),
+                Choice('None', 'No option'),
+            ], coerce=coerce_none)
 
     Note when the option None is selected a 'None' str will be passed. By using a coerce
     function the 'None' str will be converted to None.
@@ -362,26 +402,12 @@ refer to a single input from the form.
     a list of fields each representing an option. The rendering of this can be
     further controlled by specifying `option_widget=`.
 
-.. autoclass:: SearchField(default field arguments)
-
-.. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=str, option_widget=None)
+.. autoclass:: SelectMultipleField(default field arguments, choices=None, coerce=str, option_widget=None)
 
    The data on the SelectMultipleField is stored as a list of objects, each of
    which is checked and coerced from the form input.  Any submitted choices
    which are not in the given choices list will cause validation on the field
    to fail.
-
-.. autoclass:: StringField(default field arguments)
-
-   .. code-block:: jinja
-
-        {{ form.username(size=30, maxlength=50) }}
-
-.. autoclass:: TelField(default field arguments)
-
-.. autoclass:: TimeField(default field arguments, format='%H:%M')
-
-.. autoclass:: URLField(default field arguments)
 
 Submit fields
 -------------
@@ -493,7 +519,7 @@ complex data structures such as lists and nested objects can be represented.
     FormField::
 
         class IMForm(Form):
-            protocol = SelectField(choices=[('aim', 'AIM'), ('msn', 'MSN')])
+            protocol = SelectField(choices=[Choice('aim', 'AIM'), Choice('msn', 'MSN')])
             username = StringField()
 
         class ContactForm(Form):

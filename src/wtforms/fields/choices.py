@@ -1,4 +1,6 @@
-import itertools
+import warnings
+from dataclasses import dataclass
+from dataclasses import field
 
 from wtforms import widgets
 from wtforms.fields.core import Field
@@ -6,9 +8,72 @@ from wtforms.validators import ValidationError
 
 __all__ = (
     "SelectField",
+    "Choice",
+    "SelectChoice",
     "SelectMultipleField",
     "RadioField",
 )
+
+
+@dataclass
+class Choice:
+    """
+    A dataclass that represents an available choice for choice fields.
+
+    :param value:
+        The value that will be sent in the request.
+    :param label:
+        The label of the option.
+    :param render_kw:
+        A dict containing HTML attributes that will be rendered
+        with the option.
+    """
+
+    value: str
+    label: str | None = None
+    render_kw: dict | None = None
+    _selected: bool = field(default=False, kw_only=True)
+
+
+@dataclass
+class SelectChoice(Choice):
+    """
+    A :class:`Choice` augmented with an ``<optgroup>`` hint for
+    :class:`SelectField`.
+
+    :param optgroup:
+        The ``<optgroup>`` HTML tag in which the option will be rendered.
+    """
+
+    optgroup: str | None = None
+
+    @classmethod
+    def from_input(cls, input, optgroup=None):
+        if isinstance(input, SelectChoice):
+            if optgroup:
+                input.optgroup = optgroup
+            return input
+
+        if isinstance(input, Choice):
+            return cls(
+                value=input.value,
+                label=input.label,
+                render_kw=input.render_kw,
+                optgroup=optgroup,
+                _selected=input._selected,
+            )
+
+        if isinstance(input, str):
+            return cls(value=input, optgroup=optgroup)
+
+        if isinstance(input, tuple):
+            warnings.warn(
+                "Passing SelectField choices as tuples is deprecated and will be "
+                "removed in wtforms 3.4. Please use Choice or SelectChoice instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            return cls(*input, optgroup=optgroup)
 
 
 class SelectFieldBase(Field):
@@ -30,14 +95,8 @@ class SelectFieldBase(Field):
     def iter_choices(self):
         """
         Provides data for choice widget rendering. Must return a sequence or
-        iterable of (value, label, selected, render_kw) tuples.
+        iterable of SelectChoice.
         """
-        raise NotImplementedError()
-
-    def has_groups(self):
-        return False
-
-    def iter_groups(self):
         raise NotImplementedError()
 
     def __iter__(self):
@@ -50,20 +109,41 @@ class SelectFieldBase(Field):
             _meta=self.meta,
         )
         for i, choice in enumerate(self.iter_choices()):
-            if len(choice) == 4:
-                value, label, checked, render_kw = choice
-            else:
-                value, label, checked = choice
-                render_kw = {}
-
-            opt = self._Option(label=label, id=f"{self.id}-{i}", **opts, **render_kw)
-            opt.process(None, value)
-            opt.checked = checked
+            opt = self._Option(
+                id=f"{self.id}-{i}",
+                label=choice.label or choice.value,
+                **opts,
+            )
+            opt.choice = choice
+            opt.checked = choice._selected
+            opt.process(None, choice.value)
             yield opt
 
-    class _Option(Field):
-        checked = False
+    def choices_from_input(self, choices):
+        if callable(choices):
+            choices = choices()
 
+        if choices is None:
+            return None
+
+        if isinstance(choices, dict):
+            warnings.warn(
+                "Passing SelectField choices in a dict deprecated and will be removed "
+                "in wtforms 3.4. Please pass a list of SelectChoice objects with a "
+                "custom optgroup attribute instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+            return [
+                SelectChoice.from_input(input, optgroup)
+                for optgroup, inputs in choices.items()
+                for input in inputs
+            ]
+
+        return [SelectChoice.from_input(input) for input in choices]
+
+    class _Option(Field):
         def _value(self):
             return str(self.data)
 
@@ -82,46 +162,14 @@ class SelectField(SelectFieldBase):
     ):
         super().__init__(label, validators, **kwargs)
         self.coerce = coerce
-        if callable(choices):
-            choices = choices()
-        if choices is not None:
-            self.choices = choices if isinstance(choices, dict) else list(choices)
-        else:
-            self.choices = None
+        self.choices = self.choices_from_input(choices)
         self.validate_choice = validate_choice
 
     def iter_choices(self):
-        if not self.choices:
-            choices = []
-        elif isinstance(self.choices, dict):
-            choices = list(itertools.chain.from_iterable(self.choices.values()))
-        else:
-            choices = self.choices
-
-        return self._choices_generator(choices)
-
-    def has_groups(self):
-        return isinstance(self.choices, dict)
-
-    def iter_groups(self):
-        if isinstance(self.choices, dict):
-            for label, choices in self.choices.items():
-                yield (label, self._choices_generator(choices))
-
-    def _choices_generator(self, choices):
-        if not choices:
-            _choices = []
-
-        elif isinstance(choices[0], list | tuple):
-            _choices = choices
-
-        else:
-            _choices = zip(choices, choices, strict=False)
-
-        for value, label, *other_args in _choices:
-            selected = self.coerce(value) == self.data
-            render_kw = other_args[0] if len(other_args) else {}
-            yield (value, label, selected, render_kw)
+        choices = self.choices_from_input(self.choices) or []
+        for choice in choices:
+            choice._selected = self.coerce(choice.value) == self.data
+        return choices
 
     def process_data(self, value):
         try:
@@ -146,10 +194,7 @@ class SelectField(SelectFieldBase):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        for _, _, match, *_ in self.iter_choices():
-            if match:
-                break
-        else:
+        if not any(choice._selected for choice in self.iter_choices()):
             raise ValidationError(self.gettext("Not a valid choice."))
 
 
@@ -162,20 +207,12 @@ class SelectMultipleField(SelectField):
 
     widget = widgets.Select(multiple=True)
 
-    def _choices_generator(self, choices):
-        if not choices:
-            _choices = []
-
-        elif isinstance(choices[0], list | tuple):
-            _choices = choices
-
-        else:
-            _choices = zip(choices, choices, strict=False)
-
-        for value, label, *other_args in _choices:
-            selected = self.data is not None and self.coerce(value) in self.data
-            render_kw = other_args[0] if len(other_args) else {}
-            yield (value, label, selected, render_kw)
+    def iter_choices(self):
+        choices = self.choices_from_input(self.choices) or []
+        if self.data:
+            for choice in choices:
+                choice._selected = self.coerce(choice.value) in self.data
+        return choices
 
     def process_data(self, value):
         try:
@@ -200,7 +237,7 @@ class SelectMultipleField(SelectField):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        acceptable = [self.coerce(choice[0]) for choice in self.iter_choices()]
+        acceptable = {self.coerce(choice.value) for choice in self.iter_choices()}
         if any(data not in acceptable for data in self.data):
             unacceptable = [
                 str(data) for data in set(self.data) if data not in acceptable

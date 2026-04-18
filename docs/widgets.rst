@@ -92,13 +92,13 @@ class. For example, here is a widget that renders a
         kwargs.setdefault('type', 'checkbox')
         field_id = kwargs.pop('id', field.id)
         html = ['<ul %s>' % html_params(id=field_id, class_=ul_class)]
-        for value, label, checked, render_kw in field.iter_choices():
-            choice_id = '%s-%s' % (field_id, value)
-            options = dict(kwargs, name=field.name, value=value, id=choice_id)
-            if checked:
+        for choice in field.iter_choices():
+            choice_id = '%s-%s' % (field_id, choice.value)
+            options = dict(kwargs, name=field.name, value=choice.value, id=choice_id)
+            if choice._selected:
                 options['checked'] = 'checked'
             html.append('<li><input %s /> ' % html_params(**options))
-            html.append('<label for="%s">%s</label></li>' % (choice_id, label))
+            html.append('<label for="%s">%s</label></li>' % (choice_id, choice.label))
         html.append('</ul>')
         return ''.join(html)
 

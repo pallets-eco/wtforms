@@ -370,12 +370,7 @@ class Select:
     rendering to make the field useful.
 
     The field must provide an `iter_choices()` method which the widget will
-    call on rendering; this method must yield tuples of
-    `(value, label, selected)` or `(value, label, selected, render_kw)`.
-    It also must provide a `has_groups()` method which tells whether choices
-    are divided into groups, and if they do, the field must have an
-    `iter_groups()` method that yields tuples of `(label, choices)`, where
-    `choices` is a iterable of `(value, label, selected)` tuples.
+    call on rendering; this method must yield :class:`Choice`.
     """
 
     validation_attrs = ["required", "disabled"]
@@ -393,30 +388,35 @@ class Select:
                 kwargs[k] = getattr(flags, k)
         select_params = html_params(name=field.name, **kwargs)
         html = [f"<select {select_params}>"]
-        if field.has_groups():
-            for group, choices in field.iter_groups():
-                optgroup_params = html_params(label=group)
+        choice_groups = self.sort_by_optgroup(field.iter_choices())
+        for optgroup, choices in choice_groups.items():
+            if optgroup:
+                optgroup_params = html_params(label=optgroup)
                 html.append(f"<optgroup {optgroup_params}>")
-                for choice in choices:
-                    val, label, selected, render_kw = choice
-                    html.append(self.render_option(val, label, selected, **render_kw))
+            for choice in choices:
+                html.append(self.render_option(choice))
+            if optgroup:
                 html.append("</optgroup>")
-        else:
-            for choice in field.iter_choices():
-                val, label, selected, render_kw = choice
-                html.append(self.render_option(val, label, selected, **render_kw))
         html.append("</select>")
         return Markup("".join(html))
 
     @classmethod
-    def render_option(cls, value, label, selected, **kwargs):
+    def render_option(cls, choice, **kwargs):
+        value = choice.value
         if isinstance(value, bool):
             value = str(value)
-
-        options = dict(kwargs, value=value)
-        if selected:
+        options = {"value": value, **(choice.render_kw or {}), **kwargs}
+        if choice._selected:
             options["selected"] = True
-        return Markup(f"<option {html_params(**options)}>{escape(label)}</option>")
+        label = escape(choice.label or choice.value)
+        return Markup(f"<option {html_params(**options)}>{label}</option>")
+
+    @classmethod
+    def sort_by_optgroup(cls, choices):
+        optgroups = {}
+        for choice in choices:
+            optgroups.setdefault(choice.optgroup, []).append(choice)
+        return optgroups
 
 
 class Option:
@@ -428,9 +428,7 @@ class Option:
     """
 
     def __call__(self, field, **kwargs):
-        return Select.render_option(
-            field._value(), field.label.text, field.checked, **kwargs
-        )
+        return Select.render_option(field.choice, **kwargs)
 
 
 class SearchInput(Input):
