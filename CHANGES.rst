@@ -69,6 +69,7 @@ Version 3.x.x
   accepting ``user:password@host`` URLs; ``schemes``
   (default ``("http", "https")``) is the allowlist of accepted schemes
   :pr:`847`
+- Add native :class:`DataList` support. :issue:`653`
 
 Version 3.2.2
 -------------

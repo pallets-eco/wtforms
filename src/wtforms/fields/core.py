@@ -43,6 +43,7 @@ class Field:
         widget=None,
         render_kw=None,
         name=None,
+        datalist=None,
         _form=None,
         _prefix="",
         _translations=None,
@@ -133,6 +134,13 @@ class Field:
         if widget is not None:
             self.widget = widget
 
+        self._datalist = None
+        if datalist is not None:
+            if isinstance(datalist, str):
+                self._datalist = datalist
+            else:
+                self._datalist = datalist._clone(id=f"{self.id}-datalist")
+
         for v in itertools.chain(self.validators, [self.widget]):
             flags = getattr(v, "field_flags", {})
 
@@ -168,6 +176,13 @@ class Field:
         even do anything related to HTML.
         """
         return self.meta.render_field(self, kwargs)
+
+    def datalist(self, **kwargs):
+        """Render the inline ``<datalist>`` bound to this field, or
+        empty markup when there is none."""
+        if self._datalist is None or isinstance(self._datalist, str):
+            return Markup("")
+        return self._datalist(self, **kwargs)
 
     @classmethod
     def check_validators(cls, validators):

@@ -5,6 +5,7 @@ __all__ = (
     "Button",
     "CheckboxInput",
     "ColorInput",
+    "DataListWidget",
     "DateInput",
     "DateTimeInput",
     "DateTimeLocalInput",
@@ -152,6 +153,33 @@ class TableWidget:
         return Markup("".join(html))
 
 
+class DataListWidget:
+    """
+    Render a :class:`~wtforms.DataList` as a :mdn-tag:`datalist` element.
+
+    Used as the default widget for :class:`~wtforms.DataList`. Receives
+    the bound :class:`~wtforms.DataList`, the current ``field`` (when
+    rendered from a field), and any HTML attributes to apply to the
+    ``<datalist>`` element. The DataList's ``render_kw`` is merged with
+    the caller's keyword arguments — caller kwargs win, and the
+    DataList's ``id`` always wins over both.
+    """
+
+    def __call__(self, datalist, field=None, **kwargs):
+        render_kw = {clean_key(k): v for k, v in datalist.render_kw.items()}
+        kwargs = {clean_key(k): v for k, v in kwargs.items()}
+        attrs = {**render_kw, "id": datalist.id, **kwargs}
+        options = []
+        for choice in datalist.iter_choices(field):
+            option_attrs = {"value": choice.value}
+            if choice.label is not None:
+                option_attrs["label"] = choice.label
+            if choice.render_kw:
+                option_attrs = {**choice.render_kw, **option_attrs}
+            options.append(f"<option {html_params(**option_attrs)}>")
+        return Markup(f"<datalist {html_params(**attrs)}>{''.join(options)}</datalist>")
+
+
 class Input:
     """
     Render a basic :mdn-tag:`input` field.
@@ -173,6 +201,9 @@ class Input:
         kwargs.setdefault("type", self.input_type)
         if "value" not in kwargs:
             kwargs["value"] = field._value()
+        datalist = getattr(field, "_datalist", None)
+        if datalist is not None and "list" not in kwargs:
+            kwargs["list"] = datalist if isinstance(datalist, str) else datalist.id
         flags = getattr(field, "flags", {})
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:

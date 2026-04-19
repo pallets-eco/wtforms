@@ -454,6 +454,8 @@ WTForms provides boolean and string-based submit controls.
 Convenience Fields
 ------------------
 
+.. currentmodule:: wtforms.fields
+
 .. autoclass:: HiddenField(default field arguments)
 
     HiddenField is useful for providing data from a model or the application to
@@ -560,6 +562,90 @@ complex data structures such as lists and nested objects can be represented.
             last_name   = StringField()
             im_accounts = FieldList(FormField(IMForm))
 
+
+Data Lists
+----------
+
+.. currentmodule:: wtforms
+
+.. class:: DataList(choices=None, *, render_kw=None, widget=None)
+
+    A :mdn-tag:`datalist` of suggestions. Unlike
+    :class:`~wtforms.fields.SelectField`, the
+    input stays a free-form text input: the browser displays the
+    suggestions but the user may type any value. Combine with
+    :class:`~wtforms.validators.AnyOf` if you need a closed set.
+
+    ``choices`` is either a list of :class:`~wtforms.fields.Choice`
+    (or plain strings, in which case the string is used as both value
+    and label), or a callable invoked at render time. The callable
+    may take no argument (``fn()``) for a static list, or ``(field)``
+    to adapt the suggestions to the current field value at each
+    render — convenient for server-side filtering::
+
+        DataList(lambda field: search(field.data))
+
+    **Inline DataList owned by a field**
+
+    Pass a :class:`DataList` instance directly as ``datalist=`` to get
+    a field-owned datalist with a unique id derived from the field's
+    id::
+
+        class F(Form):
+            country = StringField(datalist=DataList(["FR", "US"]))
+
+        {{ form.country() }}
+        {{ form.country.datalist() }}
+
+    ``{{ form.country() }}`` emits the ``<input list="...">`` and
+    ``{{ form.country.datalist() }}`` emits the matching
+    :mdn-tag:`datalist` element. Both calls are explicit, like
+    :attr:`Field.errors` or :attr:`Field.label` — you decide where each
+    piece appears in the DOM.
+
+    Inside a :class:`~wtforms.fields.FieldList`, each entry binds its
+    own clone of the inline :class:`DataList`, so a callable
+    ``choices`` sees each entry's own value::
+
+        class F(Form):
+            items = FieldList(
+                StringField(
+                    datalist=DataList(lambda field: suggest(field.data))
+                ),
+                min_entries=3,
+            )
+
+        {% for entry in form.items %}
+            {{ entry() }}
+            {{ entry.datalist() }}
+        {% endfor %}
+
+    **String references**
+
+    A field may also reference an existing datalist id directly by
+    string::
+
+        class F(Form):
+            field = StringField(datalist="external")
+
+    The ``list="external"`` attribute is emitted as-is — the user is
+    expected to render the :mdn-tag:`datalist` element themselves (in
+    a shared layout, a static template, or another form on the same
+    page). ``field.datalist()`` returns empty markup in this case, so
+    calling it unconditionally in templates is safe.
+
+    **Compatible fields**
+
+    Any field accepts a ``datalist=`` parameter, but only text-based
+    HTML inputs (``text``, ``search``, ``email``, ``tel``, ``url``,
+    ``number``, ``range``, ``color``, date/time inputs) honor the
+    ``list=`` attribute. Passing ``datalist=`` to a
+    :class:`~wtforms.fields.SelectField` or
+    :class:`~wtforms.fields.TextAreaField` is silently ignored by the
+    browser.
+
+
+.. currentmodule:: wtforms.fields
 
 Custom Fields
 -------------
