@@ -8,6 +8,9 @@ Released 2026-05-03
 - Fix :class:`~validators.Disabled` validation with provided formdata. :pr:`880`
 - End support for Python 3.9, start support for Python 3.14. :pr:`883`
 - Add Tamil and Serbian translations.
+- :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
+  consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
+  overrides were silently bypassed for all ``FieldList`` entries.
 
 Version 3.2.1
 -------------

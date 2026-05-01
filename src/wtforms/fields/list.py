@@ -161,14 +161,14 @@ class FieldList(Field):
         self.last_index = index
         name = f"{self.short_name}{self._separator}{index}"
         id = f"{self.id}{self._separator}{index}"
-        field = self.unbound_field.bind(
-            form=None,
+        options = dict(
             name=name,
             prefix=self._prefix,
             id=id,
             _meta=self.meta,
             translations=self._translations,
         )
+        field = self.meta.bind_field(None, self.unbound_field, options)
         field.process(formdata, data)
         self.entries.append(field)
         return field
