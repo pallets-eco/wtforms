@@ -21,6 +21,7 @@ from wtforms.fields.numeric import FloatField
 from wtforms.fields.numeric import IntegerField
 from wtforms.fields.numeric import IntegerRangeField
 from wtforms.fields.simple import BooleanField
+from wtforms.fields.simple import ButtonField
 from wtforms.fields.simple import ColorField
 from wtforms.fields.simple import EmailField
 from wtforms.fields.simple import FileField
@@ -63,6 +64,7 @@ __all__ = [
     "FloatField",
     "IntegerRangeField",
     "DecimalRangeField",
+    "ButtonField",
     "BooleanField",
     "TextAreaField",
     "PasswordField",

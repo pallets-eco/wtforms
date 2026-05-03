@@ -34,6 +34,8 @@ Version 3.x.x
   :issue:`256`
 - :class:`~fields.FieldList` builds entries in the order keys appear in
   ``formdata``, instead of sorting them by numeric index. :issue:`256`
+- Add :class:`~fields.ButtonField` to render ``<button type="submit">``
+  controls with string values. :issue:`784`
 
 Version 3.2.2
 -------------

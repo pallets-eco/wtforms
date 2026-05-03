@@ -15,6 +15,7 @@ Built-in widgets
 ----------------
 
 .. autoclass:: wtforms.widgets.ColorInput
+.. autoclass:: wtforms.widgets.Button
 .. autoclass:: wtforms.widgets.CheckboxInput
 .. autoclass:: wtforms.widgets.DateTimeInput
 .. autoclass:: wtforms.widgets.DateTimeLocalInput
