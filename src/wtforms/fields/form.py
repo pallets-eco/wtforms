@@ -40,8 +40,7 @@ class FormField(Field):
     def process(self, formdata, data=unset_value, extra_filters=None):
         if extra_filters:
             raise TypeError(
-                "FormField cannot take filters, as the encapsulated"
-                "data is not mutable."
+                "FormField cannot take filters, as the encapsulateddata is not mutable."
             )
 
         if data is unset_value:

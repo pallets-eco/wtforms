@@ -6,6 +6,10 @@ strings rendered by WTForms are created and updated by the community. If
 you notice that your locale is missing, or find a translation error,
 please submit a fix.
 
+> **Note:** Translations should be contributed via
+> [Weblate](https://hosted.weblate.org/projects/wtforms/wtforms/). The
+> commands below are intended for local development and maintenance only.
+
 
 Create
 ------
@@ -59,4 +63,5 @@ correct.
 Submit
 ------
 
-To submit your translation, create a pull request on GitHub.
+To submit your translation, please use
+[Weblate](https://hosted.weblate.org/projects/wtforms/wtforms/).

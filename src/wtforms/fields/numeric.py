@@ -144,7 +144,7 @@ class DecimalField(LocaleAwareNumberField):
         if not hasattr(self.data, "quantize"):
             # If for some reason, data is a float or int, then format
             # as we would for floats using string formatting.
-            format = "%%0.%df" % self.places
+            format = f"%.{self.places}f"
             return format % self.data
 
         exp = decimal.Decimal(".1") ** self.places
@@ -199,7 +199,7 @@ class FloatField(Field):
 
 class IntegerRangeField(IntegerField):
     """
-    Represents an ``<input type="range">``.
+    Represents an :mdn-input:`range`.
     """
 
     widget = widgets.RangeInput()
@@ -207,7 +207,7 @@ class IntegerRangeField(IntegerField):
 
 class DecimalRangeField(DecimalField):
     """
-    Represents an ``<input type="range">``.
+    Represents an :mdn-input:`range`.
     """
 
     widget = widgets.RangeInput(step="any")

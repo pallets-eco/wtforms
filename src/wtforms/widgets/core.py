@@ -85,7 +85,7 @@ def html_params(**kwargs):
 
 class ListWidget:
     """
-    Renders a list of fields as a `ul` or `ol` list.
+    Render a list of fields as a :mdn-tag:`ul` or :mdn-tag:`ol`.
 
     This is used for fields which encapsulate many inner fields as subfields.
     The widget will try to iterate the field to get access to the subfields and
@@ -115,10 +115,10 @@ class ListWidget:
 
 class TableWidget:
     """
-    Renders a list of fields as a set of table rows with th/td pairs.
+    Render a list of fields as a :mdn-tag:`table`.
 
-    If `with_table_tag` is True, then an enclosing <table> is placed around the
-    rows.
+    If `with_table_tag` is True, then an enclosing :mdn-tag:`table` is placed
+    around the rows.
 
     Hidden fields will not be displayed with a row, instead the field will be
     pushed into a subsequent table row to ensure XHTML validity. Hidden fields
@@ -152,7 +152,7 @@ class TableWidget:
 
 class Input:
     """
-    Render a basic ``<input>`` field.
+    Render a basic :mdn-tag:`input` field.
 
     This is used as the basis for most of the other input fields.
 
@@ -191,7 +191,7 @@ class Input:
 
 class TextInput(Input):
     """
-    Render a single-line text input.
+    Render a single-line :mdn-input:`text`.
     """
 
     input_type = "text"
@@ -207,7 +207,7 @@ class TextInput(Input):
 
 class PasswordInput(Input):
     """
-    Render a password input.
+    Render an :mdn-input:`password`.
 
     For security purposes, this field will not reproduce the value on a form
     submit by default. To have the value filled in, set `hide_value` to
@@ -235,7 +235,7 @@ class PasswordInput(Input):
 
 class HiddenInput(Input):
     """
-    Render a hidden input.
+    Render an :mdn-input:`hidden`.
     """
 
     input_type = "hidden"
@@ -248,7 +248,7 @@ class HiddenInput(Input):
 
 class CheckboxInput(Input):
     """
-    Render a checkbox.
+    Render an :mdn-input:`checkbox`.
 
     The ``checked`` HTML attribute is set if the field's data is a non-false value.
     """
@@ -264,7 +264,7 @@ class CheckboxInput(Input):
 
 class RadioInput(Input):
     """
-    Render a single radio button.
+    Render a single :mdn-input:`radio` button.
 
     This widget is most commonly used in conjunction with ListWidget or some
     other listing, as singular radio buttons are not very useful.
@@ -280,7 +280,7 @@ class RadioInput(Input):
 
 
 class FileInput(Input):
-    """Render a file chooser input.
+    """Render an :mdn-input:`file`.
 
     :param multiple: allow choosing multiple files
     """
@@ -304,7 +304,7 @@ class FileInput(Input):
 
 class SubmitInput(Input):
     """
-    Renders a submit button.
+    Renders an :mdn-input:`submit`.
 
     The field's label is used as the text of the submit button instead of the
     data on the field.
@@ -320,7 +320,7 @@ class SubmitInput(Input):
 
 class TextArea:
     """
-    Renders a multi-line text area.
+    Renders a multi-line :mdn-tag:`textarea`.
 
     `rows` and `cols` ought to be passed as keyword args when rendering.
     """
@@ -342,7 +342,7 @@ class TextArea:
 
 class Select:
     """
-    Renders a select field.
+    Renders a :mdn-tag:`select` field.
 
     If `multiple` is True, then the `size` property should be specified on
     rendering to make the field useful.
@@ -400,7 +400,7 @@ class Select:
 
 class Option:
     """
-    Renders the individual option from a select field.
+    Render an individual :mdn-tag:`option` from a select field.
 
     This is just a convenience for various custom rendering situations, and an
     option by itself does not constitute an entire field.
@@ -414,7 +414,7 @@ class Option:
 
 class SearchInput(Input):
     """
-    Renders an input with type "search".
+    Render an :mdn-input:`search`.
     """
 
     input_type = "search"
@@ -430,7 +430,7 @@ class SearchInput(Input):
 
 class TelInput(Input):
     """
-    Renders an input with type "tel".
+    Render an :mdn-input:`tel`.
     """
 
     input_type = "tel"
@@ -446,7 +446,7 @@ class TelInput(Input):
 
 class URLInput(Input):
     """
-    Renders an input with type "url".
+    Render an :mdn-input:`url`.
     """
 
     input_type = "url"
@@ -462,7 +462,7 @@ class URLInput(Input):
 
 class EmailInput(Input):
     """
-    Renders an input with type "email".
+    Render an :mdn-input:`email`.
     """
 
     input_type = "email"
@@ -478,7 +478,10 @@ class EmailInput(Input):
 
 class DateTimeInput(Input):
     """
-    Renders an input with type "datetime".
+    Render an ``<input type="datetime">`` control.
+
+    This is a legacy HTML input type. For modern browser support, prefer
+    :class:`DateTimeLocalInput`.
     """
 
     input_type = "datetime"
@@ -487,7 +490,7 @@ class DateTimeInput(Input):
 
 class DateInput(Input):
     """
-    Renders an input with type "date".
+    Render a :mdn-input:`date`.
     """
 
     input_type = "date"
@@ -496,7 +499,7 @@ class DateInput(Input):
 
 class MonthInput(Input):
     """
-    Renders an input with type "month".
+    Render an :mdn-input:`month`.
     """
 
     input_type = "month"
@@ -505,7 +508,7 @@ class MonthInput(Input):
 
 class WeekInput(Input):
     """
-    Renders an input with type "week".
+    Render an :mdn-input:`week`.
     """
 
     input_type = "week"
@@ -514,7 +517,7 @@ class WeekInput(Input):
 
 class TimeInput(Input):
     """
-    Renders an input with type "time".
+    Render a :mdn-input:`time`.
     """
 
     input_type = "time"
@@ -523,7 +526,7 @@ class TimeInput(Input):
 
 class DateTimeLocalInput(Input):
     """
-    Renders an input with type "datetime-local".
+    Render an :mdn-input:`datetime-local`.
     """
 
     input_type = "datetime-local"
@@ -532,7 +535,7 @@ class DateTimeLocalInput(Input):
 
 class NumberInput(Input):
     """
-    Renders an input with type "number".
+    Render an :mdn-input:`number`.
     """
 
     input_type = "number"
@@ -555,7 +558,7 @@ class NumberInput(Input):
 
 class RangeInput(Input):
     """
-    Renders an input with type "range".
+    Render an :mdn-input:`range`.
     """
 
     input_type = "range"
@@ -572,7 +575,7 @@ class RangeInput(Input):
 
 class ColorInput(Input):
     """
-    Renders an input with type "color".
+    Render an :mdn-input:`color`.
     """
 
     input_type = "color"

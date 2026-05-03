@@ -56,9 +56,7 @@ class SelectFieldBase(Field):
                 value, label, checked = choice
                 render_kw = {}
 
-            opt = self._Option(
-                label=label, id="%s-%d" % (self.id, i), **opts, **render_kw
-            )
+            opt = self._Option(label=label, id=f"{self.id}-{i}", **opts, **render_kw)
             opt.process(None, value)
             opt.checked = checked
             yield opt
@@ -114,11 +112,11 @@ class SelectField(SelectFieldBase):
         if not choices:
             _choices = []
 
-        elif isinstance(choices[0], (list, tuple)):
+        elif isinstance(choices[0], list | tuple):
             _choices = choices
 
         else:
-            _choices = zip(choices, choices)
+            _choices = zip(choices, choices, strict=False)
 
         for value, label, *other_args in _choices:
             selected = self.coerce(value) == self.data
@@ -158,8 +156,8 @@ class SelectField(SelectFieldBase):
 class SelectMultipleField(SelectField):
     """
     No different from a normal select field, except this one can take (and
-    validate) multiple choices.  You'll need to specify the HTML `size`
-    attribute to the select field when rendering.
+    validate) multiple choices. You'll need to specify the HTML
+    :mdn-attr:`size` attribute on the :mdn-tag:`select` field when rendering.
     """
 
     widget = widgets.Select(multiple=True)
@@ -168,11 +166,11 @@ class SelectMultipleField(SelectField):
         if not choices:
             _choices = []
 
-        elif isinstance(choices[0], (list, tuple)):
+        elif isinstance(choices[0], list | tuple):
             _choices = choices
 
         else:
-            _choices = zip(choices, choices)
+            _choices = zip(choices, choices, strict=False)
 
         for value, label, *other_args in _choices:
             selected = self.data is not None and self.coerce(value) in self.data
@@ -219,7 +217,7 @@ class SelectMultipleField(SelectField):
 
 class RadioField(SelectField):
     """
-    Like a SelectField, except displays a list of radio buttons.
+    Like a SelectField, except displays a list of :mdn-input:`radio` buttons.
 
     Iterating the field will produce subfields (each containing a label as
     well) in order to allow custom rendering of the individual radio fields.

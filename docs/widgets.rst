@@ -83,8 +83,9 @@ there are errors::
 In the above example, we extended the behavior of the existing
 :class:`TextInput` widget to append a CSS class as needed. However, widgets
 need not extend from an existing widget, and indeed don't even have to be a
-class.  For example, here is a widget that renders a
-:class:`~wtforms.fields.SelectMultipleField` as a collection of checkboxes::
+class. For example, here is a widget that renders a
+:class:`~wtforms.fields.SelectMultipleField` as a collection of
+:mdn-input:`checkbox` controls::
 
     def select_multi_checkbox(field, ul_class='', **kwargs):
         kwargs.setdefault('type', 'checkbox')

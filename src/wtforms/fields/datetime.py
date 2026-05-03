@@ -55,7 +55,7 @@ class DateTimeField(Field):
 class DateField(DateTimeField):
     """
     Same as :class:`~wtforms.fields.DateTimeField`, except stores a
-    :class:`datetime.date`.
+    :class:`datetime.date` and renders as an :mdn-input:`date`.
     """
 
     widget = widgets.DateInput()
@@ -81,7 +81,7 @@ class DateField(DateTimeField):
 class TimeField(DateTimeField):
     """
     Same as :class:`~wtforms.fields.DateTimeField`, except stores a
-    :class:`datetime.time`.
+    :class:`datetime.time` and renders as an :mdn-input:`time`.
     """
 
     widget = widgets.TimeInput()
@@ -107,7 +107,8 @@ class TimeField(DateTimeField):
 class MonthField(DateField):
     """
     Same as :class:`~wtforms.fields.DateField`, except represents a month,
-    stores a :class:`datetime.date` with `day = 1`.
+    stores a :class:`datetime.date` with `day = 1`, and renders as an
+    :mdn-input:`month`.
     """
 
     widget = widgets.MonthInput()
@@ -119,7 +120,8 @@ class MonthField(DateField):
 class WeekField(DateField):
     """
     Same as :class:`~wtforms.fields.DateField`, except represents a week,
-    stores a :class:`datetime.date` of the monday of the given week.
+    stores a :class:`datetime.date` of the monday of the given week, and
+    renders as an :mdn-input:`week`.
     """
 
     widget = widgets.WeekInput()
@@ -152,7 +154,7 @@ class WeekField(DateField):
 class DateTimeLocalField(DateTimeField):
     """
     Same as :class:`~wtforms.fields.DateTimeField`, but represents an
-    ``<input type="datetime-local">``.
+    :mdn-input:`datetime-local`.
     """
 
     widget = widgets.DateTimeLocalInput()

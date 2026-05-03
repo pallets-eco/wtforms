@@ -187,7 +187,7 @@ def test_min_max_entries():
     big_input = ["foo", "flaf", "bar", "baz"]
     with pytest.raises(AssertionError):
         F(a=big_input)
-    pdata = DummyPostData(("a-%d" % i, v) for i, v in enumerate(big_input))
+    pdata = DummyPostData((f"a-{i}", v) for i, v in enumerate(big_input))
     a = F(pdata).a
     assert a.data == ["foo", "flaf", "bar"]
     with pytest.raises(AssertionError):

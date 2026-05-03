@@ -421,7 +421,7 @@ class Flags:
 
 class Label:
     """
-    An HTML form label.
+    An HTML :mdn-tag:`label`.
     """
 
     def __init__(self, field_id, text):

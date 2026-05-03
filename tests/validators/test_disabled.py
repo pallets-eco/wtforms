@@ -16,5 +16,8 @@ def test_disabled():
     )
     assert form.validate()
 
+    form = F(DummyPostData())
+    assert form.validate()
+
     form = F(DummyPostData(disabled=["foobar"]))
     assert not form.validate()

@@ -80,8 +80,7 @@ def test_simple():
         b(
             "decimal",
             "43.5",
-            '<input id="decimal" name="decimal" '
-            'step="any" type="number" value="43.5">',
+            '<input id="decimal" name="decimal" step="any" type="number" value="43.5">',
             Decimal("43.5"),
         ),
         b(
@@ -108,13 +107,13 @@ def test_simple():
     for item in VALUES:
         field = form[item["key"]]
         render_value = field()
-        assert (
-            render_value == item["expected_html"]
-        ), f"Field {item['key']} render mismatch: "
+        assert render_value == item["expected_html"], (
+            f"Field {item['key']} render mismatch: "
+        )
         "{render_value} != {item['expected_html']}"
-        assert (
-            field.data == item["data"]
-        ), "Field {item['key']} data mismatch: {field.data} != {item['data']}"
+        assert field.data == item["data"], (
+            "Field {item['key']} data mismatch: {field.data} != {item['data']}"
+        )
 
 
 class G(Form):

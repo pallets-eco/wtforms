@@ -123,9 +123,9 @@ class Length:
     """
 
     def __init__(self, min=-1, max=-1, message=None):
-        assert (
-            min != -1 or max != -1
-        ), "At least one of `min` or `max` must be specified."
+        assert min != -1 or max != -1, (
+            "At least one of `min` or `max` must be specified."
+        )
         assert max == -1 or min <= max, "`min` cannot be more than `max`."
         self.min = min
         self.max = max
@@ -808,7 +808,7 @@ class Disabled:
         self.field_flags = {"disabled": True}
 
     def __call__(self, form, field):
-        if field.raw_data is not None:
+        if field.raw_data:
             raise ValidationError(
                 field.gettext("This field is disabled and cannot have a value.")
             )

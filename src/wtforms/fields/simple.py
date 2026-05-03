@@ -20,9 +20,10 @@ __all__ = (
 
 class BooleanField(Field):
     """
-    Represents an ``<input type="checkbox">``. Set the ``checked``-status by using the
-    ``default``-option. Any value for ``default``, e.g. ``default="checked"`` puts
-    ``checked`` into the html-element and sets the ``data`` to ``True``
+    Represents an :mdn-input:`checkbox`. Set the ``checked``-status by using
+    the ``default``-option. Any value for ``default``, e.g.
+    ``default="checked"``, puts ``checked`` into the HTML element and sets
+    the ``data`` to ``True``
 
     :param false_values:
         If provided, a sequence of strings each of which is an exact match
@@ -56,7 +57,7 @@ class BooleanField(Field):
 class StringField(Field):
     """
     This field is the base for most of the more complicated fields, and
-    represents an ``<input type="text">``.
+    represents an :mdn-input:`text`.
     """
 
     widget = widgets.TextInput()
@@ -71,7 +72,7 @@ class StringField(Field):
 
 class TextAreaField(StringField):
     """
-    This field represents an HTML ``<textarea>`` and can be used to take
+    This field represents an HTML :mdn-tag:`textarea` and can be used to take
     multi-line input.
     """
 
@@ -80,7 +81,7 @@ class TextAreaField(StringField):
 
 class PasswordField(StringField):
     """
-    A StringField, except renders an ``<input type="password">``.
+    A StringField, except renders an :mdn-input:`password`.
 
     Also, whatever value is accepted by this field is not rendered back
     to the browser like normal fields.
@@ -90,7 +91,7 @@ class PasswordField(StringField):
 
 
 class FileField(Field):
-    """Renders a file upload field.
+    """Renders an :mdn-input:`file` field.
 
     By default, the value will be the filename sent in the form data.
     WTForms **does not** deal with frameworks' file handling capabilities.
@@ -116,9 +117,10 @@ class MultipleFileField(FileField):
 
 class HiddenField(StringField):
     """
-    HiddenField is a convenience for a StringField with a HiddenInput widget.
+    HiddenField is a convenience for a StringField with a
+    :mdn-input:`hidden` widget.
 
-    It will render as an ``<input type="hidden">`` but otherwise coerce to a string.
+    It will render as an :mdn-input:`hidden` but otherwise coerce to a string.
     """
 
     widget = widgets.HiddenInput()
@@ -126,8 +128,8 @@ class HiddenField(StringField):
 
 class SubmitField(BooleanField):
     """
-    Represents an ``<input type="submit">``.  This allows checking if a given
-    submit button has been pressed.
+    Represents an :mdn-input:`submit`. This allows checking if a given submit
+    button has been pressed.
     """
 
     widget = widgets.SubmitInput()
@@ -135,7 +137,7 @@ class SubmitField(BooleanField):
 
 class SearchField(StringField):
     """
-    Represents an ``<input type="search">``.
+    Represents an :mdn-input:`search`.
     """
 
     widget = widgets.SearchInput()
@@ -143,7 +145,7 @@ class SearchField(StringField):
 
 class TelField(StringField):
     """
-    Represents an ``<input type="tel">``.
+    Represents an :mdn-input:`tel`.
     """
 
     widget = widgets.TelInput()
@@ -151,7 +153,7 @@ class TelField(StringField):
 
 class URLField(StringField):
     """
-    Represents an ``<input type="url">``.
+    Represents an :mdn-input:`url`.
     """
 
     widget = widgets.URLInput()
@@ -159,7 +161,7 @@ class URLField(StringField):
 
 class EmailField(StringField):
     """
-    Represents an ``<input type="email">``.
+    Represents an :mdn-input:`email`.
     """
 
     widget = widgets.EmailInput()
@@ -167,7 +169,7 @@ class EmailField(StringField):
 
 class ColorField(StringField):
     """
-    Represents an ``<input type="color">``.
+    Represents an :mdn-input:`color`.
     """
 
     widget = widgets.ColorInput()
