@@ -14,7 +14,13 @@ def test_lazy_proxy_raises(really_lazy_proxy):
     """
     Tests that the validators support lazy translation strings for messages.
     """
-    with pytest.raises(Exception):
+    with pytest.raises(
+        Exception,
+        match=(
+            "Translator function called during form declaration: "
+            "it should be called at response time."
+        ),
+    ):
         str(really_lazy_proxy)
 
 

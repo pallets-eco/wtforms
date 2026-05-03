@@ -1,6 +1,7 @@
 import pytest
-from tests.common import DummyPostData
 
+from tests.common import DummyPostData
+from wtforms import validators
 from wtforms import widgets
 from wtforms.fields import SelectField
 from wtforms.form import Form
@@ -131,6 +132,12 @@ def test_dont_validate_choices():
     assert len(form.a.errors) == 0
 
 
+def test_choices_can_be_none_when_choice_validation_is_disabled():
+    F = make_form(a=SelectField(validate_choice=False))
+    form = F(DummyPostData(a="b"))
+    assert form.validate()
+
+
 def test_choice_shortcut():
     F = make_form(a=SelectField(choices=["foo", "bar"], validate_choice=False))
     form = F(a="bar")
@@ -145,7 +152,7 @@ def test_choice_shortcut_post():
     assert len(form.a.errors) == 0
 
 
-@pytest.mark.parametrize("choices", [[], None])
+@pytest.mark.parametrize("choices", [[], None, {}])
 def test_empty_choice(choices):
     F = make_form(a=SelectField(choices=choices, validate_choice=False))
     form = F(a="bar")
@@ -162,4 +169,117 @@ def test_callable_choices():
     assert list(str(x) for x in form.a) == [
         '<option value="foo">foo</option>',
         '<option selected value="bar">bar</option>',
+    ]
+
+
+def test_requried_flag():
+    F = make_form(
+        c=SelectField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c="a"))
+    assert form.c() == (
+        '<select id="c" name="c" required>'
+        '<option selected value="a">hello</option>'
+        '<option value="b">bye</option>'
+        "</select>"
+    )
+
+
+def test_required_validator():
+    F = make_form(
+        c=SelectField(
+            choices=[("a", "hello"), ("b", "bye")],
+            validators=[validators.InputRequired()],
+        )
+    )
+    form = F(DummyPostData(c="b"))
+    assert form.validate()
+    assert form.c.errors == []
+    form = F()
+    assert form.validate() is False
+    assert form.c.errors == ["This field is required."]
+
+
+def test_render_kw_preserved():
+    F = make_form(
+        a=SelectField(choices=[("foo"), ("bar")], render_kw=dict(disabled=True))
+    )
+    form = F()
+    assert form.a() == (
+        '<select disabled id="a" name="a">'
+        '<option value="foo">foo</option>'
+        '<option value="bar">bar</option>'
+        "</select>"
+    )
+
+
+def test_optgroup():
+    F = make_form(a=SelectField(choices={"hello": [("a", "Foo")]}))
+    form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option selected value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [("a", "Foo", True, {})]
+
+
+def test_optgroup_shortcut():
+    F = make_form(a=SelectField(choices={"hello": ["foo", "bar"]}))
+    form = F(a="bar")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option value="foo">foo</option>'
+        '<option selected value="bar">bar</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("foo", "foo", False, {}),
+        ("bar", "bar", True, {}),
+    ]
+
+
+@pytest.mark.parametrize("choices", [[], ()])
+def test_empty_optgroup(choices):
+    F = make_form(a=SelectField(choices={"hello": choices}))
+    form = F(a="bar")
+    assert '<optgroup label="hello"></optgroup>' in form.a()
+    assert list(form.a.iter_choices()) == []
+
+
+def test_option_render_kw():
+    F = make_form(
+        a=SelectField(choices=[("a", "Foo", {"title": "foobar", "data-foo": "bar"})])
+    )
+    form = F(a="a")
+
+    assert (
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
+    ]
+
+
+def test_optgroup_option_render_kw():
+    F = make_form(
+        a=SelectField(
+            choices={"hello": [("a", "Foo", {"title": "foobar", "data-foo": "bar"})]}
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
     ]

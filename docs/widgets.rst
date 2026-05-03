@@ -27,6 +27,7 @@ Built-in widgets
 .. autoclass:: wtforms.widgets.MonthInput
 .. autoclass:: wtforms.widgets.NumberInput
 .. autoclass:: wtforms.widgets.PasswordInput
+.. autoclass:: wtforms.widgets.RadioInput
 .. autoclass:: wtforms.widgets.RangeInput
 .. autoclass:: wtforms.widgets.SubmitInput
 .. autoclass:: wtforms.widgets.SearchInput
@@ -82,19 +83,23 @@ there are errors::
 In the above example, we extended the behavior of the existing
 :class:`TextInput` widget to append a CSS class as needed. However, widgets
 need not extend from an existing widget, and indeed don't even have to be a
-class.  For example, here is a widget that renders a
-:class:`~wtforms.fields.SelectMultipleField` as a collection of checkboxes::
+class. For example, here is a widget that renders a
+:class:`~wtforms.fields.SelectMultipleField` as a collection of
+:mdn-input:`checkbox` controls::
 
     def select_multi_checkbox(field, ul_class='', **kwargs):
         kwargs.setdefault('type', 'checkbox')
         field_id = kwargs.pop('id', field.id)
         html = ['<ul %s>' % html_params(id=field_id, class_=ul_class)]
-        for value, label, checked in field.iter_choices():
+        for value, label, checked, render_kw in field.iter_choices():
             choice_id = '%s-%s' % (field_id, value)
             options = dict(kwargs, name=field.name, value=value, id=choice_id)
             if checked:
                 options['checked'] = 'checked'
             html.append('<li><input %s /> ' % html_params(**options))
-            html.append('<label for="%s">%s</label></li>' % (field_id, label))
+            html.append('<label for="%s">%s</label></li>' % (choice_id, label))
         html.append('</ul>')
         return ''.join(html)
+
+    class TestForm(Form):
+        tester = SelectMultipleField(choices=my_choices, widget=select_multi_checkbox)

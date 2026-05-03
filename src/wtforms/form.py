@@ -30,6 +30,7 @@ class BaseForm:
             prefix += "-"
 
         self.meta = meta
+        self._form_error_key = ""
         self._prefix = prefix
         self._fields = OrderedDict()
 
@@ -55,19 +56,19 @@ class BaseForm:
         return iter(self._fields.values())
 
     def __contains__(self, name):
-        """ Returns `True` if the named field is a member of this form. """
+        """Returns `True` if the named field is a member of this form."""
         return name in self._fields
 
     def __getitem__(self, name):
-        """ Dict-style access to this form's fields."""
+        """Dict-style access to this form's fields."""
         return self._fields[name]
 
     def __setitem__(self, name, value):
-        """ Bind a field to this form. """
+        """Bind a field to this form."""
         self._fields[name] = value.bind(form=self, name=name, prefix=self._prefix)
 
     def __delitem__(self, name):
-        """ Remove a field from this form. """
+        """Remove a field from this form."""
         del self._fields[name]
 
     def populate_obj(self, obj):
@@ -113,7 +114,7 @@ class BaseForm:
         for name, field in self._fields.items():
             field_extra_filters = filters.get(name, [])
 
-            inline_filter = getattr(self, "filter_%s" % name, None)
+            inline_filter = getattr(self, f"filter_{name}", None)
             if inline_filter is not None:
                 field_extra_filters.append(inline_filter)
 
@@ -155,7 +156,7 @@ class BaseForm:
     def errors(self):
         errors = {name: f.errors for name, f in self._fields.items() if f.errors}
         if self.form_errors:
-            errors[None] = self.form_errors
+            errors[self._form_error_key] = self.form_errors
         return errors
 
 

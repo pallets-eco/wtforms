@@ -1,7 +1,7 @@
 import pytest
 from markupsafe import Markup
-from tests.common import DummyPostData
 
+from tests.common import DummyPostData
 from wtforms import meta
 from wtforms import validators
 from wtforms.fields import Field
@@ -125,15 +125,15 @@ def test_check_validators():
 
     with pytest.raises(
         TypeError,
-        match=fr"{v1} is not a valid validator because it is not callable",
+        match=rf"{v1} is not a valid validator because it is not callable",
     ):
         Field(validators=[v1])
 
     with pytest.raises(
         TypeError,
-        match=r"{} is not a valid validator because "
+        match=rf"{v2} is not a valid validator because "
         "it is a class, it should be an "
-        "instance".format(v2),
+        "instance",
     ):
         Field(validators=[v2])
 

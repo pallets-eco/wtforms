@@ -184,7 +184,7 @@ In addition to providing data using the first two arguments (`formdata` and
 `obj`), you can pass keyword arguments to populate the form. Note though that a
 few names are reserved: `formdata`, `obj`, and `prefix`.
 
-`formdata` takes precendence over `obj`, which itself takes precedence over
+`formdata` takes precedence over `obj`, which itself takes precedence over
 keyword arguments. For example::
 
     def change_username(request):

@@ -135,7 +135,7 @@ The Field base class
     .. attribute:: label
 
         This is a :class:`Label` instance which when evaluated as a string
-        returns an HTML ``<label for="id">`` construct.
+        returns an HTML :mdn-tag:`label` construct.
 
     .. attribute:: default
 
@@ -258,6 +258,8 @@ refer to a single input from the form.
 
 .. autoclass:: IntegerRangeField(default field arguments)
 
+.. autoclass:: MonthField(default field arguments, format='%Y-%m')
+
 .. autoclass:: RadioField(default field arguments, choices=[], coerce=str)
 
     .. code-block:: jinja
@@ -270,17 +272,22 @@ refer to a single input from the form.
         {% endfor %}
 
     Simply outputting the field without iterating its subfields will result in
-    a ``<ul>`` list of radio choices.
+    a :mdn-tag:`ul` list of radio choices.
 
 .. class:: SelectField(default field arguments, choices=[], coerce=str, option_widget=None, validate_choice=True)
 
-    Select fields take a ``choices`` parameter which is either a list of
-    ``(value, label)`` pairs, or a function taking no argument, and returning
-    a list of ``(value, label)`` pairs. It can also be a list of only values, in
-    which case the value is used as the label. The value can be any
-    type, but because form data is sent to the browser as strings, you
-    will need to provide a ``coerce`` function that converts a string
-    back to the expected type.
+    Select fields take a ``choices`` parameter which is either:
+
+    * a list of ``(value, label)`` or ``(value, label, render_kw)`` tuples.
+      It can also be a list of only values, in which case the value is used
+      as the label. If set, the ``render_kw`` dictionnary will be rendered as
+      HTML :mdn-tag:`option` parameters. The value can be of any
+      type, but because form data is sent to the browser as strings, you
+      will need to provide a ``coerce`` function that converts a string
+      back to the expected type.
+    * a dictionary of ``{label: list}`` pairs defining groupings of options.
+    * a function taking no argument, and returning either a list or a dictionary.
+
 
     **Select fields with static choice values**::
 
@@ -308,6 +315,19 @@ refer to a single input from the form.
     `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we
     use :func:`int()` to coerce form data.  The default coerce is
     :func:`str()`.
+
+    **Coerce function example**::
+
+        def coerce_none(value):
+            if value == 'None':
+                return None
+            return value
+
+        class NonePossible(Form):
+            my_select_field = SelectField('Select an option', choices=[('1', 'Option 1'), ('2', 'Option 2'), ('None', 'No option')], coerce=coerce_none)
+
+    Note when the option None is selected a 'None' str will be passed. By using a coerce
+    function the 'None' str will be converted to None.
 
     **Skipping choice validation**::
 
@@ -375,6 +395,8 @@ Convenience Fields
 
         {{ form.textarea(rows=7, cols=90) }}
 
+.. autoclass:: ColorField(default field arguments)
+
 
 Field Enclosures
 ----------------
@@ -411,7 +433,7 @@ complex data structures such as lists and nested objects can be represented.
     :attr:`~wtforms.form.Form.data` dict of the enclosed form. Similarly, the
     `errors` property encapsulate the forms' errors.
 
-.. autoclass:: FieldList(unbound_field, default field arguments, min_entries=0, max_entries=None)
+.. autoclass:: FieldList(unbound_field, default field arguments, min_entries=0, max_entries=None, separator='-')
 
     **Note**: Due to a limitation in how HTML sends values, FieldList cannot enclose
     :class:`BooleanField` or :class:`SubmitField` instances.
@@ -485,7 +507,7 @@ Custom fields can also override the default field constructor if needed to
 provide additional customization::
 
     class BetterTagListField(TagListField):
-        def __init__(self, label='', validators=None, remove_duplicates=True, **kwargs):
+        def __init__(self, label=None, validators=None, remove_duplicates=True, **kwargs):
             super(BetterTagListField, self).__init__(label, validators, **kwargs)
             self.remove_duplicates = remove_duplicates
 
@@ -553,17 +575,15 @@ Additional Helper Classes
         >>> flags.required = True
         >>> 'required' in flags
         True
+        >>> flags.nonexistent
         >>> 'nonexistent' in flags
-        False
-        >>> flags.fake
         False
 
 
 .. class:: Label
 
     On all fields, the `label` property is an instance of this class.
-    Labels can be printed to yield a
-    ``<label for="field_id">Label Text</label>``
+    Labels can be printed to yield a :mdn-tag:`label`
     HTML tag enclosure. Similar to fields, you can also call the label with
     additional html params.
 

@@ -35,7 +35,8 @@ def test_data_required_clobber(dummy_form, dummy_field):
     assert len(dummy_field.errors) == 1
     with pytest.raises(StopValidation):
         validator(dummy_form, dummy_field)
-        assert len(dummy_field.errors) == 0
+
+    assert len(dummy_field.errors) == 0
 
 
 @pytest.mark.parametrize(
@@ -53,7 +54,8 @@ def test_data_required_messages(dummy_form, dummy_field, validator, message):
 
     with pytest.raises(StopValidation) as e:
         validator(dummy_form, dummy_field)
-        assert str(e.value) == message
+
+    assert str(e.value) == message
 
 
 def test_required_passes(dummy_form, dummy_field):

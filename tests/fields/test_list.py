@@ -1,8 +1,8 @@
 from collections import namedtuple
 
 import pytest
-from tests.common import DummyPostData
 
+from tests.common import DummyPostData
 from wtforms import validators
 from wtforms.fields import FieldList
 from wtforms.fields import FormField
@@ -103,6 +103,68 @@ def test_enclosed_subform_custom_name():
     assert o.subforms[0].foo.data == "default"
 
 
+def test_custom_separator():
+    F = make_form(a=FieldList(t, separator="_"))
+
+    pdata = DummyPostData({"a_0": "0_a", "a_1": "1_a"})
+    f = F(pdata)
+    assert f.a[0].data == "0_a"
+    assert f.a[1].data == "1_a"
+
+
+def test_enclosed_subform_list_separator():
+    class Inside(Form):
+        foo = StringField(default="default")
+
+    class Outside(Form):
+        subforms = FieldList(FormField(Inside), min_entries=1, separator="_")
+
+    o = Outside()
+    assert o.subforms[0].foo.data == "default"
+    assert o.subforms[0].foo.name == "subforms_0-foo"
+
+    pdata = DummyPostData({"subforms_0-foo": "0-foo", "subforms_1-foo": "1-foo"})
+    o = Outside(pdata)
+    assert o.subforms[0].foo.data == "0-foo"
+    assert o.subforms[1].foo.data == "1-foo"
+
+
+def test_enclosed_subform_uniform_separators():
+    class Inside(Form):
+        foo = StringField(default="default")
+
+    class Outside(Form):
+        subforms = FieldList(
+            FormField(Inside, separator="_"), min_entries=1, separator="_"
+        )
+
+    o = Outside()
+    assert o.subforms[0].foo.data == "default"
+    assert o.subforms[0].foo.name == "subforms_0_foo"
+
+    pdata = DummyPostData({"subforms_0_foo": "0_foo", "subforms_1_foo": "1_foo"})
+    o = Outside(pdata)
+    assert o.subforms[0].foo.data == "0_foo"
+    assert o.subforms[1].foo.data == "1_foo"
+
+
+def test_enclosed_subform_mixed_separators():
+    class Inside(Form):
+        foo = StringField(default="default")
+
+    class Outside(Form):
+        subforms = FieldList(FormField(Inside, separator="_"), min_entries=1)
+
+    o = Outside()
+    assert o.subforms[0].foo.data == "default"
+    assert o.subforms[0].foo.name == "subforms-0_foo"
+
+    pdata = DummyPostData({"subforms-0_foo": "0_foo", "subforms-1_foo": "1_foo"})
+    o = Outside(pdata)
+    assert o.subforms[0].foo.data == "0_foo"
+    assert o.subforms[1].foo.data == "1_foo"
+
+
 def test_entry_management():
     F = make_form(a=FieldList(t))
     a = F(a=["hello", "bye"]).a
@@ -125,7 +187,7 @@ def test_min_max_entries():
     big_input = ["foo", "flaf", "bar", "baz"]
     with pytest.raises(AssertionError):
         F(a=big_input)
-    pdata = DummyPostData(("a-%d" % i, v) for i, v in enumerate(big_input))
+    pdata = DummyPostData((f"a-{i}", v) for i, v in enumerate(big_input))
     a = F(pdata).a
     assert a.data == ["foo", "flaf", "bar"]
     with pytest.raises(AssertionError):
@@ -161,7 +223,7 @@ def test_validators():
 
 def test_no_filters():
     with pytest.raises(TypeError):
-        FieldList(t, filters=[lambda x: x], _form=Form(), name="foo")
+        FieldList(t, filters=[str], _form=Form(), name="foo")
 
 
 def test_process_prefilled():

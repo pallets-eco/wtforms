@@ -12,7 +12,7 @@ How to Contribute
 WTForms is now on `GitHub`_, so all contributions should be either associated
 with a pull request or with a ticket & patch.
 
-.. _GitHub: https://github.com/wtforms/wtforms
+.. _GitHub: https://github.com/pallets-eco/wtforms
 
 
 Contribution Guidelines
@@ -34,11 +34,11 @@ Code submitted should:
 
 * Use naming schemes consistent with WTForms conventions
 
-* Work on all versions of Python that WTForms currently supports (and
-  python3 without needing 2to3).  Take advantage of `Travis-CI`_ for running
-  tests on all supported Python versions.
+* Work on all versions of Python that WTForms currently supports.  Take
+  advantage of `Github Actions`_ for running tests on all supported Python
+  versions.
 
-.. _Travis-CI: https://travis-ci.org
+.. _Github Actions: https://github.com/pallets-eco/wtforms/actions
 .. _PEP8: https://www.python.org/dev/peps/pep-0008/
 
 
@@ -48,7 +48,7 @@ Note on API compatibility
 WTForms is a very small library, but yet it's possible to break API
 compatibility pretty easily. We are okay with breaking API compatibility
 for compelling features or major changes that we feel are worthwhile
-inclusions to the WTForms core, but realize that any API compatiblity
+inclusions to the WTForms core, but realize that any API compatibility
 break will delay the inclusion of your ticket to the next major release.
 
 Some examples of API compatibility breaks include:
@@ -65,6 +65,6 @@ behaved the same as it did before. This could look something like:
 
 1. Add a keyword arg ``use_locale`` to the constructor
 2. Make the keyword default to ``False`` so the behavior without this arg is
-   identical to the previous bevhavior.
+   identical to the previous behavior.
 3. Add your functionality and make sure all existing DecimalField tests work
    unchanged (and of course add new tests for the new functionality).

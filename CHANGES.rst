@@ -1,9 +1,126 @@
 .. currentmodule:: wtforms
 
+Version 3.2.2
+-------------
+
+Released 2026-05-03
+
+- Fix :class:`~validators.Disabled` validation with provided formdata. :pr:`880`
+- End support for Python 3.9, start support for Python 3.14. :pr:`883`
+- Add Tamil and Serbian translations.
+
+Version 3.2.1
+-------------
+
+Released 2024-10-21
+
+- Fix :class:`~fields.SelectMultipleBase` import. :issue:`861` :pr:`862`
+
+Version 3.2.0
+-------------
+
+Released 2024-10-20
+
+- Translations update: korean, chinese (traditional), portugese, russian,
+  dutch, kazakh, swedish, turkish, slovak, ukranian, spanish, french.
+- Move the repository to the pallets-eco organization. :pr:`854`
+- Stop supporting Python 3.9 and start supporting Python 3.13 :pr:`855`
+- Removed `required` flag support from :class:`~fields.HiddenWidget`,
+  :class:`~fields.RangeWidget` and :class:`~fields.SelectWidget` to
+  conform to W3C :pr:`810`
+- :class:`~wtforms.validators.NoneOf` and :class:`~wtforms.validators.AnyOf`
+  can validate multiple valued fields like :class:`~fields.SelectMultipleField`
+  :pr:`538` :pr:`807`
+- Use GHA and pre-commit workflows inspired from Flask. :pr:`856` :pr:`860`
+- ⚠️Breaking change⚠️: Some deprecated code was removed (:pr:`859`):
+
+  - :class:`~wtforms.Flags` can no longer be tuples. :issue:`467`
+  - `iter_choices` needs a tuple of 4 items :issue:`816`
+
+- ⚠️Breaking change⚠️: The key for form errors moved from :data:`None` to
+  empty string `""`. :issue:`829` :pr:`858`
+
+.. note::
+   If you need to keep the old behavior you can set the ``_form_error_key``
+   parameter of your form to :data:`None`.
+
+
+Version 3.1.2
+-------------
+
+Released 2024-01-06
+
+- Fix :class:`~fields.SelectMultipleField` value coercion on validation.
+  :issue:`822` :pr:`823`
+
+Version 3.1.1
+-------------
+
+Released 2023-11-01
+
+- Display :class:`~wtforms.Flags` values in their repr. :pr:`808`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``choices`` can be `None` if `validate_choice` is `False` :pr:`809`
+- Documentation improvements :pr:`812` :pr:`815` :pr:`817`
+- Unit tests improvements :pr:`813`
+- Python 3.12 support :pr:`818`
+- Restored support for 3-items tuple return value from `iter_choices`
+  :pr:`816`
+
+Version 3.1.0
+-------------
+
+Released 2023-10-10
+
+-   Documentation improvements :pr:`726` :pr:`733` :pr:`749`
+    :pr:`767` :pr:`788` :pr:`789` :pr:`793`
+-   Translation improvements :pr:`732` :pr:`734` :pr:`754`
+-   Implement :class:`~fields.ColorField` :pr:`755`
+-   Delayed import of ``email_validator``. :issue:`727`
+-   ``<option>`` attributes can be passed by the :class:`~fields.SelectField`
+    ``choices`` parameter :issue:`692` :pr:`739`.
+    ⚠️breaking change⚠️: `iter_choices` now returns a tuple of 4 items
+-   Use the standard datetime formats by default for
+    :class:`~fields.DateTimeLocalField`  :pr:`761`
+-   Python 3.11 support :pr:`763`
+-   Added shorter format to :class:`~fields.DateTimeLocalField`
+    defaults :pr:`761`
+-   Stop support for python 3.7 :pr:`794`
+-   Added shorter format to :class:`~fields.WeekField`
+    defaults :pr:`765`
+-   Move to pyproject.toml :pr:`796`
+-   URL validator takes a ``allow_ip`` parameter :pr:`800`
+-   Implement :class:`~validators.ReadOnly` and
+    :class:`~validators.Disabled` `:pr:`788`
+
+Version 3.0.1
+-------------
+
+Released 2021-12-23
+
+-   Fixed :class:`~fields.DateTimeField` and other similar fields can
+    handle multiple formats. :issue:`720` :pr:`721`
+-   Stop support for python 3.6 :pr:`722`
+
 Version 3.0.0
 -------------
 
-Unreleased
+Released 2021-11-07
+
+-   Fixed :class:`~fields.RadioField` validators. :issue:`477` :pr:`615`
+-   :meth:`~fields.FormField.populate_obj` always calls :func:`setattr`
+    :pr:`675`
+-   WTForms has a new logo. :issue:`569` :pr:`689`
+-   Fixed :class:`~fields.RadioField` `render_kw` rendering. :issue:`490`
+    :pr:`628` :pr:`688`
+-   Support for optgroups in :class:`~fields.SelectField` and
+    :class:`~fields.SelectMultipleField`. :issue:`656` :pr:`667`
+-   Minor documentation fix. :issue:`701`
+-   Custom separators for :class:`~fields.FieldList`. :issue:`681` :pr:`694`
+-   :class:`~fields.DateTimeField`, :class:`~fields.DateField` and
+    :class:`~fields.TimeField` support time formats that removes leading
+    zeros. :pr:`703`
+-   Refactoring: split `fields/core.py` and `fields/simple.py` :pr:`710`
 
 Version 3.0.0a1
 ---------------
@@ -38,7 +155,8 @@ Released 2020-11-23
 -   Render attribute names like ``for_`` and ``class_`` are normalized
     consistently so later values override those specified earlier.
     :issue:`449`, :pr:`596`
--   Flags can take non-boolean values. :issue:`406` :pr:`467`
+-   Flags should now be stored in dicts and can take non-boolean values.
+    A ``DeprecationWarning`` is issued when tuples are used. :issue:`406` :pr:`467`
 -   Widgets are HTML5 by default. :issue:`594` :pr:`614`
 -   Fixed a bug when the :class:`~wtforms.fields.core.SelectField` choices
     are list of strings. :pr:`598`
@@ -47,6 +165,8 @@ Released 2020-11-23
     bugfix. :issue:`606` :pr:`642`
 -   Fixed SelectMultipleField validation when using choices list shortcut.
     :issue:`612` :pr:`661`
+-   Removed :meth:`form._get_translations`. Use
+    :meth:`Meta.get_translations <wtforms.meta.DefaultMeta.get_translations>` instead.
 
 
 Version 2.3.3
@@ -185,7 +305,7 @@ Released 2018-06-02
 -   Widgets render the ``required`` attribute when using a validator
     that provides the ``'required'`` flag, such as
     :class:`~validators.DataRequired`. :pr:`361`
--   Fix a compatibility issue with SQLAlchemy 2.1 that caused
+-   Fix a compatibility issue with SQLAlchemy 1.2 that caused
     :class:`~ext.sqlalchemy.fields.QuerySelectField` to fail with
     ``ValueError: too many values to unpack``. :pr:`391`
 
@@ -240,6 +360,7 @@ Released 2014-05-20
 -   Passing ``attr=False`` to WTForms widgets causes the value to be
     ignored.
 -   ``Unique`` validator in ``wtforms.ext.sqlalchemy`` has been removed.
+-   Deprecate ``form._get_translations``. Use ``Meta.get_translations`` instead.
 
 
 Version 1.0.5
