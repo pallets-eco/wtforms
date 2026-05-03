@@ -175,6 +175,16 @@ class Input:
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
+
+        format = getattr(field, "format", None)
+        if format is not None:
+            format = format[0] if isinstance(format, list) else format
+
+            for attr in ("min", "max"):
+                value = kwargs.get(attr)
+                if hasattr(value, "strftime"):
+                    kwargs[attr] = value.strftime(format)
+
         input_params = self.html_params(name=field.name, **kwargs)
         return Markup(f"<input {input_params}>")
 

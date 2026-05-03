@@ -1,5 +1,12 @@
 .. currentmodule:: wtforms
 
+Version 3.x.x
+-------------
+
+Unreleased
+
+- Add :class:`~validators.DateRange`. :pr:`787`
+
 Version 3.2.1
 -------------
 
