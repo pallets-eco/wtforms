@@ -1,3 +1,4 @@
+import warnings
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
@@ -103,7 +104,9 @@ def test_simple():
         formdata[item["key"]] = item["form_input"]
         kw[item["key"]] = item["data"]
 
-    form = F(formdata)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        form = F(formdata)
     for item in VALUES:
         field = form[item["key"]]
         render_value = field()

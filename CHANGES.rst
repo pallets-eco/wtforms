@@ -11,6 +11,7 @@ Version 3.x.x
 - Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
 - Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
   :issue:`775`
+- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831`
 
 Version 3.2.2
 -------------
