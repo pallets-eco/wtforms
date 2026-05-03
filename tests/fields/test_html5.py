@@ -10,6 +10,7 @@ from wtforms.fields import DateTimeLocalField
 from wtforms.fields import DecimalField
 from wtforms.fields import DecimalRangeField
 from wtforms.fields import EmailField
+from wtforms.fields import FloatField
 from wtforms.fields import IntegerField
 from wtforms.fields import IntegerRangeField
 from wtforms.fields import PasswordField
@@ -31,6 +32,7 @@ class F(Form):
     date = DateField()
     dt_local = DateTimeLocalField()
     integer = IntegerField()
+    float = FloatField()
     decimal = DecimalField()
     int_range = IntegerRangeField()
     decimal_range = DecimalRangeField()
@@ -76,6 +78,12 @@ def test_simple():
             "42",
             '<input id="integer" name="integer" type="number" value="42">',
             42,
+        ),
+        b(
+            "float",
+            "1.234",
+            '<input id="float" name="float" step="any" type="number" value="1.234">',
+            1.234,
         ),
         b(
             "decimal",

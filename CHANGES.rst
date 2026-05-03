@@ -1,5 +1,13 @@
 .. currentmodule:: wtforms
 
+Version 3.x.x
+-------------
+
+Unreleased
+
+- Make :class:`~fields.FloatField` render as ``<input type="number">`` with
+  ``step="any"``. :issue:`677` :pr:`679`
+
 Version 3.2.2
 -------------
 
