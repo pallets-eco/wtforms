@@ -9,6 +9,8 @@ Version 3.x.x
 - Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
 - Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
 - Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
+- Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
+  :issue:`775`
 
 Version 3.2.2
 -------------
