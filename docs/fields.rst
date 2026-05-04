@@ -452,7 +452,29 @@ complex data structures such as lists and nested objects can be represented.
     :class:`BooleanField` or :class:`SubmitField` instances.
 
     .. automethod:: append_entry([data])
+    .. automethod:: insert_entry(index[, data])
     .. automethod:: pop_entry
+
+    ``append_entry`` and ``insert_entry`` accept Python object data for the new
+    entry, not submitted formdata. For simple enclosed fields this is usually a
+    scalar value. For ``FieldList(FormField(...))``, this may be a dict or an
+    object that the enclosed form can process, similar to passing ``data`` or
+    ``obj`` when constructing that form.
+
+    **Stable entry identity.** Each entry's ``name``, ``id`` and numeric
+    ``index`` are stable for the lifetime of that entry: ``insert_entry`` and
+    ``pop_entry`` never rename existing entries. As a consequence, popping
+    an entry in the middle leaves a gap in the indices (e.g. ``[a-0, a-1,
+    a-2]`` becomes ``[a-0, a-2]`` after ``pop_entry(1)``). The gap is
+    preserved across formdata round-trips, so client-side code that holds
+    references to a given entry's HTML name or id can rely on those
+    identifiers not changing under its feet.
+
+    Each entry exposes its numeric ``index`` (the integer in its HTML
+    ``name`` / ``id``) as :attr:`Field.index`. Use it when you need a
+    stable identifier for a specific entry across operations: a position
+    in :attr:`entries` is volatile (an :meth:`insert_entry` or
+    :meth:`pop_entry` shifts later positions), but ``index`` is not.
 
     .. attribute:: entries
 
@@ -461,8 +483,8 @@ complex data structures such as lists and nested objects can be represented.
         FieldList works as expected, and proxies to the enclosed entries list.
 
         **Do not** resize the entries list directly, this will result in
-        undefined behavior. See `append_entry` and `pop_entry` for ways you can
-        manipulate the list.
+        undefined behavior. See `append_entry`, `insert_entry`, and `pop_entry`
+        for ways you can manipulate the list.
 
     .. automethod:: __iter__
     .. automethod:: __len__
