@@ -7,6 +7,7 @@ Version 3.x.x
   consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
   overrides were silently bypassed for all ``FieldList`` entries.
 - Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
+- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
 
 Version 3.2.2
 -------------

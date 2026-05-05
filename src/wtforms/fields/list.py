@@ -68,6 +68,7 @@ class FieldList(Field):
                 " them on the enclosed field."
             )
 
+        self.last_index = -1
         self.entries = []
         if data is unset_value or not data:
             try:

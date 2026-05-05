@@ -243,6 +243,24 @@ def test_process_prefilled():
     assert form.a.data == data
 
 
+def test_process_resets_last_index():
+    F = make_form(a=FieldList(t, min_entries=1))
+    form = F()
+
+    assert form.a.last_index == 0
+    assert [entry.name for entry in form.a.entries] == ["a-0"]
+
+    form.a.process(None, ["foo", "bar"])
+    assert form.a.last_index == 1
+    assert [entry.name for entry in form.a.entries] == ["a-0", "a-1"]
+    assert form.a.data == ["foo", "bar"]
+
+    form.a.process(None, ["baz"])
+    assert form.a.last_index == 0
+    assert [entry.name for entry in form.a.entries] == ["a-0"]
+    assert form.a.data == ["baz"]
+
+
 def test_errors():
     F = make_form(a=FieldList(t))
     form = F(DummyPostData({"a-0": ["a"], "a-1": ""}))
