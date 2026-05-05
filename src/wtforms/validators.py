@@ -374,6 +374,9 @@ class Email:
         (Default False).
     :param check_deliverability:
         Perform domain name resolution check (Default False).
+    :param test_environment:
+        Allow `test` and `*.test` domain names, and disable DNS-based
+        deliverability checks (Default False).
     :param allow_smtputf8:
         Fail validation for addresses that would require SMTPUTF8
         (Default True).
@@ -387,12 +390,14 @@ class Email:
         message=None,
         granular_message=False,
         check_deliverability=False,
+        test_environment=False,
         allow_smtputf8=True,
         allow_empty_local=False,
     ):
         self.message = message
         self.granular_message = granular_message
         self.check_deliverability = check_deliverability
+        self.test_environment = test_environment
         self.allow_smtputf8 = allow_smtputf8
         self.allow_empty_local = allow_empty_local
 
@@ -410,6 +415,7 @@ class Email:
             email_validator.validate_email(
                 field.data,
                 check_deliverability=self.check_deliverability,
+                test_environment=self.test_environment,
                 allow_smtputf8=self.allow_smtputf8,
                 allow_empty_local=self.allow_empty_local,
             )

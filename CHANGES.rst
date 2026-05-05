@@ -6,6 +6,7 @@ Version 3.x.x
 - :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
   consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
   overrides were silently bypassed for all ``FieldList`` entries.
+- Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
 
 Version 3.2.2
 -------------
