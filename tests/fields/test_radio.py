@@ -22,6 +22,7 @@ def test_radio_field():
     assert form.a.data == "a"
     assert form.b.data is None
     assert form.validate() is False
+    assert form.a.label() == "<label>A</label>"
     assert form.a() == (
         '<ul id="a">'
         '<li><input checked id="a-0" name="a" type="radio" value="a"> '
@@ -42,6 +43,11 @@ def test_radio_field():
         '<input checked id="a-0" name="a" type="radio" value="a">',
         '<input id="a-1" name="a" type="radio" value="b">',
     ]
+
+
+def test_radio_field_label_for_can_be_overridden():
+    form = F()
+    assert form.a.label(for_="custom-id") == '<label for="custom-id">A</label>'
 
 
 def test_text_coercion():

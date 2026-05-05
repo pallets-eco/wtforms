@@ -225,3 +225,7 @@ class RadioField(SelectField):
 
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.RadioInput()
+
+    def __init__(self, label=None, validators=None, **kwargs):
+        super().__init__(label, validators, **kwargs)
+        self.label.field_id = False
