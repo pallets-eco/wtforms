@@ -8,6 +8,7 @@ Version 3.x.x
   overrides were silently bypassed for all ``FieldList`` entries.
 - Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
 - Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
+- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
 
 Version 3.2.2
 -------------
