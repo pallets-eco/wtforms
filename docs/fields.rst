@@ -220,6 +220,13 @@ refer to a single input from the form.
 
 .. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
+    .. warning::
+        :class:`DateTimeField` renders ``<input type="datetime">``, which is
+        obsolete in HTML and not broadly supported by browsers. Use
+        :class:`DateTimeLocalField` instead.
+
+        :class:`DateTimeField` is deprecated and will be removed in WTForms 3.4.
+
 .. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
 .. autoclass:: DecimalField(default field arguments, places=2, rounding=None, use_locale=False, number_format=None)
