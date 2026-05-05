@@ -105,3 +105,12 @@ def test_datetimefield_subclasses_do_not_warn():
     with warnings.catch_warnings():
         warnings.simplefilter("error", DeprecationWarning)
         F()
+
+
+def test_invalid_value_message():
+    F = make_form(
+        a=DateTimeLocalField(invalid_value_message="Enter a complete date and time.")
+    )
+    form = F(DummyPostData(a=["2020-03-04"]))
+    assert not form.validate()
+    assert form.a.errors == ["Enter a complete date and time."]

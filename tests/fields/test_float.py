@@ -30,3 +30,12 @@ def test_float_field():
     form = F(b=9.0)
     assert form.b.data == 9.0
     assert form.b._value() == "9.0"
+
+
+def test_invalid_value_message():
+    class G(Form):
+        a = FloatField(invalid_value_message="Enter a number with a decimal point.")
+
+    form = G(DummyPostData(a=["x"]))
+    assert not form.validate()
+    assert form.a.errors == ["Enter a number with a decimal point."]

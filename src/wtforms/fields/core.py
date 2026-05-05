@@ -39,6 +39,7 @@ class Field:
         description="",
         id=None,
         default=None,
+        invalid_value_message=None,
         widget=None,
         render_kw=None,
         name=None,
@@ -69,6 +70,9 @@ class Field:
         :param default:
             The default value to assign to the field, if no form or object
             input is provided. May be a callable.
+        :param invalid_value_message:
+            Optional custom message used when processing submitted or Python
+            data fails because the value is invalid for this field.
         :param widget:
             If provided, overrides the widget used to render the field.
         :param dict render_kw:
@@ -107,6 +111,7 @@ class Field:
 
         self.default = default
         self.description = description
+        self.invalid_value_message = invalid_value_message
         self.render_kw = render_kw
         self.filters = filters
         self.flags = Flags()

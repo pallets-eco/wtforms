@@ -33,3 +33,12 @@ def test_invalid_data():
     assert 1 == len(form.a.process_errors)
     assert 1 == len(form.a.errors)
     assert "Not a valid week value." == form.a.process_errors[0]
+
+
+def test_invalid_value_message():
+    class G(Form):
+        a = WeekField(invalid_value_message="Enter a week as YYYY-Www.")
+
+    form = G(DummyPostData(a=["bogus"]))
+    assert not form.validate()
+    assert form.a.errors == ["Enter a week as YYYY-Www."]

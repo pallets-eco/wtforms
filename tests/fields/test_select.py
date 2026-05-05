@@ -138,6 +138,31 @@ def test_validate_choices_when_empty():
     assert form.a.errors[0] == "Not a valid choice."
 
 
+def test_invalid_value_message():
+    F = make_form(
+        a=SelectField(
+            choices=[Choice(1, "Foo")],
+            coerce=int,
+            invalid_value_message="Submitted value could not be parsed.",
+        )
+    )
+    form = F(DummyPostData(a=["x"]))
+    assert not form.validate()
+    assert form.a.errors == ["Submitted value could not be parsed."]
+
+
+def test_invalid_choice_message():
+    F = make_form(
+        a=SelectField(
+            choices=[Choice("a", "Foo")],
+            invalid_choice_message="Pick one of the available options.",
+        )
+    )
+    form = F(DummyPostData(a=["b"]))
+    assert not form.validate()
+    assert form.a.errors == ["Pick one of the available options."]
+
+
 def test_validate_choices_when_none():
     F = make_form(a=SelectField())
     form = F(DummyPostData(a="b"))
