@@ -1,5 +1,6 @@
 import datetime
 import warnings
+from collections.abc import Callable
 
 from wtforms import widgets
 from wtforms.fields.core import Field
@@ -169,11 +170,34 @@ class DateTimeLocalField(DateTimeField):
     """
     Same as :class:`~wtforms.fields.DateTimeField`, but represents an
     :mdn-input:`datetime-local`.
+
+    :param tz:
+        Optional timezone associated with the input. The HTML
+        ``datetime-local`` widget always renders and submits a naive
+        local datetime; ``tz`` declares the zone in which that local
+        datetime should be interpreted. Accepts:
+
+        - ``None`` (default): legacy behavior, :attr:`data` is naive.
+        - a :class:`datetime.tzinfo` instance: parsed values get this
+          zone attached, and aware values rendered through the field
+          are converted to it before being formatted.
+        - a callable returning a :class:`datetime.tzinfo` (or ``None``):
+          resolved on each access, useful when the zone depends on the
+          request context (e.g. user preferences). Returning ``None``
+          falls back to the naive behavior.
+
+        No correction is applied for DST gaps or overlaps — submitted
+        values are annotated as-is via ``replace(tzinfo=...)``.
     """
 
     widget = widgets.DateTimeLocalInput()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self,
+        *args,
+        tz: datetime.tzinfo | Callable[[], datetime.tzinfo | None] | None = None,
+        **kwargs,
+    ):
         kwargs.setdefault(
             "format",
             [
@@ -184,3 +208,30 @@ class DateTimeLocalField(DateTimeField):
             ],
         )
         super().__init__(*args, **kwargs)
+        self.tz = tz
+
+    def _resolve_tz(self):
+        return self.tz() if callable(self.tz) else self.tz
+
+    def _value(self):
+        """Render :attr:`data`, converting aware values to ``tz`` and stripping
+        the zone before formatting."""
+        if self.raw_data:
+            return " ".join(self.raw_data)
+
+        if not self.data:
+            return ""
+
+        value = self.data
+        tz = self._resolve_tz()
+        if tz is not None and value.tzinfo is not None:
+            value = value.astimezone(tz).replace(tzinfo=None)
+
+        return value.strftime(self.format[0])
+
+    def process_formdata(self, valuelist):
+        """Parse the submitted value and annotate it with ``tz`` if set."""
+        super().process_formdata(valuelist)
+        tz = self._resolve_tz()
+        if tz is not None and self.data is not None:
+            self.data = self.data.replace(tzinfo=tz)
