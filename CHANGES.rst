@@ -14,6 +14,9 @@ Version 3.x.x
 - Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
   :issue:`775`
 - Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831`
+- Accept :class:`uuid.UUID` instances in the :class:`~validators.UUID` validator,
+  and translate unexpected types into :class:`~validators.ValidationError`
+  instead of letting :class:`TypeError` escape. :issue:`549` :pr:`769`
 
 Version 3.2.2
 -------------
