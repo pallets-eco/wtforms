@@ -18,7 +18,8 @@ Version 3.x.x
   and translate unexpected types into :class:`~validators.ValidationError`
   instead of letting :class:`TypeError` escape. :issue:`549` :pr:`769`
 - Escape double quotes in :class:`~markupsafe.Markup` attribute values
-  passed to :func:`~widgets.html_params`. :issue:`801`
+  passed to :func:`~widgets.html_params`, and return a
+  :class:`~markupsafe.Markup`. :issue:`801`
 
 Version 3.2.2
 -------------
