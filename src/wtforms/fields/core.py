@@ -57,9 +57,10 @@ class Field:
         :param filters:
             A sequence of callable which are run by :meth:`~Field.process`
             to filter or transform the input data. For example
-            ``StringForm(filters=[str.strip, str.upper])``.
+            ``StringForm(filters=[lambda x: x.strip() if x is not None else x])``.
             Note that filters are applied after processing the default and
-            incoming data, but before validation.
+            incoming data, but before validation. Filters should handle
+            empty values such as `None`.
         :param description:
             A description for the field, typically used for help text.
         :param id:

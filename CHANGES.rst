@@ -24,6 +24,7 @@ Version 3.x.x
 - Escape double quotes in :class:`~markupsafe.Markup` attribute values
   passed to :func:`~widgets.html_params`, and return a
   :class:`~markupsafe.Markup`. :issue:`801`
+- Clarify documentation about filters. :issue:`859`
 
 Version 3.2.2
 -------------
