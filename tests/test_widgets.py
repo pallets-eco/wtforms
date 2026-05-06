@@ -130,12 +130,28 @@ def test_checkbox_input(basic_widget_dummy_field):
     assert "checked" not in CheckboxInput()(basic_widget_dummy_field)
 
 
+def test_checkbox_input_kwarg_overrides_data(basic_widget_dummy_field):
+    """Render-time ``checked`` kwargs must take precedence over ``field.data``."""
+    basic_widget_dummy_field.data = True
+    assert "checked" not in CheckboxInput()(basic_widget_dummy_field, checked=False)
+    basic_widget_dummy_field.data = False
+    assert "checked" in CheckboxInput()(basic_widget_dummy_field, checked=True)
+
+
 def test_radio_input(basic_widget_dummy_field):
     basic_widget_dummy_field.checked = True
     expected = '<input checked id="id" name="bar" type="radio" value="foo">'
     assert RadioInput()(basic_widget_dummy_field) == expected
     basic_widget_dummy_field.checked = False
     assert RadioInput()(basic_widget_dummy_field) == expected.replace(" checked", "")
+
+
+def test_radio_input_kwarg_overrides_checked(basic_widget_dummy_field):
+    """Render-time ``checked`` kwargs must take precedence over ``field.checked``."""
+    basic_widget_dummy_field.checked = True
+    assert "checked" not in RadioInput()(basic_widget_dummy_field, checked=False)
+    basic_widget_dummy_field.checked = False
+    assert "checked" in RadioInput()(basic_widget_dummy_field, checked=True)
 
 
 def test_textarea(basic_widget_dummy_field):
