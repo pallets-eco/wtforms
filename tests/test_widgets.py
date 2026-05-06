@@ -44,6 +44,14 @@ def test_quoting():
     assert html_params(foo='hi&bye"quot') == 'foo="hi&amp;bye&#34;quot"'
 
 
+def test_quoting_markup_value():
+    """Double quotes in a Markup value must still be escaped in the attribute."""
+    assert (
+        html_params(data_render=Markup('<a href="#"></a>'))
+        == 'data-render="<a href=&quot;#&quot;></a>"'
+    )
+
+
 def test_listwidget(dummy_field_class):
     # ListWidget just expects an iterable of field-like objects as its
     # 'field' so that is what we will give it
