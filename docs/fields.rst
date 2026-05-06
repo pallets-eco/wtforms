@@ -301,27 +301,33 @@ refer to a single input from the form.
         class PastebinEntry(Form):
             language = SelectField('Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
 
-    Note that the `choices` keyword is only evaluated once, so if you want to make
-    a dynamic drop-down list, you'll want to assign the choices list to the field
-    after instantiation. Any submitted choices which are not in the given choices
-    list will cause validation on the field to fail. If this option cannot be
-    applied to your problem you may wish to skip choice validation (see below).
+    Note that the `choices` keyword is evaluated each time the form is
+    instantiated, so callables passed as `choices` are re-evaluated per instance.
+    For dynamic options, either pass a callable to `choices` or assign
+    `field.choices` after instantiation. Any submitted choices which are not in
+    the given choices list will cause validation on the field to fail. If this
+    option cannot be applied to your problem you may wish to skip choice
+    validation (see below).
 
     **Select fields with dynamic choice values**::
 
         class UserDetails(Form):
-            group_id = SelectField('Group', coerce=int)
+            group_id = SelectField(
+                'Group',
+                coerce=int,
+                choices=lambda: [(g.id, g.name) for g in Group.query.order_by('name')],
+            )
 
         def edit_user(request, id):
             user = User.query.get(id)
             form = UserDetails(request.POST, obj=user)
-            form.group_id.choices = [(g.id, g.name) for g in Group.query.order_by('name')]
 
-    Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField`
-    constructor, but rather created the list in the view function. Also, the
-    `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we
-    use :func:`int()` to coerce form data.  The default coerce is
-    :func:`str()`.
+    Note we passed a callable to `choices` rather than a static list; it is
+    invoked each time the form is instantiated, producing fresh options per
+    request. If the choices depend on data only available in the view, you can
+    instead assign `form.group_id.choices` after instantiation. The `coerce`
+    keyword arg to :class:`~wtforms.fields.SelectField` says that we use
+    :func:`int()` to coerce form data. The default coerce is :func:`str()`.
 
     **Coerce function example**::
 
