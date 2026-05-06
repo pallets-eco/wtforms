@@ -25,6 +25,9 @@ Version 3.x.x
   passed to :func:`~widgets.html_params`, and return a
   :class:`~markupsafe.Markup`. :issue:`801`
 - Clarify documentation about filters. :issue:`859`
+- Let render-time ``checked`` kwargs take precedence over the field's value
+  in :class:`~widgets.CheckboxInput` and :class:`~widgets.RadioInput`.
+  :issue:`706`
 
 Version 3.2.2
 -------------

@@ -249,7 +249,7 @@ class CheckboxInput(Input):
 
     def __call__(self, field, **kwargs):
         if getattr(field, "checked", field.data):
-            kwargs["checked"] = True
+            kwargs.setdefault("checked", True)
         return super().__call__(field, **kwargs)
 
 
@@ -266,7 +266,7 @@ class RadioInput(Input):
 
     def __call__(self, field, **kwargs):
         if field.checked:
-            kwargs["checked"] = True
+            kwargs.setdefault("checked", True)
         return super().__call__(field, **kwargs)
 
 
