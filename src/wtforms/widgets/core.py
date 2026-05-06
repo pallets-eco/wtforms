@@ -546,21 +546,13 @@ class NumberInput(Input):
         return super().__call__(field, **kwargs)
 
 
-class RangeInput(Input):
+class RangeInput(NumberInput):
     """
     Render an :mdn-input:`range`.
     """
 
     input_type = "range"
     validation_attrs = ["disabled", "max", "min", "step"]
-
-    def __init__(self, step=None):
-        self.step = step
-
-    def __call__(self, field, **kwargs):
-        if self.step is not None:
-            kwargs.setdefault("step", self.step)
-        return super().__call__(field, **kwargs)
 
 
 class ColorInput(Input):

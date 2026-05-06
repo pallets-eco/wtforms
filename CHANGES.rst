@@ -3,10 +3,17 @@
 Version 3.x.x
 -------------
 
-Unreleased
-
 - Make :class:`~fields.FloatField` render as ``<input type="number">`` with
   ``step="any"``. :issue:`677` :pr:`679`
+- :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
+  consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
+  overrides were silently bypassed for all ``FieldList`` entries.
+- Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
+- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
+- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
+- Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
+  :issue:`775`
+- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831`
 
 Version 3.2.2
 -------------

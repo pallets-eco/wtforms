@@ -441,8 +441,9 @@ class Label:
             kwargs.setdefault("for", self.field_id)
 
         attributes = widgets.html_params(**kwargs)
+        attributes = f" {attributes}" if attributes else ""
         text = escape(text or self.text)
-        return Markup(f"<label {attributes}>{text}</label>")
+        return Markup(f"<label{attributes}>{text}</label>")
 
     def __repr__(self):
         return f"Label({self.field_id!r}, {self.text!r})"

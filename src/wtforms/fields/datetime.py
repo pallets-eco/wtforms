@@ -1,4 +1,5 @@
 import datetime
+import warnings
 
 from wtforms import widgets
 from wtforms.fields.core import Field
@@ -20,6 +21,11 @@ class DateTimeField(Field):
     several formats. If ``format`` is a list, any input value matching any
     format will be accepted, and the first format in the list will be used
     to produce HTML values.
+
+    .. deprecated:: 3.2.3
+       ``DateTimeField`` renders ``<input type="datetime">``, which is
+       obsolete. Use :class:`DateTimeLocalField` instead. ``DateTimeField``
+       will be removed in WTForms 3.4.
     """
 
     widget = widgets.DateTimeInput()
@@ -28,6 +34,14 @@ class DateTimeField(Field):
         self, label=None, validators=None, format="%Y-%m-%d %H:%M:%S", **kwargs
     ):
         super().__init__(label, validators, **kwargs)
+        if type(self) is DateTimeField:
+            warnings.warn(
+                "'DateTimeField' renders <input type=\"datetime\">, which is"
+                " obsolete. Use 'DateTimeLocalField' instead. 'DateTimeField'"
+                " will be removed in WTForms 3.4.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         self.format = format if isinstance(format, list) else [format]
         self.strptime_format = clean_datetime_format_for_strptime(self.format)
 

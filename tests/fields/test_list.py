@@ -8,6 +8,7 @@ from wtforms.fields import FieldList
 from wtforms.fields import FormField
 from wtforms.fields import StringField
 from wtforms.form import Form
+from wtforms.meta import DefaultMeta
 
 
 class AttrDict:
@@ -242,8 +243,55 @@ def test_process_prefilled():
     assert form.a.data == data
 
 
+def test_process_resets_last_index():
+    F = make_form(a=FieldList(t, min_entries=1))
+    form = F()
+
+    assert form.a.last_index == 0
+    assert [entry.name for entry in form.a.entries] == ["a-0"]
+
+    form.a.process(None, ["foo", "bar"])
+    assert form.a.last_index == 1
+    assert [entry.name for entry in form.a.entries] == ["a-0", "a-1"]
+    assert form.a.data == ["foo", "bar"]
+
+    form.a.process(None, ["baz"])
+    assert form.a.last_index == 0
+    assert [entry.name for entry in form.a.entries] == ["a-0"]
+    assert form.a.data == ["baz"]
+
+
 def test_errors():
     F = make_form(a=FieldList(t))
     form = F(DummyPostData({"a-0": ["a"], "a-1": ""}))
     assert not form.validate()
     assert form.a.errors == [[], ["This field is required."]]
+
+
+def test_add_entry_routes_through_meta_bind_field():
+    """_add_entry must call meta.bind_field, just as the form constructor does.
+
+    Without this, a custom Meta.bind_field override is silently bypassed for
+    all FieldList entries — whether created at construction time (via process)
+    or later via append_entry.
+    """
+
+    class TrackingMeta(DefaultMeta):
+        def bind_field(self, form, unbound_field, options):
+            field = super().bind_field(form, unbound_field, options)
+            field._bound_via_meta = True
+            return field
+
+    class F(Form):
+        class Meta(TrackingMeta):
+            pass
+
+        items = FieldList(StringField())
+
+    pdata = DummyPostData({"items-0": "a", "items-1": "b"})
+    form = F(pdata)
+    for entry in form.items.entries:
+        assert getattr(entry, "_bound_via_meta", False)
+
+    form.items.append_entry("c")
+    assert getattr(form.items[-1], "_bound_via_meta", False)
