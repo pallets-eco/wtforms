@@ -28,6 +28,8 @@ Version 3.x.x
 - Let render-time ``checked`` kwargs take precedence over the field's value
   in :class:`~widgets.CheckboxInput` and :class:`~widgets.RadioInput`.
   :issue:`706`
+- Add a ``tz`` parameter to :class:`~fields.DateTimeLocalField` to associate a
+  timezone with the input. :issue:`833`
 
 Version 3.2.2
 -------------
