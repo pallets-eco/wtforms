@@ -80,8 +80,8 @@ def html_params(**kwargs):
             pass
         else:
             v = escape(v).replace(Markup('"'), Markup("&quot;"))
-            params.append(f'{str(k)}="{v}"')  # noqa: B907
-    return " ".join(params)
+            params.append(Markup('{k}="{v}"').format(k=k, v=v))
+    return Markup(" ").join(params)
 
 
 class ListWidget:
