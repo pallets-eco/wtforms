@@ -567,9 +567,11 @@ class UUID:
             message = field.gettext("Invalid UUID.")
         if isinstance(field.data, uuid.UUID):
             return
+        if not isinstance(field.data, str):
+            raise ValidationError(message)
         try:
             uuid.UUID(field.data)
-        except (ValueError, TypeError) as exc:
+        except ValueError as exc:
             raise ValidationError(message) from exc
 
 

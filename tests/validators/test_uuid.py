@@ -40,3 +40,12 @@ def test_bad_uuid_raises(uuid_val, dummy_form, dummy_field):
     dummy_field.data = uuid_val
     with pytest.raises(ValidationError):
         validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize("uuid_val", [None, 123, []])
+def test_bad_uuid_type_raises(uuid_val, dummy_form, dummy_field):
+    """Non-string, non-UUID values should be reported as ValidationError."""
+    validator = UUID()
+    dummy_field.data = uuid_val
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
