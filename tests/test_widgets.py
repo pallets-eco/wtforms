@@ -195,6 +195,11 @@ def test_render_option():
     )
 
     assert (
+        Select.render_option(False, "foo", False)
+        == '<option value="False">foo</option>'
+    )
+
+    assert (
         Select.render_option("bar", '<i class="bar"></i>foo', False)
         == '<option value="bar">&lt;i class=&#34;bar&#34;&gt;&lt;/i&gt;foo</option>'
     )

@@ -379,8 +379,7 @@ class Select:
 
     @classmethod
     def render_option(cls, value, label, selected, **kwargs):
-        if value is True:
-            # Handle the special case of a 'True' value.
+        if isinstance(value, bool):
             value = str(value)
 
         options = dict(kwargs, value=value)
