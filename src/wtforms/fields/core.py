@@ -1,6 +1,5 @@
 import inspect
 import itertools
-import warnings
 
 from markupsafe import escape
 from markupsafe import Markup
@@ -131,17 +130,6 @@ class Field:
         for v in itertools.chain(self.validators, [self.widget]):
             flags = getattr(v, "field_flags", {})
 
-            # check for legacy format, remove eventually
-            if isinstance(flags, tuple):  # pragma: no cover
-                warnings.warn(
-                    "Flags should be stored in dicts and not in tuples. "
-                    "The next version of WTForms will abandon support "
-                    "for flags in tuples.",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
-                flags = {flag_name: True for flag_name in flags}
-
             for k, v in flags.items():
                 setattr(self.flags, k, v)
 
@@ -181,14 +169,14 @@ class Field:
             for validator in validators:
                 if not callable(validator):
                     raise TypeError(
-                        "{} is not a valid validator because it is not "
-                        "callable".format(validator)
+                        f"{validator} is not a valid validator because it is not "
+                        "callable"
                     )
 
                 if inspect.isclass(validator):
                     raise TypeError(
-                        "{} is not a valid validator because it is a class, "
-                        "it should be an instance".format(validator)
+                        f"{validator} is not a valid validator because it is a class, "
+                        "it should be an instance"
                     )
 
     def gettext(self, string):
@@ -399,8 +387,10 @@ class UnboundField:
         return self.field_class(*self.args, **kw)
 
     def __repr__(self):
-        return "<UnboundField({}, {!r}, {!r})>".format(
-            self.field_class.__name__, self.args, self.kwargs
+        return (
+            "<UnboundField("
+            f"{self.field_class.__name__}, {self.args!r}, {self.kwargs!r}"
+            ")>"
         )
 
 
@@ -420,13 +410,18 @@ class Flags:
         return getattr(self, name)
 
     def __repr__(self):
-        flags = (name for name in dir(self) if not name.startswith("_"))
-        return "<wtforms.fields.Flags: {%s}>" % ", ".join(flags)
+        flags = (
+            f"{name}={getattr(self, name)}"
+            for name in dir(self)
+            if not name.startswith("_")
+        )
+        flags = ", ".join(flags)
+        return f"<wtforms.fields.Flags: {{{flags}}}>"
 
 
 class Label:
     """
-    An HTML form label.
+    An HTML :mdn-tag:`label`.
     """
 
     def __init__(self, field_id, text):
@@ -446,8 +441,9 @@ class Label:
             kwargs.setdefault("for", self.field_id)
 
         attributes = widgets.html_params(**kwargs)
+        attributes = f" {attributes}" if attributes else ""
         text = escape(text or self.text)
-        return Markup(f"<label {attributes}>{text}</label>")
+        return Markup(f"<label{attributes}>{text}</label>")
 
     def __repr__(self):
         return f"Label({self.field_id!r}, {self.text!r})"

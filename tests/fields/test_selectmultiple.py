@@ -1,6 +1,6 @@
 import pytest
-from tests.common import DummyPostData
 
+from tests.common import DummyPostData
 from wtforms import validators
 from wtforms.fields import SelectField
 from wtforms.fields import SelectMultipleField
@@ -27,16 +27,18 @@ def test_defaults():
     # Test for possible regression with null data
     form.a.data = None
     assert form.validate()
-    assert list(form.a.iter_choices()) == [(v, l, False) for v, l in form.a.choices]
+    assert list(form.a.iter_choices()) == [
+        (value, label, False, {}) for value, label in form.a.choices
+    ]
 
 
 def test_with_data():
     form = F(DummyPostData(a=["a", "c"]))
     assert form.a.data == ["a", "c"]
     assert list(form.a.iter_choices()) == [
-        ("a", "hello", True),
-        ("b", "bye", False),
-        ("c", "something", True),
+        ("a", "hello", True, {}),
+        ("b", "bye", False, {}),
+        ("c", "something", True, {}),
     ]
     assert form.b.data == []
     form = F(DummyPostData(b=["1", "2"]))
@@ -107,6 +109,12 @@ def test_dont_validate_choices():
     assert len(form.a.errors) == 0
 
 
+def test_choices_can_be_none_when_choice_validation_is_disabled():
+    F = make_form(a=SelectMultipleField(validate_choice=False))
+    form = F(DummyPostData(a="b"))
+    assert form.validate()
+
+
 def test_requried_flag():
     F = make_form(
         c=SelectMultipleField(
@@ -149,3 +157,51 @@ def test_render_kw_preserved():
         '<option value="bar">bar</option>'
         "</select>"
     )
+
+
+def test_option_render_kw():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[("a", "Foo", {"title": "foobar", "data-foo": "bar"})]
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
+    ]
+
+
+def test_optgroup_option_render_kw():
+    F = make_form(
+        a=SelectMultipleField(
+            choices={"hello": [("a", "Foo", {"title": "foobar", "data-foo": "bar"})]}
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        ("a", "Foo", True, {"title": "foobar", "data-foo": "bar"})
+    ]
+
+
+def test_can_supply_coercable_values_as_options():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[("1", "One"), ("2", "Two")],
+            coerce=int,
+        )
+    )
+    post_data = DummyPostData(a=["1", "2"])
+    form = F(post_data)
+    assert form.validate()
+    assert form.a.data == [1, 2]

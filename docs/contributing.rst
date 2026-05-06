@@ -12,7 +12,7 @@ How to Contribute
 WTForms is now on `GitHub`_, so all contributions should be either associated
 with a pull request or with a ticket & patch.
 
-.. _GitHub: https://github.com/wtforms/wtforms
+.. _GitHub: https://github.com/pallets-eco/wtforms
 
 
 Contribution Guidelines
@@ -38,7 +38,7 @@ Code submitted should:
   advantage of `Github Actions`_ for running tests on all supported Python
   versions.
 
-.. _Github Actions: https://github.com/wtforms/wtforms/actions
+.. _Github Actions: https://github.com/pallets-eco/wtforms/actions
 .. _PEP8: https://www.python.org/dev/peps/pep-0008/
 
 

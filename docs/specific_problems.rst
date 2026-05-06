@@ -124,10 +124,10 @@ Alternatively, you can create a field which does this by subclassing::
     class HiddenInteger(IntegerField):
         widget = HiddenInput()
 
-Some fields support even more sophisticated customization.For example, what if
-a multiple-select was desired where instead of using a multi-row ``<select>``,
-a series of checkboxes was used? By using widgets, one can get that behavior
-very easily::
+Some fields support even more sophisticated customization. For example, what if
+a multiple-select was desired where instead of using a multi-row
+:mdn-tag:`select`, a series of :mdn-input:`checkbox` controls was used? By
+using widgets, one can get that behavior very easily::
 
     class MultiCheckboxField(SelectMultipleField):
         """
@@ -140,4 +140,4 @@ very easily::
         option_widget = widgets.CheckboxInput()
 
 By overriding `option_widget`, our new multiple-select when iterated will now
-produce fields that render as checkboxes.
+produce fields that render as :mdn-input:`checkbox` controls.

@@ -1,7 +1,6 @@
 from datetime import date
 
 from tests.common import DummyPostData
-
 from wtforms.fields import WeekField
 from wtforms.form import Form
 

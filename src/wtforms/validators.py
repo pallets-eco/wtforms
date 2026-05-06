@@ -33,6 +33,10 @@ __all__ = (
     "UUID",
     "ValidationError",
     "StopValidation",
+    "readonly",
+    "ReadOnly",
+    "disabled",
+    "Disabled",
 )
 
 
@@ -116,9 +120,9 @@ class Length:
     """
 
     def __init__(self, min=-1, max=-1, message=None):
-        assert (
-            min != -1 or max != -1
-        ), "At least one of `min` or `max` must be specified."
+        assert min != -1 or max != -1, (
+            "At least one of `min` or `max` must be specified."
+        )
         assert max == -1 or min <= max, "`min` cannot be more than `max`."
         self.min = min
         self.max = max
@@ -370,6 +374,9 @@ class Email:
         (Default False).
     :param check_deliverability:
         Perform domain name resolution check (Default False).
+    :param test_environment:
+        Allow `test` and `*.test` domain names, and disable DNS-based
+        deliverability checks (Default False).
     :param allow_smtputf8:
         Fail validation for addresses that would require SMTPUTF8
         (Default True).
@@ -383,12 +390,14 @@ class Email:
         message=None,
         granular_message=False,
         check_deliverability=False,
+        test_environment=False,
         allow_smtputf8=True,
         allow_empty_local=False,
     ):
         self.message = message
         self.granular_message = granular_message
         self.check_deliverability = check_deliverability
+        self.test_environment = test_environment
         self.allow_smtputf8 = allow_smtputf8
         self.allow_empty_local = allow_empty_local
 
@@ -406,6 +415,7 @@ class Email:
             email_validator.validate_email(
                 field.data,
                 check_deliverability=self.check_deliverability,
+                test_environment=self.test_environment,
                 allow_smtputf8=self.allow_smtputf8,
                 allow_empty_local=self.allow_empty_local,
             )
@@ -511,11 +521,13 @@ class URL(Regexp):
         If true, then the domain-name portion of the URL must contain a .tld
         suffix.  Set this to false if you want to allow domains like
         `localhost`.
+    :param allow_ip:
+        If false, then give ip as host will fail validation
     :param message:
         Error message to raise in case of a validation error.
     """
 
-    def __init__(self, require_tld=True, message=None):
+    def __init__(self, require_tld=True, allow_ip=True, message=None):
         regex = (
             r"^[a-z]+://"
             r"(?P<host>[^\/\?:]+)"
@@ -525,7 +537,7 @@ class URL(Regexp):
         )
         super().__init__(regex, re.IGNORECASE, message)
         self.validate_hostname = HostnameValidation(
-            require_tld=require_tld, allow_ip=True
+            require_tld=require_tld, allow_ip=allow_ip
         )
 
     def __call__(self, form, field):
@@ -582,7 +594,8 @@ class AnyOf:
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
-        if field.data in self.values:
+        data = field.data if isinstance(field.data, list) else [field.data]
+        if any(d in self.values for d in data):
             return
 
         message = self.message
@@ -617,7 +630,8 @@ class NoneOf:
         self.values_formatter = values_formatter
 
     def __call__(self, form, field):
-        if field.data not in self.values:
+        data = field.data if isinstance(field.data, list) else [field.data]
+        if not any(d in self.values for d in data):
             return
 
         message = self.message
@@ -678,6 +692,39 @@ class HostnameValidation:
         return True
 
 
+class ReadOnly:
+    """
+    Set a field readonly.
+
+    Validation fails if the form data is different than the
+    field object data, or if unset, from the field default data.
+    """
+
+    def __init__(self):
+        self.field_flags = {"readonly": True}
+
+    def __call__(self, form, field):
+        if field.data != field.object_data:
+            raise ValidationError(field.gettext("This field cannot be edited."))
+
+
+class Disabled:
+    """
+    Set a field disabled.
+
+    Validation fails if the form data has any value.
+    """
+
+    def __init__(self):
+        self.field_flags = {"disabled": True}
+
+    def __call__(self, form, field):
+        if field.raw_data:
+            raise ValidationError(
+                field.gettext("This field is disabled and cannot have a value.")
+            )
+
+
 email = Email
 equal_to = EqualTo
 ip_address = IPAddress
@@ -691,3 +738,5 @@ regexp = Regexp
 url = URL
 any_of = AnyOf
 none_of = NoneOf
+readonly = ReadOnly
+disabled = Disabled

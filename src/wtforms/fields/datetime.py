@@ -1,4 +1,5 @@
 import datetime
+import warnings
 
 from wtforms import widgets
 from wtforms.fields.core import Field
@@ -20,6 +21,11 @@ class DateTimeField(Field):
     several formats. If ``format`` is a list, any input value matching any
     format will be accepted, and the first format in the list will be used
     to produce HTML values.
+
+    .. deprecated:: 3.2.3
+       ``DateTimeField`` renders ``<input type="datetime">``, which is
+       obsolete. Use :class:`DateTimeLocalField` instead. ``DateTimeField``
+       will be removed in WTForms 3.4.
     """
 
     widget = widgets.DateTimeInput()
@@ -28,13 +34,22 @@ class DateTimeField(Field):
         self, label=None, validators=None, format="%Y-%m-%d %H:%M:%S", **kwargs
     ):
         super().__init__(label, validators, **kwargs)
+        if type(self) is DateTimeField:
+            warnings.warn(
+                "'DateTimeField' renders <input type=\"datetime\">, which is"
+                " obsolete. Use 'DateTimeLocalField' instead. 'DateTimeField'"
+                " will be removed in WTForms 3.4.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         self.format = format if isinstance(format, list) else [format]
         self.strptime_format = clean_datetime_format_for_strptime(self.format)
 
     def _value(self):
         if self.raw_data:
             return " ".join(self.raw_data)
-        return self.data and self.data.strftime(self.format[0]) or ""
+        format = self.format[0]
+        return self.data and self.data.strftime(format) or ""
 
     def process_formdata(self, valuelist):
         if not valuelist:
@@ -54,7 +69,7 @@ class DateTimeField(Field):
 class DateField(DateTimeField):
     """
     Same as :class:`~wtforms.fields.DateTimeField`, except stores a
-    :class:`datetime.date`.
+    :class:`datetime.date` and renders as an :mdn-input:`date`.
     """
 
     widget = widgets.DateInput()
@@ -80,7 +95,7 @@ class DateField(DateTimeField):
 class TimeField(DateTimeField):
     """
     Same as :class:`~wtforms.fields.DateTimeField`, except stores a
-    :class:`datetime.time`.
+    :class:`datetime.time` and renders as an :mdn-input:`time`.
     """
 
     widget = widgets.TimeInput()
@@ -106,7 +121,8 @@ class TimeField(DateTimeField):
 class MonthField(DateField):
     """
     Same as :class:`~wtforms.fields.DateField`, except represents a month,
-    stores a :class:`datetime.date` with `day = 1`.
+    stores a :class:`datetime.date` with `day = 1`, and renders as an
+    :mdn-input:`month`.
     """
 
     widget = widgets.MonthInput()
@@ -118,7 +134,8 @@ class MonthField(DateField):
 class WeekField(DateField):
     """
     Same as :class:`~wtforms.fields.DateField`, except represents a week,
-    stores a :class:`datetime.date` of the monday of the given week.
+    stores a :class:`datetime.date` of the monday of the given week, and
+    renders as an :mdn-input:`week`.
     """
 
     widget = widgets.WeekInput()
@@ -151,7 +168,7 @@ class WeekField(DateField):
 class DateTimeLocalField(DateTimeField):
     """
     Same as :class:`~wtforms.fields.DateTimeField`, but represents an
-    ``<input type="datetime-local">``.
+    :mdn-input:`datetime-local`.
     """
 
     widget = widgets.DateTimeLocalInput()

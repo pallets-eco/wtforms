@@ -1,15 +1,100 @@
 .. currentmodule:: wtforms
 
-Version 3.0.2
+Version 3.x.x
 -------------
 
-Unreleased
+- Make :class:`~fields.FloatField` render as ``<input type="number">`` with
+  ``step="any"``. :issue:`677` :pr:`679`
+- :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
+  consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
+  overrides were silently bypassed for all ``FieldList`` entries.
+- Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
+- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
+- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
+- Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
+  :issue:`775`
+- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831`
+
+Version 3.2.2
+-------------
+
+Released 2026-05-03
+
+- Fix :class:`~validators.Disabled` validation with provided formdata. :pr:`880`
+- End support for Python 3.9, start support for Python 3.14. :pr:`883`
+- Add Tamil and Serbian translations.
+
+Version 3.2.1
+-------------
+
+Released 2024-10-21
+
+- Fix :class:`~fields.SelectMultipleBase` import. :issue:`861` :pr:`862`
+
+Version 3.2.0
+-------------
+
+Released 2024-10-20
+
+- Translations update: korean, chinese (traditional), portugese, russian,
+  dutch, kazakh, swedish, turkish, slovak, ukranian, spanish, french.
+- Move the repository to the pallets-eco organization. :pr:`854`
+- Stop supporting Python 3.9 and start supporting Python 3.13 :pr:`855`
+- Removed `required` flag support from :class:`~fields.HiddenWidget`,
+  :class:`~fields.RangeWidget` and :class:`~fields.SelectWidget` to
+  conform to W3C :pr:`810`
+- :class:`~wtforms.validators.NoneOf` and :class:`~wtforms.validators.AnyOf`
+  can validate multiple valued fields like :class:`~fields.SelectMultipleField`
+  :pr:`538` :pr:`807`
+- Use GHA and pre-commit workflows inspired from Flask. :pr:`856` :pr:`860`
+- ⚠️Breaking change⚠️: Some deprecated code was removed (:pr:`859`):
+
+  - :class:`~wtforms.Flags` can no longer be tuples. :issue:`467`
+  - `iter_choices` needs a tuple of 4 items :issue:`816`
+
+- ⚠️Breaking change⚠️: The key for form errors moved from :data:`None` to
+  empty string `""`. :issue:`829` :pr:`858`
+
+.. note::
+   If you need to keep the old behavior you can set the ``_form_error_key``
+   parameter of your form to :data:`None`.
+
+
+Version 3.1.2
+-------------
+
+Released 2024-01-06
+
+- Fix :class:`~fields.SelectMultipleField` value coercion on validation.
+  :issue:`822` :pr:`823`
+
+Version 3.1.1
+-------------
+
+Released 2023-11-01
+
+- Display :class:`~wtforms.Flags` values in their repr. :pr:`808`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``choices`` can be `None` if `validate_choice` is `False` :pr:`809`
+- Documentation improvements :pr:`812` :pr:`815` :pr:`817`
+- Unit tests improvements :pr:`813`
+- Python 3.12 support :pr:`818`
+- Restored support for 3-items tuple return value from `iter_choices`
+  :pr:`816`
+
+Version 3.1.0
+-------------
+
+Released 2023-10-10
 
 -   Documentation improvements :pr:`726` :pr:`733` :pr:`749`
     :pr:`767` :pr:`788` :pr:`789` :pr:`793`
 -   Translation improvements :pr:`732` :pr:`734` :pr:`754`
 -   Implement :class:`~fields.ColorField` :pr:`755`
 -   Delayed import of ``email_validator``. :issue:`727`
+-   ``<option>`` attributes can be passed by the :class:`~fields.SelectField`
+    ``choices`` parameter :issue:`692` :pr:`739`.
+    ⚠️breaking change⚠️: `iter_choices` now returns a tuple of 4 items
 -   Use the standard datetime formats by default for
     :class:`~fields.DateTimeLocalField`  :pr:`761`
 -   Python 3.11 support :pr:`763`
@@ -19,6 +104,10 @@ Unreleased
 -   Stop support for python 3.7 :pr:`794`
 -   Added shorter format to :class:`~fields.WeekField`
     defaults :pr:`765`
+-   Move to pyproject.toml :pr:`796`
+-   URL validator takes a ``allow_ip`` parameter :pr:`800`
+-   Implement :class:`~validators.ReadOnly` and
+    :class:`~validators.Disabled` `:pr:`788`
 
 Version 3.0.1
 -------------
@@ -92,6 +181,8 @@ Released 2020-11-23
     bugfix. :issue:`606` :pr:`642`
 -   Fixed SelectMultipleField validation when using choices list shortcut.
     :issue:`612` :pr:`661`
+-   Removed :meth:`form._get_translations`. Use
+    :meth:`Meta.get_translations <wtforms.meta.DefaultMeta.get_translations>` instead.
 
 
 Version 2.3.3
@@ -285,6 +376,7 @@ Released 2014-05-20
 -   Passing ``attr=False`` to WTForms widgets causes the value to be
     ignored.
 -   ``Unique`` validator in ``wtforms.ext.sqlalchemy`` has been removed.
+-   Deprecate ``form._get_translations``. Use ``Meta.get_translations`` instead.
 
 
 Version 1.0.5

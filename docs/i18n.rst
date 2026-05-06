@@ -93,8 +93,9 @@ An example of writing a simple translations object::
             return ungettext(singular, plural, n)
 
     class MyBaseForm(Form):
-        def _get_translations(self):
-            return MyTranslations()
+        class Meta:
+            def get_translations(self, form):
+                return MyTranslations()
 
 You would then use this new base Form class as the base class for any forms you
 create, and any built-in messages from WTForms will be passed to your

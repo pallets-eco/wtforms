@@ -135,7 +135,7 @@ The Field base class
     .. attribute:: label
 
         This is a :class:`Label` instance which when evaluated as a string
-        returns an HTML ``<label for="id">`` construct.
+        returns an HTML :mdn-tag:`label` construct.
 
     .. attribute:: default
 
@@ -220,6 +220,13 @@ refer to a single input from the form.
 
 .. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
+    .. warning::
+        :class:`DateTimeField` renders ``<input type="datetime">``, which is
+        obsolete in HTML and not broadly supported by browsers. Use
+        :class:`DateTimeLocalField` instead.
+
+        :class:`DateTimeField` is deprecated and will be removed in WTForms 3.4.
+
 .. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
 .. autoclass:: DecimalField(default field arguments, places=2, rounding=None, use_locale=False, number_format=None)
@@ -258,7 +265,7 @@ refer to a single input from the form.
 
 .. autoclass:: IntegerRangeField(default field arguments)
 
-.. autoclass:: MonthField(default field arguments, format='%Y:%m')
+.. autoclass:: MonthField(default field arguments, format='%Y-%m')
 
 .. autoclass:: RadioField(default field arguments, choices=[], coerce=str)
 
@@ -272,14 +279,16 @@ refer to a single input from the form.
         {% endfor %}
 
     Simply outputting the field without iterating its subfields will result in
-    a ``<ul>`` list of radio choices.
+    a :mdn-tag:`ul` list of radio choices.
 
 .. class:: SelectField(default field arguments, choices=[], coerce=str, option_widget=None, validate_choice=True)
 
     Select fields take a ``choices`` parameter which is either:
 
-    * a list of ``(value, label)`` pairs. It can also be a list of only values, in
-      which case the value is used as the label. The value can be of any
+    * a list of ``(value, label)`` or ``(value, label, render_kw)`` tuples.
+      It can also be a list of only values, in which case the value is used
+      as the label. If set, the ``render_kw`` dictionnary will be rendered as
+      HTML :mdn-tag:`option` parameters. The value can be of any
       type, but because form data is sent to the browser as strings, you
       will need to provide a ``coerce`` function that converts a string
       back to the expected type.
@@ -581,8 +590,7 @@ Additional Helper Classes
 .. class:: Label
 
     On all fields, the `label` property is an instance of this class.
-    Labels can be printed to yield a
-    ``<label for="field_id">Label Text</label>``
+    Labels can be printed to yield a :mdn-tag:`label`
     HTML tag enclosure. Similar to fields, you can also call the label with
     additional html params.
 

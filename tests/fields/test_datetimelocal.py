@@ -1,7 +1,7 @@
+import os
 from datetime import datetime
 
 from tests.common import DummyPostData
-
 from wtforms.fields import DateTimeLocalField
 from wtforms.form import Form
 
@@ -13,7 +13,9 @@ def make_form(name="F", **fields):
 class F(Form):
     a = DateTimeLocalField()
     b = DateTimeLocalField(format="%Y-%m-%d %H:%M")
-    c = DateTimeLocalField(format="%-m/%-d/%Y %-I:%M")
+    c = DateTimeLocalField(
+        format="%#m/%#d/%Y %#I:%M" if os.name == "nt" else "%-m/%-d/%Y %-I:%M"
+    )
 
 
 def test_basic():
