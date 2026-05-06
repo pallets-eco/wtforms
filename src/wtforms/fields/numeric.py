@@ -170,11 +170,14 @@ class DecimalField(LocaleAwareNumberField):
 
 class FloatField(Field):
     """
-    A text field, except all input is coerced to an float.  Erroneous input
-    is ignored and will not be accepted as a value.
+    A field that stores floating-point values.
+
+    By default, this renders as an ``<input type="number">`` with
+    ``step="any"`` to allow browser input of any floating-point value.
+    Erroneous input is ignored and will not be accepted as a value.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.NumberInput(step="any")
 
     def __init__(self, label=None, validators=None, **kwargs):
         super().__init__(label, validators, **kwargs)

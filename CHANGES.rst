@@ -3,6 +3,8 @@
 Version 3.x.x
 -------------
 
+- Make :class:`~fields.FloatField` render as ``<input type="number">`` with
+  ``step="any"``. :issue:`677` :pr:`679`
 - :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
   consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
   overrides were silently bypassed for all ``FieldList`` entries.
