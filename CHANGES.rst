@@ -40,6 +40,9 @@ Version 3.x.x
   deprecated in favor of :class:`~fields.Choice`. :pr:`739`
 - ``<option>`` HTML attributes can be passed using
   :class:`~fields.Choice`. :issue:`692` :pr:`739`
+- Add :meth:`fields.Choice.from_enum` to build choices from an
+  :class:`enum.Enum` class, and let :class:`~fields.SelectField` accept an
+  Enum class as ``coerce``. :issue:`338`
 
 Version 3.2.2
 -------------
