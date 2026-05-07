@@ -1,6 +1,7 @@
 import warnings
 from dataclasses import dataclass
 from dataclasses import field
+from enum import Enum
 
 from wtforms import widgets
 from wtforms.fields.core import Field
@@ -13,6 +14,18 @@ __all__ = (
     "SelectMultipleField",
     "RadioField",
 )
+
+
+def _enum_coerce(enum_cls):
+    def coerce(v):
+        if isinstance(v, enum_cls):
+            return v
+        try:
+            return enum_cls[v]
+        except KeyError as e:
+            raise ValueError(str(e)) from e
+
+    return coerce
 
 
 @dataclass
@@ -33,6 +46,19 @@ class Choice:
     label: str | None = None
     render_kw: dict | None = None
     _selected: bool = field(default=False, kw_only=True)
+
+    @classmethod
+    def from_enum(cls, enum_cls, *, label=None):
+        """Build a list of choices from an :class:`enum.Enum` class.
+
+        The HTML value of each option is the item ``name``. The label
+        defaults to ``str(item)`` when the Enum defines its own
+        ``__str__``, otherwise to ``item.name``. Pass ``label=`` (a
+        callable taking an item) to override.
+        """
+        if label is None:
+            label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
+        return [cls(value=m.name, label=label(m)) for m in enum_cls]
 
 
 @dataclass
@@ -161,6 +187,8 @@ class SelectField(SelectFieldBase):
         **kwargs,
     ):
         super().__init__(label, validators, **kwargs)
+        if isinstance(coerce, type) and issubclass(coerce, Enum):
+            coerce = _enum_coerce(coerce)
         self.coerce = coerce
         self.choices = self.choices_from_input(choices)
         self.validate_choice = validate_choice

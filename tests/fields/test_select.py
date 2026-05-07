@@ -1,4 +1,13 @@
+import sys
+from enum import Enum
+from enum import IntEnum
+
 import pytest
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    StrEnum = None
 
 from tests.common import DummyPostData
 from wtforms import validators
@@ -347,3 +356,98 @@ def test_dict_choices_deprecation_with_tuple():
     assert list(form.a.iter_choices()) == [
         SelectChoice("a", "Foo", None, "hello", _selected=True)
     ]
+
+
+class _Plain(Enum):
+    RED = 1
+    GREEN = 2
+
+
+class _Pretty(Enum):
+    RED = 1
+    GREEN = 2
+
+    def __str__(self):
+        return self.name.title()
+
+
+class _Level(IntEnum):
+    LOW = 1
+    HIGH = 2
+
+
+def test_choice_from_enum_plain():
+    """Plain Enum without ``__str__`` falls back to ``member.name`` for the label."""
+    assert Choice.from_enum(_Plain) == [
+        Choice(value="RED", label="RED"),
+        Choice(value="GREEN", label="GREEN"),
+    ]
+
+
+def test_choice_from_enum_with_dunder_str():
+    """An Enum that overrides ``__str__`` uses ``str(member)`` as label."""
+    assert Choice.from_enum(_Pretty) == [
+        Choice(value="RED", label="Red"),
+        Choice(value="GREEN", label="Green"),
+    ]
+
+
+@pytest.mark.skipif(sys.version_info < (3, 11), reason="StrEnum requires 3.11+")
+def test_choice_from_enum_strenum():
+    """StrEnum uses ``str(member)`` (the value) as label."""
+
+    class _Status(StrEnum):
+        ACTIVE = "active"
+        INACTIVE = "inactive"
+
+    assert Choice.from_enum(_Status) == [
+        Choice(value="ACTIVE", label="active"),
+        Choice(value="INACTIVE", label="inactive"),
+    ]
+
+
+def test_choice_from_enum_intenum():
+    """IntEnum has no ``__str__`` injected; falls back to ``member.name``."""
+    assert Choice.from_enum(_Level) == [
+        Choice(value="LOW", label="LOW"),
+        Choice(value="HIGH", label="HIGH"),
+    ]
+
+
+def test_choice_from_enum_custom_label():
+    """A ``label=`` callable overrides the default."""
+    assert Choice.from_enum(_Plain, label=lambda m: m.name.title()) == [
+        Choice(value="RED", label="Red"),
+        Choice(value="GREEN", label="Green"),
+    ]
+
+
+def test_select_field_enum_coerce_round_trip():
+    """``coerce=EnumCls`` round-trips form data back to an Enum member."""
+    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    form = F(DummyPostData(a=["RED"]))
+    assert form.a.data is _Plain.RED
+    assert form.validate()
+
+
+def test_select_field_enum_coerce_accepts_member():
+    """``coerce=EnumCls`` accepts an already-coerced member without re-lookup."""
+    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    form = F(a=_Plain.GREEN)
+    assert form.a.data is _Plain.GREEN
+
+
+def test_select_field_enum_coerce_invalid():
+    """An unknown name fails validation cleanly (KeyError → ValueError)."""
+    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    form = F(DummyPostData(a=["BAD"]))
+    assert not form.validate()
+    assert form.a.data is None
+    assert "Invalid Choice: could not coerce." in form.a.errors
+
+
+def test_select_field_enum_renders_selected():
+    """Pre-selecting a member highlights the right option."""
+    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    form = F(a=_Plain.GREEN)
+    assert '<option selected value="GREEN">GREEN</option>' in form.a()

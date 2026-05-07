@@ -1,3 +1,5 @@
+from enum import Enum
+
 import pytest
 
 from tests.common import DummyPostData
@@ -222,3 +224,19 @@ def test_can_supply_coercable_values_as_options():
     form = F(post_data)
     assert form.validate()
     assert form.a.data == [1, 2]
+
+
+class _Color(Enum):
+    RED = 1
+    GREEN = 2
+    BLUE = 3
+
+
+def test_select_multiple_enum_round_trip():
+    """``coerce=EnumCls`` works for SelectMultipleField too."""
+    F = make_form(
+        a=SelectMultipleField(choices=Choice.from_enum(_Color), coerce=_Color)
+    )
+    form = F(DummyPostData(a=["RED", "BLUE"]))
+    assert form.validate()
+    assert form.a.data == [_Color.RED, _Color.BLUE]

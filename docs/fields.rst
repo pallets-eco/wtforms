@@ -382,6 +382,32 @@ Choice Fields
     Note when the option None is selected a 'None' str will be passed. By using a coerce
     function the 'None' str will be converted to None.
 
+    **Select fields backed by an Enum**::
+
+        from enum import Enum
+
+        class Color(Enum):
+            RED = 1
+            GREEN = 2
+            BLUE = 3
+
+        class PaintForm(Form):
+            color = SelectField(choices=Choice.from_enum(Color), coerce=Color)
+
+    :meth:`Choice.from_enum` builds the option list from the Enum items;
+    the HTML ``value`` of each option is the item's ``name``. Passing the
+    Enum class itself as ``coerce`` installs the matching coercion, so
+    ``form.color.data`` is a ``Color`` item after submit. Pre-selecting
+    works the usual way, with an Enum item: ``PaintForm(color=Color.RED)``.
+
+    By default the option label is ``str(item)`` if the Enum defines its
+    own ``__str__`` (also the case for :class:`enum.StrEnum`), otherwise
+    ``item.name``. To customise, pass a ``label`` callable taking an Enum
+    item and returning the label string::
+
+        Choice.from_enum(Color, label=lambda item: item.name.title())
+        # → [Choice('RED', 'Red'), Choice('GREEN', 'Green'), Choice('BLUE', 'Blue')]
+
     **Skipping choice validation**::
 
         class DynamicSelectForm(Form):
