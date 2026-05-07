@@ -461,20 +461,10 @@ complex data structures such as lists and nested objects can be represented.
     object that the enclosed form can process, similar to passing ``data`` or
     ``obj`` when constructing that form.
 
-    **Stable entry identity.** Each entry's ``name``, ``id`` and numeric
-    ``index`` are stable for the lifetime of that entry: ``insert_entry`` and
-    ``pop_entry`` never rename existing entries. As a consequence, popping
-    an entry in the middle leaves a gap in the indices (e.g. ``[a-0, a-1,
-    a-2]`` becomes ``[a-0, a-2]`` after ``pop_entry(1)``). The gap is
-    preserved across formdata round-trips, so client-side code that holds
-    references to a given entry's HTML name or id can rely on those
-    identifiers not changing under its feet.
-
-    Each entry exposes its numeric ``index`` (the integer in its HTML
-    ``name`` / ``id``) as :attr:`Field.index`. Use it when you need a
-    stable identifier for a specific entry across operations: a position
-    in :attr:`entries` is volatile (an :meth:`insert_entry` or
-    :meth:`pop_entry` shifts later positions), but ``index`` is not.
+    Entries are kept with consecutive indices: ``insert_entry``,
+    ``pop_entry`` and rebuilds from formdata renumber entries so that each
+    entry's ``index``, ``name`` and ``id`` reflect its position in
+    :attr:`entries`.
 
     .. attribute:: entries
 

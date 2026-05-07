@@ -83,13 +83,15 @@ class FieldList(Field):
             if self.max_entries:
                 indices = indices[: self.max_entries]
 
-            idata = iter(data)
+            data_list = list(data) if data else []
             for index in indices:
-                try:
-                    obj_data = next(idata)
-                except StopIteration:
+                if index < len(data_list):
+                    obj_data = data_list[index]
+                else:
                     obj_data = unset_value
                 self._add_entry(formdata, obj_data, index=index)
+
+            self._compact_indices()
         else:
             for obj_data in data:
                 self._add_entry(formdata, obj_data)
@@ -145,9 +147,13 @@ class FieldList(Field):
         candidates = itertools.chain(ivalues, itertools.repeat(None))
         _fake = type("_fake", (object,), {})
         output = []
-        for field, data in zip(self.entries, candidates, strict=False):
+        for field, fallback in zip(self.entries, candidates, strict=False):
             fake_obj = _fake()
-            fake_obj.data = data
+            bound = field.object_data
+            if bound is unset_value or bound is None or isinstance(bound, dict):
+                fake_obj.data = fallback
+            else:
+                fake_obj.data = bound
             field.populate_obj(fake_obj, "data")
             output.append(fake_obj.data)
 
@@ -175,8 +181,44 @@ class FieldList(Field):
         self.entries.append(field)
         return field
 
-    def _recalculate_last_index(self):
-        self.last_index = max((field.index for field in self.entries), default=-1)
+    def _compact_indices(self):
+        """Renumber all entries so indices form a consecutive ``[0..N-1]``."""
+        for new_index, entry in enumerate(self.entries):
+            self._rename_entry(entry, new_index)
+        self.last_index = len(self.entries) - 1
+
+    def _rename_entry(self, entry, new_index):
+        """Rename ``entry`` to ``new_index`` and propagate to its descendants."""
+        old_name = entry.name
+        old_id = entry.id
+        new_name = f"{self.short_name}{self._separator}{new_index}"
+        new_id = f"{self.id}{self._separator}{new_index}"
+
+        if old_name == new_name and old_id == new_id and entry.index == new_index:
+            return
+
+        entry.index = new_index
+        entry.name = new_name
+        entry.short_name = str(new_index)
+        entry.id = new_id
+
+        for descendant in self._iter_descendants(entry):
+            if descendant.name and descendant.name.startswith(old_name):
+                descendant.name = new_name + descendant.name[len(old_name) :]
+            if descendant.id and descendant.id.startswith(old_id):
+                descendant.id = new_id + descendant.id[len(old_id) :]
+
+    def _iter_descendants(self, field):
+        """Yield all fields below ``field`` recursively (form sub-fields and
+        FieldList entries)."""
+        if hasattr(field, "form") and hasattr(field.form, "_fields"):
+            for subfield in field.form._fields.values():
+                yield subfield
+                yield from self._iter_descendants(subfield)
+        if hasattr(field, "entries"):
+            for subfield in field.entries:
+                yield subfield
+                yield from self._iter_descendants(subfield)
 
     def append_entry(self, data=unset_value):
         """
@@ -189,40 +231,28 @@ class FieldList(Field):
 
     def insert_entry(self, index, data=unset_value):
         """
-        Create a new entry with optional default data and insert it into the
-        entries list at the given position.
+        Create a new entry with optional default data and insert it at the
+        given position in :attr:`entries`.
 
-        The new entry receives an index of ``max(existing indices) + 1``.
-        Existing entries keep their ``name`` and ``id``: an ``insert`` only
-        changes their position in :attr:`entries`, never their HTML identity.
-        See :meth:`pop_entry` for how popping affects subsequent index
-        allocation.
-
-        ``index`` follows :meth:`list.insert` semantics (negative or
-        out-of-range values are clamped). Like :meth:`append_entry`, the new
-        entry only receives object data, not formdata.
+        After insertion, all entries are renumbered so indices form a
+        consecutive ``[0..N-1]`` range. ``index`` follows :meth:`list.insert`
+        semantics (negative or out-of-range values are clamped). Like
+        :meth:`append_entry`, the new entry only receives object data, not
+        formdata.
         """
         field = self._add_entry(data=data)
         self.entries.insert(index, self.entries.pop())
+        self._compact_indices()
         return field
 
     def pop_entry(self, index=-1):
-        """Remove the entry at ``index`` from the list and return it.
+        """Remove the entry at ``index`` from :attr:`entries` and return it.
 
-        Remaining entries keep their ``name`` and ``id`` — ``FieldList``
-        guarantees stable HTML identity across modifications. Popping an
-        entry in the middle therefore leaves a gap in the indices (e.g.
-        after popping ``a-1`` from ``[a-0, a-1, a-2]`` the entries are
-        ``[a-0, a-2]``); the gap is preserved through formdata round-trips.
-
-        Popping the **last** entry frees its index for reuse: the next
-        :meth:`append_entry` will reattribute the same name. Popping any
-        **other** entry never frees its index — subsequent
-        :meth:`append_entry` / :meth:`insert_entry` always receive a fresh,
-        strictly greater index.
+        After removal, remaining entries are renumbered so indices form a
+        consecutive ``[0..N-1]`` range.
         """
         entry = self.entries.pop(index)
-        self._recalculate_last_index()
+        self._compact_indices()
         return entry
 
     def __iter__(self):
