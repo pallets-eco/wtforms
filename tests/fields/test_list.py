@@ -186,18 +186,18 @@ def test_entry_management_by_index():
 
     assert a.pop_entry(1).data == "bye"
     assert a.data == ["hello", "later"]
-    assert [entry.name for entry in a.entries] == ["a-0", "a-2"]
+    assert [entry.name for entry in a.entries] == ["a-0", "a-1"]
 
     inserted = a.insert_entry(1, "orange")
-    assert inserted.name == "a-3"
+    assert inserted.name == "a-1"
     assert a.data == ["hello", "orange", "later"]
-    assert [entry.name for entry in a.entries] == ["a-0", "a-3", "a-2"]
+    assert [entry.name for entry in a.entries] == ["a-0", "a-1", "a-2"]
 
-    assert a.pop_entry(1).name == "a-3"
+    assert a.pop_entry(1).data == "orange"
     assert a.data == ["hello", "later"]
 
     appended = a.append_entry("grape")
-    assert appended.name == "a-3"
+    assert appended.name == "a-2"
     assert a.data == ["hello", "later", "grape"]
 
 
@@ -210,49 +210,51 @@ def test_entry_management_by_index_with_subforms():
 
     inserted = a.insert_entry(1, {"foo": "orange"})
     assert a.data == [{"foo": "hello"}, {"foo": "orange"}, {"foo": "bye"}]
-    assert inserted.foo.name == "a-2-foo"
-    assert [entry.foo.name for entry in a.entries] == ["a-0-foo", "a-2-foo", "a-1-foo"]
+    assert inserted.foo.name == "a-1-foo"
+    assert [entry.foo.name for entry in a.entries] == ["a-0-foo", "a-1-foo", "a-2-foo"]
 
     assert a.pop_entry(1).foo.data == "orange"
     assert a.data == [{"foo": "hello"}, {"foo": "bye"}]
+    assert [entry.foo.name for entry in a.entries] == ["a-0-foo", "a-1-foo"]
 
 
-def test_gap_preserved_through_formdata_round_trip():
-    """A formdata with non-consecutive indices rebuilds entries with the
-    same gap, and ``last_index`` reflects the max."""
+def test_gap_compacted_through_formdata_round_trip():
+    """A formdata with gaps in indices is compacted on read: entries are
+    rebuilt with consecutive indices, preserving formdata key order."""
     F = make_form(a=FieldList(t))
     pdata = DummyPostData([("a-0", "hello"), ("a-2", "later")])
     a = F(pdata).a
-    assert [entry.name for entry in a.entries] == ["a-0", "a-2"]
+    assert [entry.name for entry in a.entries] == ["a-0", "a-1"]
     assert a.data == ["hello", "later"]
     appended = a.append_entry("grape")
-    assert appended.name == "a-3"
+    assert appended.name == "a-2"
 
 
-def test_entry_index_attribute_is_stable():
-    """``field.index`` exposes the entry's stable HTML index, independent
-    of its current position in :attr:`entries`."""
+def test_entry_index_attribute_reflects_position():
+    """``field.index`` always reflects the entry's current position; mutations
+    via :meth:`insert_entry` or :meth:`pop_entry` renumber entries to
+    consecutive ``[0..N-1]``."""
     F = make_form(a=FieldList(t))
     a = F(a=["A", "B", "C"]).a
     assert [e.index for e in a.entries] == [0, 1, 2]
 
     a.pop_entry(0)
-    assert [e.index for e in a.entries] == [1, 2]
+    assert [e.index for e in a.entries] == [0, 1]
 
     inserted = a.insert_entry(0, "X")
-    assert inserted.index == 3
-    assert [e.index for e in a.entries] == [3, 1, 2]
+    assert inserted.index == 0
+    assert [e.index for e in a.entries] == [0, 1, 2]
 
 
 def test_formdata_order_drives_entry_order():
-    """Entries are built in formdata key order, not numeric index order."""
+    """Entries are built in formdata key order, with consecutive indices."""
     F = make_form(a=FieldList(t))
     pdata = DummyPostData([("a-2", "second"), ("a-0", "first"), ("a-1", "middle")])
     a = F(pdata).a
     assert [(e.name, e.data) for e in a.entries] == [
-        ("a-2", "second"),
-        ("a-0", "first"),
-        ("a-1", "middle"),
+        ("a-0", "second"),
+        ("a-1", "first"),
+        ("a-2", "middle"),
     ]
 
 
@@ -371,3 +373,37 @@ def test_add_entry_routes_through_meta_bind_field():
 
     form.items.append_entry("c")
     assert getattr(form.items[-1], "_bound_via_meta", False)
+
+
+def test_formdata_with_sparse_indices_keeps_entry_obj_alignment():
+    """Non-consecutive indices in formdata still align each entry with the obj
+    at the same index, and ``populate_obj`` produces the collection without the
+    missing slot."""
+
+    class Inside(Form):
+        street = StringField()
+
+    class Outside(Form):
+        addresses = FieldList(FormField(Inside))
+
+    a0 = AttrDict(street="A street")
+    a1 = AttrDict(street="B street")
+    a2 = AttrDict(street="C street")
+    user = AttrDict(addresses=[a0, a1, a2])
+
+    pdata = DummyPostData(
+        {
+            "addresses-0-street": "A street updated",
+            "addresses-2-street": "C street updated",
+        }
+    )
+    form = Outside(pdata, obj=user)
+
+    form.populate_obj(user)
+
+    assert user.addresses[0] is a0
+    assert user.addresses[0].street == "A street updated"
+    assert user.addresses[1] is a2
+    assert user.addresses[1].street == "C street updated"
+    assert a1 not in user.addresses
+    assert a1.street == "B street"
