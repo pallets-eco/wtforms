@@ -200,6 +200,36 @@ def test_select(select_dummy_field):
     )
 
 
+def test_select_mixed_grouped_and_ungrouped_choices(dummy_field_class):
+    """Choices with and without ``optgroup`` render in groups by first
+    appearance, preserving each choice's intra-group order; ungrouped
+    choices share a single bucket rendered without an ``<optgroup>`` wrapper."""
+    field = dummy_field_class(
+        [
+            SelectChoice("foo", "lfoo", optgroup="g1", _selected=True),
+            SelectChoice("baz", "lbaz", optgroup="g2"),
+            SelectChoice("abc", "labc"),
+            SelectChoice("bar", "lbar", optgroup="g1"),
+            SelectChoice("xyz", "lxyz"),
+        ]
+    )
+    field.name = "f"
+
+    assert Select()(field) == (
+        '<select id="" name="f">'
+        '<optgroup label="g1">'
+        '<option selected value="foo">lfoo</option>'
+        '<option value="bar">lbar</option>'
+        "</optgroup>"
+        '<optgroup label="g2">'
+        '<option value="baz">lbaz</option>'
+        "</optgroup>"
+        '<option value="abc">labc</option>'
+        '<option value="xyz">lxyz</option>'
+        "</select>"
+    )
+
+
 def test_render_option():
     assert (
         Select.render_option(SelectChoice("bar", "foo", _selected=False))
