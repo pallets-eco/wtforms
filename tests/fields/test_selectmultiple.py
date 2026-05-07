@@ -103,6 +103,52 @@ def test_validate_choices_when_empty():
     assert form.a.errors[0] == "'b' is not a valid choice for this field."
 
 
+def test_invalid_value_message():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice(1, "Foo")],
+            coerce=int,
+            invalid_value_message="One or more submitted values could not be parsed.",
+        )
+    )
+    form = F(DummyPostData(a=["x"]))
+    assert not form.validate()
+    assert form.a.errors == ["One or more submitted values could not be parsed."]
+
+
+def test_invalid_choice_message():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice("a", "Foo")],
+            invalid_choice_message="Pick only the available options.",
+        )
+    )
+    form = F(DummyPostData(a=["b"]))
+    assert not form.validate()
+    assert form.a.errors == ["Pick only the available options."]
+
+
+def test_invalid_choice_message_callable():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice("a", "Foo")],
+            invalid_choice_message=lambda n: (
+                f"Pick {n} available option."
+                if n == 1
+                else f"Pick only {n} available options."
+            ),
+        )
+    )
+
+    form = F(DummyPostData(a=["b"]))
+    assert not form.validate()
+    assert form.a.errors == ["Pick 1 available option."]
+
+    form = F(DummyPostData(a=["b", "c"]))
+    assert not form.validate()
+    assert form.a.errors == ["Pick only 2 available options."]
+
+
 def test_validate_choices_when_none():
     F = make_form(a=SelectMultipleField())
     form = F(DummyPostData(a="b"))

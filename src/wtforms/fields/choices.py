@@ -184,6 +184,8 @@ class SelectField(SelectFieldBase):
         coerce=str,
         choices=None,
         validate_choice=True,
+        invalid_value_message=None,
+        invalid_choice_message=None,
         **kwargs,
     ):
         super().__init__(label, validators, **kwargs)
@@ -192,6 +194,12 @@ class SelectField(SelectFieldBase):
         self.coerce = coerce
         self.choices = self.choices_from_input(choices)
         self.validate_choice = validate_choice
+        self.invalid_value_message = invalid_value_message or self.gettext(
+            "Invalid Choice: could not coerce."
+        )
+        self.invalid_choice_message = invalid_choice_message or self.gettext(
+            "Not a valid choice."
+        )
 
     def iter_choices(self):
         choices = self.choices_from_input(self.choices) or []
@@ -213,9 +221,12 @@ class SelectField(SelectFieldBase):
         try:
             self.data = self.coerce(valuelist[0])
         except ValueError as exc:
-            raise ValueError(self.gettext("Invalid Choice: could not coerce.")) from exc
+            raise ValueError(self.invalid_value_message) from exc
 
     def pre_validate(self, form):
+        if self.process_errors:
+            return
+
         if not self.validate_choice:
             return
 
@@ -223,7 +234,7 @@ class SelectField(SelectFieldBase):
             raise TypeError(self.gettext("Choices cannot be None."))
 
         if not any(choice._selected for choice in self.iter_choices()):
-            raise ValidationError(self.gettext("Not a valid choice."))
+            raise ValidationError(self.invalid_choice_message)
 
 
 class SelectMultipleField(SelectField):
@@ -231,9 +242,38 @@ class SelectMultipleField(SelectField):
     No different from a normal select field, except this one can take (and
     validate) multiple choices. You'll need to specify the HTML
     :mdn-attr:`size` attribute on the :mdn-tag:`select` field when rendering.
+
+    ``invalid_choice_message`` may be a string, or a callable taking the
+    number of invalid submitted values and returning the message. The
+    returned message must contain ``%(value)s``, which is replaced with the
+    comma-separated list of unacceptable values.
     """
 
     widget = widgets.Select(multiple=True)
+
+    def __init__(
+        self,
+        label=None,
+        validators=None,
+        coerce=str,
+        choices=None,
+        validate_choice=True,
+        invalid_value_message=None,
+        invalid_choice_message=None,
+        **kwargs,
+    ):
+        super().__init__(
+            label,
+            validators,
+            coerce=coerce,
+            choices=choices,
+            validate_choice=validate_choice,
+            **kwargs,
+        )
+        self.invalid_value_message = invalid_value_message or self.gettext(
+            "Invalid choice(s): one or more data inputs could not be coerced."
+        )
+        self.invalid_choice_message = invalid_choice_message
 
     def iter_choices(self):
         choices = self.choices_from_input(self.choices) or []
@@ -252,13 +292,12 @@ class SelectMultipleField(SelectField):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError as exc:
-            raise ValueError(
-                self.gettext(
-                    "Invalid choice(s): one or more data inputs could not be coerced."
-                )
-            ) from exc
+            raise ValueError(self.invalid_value_message) from exc
 
     def pre_validate(self, form):
+        if self.process_errors:
+            return
+
         if not self.validate_choice or not self.data:
             return
 
@@ -270,14 +309,17 @@ class SelectMultipleField(SelectField):
             unacceptable = [
                 str(data) for data in set(self.data) if data not in acceptable
             ]
-            raise ValidationError(
-                self.ngettext(
+            if callable(self.invalid_choice_message):
+                message = self.invalid_choice_message(len(unacceptable))
+            elif self.invalid_choice_message is not None:
+                message = self.invalid_choice_message
+            else:
+                message = self.ngettext(
                     "'%(value)s' is not a valid choice for this field.",
                     "'%(value)s' are not valid choices for this field.",
                     len(unacceptable),
                 )
-                % dict(value="', '".join(unacceptable))
-            )
+            raise ValidationError(message % dict(value="', '".join(unacceptable)))
 
 
 class RadioField(SelectField):

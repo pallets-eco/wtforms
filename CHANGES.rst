@@ -46,6 +46,14 @@ Version 3.x.x
 - Defer to ``email_validator``'s module-level defaults for the
   :class:`~validators.Email` ``test_environment``, ``allow_smtputf8`` and
   ``allow_empty_local`` options. :issue:`915`
+- Add ``invalid_value_message`` and ``invalid_choice_message`` keyword
+  arguments for customizing built-in field error messages. On
+  ``SelectMultipleField``, ``invalid_choice_message`` may also be a callable
+  for custom pluralization. :issue:`39` :issue:`832`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``pre_validate`` now short-circuits when ``process_formdata`` already
+  produced an error, so a single coercion failure no longer surfaces as both
+  an "invalid value" and an "invalid choice" error.
 
 Version 3.2.2
 -------------

@@ -42,6 +42,9 @@ The Field base class
 
     .. automethod:: __init__
 
+    Built-in field processing messages can be customized per field with
+    ``invalid_value_message=``.
+
     **Validation**
 
     To validate the field, call its `validate` method, providing a form and any
@@ -303,7 +306,7 @@ Choice Fields
     a :mdn-tag:`ul` list of radio choices.
 
 
-.. class:: SelectField(default field arguments, choices=None, coerce=str, option_widget=None, validate_choice=True)
+.. class:: SelectField(default field arguments, choices=None, coerce=str, option_widget=None, validate_choice=True, invalid_value_message=None, invalid_choice_message=None)
 
     Select fields take a ``choices`` parameter which is either:
 
@@ -428,7 +431,11 @@ Choice Fields
     a list of fields each representing an option. The rendering of this can be
     further controlled by specifying `option_widget=`.
 
-.. autoclass:: SelectMultipleField(default field arguments, choices=None, coerce=str, option_widget=None)
+    Use ``invalid_value_message=`` to customize errors raised when submitted
+    data cannot be coerced, and ``invalid_choice_message=`` to customize errors
+    raised when the value is not present in ``choices``.
+
+.. autoclass:: SelectMultipleField(default field arguments, choices=None, coerce=str, option_widget=None, invalid_value_message=None, invalid_choice_message=None)
 
    The data on the SelectMultipleField is stored as a list of objects, each of
    which is checked and coerced from the form input.  Any submitted choices
