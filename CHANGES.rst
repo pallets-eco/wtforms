@@ -43,6 +43,9 @@ Version 3.x.x
 - Add :meth:`fields.Choice.from_enum` to build choices from an
   :class:`enum.Enum` class, and let :class:`~fields.SelectField` accept an
   Enum class as ``coerce``. :issue:`338`
+- Defer to ``email_validator``'s module-level defaults for the
+  :class:`~validators.Email` ``test_environment``, ``allow_smtputf8`` and
+  ``allow_empty_local`` options. :issue:`915`
 
 Version 3.2.2
 -------------

@@ -1,3 +1,4 @@
+import email_validator
 import pytest
 
 from wtforms.validators import email
@@ -80,3 +81,27 @@ def test_test_environment_accepts_test_domains(dummy_form, dummy_field):
     validator = email(test_environment=True)
     dummy_field.data = "user@example.test"
     validator(dummy_form, dummy_field)
+
+
+def test_default_test_environment_respects_global(monkeypatch, dummy_form, dummy_field):
+    """
+    With ``test_environment`` left at its default, the email_validator
+    module-level ``TEST_ENVIRONMENT`` flag is honoured.
+    """
+    monkeypatch.setattr(email_validator, "TEST_ENVIRONMENT", True)
+    validator = email()
+    dummy_field.data = "user@example.test"
+    validator(dummy_form, dummy_field)
+
+
+def test_explicit_test_environment_false_overrides_global(
+    monkeypatch, dummy_form, dummy_field
+):
+    """
+    Passing ``test_environment=False`` overrides the global default.
+    """
+    monkeypatch.setattr(email_validator, "TEST_ENVIRONMENT", True)
+    validator = email(test_environment=False)
+    dummy_field.data = "user@example.test"
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
