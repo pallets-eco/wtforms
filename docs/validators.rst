@@ -15,15 +15,15 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.DataRequired
 
-   This also sets the ``required`` :attr:`flag <wtforms.fields.Field.flags>` on
-   fields it is used on. This flag causes the ``required`` attribute to be
+   This also sets the :mdn-attr:`required` :attr:`flag <wtforms.fields.Field.flags>` on
+   fields it is used on. This flag causes the :mdn-attr:`required` attribute to be
    rendered in the tag, which prevents a request/response cycle for validation.
    This behavior can be overridden in the following ways:
 
    -   Specifying ``required=False`` when rendering in the template.
    -   Making a custom a widget that doesn't set it.
-   -   Rendering the ``novalidate`` attribute" on the ``form`` tag, or the
-       ``formnovalidate`` attribute on a submit button.
+   -   Rendering the :mdn-attr:`novalidate` attribute on the :mdn-tag:`form`
+       tag, or the :mdn-attr:`formnovalidate` attribute on a submit button.
 
    The ``required`` flag behavior also applies to the :class:`InputRequired` class.
 

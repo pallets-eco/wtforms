@@ -1,3 +1,4 @@
+import warnings
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
@@ -10,6 +11,7 @@ from wtforms.fields import DateTimeLocalField
 from wtforms.fields import DecimalField
 from wtforms.fields import DecimalRangeField
 from wtforms.fields import EmailField
+from wtforms.fields import FloatField
 from wtforms.fields import IntegerField
 from wtforms.fields import IntegerRangeField
 from wtforms.fields import PasswordField
@@ -31,6 +33,7 @@ class F(Form):
     date = DateField()
     dt_local = DateTimeLocalField()
     integer = IntegerField()
+    float = FloatField()
     decimal = DecimalField()
     int_range = IntegerRangeField()
     decimal_range = DecimalRangeField()
@@ -78,10 +81,15 @@ def test_simple():
             42,
         ),
         b(
+            "float",
+            "1.234",
+            '<input id="float" name="float" step="any" type="number" value="1.234">',
+            1.234,
+        ),
+        b(
             "decimal",
             "43.5",
-            '<input id="decimal" name="decimal" '
-            'step="any" type="number" value="43.5">',
+            '<input id="decimal" name="decimal" step="any" type="number" value="43.5">',
             Decimal("43.5"),
         ),
         b(
@@ -104,17 +112,19 @@ def test_simple():
         formdata[item["key"]] = item["form_input"]
         kw[item["key"]] = item["data"]
 
-    form = F(formdata)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        form = F(formdata)
     for item in VALUES:
         field = form[item["key"]]
         render_value = field()
-        assert (
-            render_value == item["expected_html"]
-        ), f"Field {item['key']} render mismatch: "
+        assert render_value == item["expected_html"], (
+            f"Field {item['key']} render mismatch: "
+        )
         "{render_value} != {item['expected_html']}"
-        assert (
-            field.data == item["data"]
-        ), "Field {item['key']} data mismatch: {field.data} != {item['data']}"
+        assert field.data == item["data"], (
+            "Field {item['key']} data mismatch: {field.data} != {item['data']}"
+        )
 
 
 class G(Form):

@@ -133,6 +133,22 @@ providing with data. Typically, you will want to assign the values manually, but
 for this simple case it's perfect. It can also be useful for CRUD and admin
 forms.
 
+The same pattern extends to a collection of objects: a
+:class:`~wtforms.fields.FormField` describes one item, a
+:class:`~wtforms.fields.FieldList` holds the list, and ``obj`` /
+``populate_obj`` thread through both ends::
+
+    class ItemForm(Form):
+        name     = StringField()
+        quantity = IntegerField()
+
+    class CartForm(Form):
+        items = FieldList(FormField(ItemForm))
+
+    form = CartForm(request.form, obj=cart)  # cart.items == [item1, item2, ...]
+    if form.validate():
+        form.populate_obj(cart)
+
 
 Exploring in the console
 ^^^^^^^^^^^^^^^^^^^^^^^^

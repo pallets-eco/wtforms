@@ -42,6 +42,9 @@ The Field base class
 
     .. automethod:: __init__
 
+    Built-in field processing messages can be customized per field with
+    ``invalid_value_message=``.
+
     **Validation**
 
     To validate the field, call its `validate` method, providing a form and any
@@ -135,7 +138,7 @@ The Field base class
     .. attribute:: label
 
         This is a :class:`Label` instance which when evaluated as a string
-        returns an HTML ``<label for="id">`` construct.
+        returns an HTML :mdn-tag:`label` construct.
 
     .. attribute:: default
 
@@ -220,6 +223,13 @@ refer to a single input from the form.
 
 .. autoclass:: DateTimeField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
+    .. warning::
+        :class:`DateTimeField` renders ``<input type="datetime">``, which is
+        obsolete in HTML and not broadly supported by browsers. Use
+        :class:`DateTimeLocalField` instead.
+
+        :class:`DateTimeField` is deprecated and will be removed in WTForms 3.4.
+
 .. autoclass:: DateTimeLocalField(default field arguments, format='%Y-%m-%d %H:%M:%S')
 
 .. autoclass:: DecimalField(default field arguments, places=2, rounding=None, use_locale=False, number_format=None)
@@ -260,7 +270,28 @@ refer to a single input from the form.
 
 .. autoclass:: MonthField(default field arguments, format='%Y-%m')
 
-.. autoclass:: RadioField(default field arguments, choices=[], coerce=str)
+.. autoclass:: SearchField(default field arguments)
+
+.. autoclass:: StringField(default field arguments)
+
+   .. code-block:: jinja
+
+        {{ form.username(size=30, maxlength=50) }}
+
+.. autoclass:: TelField(default field arguments)
+
+.. autoclass:: TimeField(default field arguments, format='%H:%M')
+
+.. autoclass:: URLField(default field arguments)
+
+Choice Fields
+-------------
+
+.. autoclass:: Choice
+
+.. autoclass:: SelectChoice
+
+.. autoclass:: RadioField(default field arguments, choices=None, coerce=str)
 
     .. code-block:: jinja
 
@@ -272,49 +303,70 @@ refer to a single input from the form.
         {% endfor %}
 
     Simply outputting the field without iterating its subfields will result in
-    a ``<ul>`` list of radio choices.
+    a :mdn-tag:`ul` list of radio choices.
 
-.. class:: SelectField(default field arguments, choices=[], coerce=str, option_widget=None, validate_choice=True)
+
+.. class:: SelectField(default field arguments, choices=None, coerce=str, option_widget=None, validate_choice=True, invalid_value_message=None, invalid_choice_message=None)
 
     Select fields take a ``choices`` parameter which is either:
 
-    * a list of ``(value, label)`` or ``(value, label, render_kw)`` tuples.
+    * a list of :class:`Choice`.
       It can also be a list of only values, in which case the value is used
-      as the label. If set, the ``render_kw`` dictionnary will be rendered as
-      HTML ``<option>`` parameters. The value can be of any
+      as the label. The :class:`Choice` ``render_kw`` mapping is rendered as
+      HTML :mdn-tag:`option` parameters. The value can be of any
       type, but because form data is sent to the browser as strings, you
       will need to provide a ``coerce`` function that converts a string
       back to the expected type.
-    * a dictionary of ``{label: list}`` pairs defining groupings of options.
-    * a function taking no argument, and returning either a list or a dictionary.
+    * a function taking no argument, and returning a list of :class:`Choice`.
 
 
     **Select fields with static choice values**::
 
         class PastebinEntry(Form):
-            language = SelectField('Programming Language', choices=[('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')])
+            language = SelectField('Programming Language', choices=[
+                Choice('cpp', 'C++'),
+                Choice('py', 'Python'),
+                Choice('text', 'Plain Text'),
+            ])
 
-    Note that the `choices` keyword is only evaluated once, so if you want to make
-    a dynamic drop-down list, you'll want to assign the choices list to the field
-    after instantiation. Any submitted choices which are not in the given choices
-    list will cause validation on the field to fail. If this option cannot be
-    applied to your problem you may wish to skip choice validation (see below).
+    Note that the `choices` keyword is evaluated each time the form is
+    instantiated, so callables passed as `choices` are re-evaluated per instance.
+    For dynamic options, either pass a callable to `choices` or assign
+    `field.choices` after instantiation. Any submitted choices which are not in
+    the given choices list will cause validation on the field to fail. If this
+    option cannot be applied to your problem you may wish to skip choice
+    validation (see below).
+
+    **Select fields with ``<optgroup>``**::
+
+        Use :class:`SelectChoice` to assign an option to an ``<optgroup>``.
+
+        class PastebinEntry(Form):
+            language = SelectField('Programming Language', choices=[
+                SelectChoice('cpp', 'C++', optgroup='Compiled'),
+                SelectChoice('rs', 'Rust', optgroup='Compiled'),
+                SelectChoice('py', 'Python', optgroup='Interpreted'),
+                SelectChoice('text', 'Plain Text'),
+            ])
 
     **Select fields with dynamic choice values**::
 
+        def available_groups():
+            return [Choice(g.id, g.name) for g in Group.query.order_by('name')]
+
         class UserDetails(Form):
-            group_id = SelectField('Group', coerce=int)
+            group_id = SelectField('Group', coerce=int, choices=available_groups)
 
         def edit_user(request, id):
             user = User.query.get(id)
             form = UserDetails(request.POST, obj=user)
-            form.group_id.choices = [(g.id, g.name) for g in Group.query.order_by('name')]
 
-    Note we didn't pass a `choices` to the :class:`~wtforms.fields.SelectField`
-    constructor, but rather created the list in the view function. Also, the
-    `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says that we
-    use :func:`int()` to coerce form data.  The default coerce is
-    :func:`str()`.
+    Note we passed a callable to `choices` rather than a static list; it is
+    invoked each time the form is instantiated, producing fresh options per
+    request. If the choices depend on data only available in the view, you can
+    instead assign `form.group_id.choices` after instantiation. The `coerce`
+    keyword arg to :class:`~wtforms.fields.SelectField` says that we use
+    :func:`int()` to coerce form data. The default coerce is :func:`str()`.
 
     **Coerce function example**::
 
@@ -324,10 +376,40 @@ refer to a single input from the form.
             return value
 
         class NonePossible(Form):
-            my_select_field = SelectField('Select an option', choices=[('1', 'Option 1'), ('2', 'Option 2'), ('None', 'No option')], coerce=coerce_none)
+            my_select_field = SelectField('Select an option', choices=[
+                Choice('1', 'Option 1'),
+                Choice('2', 'Option 2'),
+                Choice('None', 'No option'),
+            ], coerce=coerce_none)
 
     Note when the option None is selected a 'None' str will be passed. By using a coerce
     function the 'None' str will be converted to None.
+
+    **Select fields backed by an Enum**::
+
+        from enum import Enum
+
+        class Color(Enum):
+            RED = 1
+            GREEN = 2
+            BLUE = 3
+
+        class PaintForm(Form):
+            color = SelectField(choices=Choice.from_enum(Color), coerce=Color)
+
+    :meth:`Choice.from_enum` builds the option list from the Enum items;
+    the HTML ``value`` of each option is the item's ``name``. Passing the
+    Enum class itself as ``coerce`` installs the matching coercion, so
+    ``form.color.data`` is a ``Color`` item after submit. Pre-selecting
+    works the usual way, with an Enum item: ``PaintForm(color=Color.RED)``.
+
+    By default the option label is ``str(item)`` if the Enum defines its
+    own ``__str__`` (also the case for :class:`enum.StrEnum`), otherwise
+    ``item.name``. To customise, pass a ``label`` callable taking an Enum
+    item and returning the label string::
+
+        Choice.from_enum(Color, label=lambda item: item.name.title())
+        # → [Choice('RED', 'Red'), Choice('GREEN', 'Green'), Choice('BLUE', 'Blue')]
 
     **Skipping choice validation**::
 
@@ -349,29 +431,25 @@ refer to a single input from the form.
     a list of fields each representing an option. The rendering of this can be
     further controlled by specifying `option_widget=`.
 
-.. autoclass:: SearchField(default field arguments)
+    Use ``invalid_value_message=`` to customize errors raised when submitted
+    data cannot be coerced, and ``invalid_choice_message=`` to customize errors
+    raised when the value is not present in ``choices``.
 
-.. autoclass:: SelectMultipleField(default field arguments, choices=[], coerce=str, option_widget=None)
+.. autoclass:: SelectMultipleField(default field arguments, choices=None, coerce=str, option_widget=None, invalid_value_message=None, invalid_choice_message=None)
 
    The data on the SelectMultipleField is stored as a list of objects, each of
    which is checked and coerced from the form input.  Any submitted choices
    which are not in the given choices list will cause validation on the field
    to fail.
 
+Submit fields
+-------------
+
+WTForms provides boolean and string-based submit controls.
+
+.. autoclass:: ButtonField(default field arguments)
+
 .. autoclass:: SubmitField(default field arguments)
-
-.. autoclass:: StringField(default field arguments)
-
-   .. code-block:: jinja
-
-        {{ form.username(size=30, maxlength=50) }}
-
-.. autoclass:: TelField(default field arguments)
-
-.. autoclass:: TimeField(default field arguments, format='%H:%M')
-
-.. autoclass:: URLField(default field arguments)
-
 
 Convenience Fields
 ------------------
@@ -436,10 +514,23 @@ complex data structures such as lists and nested objects can be represented.
 .. autoclass:: FieldList(unbound_field, default field arguments, min_entries=0, max_entries=None, separator='-')
 
     **Note**: Due to a limitation in how HTML sends values, FieldList cannot enclose
-    :class:`BooleanField` or :class:`SubmitField` instances.
+    :class:`BooleanField`, :class:`ButtonField`, or :class:`SubmitField`
+    instances.
 
     .. automethod:: append_entry([data])
+    .. automethod:: insert_entry(index[, data])
     .. automethod:: pop_entry
+
+    ``append_entry`` and ``insert_entry`` accept Python object data for the new
+    entry, not submitted formdata. For simple enclosed fields this is usually a
+    scalar value. For ``FieldList(FormField(...))``, this may be a dict or an
+    object that the enclosed form can process, similar to passing ``data`` or
+    ``obj`` when constructing that form.
+
+    Entries are kept with consecutive indices: ``insert_entry``,
+    ``pop_entry`` and rebuilds from formdata renumber entries so that each
+    entry's ``index``, ``name`` and ``id`` reflect its position in
+    :attr:`entries`.
 
     .. attribute:: entries
 
@@ -448,8 +539,8 @@ complex data structures such as lists and nested objects can be represented.
         FieldList works as expected, and proxies to the enclosed entries list.
 
         **Do not** resize the entries list directly, this will result in
-        undefined behavior. See `append_entry` and `pop_entry` for ways you can
-        manipulate the list.
+        undefined behavior. See `append_entry`, `insert_entry`, and `pop_entry`
+        for ways you can manipulate the list.
 
     .. automethod:: __iter__
     .. automethod:: __len__
@@ -461,7 +552,7 @@ complex data structures such as lists and nested objects can be represented.
     FormField::
 
         class IMForm(Form):
-            protocol = SelectField(choices=[('aim', 'AIM'), ('msn', 'MSN')])
+            protocol = SelectField(choices=[Choice('aim', 'AIM'), Choice('msn', 'MSN')])
             username = StringField()
 
         class ContactForm(Form):
@@ -583,8 +674,7 @@ Additional Helper Classes
 .. class:: Label
 
     On all fields, the `label` property is an instance of this class.
-    Labels can be printed to yield a
-    ``<label for="field_id">Label Text</label>``
+    Labels can be printed to yield a :mdn-tag:`label`
     HTML tag enclosure. Similar to fields, you can also call the label with
     additional html params.
 

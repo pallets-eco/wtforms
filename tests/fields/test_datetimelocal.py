@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+from datetime import timezone
+from zoneinfo import ZoneInfo
 
 from tests.common import DummyPostData
 from wtforms.fields import DateTimeLocalField
@@ -72,3 +74,68 @@ def test_separators():
     form = F(DummyPostData(a=["2008-05-05T04:30:00"]))
     assert form.a.data == dt
     assert form.validate()
+
+
+def test_tz_attaches_tzinfo_on_submit():
+    """Submitted naive value gets the field's ``tz`` attached."""
+    paris = ZoneInfo("Europe/Paris")
+    F = make_form(a=DateTimeLocalField(tz=paris))
+    form = F(DummyPostData(a=["2026-05-06T16:00:00"]))
+    assert form.a.data == datetime(2026, 5, 6, 16, 0, tzinfo=paris)
+
+
+def test_tz_converts_aware_data_at_render():
+    """Aware ``data`` is converted to ``tz`` and stripped before rendering."""
+    paris = ZoneInfo("Europe/Paris")
+    F = make_form(a=DateTimeLocalField(tz=paris))
+    form = F(a=datetime(2026, 5, 6, 14, 0, tzinfo=timezone.utc))
+    # 14:00 UTC == 16:00 Europe/Paris on 2026-05-06 (CEST, UTC+2)
+    assert form.a._value() == "2026-05-06 16:00:00"
+
+
+def test_tz_round_trip_through_utc():
+    """Submitted local time round-trips correctly when reconverted to UTC."""
+    paris = ZoneInfo("Europe/Paris")
+    F = make_form(a=DateTimeLocalField(tz=paris))
+    form = F(DummyPostData(a=["2026-05-06T16:00:00"]))
+    assert form.a.data is not None
+    stored = form.a.data.astimezone(timezone.utc)
+    assert stored == datetime(2026, 5, 6, 14, 0, tzinfo=timezone.utc)
+
+
+def test_tz_callable_resolved_lazily():
+    """A callable ``tz`` is resolved at each access, not at construction."""
+    paris = ZoneInfo("Europe/Paris")
+    holder = {"tz": paris}
+    F = make_form(a=DateTimeLocalField(tz=lambda: holder["tz"]))
+    form = F(DummyPostData(a=["2026-05-06T16:00:00"]))
+    assert form.a.data == datetime(2026, 5, 6, 16, 0, tzinfo=paris)
+
+    new_york = ZoneInfo("America/New_York")
+    holder["tz"] = new_york
+    form = F(DummyPostData(a=["2026-05-06T10:00:00"]))
+    assert form.a.data == datetime(2026, 5, 6, 10, 0, tzinfo=new_york)
+
+
+def test_tz_callable_returning_none_falls_back_to_naive():
+    """A callable returning ``None`` is treated as no timezone configured."""
+    F = make_form(a=DateTimeLocalField(tz=lambda: None))
+    form = F(DummyPostData(a=["2026-05-06T16:00:00"]))
+    assert form.a.data == datetime(2026, 5, 6, 16, 0)
+    assert form.a.data.tzinfo is None
+
+
+def test_tz_none_keeps_legacy_naive_behavior():
+    """Without ``tz``, the field preserves the pre-3.3 naive behavior."""
+    F = make_form(a=DateTimeLocalField())
+    form = F(DummyPostData(a=["2026-05-06T16:00:00"]))
+    assert form.a.data == datetime(2026, 5, 6, 16, 0)
+    assert form.a.data.tzinfo is None
+
+
+def test_tz_naive_data_rendered_unchanged():
+    """Naive ``data`` is rendered as-is even when ``tz`` is set."""
+    paris = ZoneInfo("Europe/Paris")
+    F = make_form(a=DateTimeLocalField(tz=paris))
+    form = F(a=datetime(2026, 5, 6, 16, 0))
+    assert form.a._value() == "2026-05-06 16:00:00"

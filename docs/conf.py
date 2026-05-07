@@ -13,6 +13,7 @@ release, version = get_version("WTForms")
 master_doc = "index"
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "pallets_sphinx_themes",
@@ -21,6 +22,20 @@ extensions = [
 ]
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
+}
+extlinks = {
+    "mdn-tag": (
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/%s",
+        "<%s>",
+    ),
+    "mdn-attr": (
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/%s",
+        "%s",
+    ),
+    "mdn-input": (
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/%s",
+        '<input type="%s">',
+    ),
 }
 issues_github_path = "pallets-eco/wtforms"
 
