@@ -30,6 +30,10 @@ Version 3.x.x
   :issue:`706`
 - Add a ``tz`` parameter to :class:`~fields.DateTimeLocalField` to associate a
   timezone with the input. :issue:`833`
+- Add :class:`~fields.FieldList` ``insert_entry`` and indexed ``pop_entry``.
+  :issue:`256`
+- :class:`~fields.FieldList` builds entries in the order keys appear in
+  ``formdata``, instead of sorting them by numeric index. :issue:`256`
 
 Version 3.2.2
 -------------

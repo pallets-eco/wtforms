@@ -79,7 +79,7 @@ class FieldList(Field):
         self.object_data = data
 
         if formdata:
-            indices = sorted(set(self._extract_indices(self.name, formdata)))
+            indices = list(dict.fromkeys(self._extract_indices(self.name, formdata)))
             if self.max_entries:
                 indices = indices[: self.max_entries]
 
@@ -170,9 +170,13 @@ class FieldList(Field):
             translations=self._translations,
         )
         field = self.meta.bind_field(None, self.unbound_field, options)
+        field.index = index
         field.process(formdata, data)
         self.entries.append(field)
         return field
+
+    def _recalculate_last_index(self):
+        self.last_index = max((field.index for field in self.entries), default=-1)
 
     def append_entry(self, data=unset_value):
         """
@@ -183,10 +187,42 @@ class FieldList(Field):
         """
         return self._add_entry(data=data)
 
-    def pop_entry(self):
-        """Removes the last entry from the list and returns it."""
-        entry = self.entries.pop()
-        self.last_index -= 1
+    def insert_entry(self, index, data=unset_value):
+        """
+        Create a new entry with optional default data and insert it into the
+        entries list at the given position.
+
+        The new entry receives an index of ``max(existing indices) + 1``.
+        Existing entries keep their ``name`` and ``id``: an ``insert`` only
+        changes their position in :attr:`entries`, never their HTML identity.
+        See :meth:`pop_entry` for how popping affects subsequent index
+        allocation.
+
+        ``index`` follows :meth:`list.insert` semantics (negative or
+        out-of-range values are clamped). Like :meth:`append_entry`, the new
+        entry only receives object data, not formdata.
+        """
+        field = self._add_entry(data=data)
+        self.entries.insert(index, self.entries.pop())
+        return field
+
+    def pop_entry(self, index=-1):
+        """Remove the entry at ``index`` from the list and return it.
+
+        Remaining entries keep their ``name`` and ``id`` — ``FieldList``
+        guarantees stable HTML identity across modifications. Popping an
+        entry in the middle therefore leaves a gap in the indices (e.g.
+        after popping ``a-1`` from ``[a-0, a-1, a-2]`` the entries are
+        ``[a-0, a-2]``); the gap is preserved through formdata round-trips.
+
+        Popping the **last** entry frees its index for reuse: the next
+        :meth:`append_entry` will reattribute the same name. Popping any
+        **other** entry never frees its index — subsequent
+        :meth:`append_entry` / :meth:`insert_entry` always receive a fresh,
+        strictly greater index.
+        """
+        entry = self.entries.pop(index)
+        self._recalculate_last_index()
         return entry
 
     def __iter__(self):
