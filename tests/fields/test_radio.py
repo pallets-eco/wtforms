@@ -1,6 +1,7 @@
 from tests.common import DummyPostData
 from wtforms import validators
 from wtforms.fields import RadioField
+from wtforms.fields.choices import Choice
 from wtforms.form import Form
 
 
@@ -9,10 +10,10 @@ def make_form(name="F", **fields):
 
 
 class F(Form):
-    a = RadioField(choices=[("a", "hello"), ("b", "bye")], default="a")
-    b = RadioField(choices=[(1, "Item 1"), (2, "Item 2")], coerce=int)
+    a = RadioField(choices=[Choice("a", "hello"), Choice("b", "bye")], default="a")
+    b = RadioField(choices=[Choice(1, "Item 1"), Choice(2, "Item 2")], coerce=int)
     c = RadioField(
-        choices=[("a", "Item 1"), ("b", "Item 2")],
+        choices=[Choice("a", "Item 1"), Choice("b", "Item 2")],
         validators=[validators.InputRequired()],
     )
 
@@ -54,7 +55,7 @@ def test_text_coercion():
     # Regression test for text coercion scenarios where the value is a boolean.
     F = make_form(
         a=RadioField(
-            choices=[(True, "yes"), (False, "no")],
+            choices=[Choice(True, "yes"), Choice(False, "no")],
             coerce=lambda x: False if x == "False" else bool(x),
         )
     )
@@ -71,7 +72,7 @@ def test_text_coercion():
 
 def test_callable_choices():
     def choices():
-        return [("a", "hello"), ("b", "bye")]
+        return [Choice("a", "hello"), Choice("b", "bye")]
 
     class F(Form):
         a = RadioField(choices=choices, default="a")
@@ -112,7 +113,8 @@ def test_required_validator():
 def test_render_kw_preserved():
     F = make_form(
         a=RadioField(
-            choices=[(True, "yes"), (False, "no")], render_kw=dict(disabled=True)
+            choices=[Choice(True, "yes"), Choice(False, "no")],
+            render_kw=dict(disabled=True),
         )
     )
     form = F()

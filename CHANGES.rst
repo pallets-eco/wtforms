@@ -36,6 +36,10 @@ Version 3.x.x
   ``formdata``, instead of sorting them by numeric index. :issue:`256`
 - Add :class:`~fields.ButtonField` to render ``<button type="submit">``
   controls with string values. :issue:`784`
+- :class:`~fields.SelectField` refactor. Choices tuples and dicts are
+  deprecated in favor of :class:`~fields.Choice`. :pr:`739`
+- ``<option>`` HTML attributes can be passed using
+  :class:`~fields.Choice`. :issue:`692` :pr:`739`
 
 Version 3.2.2
 -------------
