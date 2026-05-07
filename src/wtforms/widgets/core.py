@@ -2,6 +2,7 @@ from markupsafe import escape
 from markupsafe import Markup
 
 __all__ = (
+    "Button",
     "CheckboxInput",
     "ColorInput",
     "DateInput",
@@ -178,6 +179,36 @@ class Input:
                 kwargs[k] = getattr(flags, k)
         input_params = self.html_params(name=field.name, **kwargs)
         return Markup(f"<input {input_params}>")
+
+
+class Button:
+    """
+    Render a ``<button>`` element.
+
+    Pass ``label=`` when rendering to override the visible button text. The
+    label is HTML-escaped; pass a :class:`markupsafe.Markup` instance to embed
+    HTML (icons, formatted text) in the button content.
+    """
+
+    html_params = staticmethod(html_params)
+    input_type = "submit"
+    validation_attrs = ["disabled"]
+
+    def __init__(self, input_type=None):
+        if input_type is not None:
+            self.input_type = input_type
+
+    def __call__(self, field, **kwargs):
+        label = kwargs.pop("label", field.label.text)
+        kwargs.setdefault("id", field.id)
+        kwargs.setdefault("type", self.input_type)
+        kwargs.setdefault("value", field._value())
+        flags = getattr(field, "flags", {})
+        for k in dir(flags):
+            if k in self.validation_attrs and k not in kwargs:
+                kwargs[k] = getattr(flags, k)
+        button_params = self.html_params(name=field.name, **kwargs)
+        return Markup(f"<button {button_params}>{escape(label)}</button>")
 
 
 class TextInput(Input):

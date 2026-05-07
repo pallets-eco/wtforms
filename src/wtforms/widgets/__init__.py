@@ -1,3 +1,4 @@
+from wtforms.widgets.core import Button
 from wtforms.widgets.core import CheckboxInput
 from wtforms.widgets.core import ColorInput
 from wtforms.widgets.core import DateInput
@@ -27,6 +28,7 @@ from wtforms.widgets.core import URLInput
 from wtforms.widgets.core import WeekInput
 
 __all__ = [
+    "Button",
     "CheckboxInput",
     "ColorInput",
     "DateInput",

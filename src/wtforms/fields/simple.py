@@ -2,6 +2,7 @@ from .. import widgets
 from .core import Field
 
 __all__ = (
+    "ButtonField",
     "BooleanField",
     "TextAreaField",
     "PasswordField",
@@ -70,6 +71,51 @@ class StringField(Field):
         return str(self.data) if self.data is not None else ""
 
 
+class ButtonField(StringField):
+    """
+    Represents a :mdn-tag:`button` with ``type="submit"``.
+
+    The field's label is used as the visible text of the button, not as the
+    submitted value. If the button is used to submit the form, the submitted
+    value is stored as a string.
+
+    The rendered ``value`` attribute comes from the field data passed at form
+    construction time, or defaults to an empty string. If the button is not
+    clicked, the field data is `None`. Pass ``label=`` when rendering to
+    override the visible button text.
+
+    The label is HTML-escaped at render time. To embed HTML in the button
+    content (an icon, formatted text), pass a :class:`markupsafe.Markup`
+    instance — at declaration or as the render-time ``label=``::
+
+        from markupsafe import Markup
+
+        class F(Form):
+            save = ButtonField(Markup('<i class="icon-save"></i> Save'))
+
+        # or at render time:
+        form.save(label=Markup('<i class="icon-save"></i> Save'))
+    """
+
+    widget = widgets.Button()
+
+    def process_data(self, value):
+        self.data = None
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = valuelist[0]
+        else:
+            self.data = None
+
+    def _value(self):
+        if self.raw_data:
+            return str(self.raw_data[0])
+        if self.object_data is not None:
+            return str(self.object_data)
+        return ""
+
+
 class TextAreaField(StringField):
     """
     This field represents an HTML :mdn-tag:`textarea` and can be used to take
@@ -128,8 +174,12 @@ class HiddenField(StringField):
 
 class SubmitField(BooleanField):
     """
-    Represents an :mdn-input:`submit`. This allows checking if a given submit
-    button has been pressed.
+    Represents an :mdn-input:`submit`.
+
+    The field's label is also used as the rendered HTML ``value`` of the submit
+    control. Its WTForms data is boolean, following :class:`BooleanField`
+    semantics: the field is ``True`` when the submitted value is not a falsy
+    value, and ``False`` otherwise.
     """
 
     widget = widgets.SubmitInput()
