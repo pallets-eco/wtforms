@@ -698,7 +698,7 @@ class URL:
         message=None,
     ):
         self.allow_userinfo = allow_userinfo
-        self.schemes = frozenset(schemes) if schemes is not None else None
+        self.schemes = schemes
         self.message = message
         self.validate_hostname = HostnameValidation(
             require_tld=require_tld, allow_ip=allow_ip
