@@ -79,7 +79,7 @@ class FieldList(Field):
         self.object_data = data
 
         if formdata:
-            indices = list(dict.fromkeys(self._extract_indices(self.name, formdata)))
+            indices = sorted(set(self._extract_indices(self.name, formdata)))
             if self.max_entries:
                 indices = indices[: self.max_entries]
 
