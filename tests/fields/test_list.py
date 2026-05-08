@@ -246,15 +246,17 @@ def test_entry_index_attribute_reflects_position():
     assert [e.index for e in a.entries] == [0, 1, 2]
 
 
-def test_formdata_order_drives_entry_order():
-    """Entries are built in formdata key order, with consecutive indices."""
+def test_formdata_index_drives_entry_order():
+    """The numeric index encoded in ``name="a-N"`` drives the entry position,
+    regardless of formdata key order. HTTP clients are free to serialize
+    keys in any order — only the ``N`` in the name carries the position."""
     F = make_form(a=FieldList(t))
     pdata = DummyPostData([("a-2", "second"), ("a-0", "first"), ("a-1", "middle")])
     a = F(pdata).a
     assert [(e.name, e.data) for e in a.entries] == [
-        ("a-0", "second"),
-        ("a-1", "first"),
-        ("a-2", "middle"),
+        ("a-0", "first"),
+        ("a-1", "middle"),
+        ("a-2", "second"),
     ]
 
 
