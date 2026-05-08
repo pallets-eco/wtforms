@@ -64,6 +64,11 @@ Version 3.x.x
 - Add an ``html_pattern`` keyword argument to :class:`~validators.Regexp`
   to control the HTML ``pattern`` attribute emitted on supporting widgets.
   :issue:`759`
+- :class:`~validators.URL` validator is based on ``urllib.parse.urlparse``
+  instead of a regex. New keyword arguments: ``allow_userinfo`` for
+  accepting ``user:password@host`` URLs; ``schemes``
+  (default ``("http", "https")``) is the allowlist of accepted schemes
+  :pr:`847`
 
 Version 3.2.2
 -------------
@@ -108,7 +113,6 @@ Released 2024-10-20
 .. note::
    If you need to keep the old behavior you can set the ``_form_error_key``
    parameter of your form to :data:`None`.
-
 
 Version 3.1.2
 -------------
