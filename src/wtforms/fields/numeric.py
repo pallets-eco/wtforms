@@ -60,8 +60,13 @@ class IntegerField(Field):
 
     widget = widgets.NumberInput()
 
-    def __init__(self, label=None, validators=None, **kwargs):
+    def __init__(
+        self, label=None, validators=None, invalid_value_message=None, **kwargs
+    ):
         super().__init__(label, validators, **kwargs)
+        self.invalid_value_message = invalid_value_message or self.gettext(
+            "Not a valid integer value."
+        )
 
     def _value(self):
         if self.raw_data:
@@ -79,7 +84,7 @@ class IntegerField(Field):
             self.data = int(value)
         except (ValueError, TypeError) as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid integer value.")) from exc
+            raise ValueError(self.invalid_value_message) from exc
 
     def process_formdata(self, valuelist):
         if not valuelist:
@@ -89,7 +94,7 @@ class IntegerField(Field):
             self.data = int(valuelist[0])
         except ValueError as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid integer value.")) from exc
+            raise ValueError(self.invalid_value_message) from exc
 
 
 class DecimalField(LocaleAwareNumberField):
@@ -98,7 +103,8 @@ class DecimalField(LocaleAwareNumberField):
 
     :param places:
         How many decimal places to quantize the value to for display on form.
-        If None, does not quantize value.
+        If unset, use 2 decimal places.
+        If explicitely set to `None`, does not quantize value.
     :param rounding:
         How to round the value during quantize, for example
         `decimal.ROUND_UP`. If unset, uses the rounding value from the
@@ -114,7 +120,13 @@ class DecimalField(LocaleAwareNumberField):
     widget = widgets.NumberInput(step="any")
 
     def __init__(
-        self, label=None, validators=None, places=unset_value, rounding=None, **kwargs
+        self,
+        label=None,
+        validators=None,
+        places=unset_value,
+        rounding=None,
+        invalid_value_message=None,
+        **kwargs,
     ):
         super().__init__(label, validators, **kwargs)
         if self.use_locale and (places is not unset_value or rounding is not None):
@@ -126,6 +138,9 @@ class DecimalField(LocaleAwareNumberField):
             places = 2
         self.places = places
         self.rounding = rounding
+        self.invalid_value_message = invalid_value_message or self.gettext(
+            "Not a valid decimal value."
+        )
 
     def _value(self):
         if self.raw_data:
@@ -143,7 +158,7 @@ class DecimalField(LocaleAwareNumberField):
         if not hasattr(self.data, "quantize"):
             # If for some reason, data is a float or int, then format
             # as we would for floats using string formatting.
-            format = "%%0.%df" % self.places
+            format = f"%.{self.places}f"
             return format % self.data
 
         exp = decimal.Decimal(".1") ** self.places
@@ -164,19 +179,27 @@ class DecimalField(LocaleAwareNumberField):
                 self.data = decimal.Decimal(valuelist[0])
         except (decimal.InvalidOperation, ValueError) as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid decimal value.")) from exc
+            raise ValueError(self.invalid_value_message) from exc
 
 
 class FloatField(Field):
     """
-    A text field, except all input is coerced to an float.  Erroneous input
-    is ignored and will not be accepted as a value.
+    A field that stores floating-point values.
+
+    By default, this renders as an ``<input type="number">`` with
+    ``step="any"`` to allow browser input of any floating-point value.
+    Erroneous input is ignored and will not be accepted as a value.
     """
 
-    widget = widgets.TextInput()
+    widget = widgets.NumberInput(step="any")
 
-    def __init__(self, label=None, validators=None, **kwargs):
+    def __init__(
+        self, label=None, validators=None, invalid_value_message=None, **kwargs
+    ):
         super().__init__(label, validators, **kwargs)
+        self.invalid_value_message = invalid_value_message or self.gettext(
+            "Not a valid float value."
+        )
 
     def _value(self):
         if self.raw_data:
@@ -193,12 +216,12 @@ class FloatField(Field):
             self.data = float(valuelist[0])
         except ValueError as exc:
             self.data = None
-            raise ValueError(self.gettext("Not a valid float value.")) from exc
+            raise ValueError(self.invalid_value_message) from exc
 
 
 class IntegerRangeField(IntegerField):
     """
-    Represents an ``<input type="range">``.
+    Represents an :mdn-input:`range`.
     """
 
     widget = widgets.RangeInput()
@@ -206,7 +229,7 @@ class IntegerRangeField(IntegerField):
 
 class DecimalRangeField(DecimalField):
     """
-    Represents an ``<input type="range">``.
+    Represents an :mdn-input:`range`.
     """
 
     widget = widgets.RangeInput(step="any")

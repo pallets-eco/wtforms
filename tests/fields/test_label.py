@@ -33,11 +33,9 @@ def test_override_for():
 def test_escaped_label_text():
     label = Label("test", '<script>alert("test");</script>')
     assert label(for_="foo") == (
-        '<label for="foo">&lt;script&gt;'
-        "alert(&#34;test&#34;);&lt;/script&gt;</label>"
+        '<label for="foo">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>'
     )
 
     assert label(**{"for": "bar"}) == (
-        '<label for="bar">&lt;script&gt;'
-        "alert(&#34;test&#34;);&lt;/script&gt;</label>"
+        '<label for="bar">&lt;script&gt;alert(&#34;test&#34;);&lt;/script&gt;</label>'
     )

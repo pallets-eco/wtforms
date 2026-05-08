@@ -1,7 +1,11 @@
-import pytest
-from tests.common import DummyPostData
+from enum import Enum
 
+import pytest
+
+from tests.common import DummyPostData
 from wtforms import validators
+from wtforms.fields import Choice
+from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
 from wtforms.fields import SelectMultipleField
 from wtforms.form import Form
@@ -13,10 +17,13 @@ def make_form(name="F", **fields):
 
 class F(Form):
     a = SelectMultipleField(
-        choices=[("a", "hello"), ("b", "bye"), ("c", "something")], default=("a",)
+        choices=[Choice("a", "hello"), Choice("b", "bye"), Choice("c", "something")],
+        default=("a",),
     )
     b = SelectMultipleField(
-        coerce=int, choices=[(1, "A"), (2, "B"), (3, "C")], default=("1", "3")
+        coerce=int,
+        choices=[Choice(1, "A"), Choice(2, "B"), Choice(3, "C")],
+        default=("1", "3"),
     )
 
 
@@ -27,16 +34,20 @@ def test_defaults():
     # Test for possible regression with null data
     form.a.data = None
     assert form.validate()
-    assert list(form.a.iter_choices()) == [(v, l, False) for v, l in form.a.choices]
+    assert list(form.a.iter_choices()) == [
+        SelectChoice("a", "hello", None, None, _selected=False),
+        SelectChoice("b", "bye", None, None, _selected=False),
+        SelectChoice("c", "something", None, None, _selected=False),
+    ]
 
 
 def test_with_data():
     form = F(DummyPostData(a=["a", "c"]))
     assert form.a.data == ["a", "c"]
     assert list(form.a.iter_choices()) == [
-        ("a", "hello", True),
-        ("b", "bye", False),
-        ("c", "something", True),
+        SelectChoice("a", "hello", None, None, _selected=True),
+        SelectChoice("b", "bye", None, None, _selected=False),
+        SelectChoice("c", "something", None, None, _selected=True),
     ]
     assert form.b.data == []
     form = F(DummyPostData(b=["1", "2"]))
@@ -92,6 +103,52 @@ def test_validate_choices_when_empty():
     assert form.a.errors[0] == "'b' is not a valid choice for this field."
 
 
+def test_invalid_value_message():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice(1, "Foo")],
+            coerce=int,
+            invalid_value_message="One or more submitted values could not be parsed.",
+        )
+    )
+    form = F(DummyPostData(a=["x"]))
+    assert not form.validate()
+    assert form.a.errors == ["One or more submitted values could not be parsed."]
+
+
+def test_invalid_choice_message():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice("a", "Foo")],
+            invalid_choice_message="Pick only the available options.",
+        )
+    )
+    form = F(DummyPostData(a=["b"]))
+    assert not form.validate()
+    assert form.a.errors == ["Pick only the available options."]
+
+
+def test_invalid_choice_message_callable():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice("a", "Foo")],
+            invalid_choice_message=lambda n: (
+                f"Pick {n} available option."
+                if n == 1
+                else f"Pick only {n} available options."
+            ),
+        )
+    )
+
+    form = F(DummyPostData(a=["b"]))
+    assert not form.validate()
+    assert form.a.errors == ["Pick 1 available option."]
+
+    form = F(DummyPostData(a=["b", "c"]))
+    assert not form.validate()
+    assert form.a.errors == ["Pick only 2 available options."]
+
+
 def test_validate_choices_when_none():
     F = make_form(a=SelectMultipleField())
     form = F(DummyPostData(a="b"))
@@ -100,17 +157,25 @@ def test_validate_choices_when_none():
 
 
 def test_dont_validate_choices():
-    F = make_form(a=SelectMultipleField(choices=[("a", "Foo")], validate_choice=False))
+    F = make_form(
+        a=SelectMultipleField(choices=[Choice("a", "Foo")], validate_choice=False)
+    )
     form = F(DummyPostData(a=["b"]))
     assert form.validate()
     assert form.a.data == ["b"]
     assert len(form.a.errors) == 0
 
 
+def test_choices_can_be_none_when_choice_validation_is_disabled():
+    F = make_form(a=SelectMultipleField(validate_choice=False))
+    form = F(DummyPostData(a="b"))
+    assert form.validate()
+
+
 def test_requried_flag():
     F = make_form(
         c=SelectMultipleField(
-            choices=[("a", "hello"), ("b", "bye")],
+            choices=[Choice("a", "hello"), Choice("b", "bye")],
             validators=[validators.InputRequired()],
         )
     )
@@ -126,7 +191,7 @@ def test_requried_flag():
 def test_required_validator():
     F = make_form(
         c=SelectMultipleField(
-            choices=[("a", "hello"), ("b", "bye")],
+            choices=[Choice("a", "hello"), Choice("b", "bye")],
             validators=[validators.InputRequired()],
         )
     )
@@ -149,3 +214,75 @@ def test_render_kw_preserved():
         '<option value="bar">bar</option>'
         "</select>"
     )
+
+
+def test_option_render_kw():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice("a", "Foo", {"title": "foobar", "data-foo": "bar"})]
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        SelectChoice(
+            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, None, _selected=True
+        )
+    ]
+
+
+def test_optgroup_option_render_kw():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[
+                SelectChoice(
+                    "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello"
+                )
+            ]
+        )
+    )
+    form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option data-foo="bar" selected title="foobar" value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        SelectChoice(
+            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello", _selected=True
+        )
+    ]
+
+
+def test_can_supply_coercable_values_as_options():
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[Choice("1", "One"), Choice("2", "Two")],
+            coerce=int,
+        )
+    )
+    post_data = DummyPostData(a=["1", "2"])
+    form = F(post_data)
+    assert form.validate()
+    assert form.a.data == [1, 2]
+
+
+class _Color(Enum):
+    RED = 1
+    GREEN = 2
+    BLUE = 3
+
+
+def test_select_multiple_enum_round_trip():
+    """``coerce=EnumCls`` works for SelectMultipleField too."""
+    F = make_form(
+        a=SelectMultipleField(choices=Choice.from_enum(_Color), coerce=_Color)
+    )
+    form = F(DummyPostData(a=["RED", "BLUE"]))
+    assert form.validate()
+    assert form.a.data == [_Color.RED, _Color.BLUE]

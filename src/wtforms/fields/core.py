@@ -1,6 +1,5 @@
 import inspect
 import itertools
-import warnings
 
 from markupsafe import escape
 from markupsafe import Markup
@@ -40,6 +39,7 @@ class Field:
         description="",
         id=None,
         default=None,
+        invalid_value_message=None,
         widget=None,
         render_kw=None,
         name=None,
@@ -56,7 +56,12 @@ class Field:
         :param validators:
             A sequence of validators to call when `validate` is called.
         :param filters:
-            A sequence of filters which are run on input data by `process`.
+            A sequence of callable which are run by :meth:`~Field.process`
+            to filter or transform the input data. For example
+            ``StringForm(filters=[lambda x: x.strip() if x is not None else x])``.
+            Note that filters are applied after processing the default and
+            incoming data, but before validation. Filters should handle
+            empty values such as `None`.
         :param description:
             A description for the field, typically used for help text.
         :param id:
@@ -65,6 +70,9 @@ class Field:
         :param default:
             The default value to assign to the field, if no form or object
             input is provided. May be a callable.
+        :param invalid_value_message:
+            Optional custom message used when processing submitted or Python
+            data fails because the value is invalid for this field.
         :param widget:
             If provided, overrides the widget used to render the field.
         :param dict render_kw:
@@ -103,6 +111,7 @@ class Field:
 
         self.default = default
         self.description = description
+        self.invalid_value_message = invalid_value_message
         self.render_kw = render_kw
         self.filters = filters
         self.flags = Flags()
@@ -126,17 +135,6 @@ class Field:
 
         for v in itertools.chain(self.validators, [self.widget]):
             flags = getattr(v, "field_flags", {})
-
-            # check for legacy format, remove eventually
-            if isinstance(flags, tuple):  # pragma: no cover
-                warnings.warn(
-                    "Flags should be stored in dicts and not in tuples. "
-                    "The next version of WTForms will abandon support "
-                    "for flags in tuples.",
-                    DeprecationWarning,
-                    stacklevel=2,
-                )
-                flags = {flag_name: True for flag_name in flags}
 
             for k, v in flags.items():
                 setattr(self.flags, k, v)
@@ -177,14 +175,14 @@ class Field:
             for validator in validators:
                 if not callable(validator):
                     raise TypeError(
-                        "{} is not a valid validator because it is not "
-                        "callable".format(validator)
+                        f"{validator} is not a valid validator because it is not "
+                        "callable"
                     )
 
                 if inspect.isclass(validator):
                     raise TypeError(
-                        "{} is not a valid validator because it is a class, "
-                        "it should be an instance".format(validator)
+                        f"{validator} is not a valid validator because it is a class, "
+                        "it should be an instance"
                     )
 
     def gettext(self, string):
@@ -395,8 +393,10 @@ class UnboundField:
         return self.field_class(*self.args, **kw)
 
     def __repr__(self):
-        return "<UnboundField({}, {!r}, {!r})>".format(
-            self.field_class.__name__, self.args, self.kwargs
+        return (
+            "<UnboundField("
+            f"{self.field_class.__name__}, {self.args!r}, {self.kwargs!r}"
+            ")>"
         )
 
 
@@ -416,13 +416,18 @@ class Flags:
         return getattr(self, name)
 
     def __repr__(self):
-        flags = (name for name in dir(self) if not name.startswith("_"))
-        return "<wtforms.fields.Flags: {%s}>" % ", ".join(flags)
+        flags = (
+            f"{name}={getattr(self, name)}"
+            for name in dir(self)
+            if not name.startswith("_")
+        )
+        flags = ", ".join(flags)
+        return f"<wtforms.fields.Flags: {{{flags}}}>"
 
 
 class Label:
     """
-    An HTML form label.
+    An HTML :mdn-tag:`label`.
     """
 
     def __init__(self, field_id, text):
@@ -442,8 +447,9 @@ class Label:
             kwargs.setdefault("for", self.field_id)
 
         attributes = widgets.html_params(**kwargs)
+        attributes = f" {attributes}" if attributes else ""
         text = escape(text or self.text)
-        return Markup(f"<label {attributes}>{text}</label>")
+        return Markup(f"<label{attributes}>{text}</label>")
 
     def __repr__(self):
         return f"Label({self.field_id!r}, {self.text!r})"

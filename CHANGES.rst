@@ -1,11 +1,156 @@
 .. currentmodule:: wtforms
 
-Version 3.0.2
+Version 3.x.x
 -------------
 
-Unreleased
+- Make :class:`~fields.FloatField` render as ``<input type="number">`` with
+  ``step="any"``. :issue:`677` :pr:`679`
+- :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
+  consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
+  overrides were silently bypassed for all ``FieldList`` entries.
+- Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
+- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
+- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
+- Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
+  :issue:`775`
+- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831`
+- Clarify that :class:`~fields.SelectField` ``choices`` is re-evaluated at
+  every form instantiation, including callables, in the documentation. :issue:`875`
+- Render ``False`` as ``value="False"`` in :class:`~fields.SelectField` options
+  instead of omitting the attribute. :issue:`878`
+- Accept :class:`uuid.UUID` instances in the :class:`~validators.UUID` validator,
+  and translate unexpected types into :class:`~validators.ValidationError`
+  instead of letting :class:`TypeError` escape. :issue:`549` :pr:`769`
+- Escape double quotes in :class:`~markupsafe.Markup` attribute values
+  passed to :func:`~widgets.html_params`, and return a
+  :class:`~markupsafe.Markup`. :issue:`801`
+- Clarify documentation about filters. :issue:`859`
+- Let render-time ``checked`` kwargs take precedence over the field's value
+  in :class:`~widgets.CheckboxInput` and :class:`~widgets.RadioInput`.
+  :issue:`706`
+- Add a ``tz`` parameter to :class:`~fields.DateTimeLocalField` to associate a
+  timezone with the input. :issue:`833`
+- Add :class:`~fields.FieldList` ``insert_entry`` and indexed ``pop_entry``.
+  :issue:`256`
+- :class:`~fields.FieldList` builds entries in the order keys appear in
+  ``formdata``, instead of sorting them by numeric index. :issue:`256`
+- Add :class:`~fields.ButtonField` to render ``<button type="submit">``
+  controls with string values. :issue:`784`
+- :class:`~fields.SelectField` refactor. Choices tuples and dicts are
+  deprecated in favor of :class:`~fields.Choice`. :pr:`739`
+- ``<option>`` HTML attributes can be passed using
+  :class:`~fields.Choice`. :issue:`692` :pr:`739`
+- Add :meth:`fields.Choice.from_enum` to build choices from an
+  :class:`enum.Enum` class, and let :class:`~fields.SelectField` accept an
+  Enum class as ``coerce``. :issue:`338`
+- Defer to ``email_validator``'s module-level defaults for the
+  :class:`~validators.Email` ``test_environment``, ``allow_smtputf8`` and
+  ``allow_empty_local`` options. :issue:`915`
+- Add ``invalid_value_message`` and ``invalid_choice_message`` keyword
+  arguments for customizing built-in field error messages. On
+  ``SelectMultipleField``, ``invalid_choice_message`` may also be a callable
+  for custom pluralization. :issue:`39` :issue:`832`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``pre_validate`` now short-circuits when ``process_formdata`` already
+  produced an error, so a single coercion failure no longer surfaces as both
+  an "invalid value" and an "invalid choice" error.
+- Add a ``matcher`` keyword argument to :class:`~validators.Regexp` to
+  override the matching function. Defaults to :func:`re.match`; pass
+  :func:`re.search` or :func:`re.fullmatch` to change the anchoring
+  behaviour. :issue:`867`
 
+Version 3.2.2
+-------------
+
+Released 2026-05-03
+
+- Fix :class:`~validators.Disabled` validation with provided formdata. :pr:`880`
+- End support for Python 3.9, start support for Python 3.14. :pr:`883`
+- Add Tamil and Serbian translations.
+
+Version 3.2.1
+-------------
+
+Released 2024-10-21
+
+- Fix :class:`~fields.SelectMultipleBase` import. :issue:`861` :pr:`862`
+
+Version 3.2.0
+-------------
+
+Released 2024-10-20
+
+- Translations update: korean, chinese (traditional), portugese, russian,
+  dutch, kazakh, swedish, turkish, slovak, ukranian, spanish, french.
+- Move the repository to the pallets-eco organization. :pr:`854`
+- Stop supporting Python 3.9 and start supporting Python 3.13 :pr:`855`
+- Removed `required` flag support from :class:`~fields.HiddenWidget`,
+  :class:`~fields.RangeWidget` and :class:`~fields.SelectWidget` to
+  conform to W3C :pr:`810`
+- :class:`~wtforms.validators.NoneOf` and :class:`~wtforms.validators.AnyOf`
+  can validate multiple valued fields like :class:`~fields.SelectMultipleField`
+  :pr:`538` :pr:`807`
+- Use GHA and pre-commit workflows inspired from Flask. :pr:`856` :pr:`860`
+- ⚠️Breaking change⚠️: Some deprecated code was removed (:pr:`859`):
+
+  - :class:`~wtforms.Flags` can no longer be tuples. :issue:`467`
+  - `iter_choices` needs a tuple of 4 items :issue:`816`
+
+- ⚠️Breaking change⚠️: The key for form errors moved from :data:`None` to
+  empty string `""`. :issue:`829` :pr:`858`
+
+.. note::
+   If you need to keep the old behavior you can set the ``_form_error_key``
+   parameter of your form to :data:`None`.
+
+
+Version 3.1.2
+-------------
+
+Released 2024-01-06
+
+- Fix :class:`~fields.SelectMultipleField` value coercion on validation.
+  :issue:`822` :pr:`823`
+
+Version 3.1.1
+-------------
+
+Released 2023-11-01
+
+- Display :class:`~wtforms.Flags` values in their repr. :pr:`808`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``choices`` can be `None` if `validate_choice` is `False` :pr:`809`
+- Documentation improvements :pr:`812` :pr:`815` :pr:`817`
+- Unit tests improvements :pr:`813`
+- Python 3.12 support :pr:`818`
+- Restored support for 3-items tuple return value from `iter_choices`
+  :pr:`816`
+
+Version 3.1.0
+-------------
+
+Released 2023-10-10
+
+-   Documentation improvements :pr:`726` :pr:`733` :pr:`749`
+    :pr:`767` :pr:`788` :pr:`789` :pr:`793`
+-   Translation improvements :pr:`732` :pr:`734` :pr:`754`
+-   Implement :class:`~fields.ColorField` :pr:`755`
 -   Delayed import of ``email_validator``. :issue:`727`
+-   ``<option>`` attributes can be passed by the :class:`~fields.SelectField`
+    ``choices`` parameter :issue:`692` :pr:`739`.
+    ⚠️breaking change⚠️: `iter_choices` now returns a tuple of 4 items
+-   Use the standard datetime formats by default for
+    :class:`~fields.DateTimeLocalField`  :pr:`761`
+-   Python 3.11 support :pr:`763`
+-   Added shorter format to :class:`~fields.DateTimeLocalField`
+    defaults :pr:`761`
+-   Stop support for python 3.7 :pr:`794`
+-   Added shorter format to :class:`~fields.WeekField`
+    defaults :pr:`765`
+-   Move to pyproject.toml :pr:`796`
+-   URL validator takes a ``allow_ip`` parameter :pr:`800`
+-   Implement :class:`~validators.ReadOnly` and
+    :class:`~validators.Disabled` `:pr:`788`
 
 Version 3.0.1
 -------------
@@ -69,7 +214,8 @@ Released 2020-11-23
 -   Render attribute names like ``for_`` and ``class_`` are normalized
     consistently so later values override those specified earlier.
     :issue:`449`, :pr:`596`
--   Flags can take non-boolean values. :issue:`406` :pr:`467`
+-   Flags should now be stored in dicts and can take non-boolean values.
+    A ``DeprecationWarning`` is issued when tuples are used. :issue:`406` :pr:`467`
 -   Widgets are HTML5 by default. :issue:`594` :pr:`614`
 -   Fixed a bug when the :class:`~wtforms.fields.core.SelectField` choices
     are list of strings. :pr:`598`
@@ -78,6 +224,8 @@ Released 2020-11-23
     bugfix. :issue:`606` :pr:`642`
 -   Fixed SelectMultipleField validation when using choices list shortcut.
     :issue:`612` :pr:`661`
+-   Removed :meth:`form._get_translations`. Use
+    :meth:`Meta.get_translations <wtforms.meta.DefaultMeta.get_translations>` instead.
 
 
 Version 2.3.3
@@ -216,7 +364,7 @@ Released 2018-06-02
 -   Widgets render the ``required`` attribute when using a validator
     that provides the ``'required'`` flag, such as
     :class:`~validators.DataRequired`. :pr:`361`
--   Fix a compatibility issue with SQLAlchemy 2.1 that caused
+-   Fix a compatibility issue with SQLAlchemy 1.2 that caused
     :class:`~ext.sqlalchemy.fields.QuerySelectField` to fail with
     ``ValueError: too many values to unpack``. :pr:`391`
 
@@ -271,6 +419,7 @@ Released 2014-05-20
 -   Passing ``attr=False`` to WTForms widgets causes the value to be
     ignored.
 -   ``Unique`` validator in ``wtforms.ext.sqlalchemy`` has been removed.
+-   Deprecate ``form._get_translations``. Use ``Meta.get_translations`` instead.
 
 
 Version 1.0.5

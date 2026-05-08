@@ -1,7 +1,6 @@
 from datetime import date
 
 from tests.common import DummyPostData
-
 from wtforms.fields import DateField
 from wtforms.form import Form
 
@@ -30,3 +29,12 @@ def test_failure():
     assert len(form.a.errors) == 1
     assert len(form.b.errors) == 1
     assert form.a.process_errors[0] == "Not a valid date value."
+
+
+def test_invalid_value_message():
+    class G(Form):
+        a = DateField(invalid_value_message="Enter a date as YYYY-MM-DD.")
+
+    form = G(DummyPostData(a=["bogus"]))
+    assert not form.validate()
+    assert form.a.errors == ["Enter a date as YYYY-MM-DD."]

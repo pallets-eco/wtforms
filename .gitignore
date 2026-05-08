@@ -15,3 +15,4 @@ __pycache__/
 /htmlcov/
 /docs/_build/
 /src/wtforms/locale/**/wtforms.mo
+uv.lock

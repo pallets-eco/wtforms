@@ -15,6 +15,7 @@ Built-in widgets
 ----------------
 
 .. autoclass:: wtforms.widgets.ColorInput
+.. autoclass:: wtforms.widgets.Button
 .. autoclass:: wtforms.widgets.CheckboxInput
 .. autoclass:: wtforms.widgets.DateTimeInput
 .. autoclass:: wtforms.widgets.DateTimeLocalInput
@@ -66,39 +67,96 @@ first argument and then any additional arguments passed to its caller as
 keywords.  Passing the field is done so that one instance of a widget might be
 used across many field instances.
 
-Let's look at a widget which renders a text field with an additional class if
-there are errors::
+The widget contract
+~~~~~~~~~~~~~~~~~~~
+
+A widget is any callable with the signature ``widget(field, **kwargs)`` that
+returns the rendered HTML. The return value should be a
+:class:`markupsafe.Markup` instance; otherwise templating engines with
+autoescape enabled will escape the markup and the user will see the raw HTML
+tags instead of the rendered widget.
+
+Inside the widget, the following ``field`` attributes are commonly used:
+
+- ``field.id`` and ``field.name`` — the rendered ``id``/``name`` attributes.
+- ``field.label`` — a :class:`~wtforms.fields.Label` instance, callable to
+  render a ``<label>`` tag.
+- ``field.errors`` — list of validation errors after ``form.validate()``.
+- ``field._value()`` — the string representation of the current value, used
+  for the ``value=`` attribute of inputs.
+- ``field.iter_choices()`` — for :class:`~wtforms.fields.SelectField` and
+  similar; yields :class:`~wtforms.fields.SelectChoice` objects with
+  ``value``, ``label``, ``render_kw`` and a ``_selected`` flag reflecting the
+  current selection.
+
+To assemble the HTML, use :func:`~wtforms.widgets.html_params` for attribute
+strings, :class:`markupsafe.Markup` to mark the result as safe, and
+:func:`markupsafe.escape` for any user-supplied content interpolated into the
+HTML::
+
+    from markupsafe import Markup, escape
+    from wtforms.widgets import html_params
+
+Subclassing a built-in widget
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The lightest customization is to extend an existing widget and post-process
+its output or its kwargs. Here is a widget that renders a text field with an
+extra CSS class when the field has errors::
 
     class MyTextInput(TextInput):
         def __init__(self, error_class='has_errors'):
-            super(MyTextInput, self).__init__()
+            super().__init__()
             self.error_class = error_class
 
         def __call__(self, field, **kwargs):
             if field.errors:
-                c = kwargs.pop('class', '') or kwargs.pop('class_', '')
-                kwargs['class'] = '%s %s' % (self.error_class, c)
-            return super(MyTextInput, self).__call__(field, **kwargs)
+                existing = kwargs.pop('class', '') or kwargs.pop('class_', '')
+                kwargs['class'] = f'{self.error_class} {existing}'.strip()
+            return super().__call__(field, **kwargs)
 
-In the above example, we extended the behavior of the existing
-:class:`TextInput` widget to append a CSS class as needed. However, widgets
-need not extend from an existing widget, and indeed don't even have to be a
-class.  For example, here is a widget that renders a
-:class:`~wtforms.fields.SelectMultipleField` as a collection of checkboxes::
+Writing a widget from scratch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A widget does not have to be a class — any callable will do. Here is a widget
+that renders a :class:`~wtforms.fields.SelectMultipleField` as a collection of
+:mdn-input:`checkbox` controls::
+
+    from markupsafe import Markup, escape
+    from wtforms.widgets import html_params
 
     def select_multi_checkbox(field, ul_class='', **kwargs):
         kwargs.setdefault('type', 'checkbox')
         field_id = kwargs.pop('id', field.id)
-        html = ['<ul %s>' % html_params(id=field_id, class_=ul_class)]
-        for value, label, checked in field.iter_choices():
-            choice_id = '%s-%s' % (field_id, value)
-            options = dict(kwargs, name=field.name, value=value, id=choice_id)
-            if checked:
-                options['checked'] = 'checked'
-            html.append('<li><input %s /> ' % html_params(**options))
-            html.append('<label for="%s">%s</label></li>' % (choice_id, label))
+        html = [f'<ul {html_params(id=field_id, class_=ul_class)}>']
+        for choice in field.iter_choices():
+            choice_id = f'{field_id}-{choice.value}'
+            options = dict(
+                kwargs,
+                name=field.name,
+                value=choice.value,
+                id=choice_id,
+                checked=choice._selected,
+            )
+            html.append(f'<li><input {html_params(**options)}> ')
+            html.append(f'<label for="{choice_id}">{escape(choice.label)}</label></li>')
         html.append('</ul>')
-        return ''.join(html)
+        return Markup(''.join(html))
 
     class TestForm(Form):
         tester = SelectMultipleField(choices=my_choices, widget=select_multi_checkbox)
+
+``widget`` versus ``option_widget``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For fields that wrap a collection of options (such as
+:class:`~wtforms.fields.SelectField`, :class:`~wtforms.fields.RadioField` and
+their multiple-choice variants), two extension points exist:
+
+- ``widget`` renders the whole field at once (the ``<select>`` element, the
+  ``<ul>`` of radios, etc.).
+- ``option_widget`` renders a single option when the field is iterated. This
+  is useful when you want to keep the default container but change how each
+  option is displayed. See :ref:`specific_problems` for an example using
+  :class:`~wtforms.widgets.ListWidget` together with
+  :class:`~wtforms.widgets.CheckboxInput` as the ``option_widget``.

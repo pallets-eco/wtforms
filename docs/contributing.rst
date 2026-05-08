@@ -12,7 +12,7 @@ How to Contribute
 WTForms is now on `GitHub`_, so all contributions should be either associated
 with a pull request or with a ticket & patch.
 
-.. _GitHub: https://github.com/wtforms/wtforms
+.. _GitHub: https://github.com/pallets-eco/wtforms
 
 
 Contribution Guidelines
@@ -34,11 +34,11 @@ Code submitted should:
 
 * Use naming schemes consistent with WTForms conventions
 
-* Work on all versions of Python that WTForms currently supports (and
-  python3 without needing 2to3).  Take advantage of `Travis-CI`_ for running
-  tests on all supported Python versions.
+* Work on all versions of Python that WTForms currently supports.  Take
+  advantage of `Github Actions`_ for running tests on all supported Python
+  versions.
 
-.. _Travis-CI: https://travis-ci.org
+.. _Github Actions: https://github.com/pallets-eco/wtforms/actions
 .. _PEP8: https://www.python.org/dev/peps/pep-0008/
 
 

@@ -3,7 +3,6 @@ from decimal import ROUND_DOWN
 from decimal import ROUND_UP
 
 from tests.common import DummyPostData
-
 from wtforms.fields import DecimalField
 from wtforms.form import Form
 
@@ -42,3 +41,10 @@ def test_quantize():
     assert form.a._value() == "3.142"
     assert isinstance(form.a.data, float)
     assert form.b._value() == "72"
+
+
+def test_invalid_value_message():
+    F = make_form(a=DecimalField(invalid_value_message="Enter a decimal number."))
+    form = F(DummyPostData(a=["x"]))
+    assert not form.validate()
+    assert form.a.errors == ["Enter a decimal number."]

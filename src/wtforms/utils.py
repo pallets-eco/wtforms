@@ -1,9 +1,11 @@
+import os
 import re
 
+_LEADING_SYMBOL = "#" if os.name == "nt" else "-"
 
 # https://docs.python.org/3/library/datetime.html#technical-detail (see NOTE #9)
 _DATETIME_STRIP_ZERO_PADDING_FORMATS_RE = re.compile(
-    "%-["
+    f"%{_LEADING_SYMBOL}["
     "d"  # day of month
     "m"  # month
     "H"  # hour (24-hour)
@@ -26,7 +28,7 @@ def clean_datetime_format_for_strptime(formats):
     return [
         re.sub(
             _DATETIME_STRIP_ZERO_PADDING_FORMATS_RE,
-            lambda m: m[0].replace("-", ""),
+            lambda m: m[0].replace(_LEADING_SYMBOL, ""),
             format,
         )
         for format in formats

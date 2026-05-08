@@ -1,5 +1,4 @@
 from tests.common import DummyPostData
-
 from wtforms.fields import IntegerField
 from wtforms.form import Form
 
@@ -37,3 +36,12 @@ def test_integer_field():
     assert not form.validate()
     assert len(form.b.process_errors) == 1
     assert len(form.b.errors) == 1
+
+
+def test_invalid_value_message():
+    class F(Form):
+        a = IntegerField(invalid_value_message="Enter a whole number.")
+
+    form = F(DummyPostData(a=["x"]))
+    assert not form.validate()
+    assert form.a.errors == ["Enter a whole number."]
