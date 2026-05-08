@@ -5,7 +5,7 @@ Version 3.x.x
 
 - Add ``datelist`` and ``choices`` for :class:`~fields.StringField`,
   :class:`~fields.SearchField`, :class:`~fields.EmailField`, :class:`~fields.TelField` and
-  :class:`~fields.URLField`. :pr:`TODO`
+  :class:`~fields.URLField`. :pr:`919`
 - Add :class:`~validators.DateRange`. ``min`` and ``max`` may be callables
   to compute dynamic bounds; :class:`~validators.NumberRange` accepts
   callables on the same terms. :pr:`787`

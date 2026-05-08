@@ -236,7 +236,7 @@ refer to a single input from the form.
 
 .. autoclass:: DecimalRangeField(default field arguments)
 
-.. autoclass:: EmailField(default field arguments, datalist=None, choices=None)
+.. autoclass:: EmailField(default field arguments)
 
 .. autoclass:: FileField(default field arguments)
 
@@ -270,19 +270,19 @@ refer to a single input from the form.
 
 .. autoclass:: MonthField(default field arguments, format='%Y-%m')
 
-.. autoclass:: SearchField(default field arguments, datalist=None, choices=None)
+.. autoclass:: SearchField(default field arguments)
 
-.. autoclass:: StringField(default field arguments, datalist=None, choices=None)
+.. autoclass:: StringField(default field arguments)
 
    .. code-block:: jinja
 
         {{ form.username(size=30, maxlength=50) }}
 
-.. autoclass:: TelField(default field arguments, datalist=None, choices=None)
+.. autoclass:: TelField(default field arguments)
 
 .. autoclass:: TimeField(default field arguments, format='%H:%M')
 
-.. autoclass:: URLField(default field arguments, datalist=None, choices=None)
+.. autoclass:: URLField(default field arguments)
 
 Choice Fields
 -------------
@@ -441,6 +441,37 @@ Choice Fields
    which is checked and coerced from the form input.  Any submitted choices
    which are not in the given choices list will cause validation on the field
    to fail.
+
+.. autoclass:: EmailField(default field arguments, datalist=None, choices=None)
+
+    An optional parameter called datelist can be provided. This string will be
+    used as a value for the attribute ``list`` in the ``input`` element.
+
+    Additionally, an optional parameter called choices can be provided. This
+    is a list of Choice objects. After the ``input`` element, a ``datelist``
+    element will be added with the value of its ``id`` attribute set to the
+    same value of datelist string parameter. Inside the ``datelist`` element,
+    for each Choice, an ``option`` element will be added.
+
+    Note that sometimes another field already results in a ``datelist`` element
+    in the HTML. In order to reuse that, only provide the identical string for
+    the parameter called datelist and omit the choices parameter.
+
+.. autoclass:: SearchField(default field arguments, datalist=None, choices=None)
+
+    See above.
+
+.. autoclass:: StringField(default field arguments, datalist=None, choices=None)
+
+    See above.
+
+.. autoclass:: TelField(default field arguments, datalist=None, choices=None)
+
+    See above.
+
+.. autoclass:: URLField(default field arguments, datalist=None, choices=None)
+
+    See above.
 
 Submit fields
 -------------
