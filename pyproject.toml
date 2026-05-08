@@ -35,7 +35,6 @@ docs = [
     "Pallets-Sphinx-Themes~=2.2.0",
     "sphinx-issues~=4.0.0",
     "sphinxcontrib-log-cabinet~=1.0.1",
-    "python-dateutil~=2.8.2",
 ]
 dev = [
     "pytest>=7.0",

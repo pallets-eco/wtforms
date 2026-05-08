@@ -39,6 +39,7 @@ class Field:
         description="",
         id=None,
         default=None,
+        invalid_value_message=None,
         widget=None,
         render_kw=None,
         name=None,
@@ -57,9 +58,10 @@ class Field:
         :param filters:
             A sequence of callable which are run by :meth:`~Field.process`
             to filter or transform the input data. For example
-            ``StringForm(filters=[str.strip, str.upper])``.
+            ``StringForm(filters=[lambda x: x.strip() if x is not None else x])``.
             Note that filters are applied after processing the default and
-            incoming data, but before validation.
+            incoming data, but before validation. Filters should handle
+            empty values such as `None`.
         :param description:
             A description for the field, typically used for help text.
         :param id:
@@ -68,6 +70,9 @@ class Field:
         :param default:
             The default value to assign to the field, if no form or object
             input is provided. May be a callable.
+        :param invalid_value_message:
+            Optional custom message used when processing submitted or Python
+            data fails because the value is invalid for this field.
         :param widget:
             If provided, overrides the widget used to render the field.
         :param dict render_kw:
@@ -106,6 +111,7 @@ class Field:
 
         self.default = default
         self.description = description
+        self.invalid_value_message = invalid_value_message
         self.render_kw = render_kw
         self.filters = filters
         self.flags = Flags()
@@ -441,8 +447,9 @@ class Label:
             kwargs.setdefault("for", self.field_id)
 
         attributes = widgets.html_params(**kwargs)
+        attributes = f" {attributes}" if attributes else ""
         text = escape(text or self.text)
-        return Markup(f"<label {attributes}>{text}</label>")
+        return Markup(f"<label{attributes}>{text}</label>")
 
     def __repr__(self):
         return f"Label({self.field_id!r}, {self.text!r})"

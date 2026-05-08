@@ -2,6 +2,7 @@ import ipaddress
 import math
 import re
 import uuid
+from collections.abc import Callable
 from datetime import date
 from datetime import datetime
 
@@ -437,16 +438,50 @@ class Regexp:
         `regex` is not a string.
     :param message:
         Error message to raise in case of a validation error.
+    :param matcher:
+        Callable invoked as ``matcher(pattern, value)`` to perform the match.
+        Defaults to :func:`re.match`. Pass :func:`re.search` or
+        :func:`re.fullmatch` to change the anchoring behaviour.
+    :param html_pattern:
+        Controls the HTML ``pattern`` attribute emitted on supporting widgets.
+        Defaults to ``False`` (no attribute). Set to ``True`` to emit the
+        Python pattern source as-is, to a string to emit a custom
+        browser-specific pattern, or to a callable invoked as
+        ``html_pattern(regex)`` returning ``bool`` or ``str`` interpreted by
+        the same rules. Python and JavaScript regex syntaxes differ; emitting
+        a Python regex unchanged may fail in browsers. Note that the HTML
+        ``pattern`` attribute is implicitly anchored at both ends (equivalent
+        to :func:`re.fullmatch`), so a pattern paired with ``matcher=re.match``
+        or ``matcher=re.search`` may be accepted server-side but rejected by
+        the browser.
     """
 
-    def __init__(self, regex, flags=0, message=None):
+    def __init__(
+        self,
+        regex,
+        flags=0,
+        message=None,
+        matcher=re.match,
+        html_pattern: bool | str | Callable[[re.Pattern], bool | str] = False,
+    ):
         if isinstance(regex, str):
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message
+        self.matcher = matcher
+        self.field_flags = self._resolve_field_flags(html_pattern)
+
+    def _resolve_field_flags(self, html_pattern):
+        if callable(html_pattern):
+            html_pattern = html_pattern(self.regex)
+        if html_pattern is True:
+            return {"pattern": self.regex.pattern}
+        if isinstance(html_pattern, str):
+            return {"pattern": html_pattern}
+        return {}
 
     def __call__(self, form, field, message=None):
-        match = self.regex.match(field.data or "")
+        match = self.matcher(self.regex, field.data or "")
         if match:
             return match
 
@@ -464,19 +499,29 @@ class Email:
     Validates an email address. Requires email_validator package to be
     installed. For ex: pip install wtforms[email].
 
+    Options that default to ``None`` are not forwarded to
+    ``email_validator``, so its module-level defaults (e.g.
+    ``email_validator.TEST_ENVIRONMENT``) take effect. Pass an explicit
+    value to override per-instance.
+
     :param message:
         Error message to raise in case of a validation error.
     :param granular_message:
         Use validation failed message from email_validator library
         (Default False).
     :param check_deliverability:
-        Perform domain name resolution check (Default False).
+        Perform domain name resolution check (Default False, diverging
+        from ``email_validator``'s default of True for safety on public
+        forms).
+    :param test_environment:
+        Allow `test` and `*.test` domain names, and disable DNS-based
+        deliverability checks (Default: defer to ``email_validator``).
     :param allow_smtputf8:
         Fail validation for addresses that would require SMTPUTF8
-        (Default True).
+        (Default: defer to ``email_validator``).
     :param allow_empty_local:
         Allow an empty local part (i.e. @example.com), e.g. for validating
-        Postfix aliases (Default False).
+        Postfix aliases (Default: defer to ``email_validator``).
     """
 
     def __init__(
@@ -484,12 +529,14 @@ class Email:
         message=None,
         granular_message=False,
         check_deliverability=False,
-        allow_smtputf8=True,
-        allow_empty_local=False,
+        test_environment=None,
+        allow_smtputf8=None,
+        allow_empty_local=None,
     ):
         self.message = message
         self.granular_message = granular_message
         self.check_deliverability = check_deliverability
+        self.test_environment = test_environment
         self.allow_smtputf8 = allow_smtputf8
         self.allow_empty_local = allow_empty_local
 
@@ -507,6 +554,7 @@ class Email:
             email_validator.validate_email(
                 field.data,
                 check_deliverability=self.check_deliverability,
+                test_environment=self.test_environment,
                 allow_smtputf8=self.allow_smtputf8,
                 allow_empty_local=self.allow_empty_local,
             )
@@ -656,6 +704,10 @@ class UUID:
         message = self.message
         if message is None:
             message = field.gettext("Invalid UUID.")
+        if isinstance(field.data, uuid.UUID):
+            return
+        if not isinstance(field.data, str):
+            raise ValidationError(message)
         try:
             uuid.UUID(field.data)
         except ValueError as exc:

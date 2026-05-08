@@ -3,9 +3,65 @@
 Version 3.x.x
 -------------
 
-Unreleased
-
 - Add :class:`~validators.DateRange`. :pr:`787`
+- Make :class:`~fields.FloatField` render as ``<input type="number">`` with
+  ``step="any"``. :issue:`677` :pr:`679`
+- :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
+  consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
+  overrides were silently bypassed for all ``FieldList`` entries.
+- Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
+- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
+- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
+- Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
+  :issue:`775`
+- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831`
+- Clarify that :class:`~fields.SelectField` ``choices`` is re-evaluated at
+  every form instantiation, including callables, in the documentation. :issue:`875`
+- Render ``False`` as ``value="False"`` in :class:`~fields.SelectField` options
+  instead of omitting the attribute. :issue:`878`
+- Accept :class:`uuid.UUID` instances in the :class:`~validators.UUID` validator,
+  and translate unexpected types into :class:`~validators.ValidationError`
+  instead of letting :class:`TypeError` escape. :issue:`549` :pr:`769`
+- Escape double quotes in :class:`~markupsafe.Markup` attribute values
+  passed to :func:`~widgets.html_params`, and return a
+  :class:`~markupsafe.Markup`. :issue:`801`
+- Clarify documentation about filters. :issue:`859`
+- Let render-time ``checked`` kwargs take precedence over the field's value
+  in :class:`~widgets.CheckboxInput` and :class:`~widgets.RadioInput`.
+  :issue:`706`
+- Add a ``tz`` parameter to :class:`~fields.DateTimeLocalField` to associate a
+  timezone with the input. :issue:`833`
+- Add :class:`~fields.FieldList` ``insert_entry`` and indexed ``pop_entry``.
+  :issue:`256`
+- :class:`~fields.FieldList` builds entries in the order keys appear in
+  ``formdata``, instead of sorting them by numeric index. :issue:`256`
+- Add :class:`~fields.ButtonField` to render ``<button type="submit">``
+  controls with string values. :issue:`784`
+- :class:`~fields.SelectField` refactor. Choices tuples and dicts are
+  deprecated in favor of :class:`~fields.Choice`. :pr:`739`
+- ``<option>`` HTML attributes can be passed using
+  :class:`~fields.Choice`. :issue:`692` :pr:`739`
+- Add :meth:`fields.Choice.from_enum` to build choices from an
+  :class:`enum.Enum` class, and let :class:`~fields.SelectField` accept an
+  Enum class as ``coerce``. :issue:`338`
+- Defer to ``email_validator``'s module-level defaults for the
+  :class:`~validators.Email` ``test_environment``, ``allow_smtputf8`` and
+  ``allow_empty_local`` options. :issue:`915`
+- Add ``invalid_value_message`` and ``invalid_choice_message`` keyword
+  arguments for customizing built-in field error messages. On
+  ``SelectMultipleField``, ``invalid_choice_message`` may also be a callable
+  for custom pluralization. :issue:`39` :issue:`832`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``pre_validate`` now short-circuits when ``process_formdata`` already
+  produced an error, so a single coercion failure no longer surfaces as both
+  an "invalid value" and an "invalid choice" error.
+- Add a ``matcher`` keyword argument to :class:`~validators.Regexp` to
+  override the matching function. Defaults to :func:`re.match`; pass
+  :func:`re.search` or :func:`re.fullmatch` to change the anchoring
+  behaviour. :issue:`867`
+- Add an ``html_pattern`` keyword argument to :class:`~validators.Regexp`
+  to control the HTML ``pattern`` attribute emitted on supporting widgets.
+  :issue:`759`
 
 Version 3.2.2
 -------------

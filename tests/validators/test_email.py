@@ -1,3 +1,4 @@
+import email_validator
 import pytest
 
 from wtforms.validators import email
@@ -58,3 +59,49 @@ def test_invalid_email_raises_granular_message(email_address, dummy_form, dummy_
         validator(dummy_form, dummy_field)
 
     assert str(e.value) == "There must be something after the @-sign."
+
+
+def test_test_environment_rejects_test_domains_by_default(dummy_form, dummy_field):
+    """
+    .test domains are rejected unless test_environment is enabled.
+    """
+    validator = email()
+    dummy_field.data = "user@example.test"
+
+    with pytest.raises(ValidationError) as e:
+        validator(dummy_form, dummy_field)
+
+    assert str(e.value) == "Invalid email address."
+
+
+def test_test_environment_accepts_test_domains(dummy_form, dummy_field):
+    """
+    test_environment=True allows .test domains for test suites.
+    """
+    validator = email(test_environment=True)
+    dummy_field.data = "user@example.test"
+    validator(dummy_form, dummy_field)
+
+
+def test_default_test_environment_respects_global(monkeypatch, dummy_form, dummy_field):
+    """
+    With ``test_environment`` left at its default, the email_validator
+    module-level ``TEST_ENVIRONMENT`` flag is honoured.
+    """
+    monkeypatch.setattr(email_validator, "TEST_ENVIRONMENT", True)
+    validator = email()
+    dummy_field.data = "user@example.test"
+    validator(dummy_form, dummy_field)
+
+
+def test_explicit_test_environment_false_overrides_global(
+    monkeypatch, dummy_form, dummy_field
+):
+    """
+    Passing ``test_environment=False`` overrides the global default.
+    """
+    monkeypatch.setattr(email_validator, "TEST_ENVIRONMENT", True)
+    validator = email(test_environment=False)
+    dummy_field.data = "user@example.test"
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)

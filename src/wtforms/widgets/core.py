@@ -2,6 +2,7 @@ from markupsafe import escape
 from markupsafe import Markup
 
 __all__ = (
+    "Button",
     "CheckboxInput",
     "ColorInput",
     "DateInput",
@@ -79,8 +80,9 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append(f'{str(k)}="{escape(v)}"')  # noqa: B907
-    return " ".join(params)
+            v = escape(v).replace(Markup('"'), Markup("&quot;"))
+            params.append(Markup('{k}="{v}"').format(k=k, v=v))
+    return Markup(" ").join(params)
 
 
 class ListWidget:
@@ -189,6 +191,36 @@ class Input:
         return Markup(f"<input {input_params}>")
 
 
+class Button:
+    """
+    Render a ``<button>`` element.
+
+    Pass ``label=`` when rendering to override the visible button text. The
+    label is HTML-escaped; pass a :class:`markupsafe.Markup` instance to embed
+    HTML (icons, formatted text) in the button content.
+    """
+
+    html_params = staticmethod(html_params)
+    input_type = "submit"
+    validation_attrs = ["disabled"]
+
+    def __init__(self, input_type=None):
+        if input_type is not None:
+            self.input_type = input_type
+
+    def __call__(self, field, **kwargs):
+        label = kwargs.pop("label", field.label.text)
+        kwargs.setdefault("id", field.id)
+        kwargs.setdefault("type", self.input_type)
+        kwargs.setdefault("value", field._value())
+        flags = getattr(field, "flags", {})
+        for k in dir(flags):
+            if k in self.validation_attrs and k not in kwargs:
+                kwargs[k] = getattr(flags, k)
+        button_params = self.html_params(name=field.name, **kwargs)
+        return Markup(f"<button {button_params}>{escape(label)}</button>")
+
+
 class TextInput(Input):
     """
     Render a single-line :mdn-input:`text`.
@@ -258,7 +290,7 @@ class CheckboxInput(Input):
 
     def __call__(self, field, **kwargs):
         if getattr(field, "checked", field.data):
-            kwargs["checked"] = True
+            kwargs.setdefault("checked", True)
         return super().__call__(field, **kwargs)
 
 
@@ -275,7 +307,7 @@ class RadioInput(Input):
 
     def __call__(self, field, **kwargs):
         if field.checked:
-            kwargs["checked"] = True
+            kwargs.setdefault("checked", True)
         return super().__call__(field, **kwargs)
 
 
@@ -348,12 +380,7 @@ class Select:
     rendering to make the field useful.
 
     The field must provide an `iter_choices()` method which the widget will
-    call on rendering; this method must yield tuples of
-    `(value, label, selected)` or `(value, label, selected, render_kw)`.
-    It also must provide a `has_groups()` method which tells whether choices
-    are divided into groups, and if they do, the field must have an
-    `iter_groups()` method that yields tuples of `(label, choices)`, where
-    `choices` is a iterable of `(value, label, selected)` tuples.
+    call on rendering; this method must yield :class:`Choice`.
     """
 
     validation_attrs = ["required", "disabled"]
@@ -371,31 +398,35 @@ class Select:
                 kwargs[k] = getattr(flags, k)
         select_params = html_params(name=field.name, **kwargs)
         html = [f"<select {select_params}>"]
-        if field.has_groups():
-            for group, choices in field.iter_groups():
-                optgroup_params = html_params(label=group)
+        choice_groups = self.sort_by_optgroup(field.iter_choices())
+        for optgroup, choices in choice_groups.items():
+            if optgroup:
+                optgroup_params = html_params(label=optgroup)
                 html.append(f"<optgroup {optgroup_params}>")
-                for choice in choices:
-                    val, label, selected, render_kw = choice
-                    html.append(self.render_option(val, label, selected, **render_kw))
+            for choice in choices:
+                html.append(self.render_option(choice))
+            if optgroup:
                 html.append("</optgroup>")
-        else:
-            for choice in field.iter_choices():
-                val, label, selected, render_kw = choice
-                html.append(self.render_option(val, label, selected, **render_kw))
         html.append("</select>")
         return Markup("".join(html))
 
     @classmethod
-    def render_option(cls, value, label, selected, **kwargs):
-        if value is True:
-            # Handle the special case of a 'True' value.
+    def render_option(cls, choice, **kwargs):
+        value = choice.value
+        if isinstance(value, bool):
             value = str(value)
-
-        options = dict(kwargs, value=value)
-        if selected:
+        options = {"value": value, **(choice.render_kw or {}), **kwargs}
+        if choice._selected:
             options["selected"] = True
-        return Markup(f"<option {html_params(**options)}>{escape(label)}</option>")
+        label = escape(choice.label or choice.value)
+        return Markup(f"<option {html_params(**options)}>{label}</option>")
+
+    @classmethod
+    def sort_by_optgroup(cls, choices):
+        optgroups = {}
+        for choice in choices:
+            optgroups.setdefault(choice.optgroup, []).append(choice)
+        return optgroups
 
 
 class Option:
@@ -407,9 +438,7 @@ class Option:
     """
 
     def __call__(self, field, **kwargs):
-        return Select.render_option(
-            field._value(), field.label.text, field.checked, **kwargs
-        )
+        return Select.render_option(field.choice, **kwargs)
 
 
 class SearchInput(Input):
@@ -556,21 +585,13 @@ class NumberInput(Input):
         return super().__call__(field, **kwargs)
 
 
-class RangeInput(Input):
+class RangeInput(NumberInput):
     """
     Render an :mdn-input:`range`.
     """
 
     input_type = "range"
     validation_attrs = ["disabled", "max", "min", "step"]
-
-    def __init__(self, step=None):
-        self.step = step
-
-    def __call__(self, field, **kwargs):
-        if self.step is not None:
-            kwargs.setdefault("step", self.step)
-        return super().__call__(field, **kwargs)
 
 
 class ColorInput(Input):
