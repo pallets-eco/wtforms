@@ -54,6 +54,10 @@ Version 3.x.x
   ``pre_validate`` now short-circuits when ``process_formdata`` already
   produced an error, so a single coercion failure no longer surfaces as both
   an "invalid value" and an "invalid choice" error.
+- Add a ``matcher`` keyword argument to :class:`~validators.Regexp` to
+  override the matching function. Defaults to :func:`re.match`; pass
+  :func:`re.search` or :func:`re.fullmatch` to change the anchoring
+  behaviour. :issue:`867`
 
 Version 3.2.2
 -------------
