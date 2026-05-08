@@ -59,9 +59,36 @@ class StringField(Field):
     """
     This field is the base for most of the more complicated fields, and
     represents an :mdn-input:`text`.
+
+    An optional parameter called datelist can be provided. This string will be
+    used as a value for the attribute ``list`` in the ``input`` element.
+
+    Additionally, an optional parameter called choices can be provided. This
+    is a list of Choice objects. After the ``input`` element, a ``datelist``
+    element will be added with the value of its ``id`` attribute set to the
+    same value of datelist string parameter. Inside the ``datelist`` element,
+    for each Choice, an ``option`` element will be added.
+
+    Note that sometimes another field already results in a ``datelist`` element
+    in the HTML. In order to reuse that, only provide the identical string for
+    the parameter called datelist and omit the choices parameter.
+
+    Support for datalist is currently:
+        - StringField
+        - SearchField
+        - EmailField
+        - TelField
+        - URLField
     """
 
     widget = widgets.TextInput()
+
+    def __init__(self, *args, datalist=None, choices=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if datalist is not None:
+            self.datalist = datalist
+            if choices is not None:
+                self.choices = choices
 
     def process_formdata(self, valuelist):
         if valuelist:

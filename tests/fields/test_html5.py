@@ -5,6 +5,7 @@ from decimal import Decimal
 
 from tests.common import DummyPostData
 from wtforms import validators
+from wtforms.fields import Choice
 from wtforms.fields import DateField
 from wtforms.fields import DateTimeField
 from wtforms.fields import DateTimeLocalField
@@ -277,3 +278,34 @@ def test_pattern_disabled_by_default():
 
     form = I()
     assert "pattern" not in form.string()
+
+
+class J(Form):
+    string5 = StringField(datalist="languages",
+                          choices=[Choice("deu", "German"),
+                                   Choice("eng", "English"),
+                                   Choice("fra", "French"),
+                                   Choice("jpn", "Japanese"),
+                                   Choice("nld", "Dutch"),
+                                   Choice("spa", "Spanish")])
+    search5 = SearchField(datalist="languages")  # Reusing choices of string5
+    email5 = EmailField(datalist="emails",
+                        choices=[Choice("support@example.org", "Support Team"),
+                                 Choice("noreply@example.org", "No Reply"),
+                                 Choice("finance@example.org", "Financial Department")])
+    tel5 = TelField(datalist="tels",
+                    choices=[Choice("+316 1234 5678", "Dutch Office"),
+                             Choice("+326 1234 5678", "Belgium Office"),
+                             Choice("+346 1234 5678", "Spanish Office")])
+    url5 = URLField(datalist="urls",
+                    choices=[Choice("https://example.org", "Generic Website"),
+                             Choice("https://example.org/issues", "Issues Website"),
+                             Choice("https://example.org/docs", "Documentation Website")])
+
+def test_datalist():
+    form = J()
+    assert form.string5() == '''<input id="string5" list="languages" name="string5" type="text" value=""><datalist id="languages"><option value="deu" label="German"><option value="eng" label="English"><option value="fra" label="French"><option value="jpn" label="Japanese"><option value="nld" label="Dutch"><option value="spa" label="Spanish"></datalist>'''
+    assert form.search5() == '''<input id="search5" list="languages" name="search5" type="search" value="">'''
+    assert form.email5() == '''<input id="email5" list="emails" name="email5" type="email" value=""><datalist id="emails"><option value="support@example.org" label="Support Team"><option value="noreply@example.org" label="No Reply"><option value="finance@example.org" label="Financial Department"></datalist>'''
+    assert form.tel5() == '''<input id="tel5" list="tels" name="tel5" type="tel" value=""><datalist id="tels"><option value="+316 1234 5678" label="Dutch Office"><option value="+326 1234 5678" label="Belgium Office"><option value="+346 1234 5678" label="Spanish Office"></datalist>'''
+    assert form.url5() == '''<input id="url5" list="urls" name="url5" type="url" value=""><datalist id="urls"><option value="https://example.org" label="Generic Website"><option value="https://example.org/issues" label="Issues Website"><option value="https://example.org/docs" label="Documentation Website"></datalist>'''

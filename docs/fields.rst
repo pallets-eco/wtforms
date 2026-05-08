@@ -236,7 +236,7 @@ refer to a single input from the form.
 
 .. autoclass:: DecimalRangeField(default field arguments)
 
-.. autoclass:: EmailField(default field arguments)
+.. autoclass:: EmailField(default field arguments, datalist=None, choices=None)
 
 .. autoclass:: FileField(default field arguments)
 
@@ -270,19 +270,19 @@ refer to a single input from the form.
 
 .. autoclass:: MonthField(default field arguments, format='%Y-%m')
 
-.. autoclass:: SearchField(default field arguments)
+.. autoclass:: SearchField(default field arguments, datalist=None, choices=None)
 
-.. autoclass:: StringField(default field arguments)
+.. autoclass:: StringField(default field arguments, datalist=None, choices=None)
 
    .. code-block:: jinja
 
         {{ form.username(size=30, maxlength=50) }}
 
-.. autoclass:: TelField(default field arguments)
+.. autoclass:: TelField(default field arguments, datalist=None, choices=None)
 
 .. autoclass:: TimeField(default field arguments, format='%H:%M')
 
-.. autoclass:: URLField(default field arguments)
+.. autoclass:: URLField(default field arguments, datalist=None, choices=None)
 
 Choice Fields
 -------------

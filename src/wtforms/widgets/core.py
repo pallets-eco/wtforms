@@ -227,6 +227,19 @@ class TextInput(Input):
         "pattern",
     ]
 
+    def __call__(self, field, **kwargs):
+        datalist = getattr(field, "datalist", None)
+        if datalist:
+            kwargs['list'] = datalist
+            choices = getattr(field, "choices", None)
+        html = [super().__call__(field, **kwargs)]
+        if datalist and choices:
+            html.append(f'<datalist id="{field.datalist}">')
+            for choice in choices:
+                html.append(f'<option value="{choice.value}" label="{choice.label}">')
+            html.append('</datalist>')
+        return Markup(''.join(html))
+
 
 class PasswordInput(Input):
     """
@@ -447,6 +460,19 @@ class SearchInput(Input):
         "pattern",
     ]
 
+    def __call__(self, field, **kwargs):
+        datalist = getattr(field, "datalist", None)
+        if datalist:
+            kwargs['list'] = datalist
+            choices = getattr(field, "choices", None)
+        html = [super().__call__(field, **kwargs)]
+        if datalist and choices:
+            html.append(f'<datalist id="{field.datalist}">')
+            for choice in choices:
+                html.append(f'<option value="{choice.value}" label="{choice.label}">')
+            html.append('</datalist>')
+        return Markup(''.join(html))
+
 
 class TelInput(Input):
     """
@@ -462,6 +488,19 @@ class TelInput(Input):
         "minlength",
         "pattern",
     ]
+
+    def __call__(self, field, **kwargs):
+        datalist = getattr(field, "datalist", None)
+        if datalist:
+            kwargs['list'] = datalist
+            choices = getattr(field, "choices", None)
+        html = [super().__call__(field, **kwargs)]
+        if datalist and choices:
+            html.append(f'<datalist id="{field.datalist}">')
+            for choice in choices:
+                html.append(f'<option value="{choice.value}" label="{choice.label}">')
+            html.append('</datalist>')
+        return Markup(''.join(html))
 
 
 class URLInput(Input):
@@ -479,6 +518,19 @@ class URLInput(Input):
         "pattern",
     ]
 
+    def __call__(self, field, **kwargs):
+        datalist = getattr(field, "datalist", None)
+        if datalist:
+            kwargs['list'] = datalist
+            choices = getattr(field, "choices", None)
+        html = [super().__call__(field, **kwargs)]
+        if datalist and choices:
+            html.append(f'<datalist id="{field.datalist}">')
+            for choice in choices:
+                html.append(f'<option value="{choice.value}" label="{choice.label}">')
+            html.append('</datalist>')
+        return Markup(''.join(html))
+
 
 class EmailInput(Input):
     """
@@ -494,6 +546,19 @@ class EmailInput(Input):
         "minlength",
         "pattern",
     ]
+
+    def __call__(self, field, **kwargs):
+        datalist = getattr(field, "datalist", None)
+        if datalist:
+            kwargs['list'] = datalist
+            choices = getattr(field, "choices", None)
+        html = [super().__call__(field, **kwargs)]
+        if datalist and choices:
+            html.append(f'<datalist id="{field.datalist}">')
+            for choice in choices:
+                html.append(f'<option value="{choice.value}" label="{choice.label}">')
+            html.append('</datalist>')
+        return Markup(''.join(html))
 
 
 class _DateTimeBaseInput(Input):
