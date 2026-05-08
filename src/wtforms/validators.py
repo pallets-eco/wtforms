@@ -2,6 +2,7 @@ import ipaddress
 import math
 import re
 import uuid
+from collections.abc import Callable
 
 __all__ = (
     "DataRequired",
@@ -344,15 +345,39 @@ class Regexp:
         Callable invoked as ``matcher(pattern, value)`` to perform the match.
         Defaults to :func:`re.match`. Pass :func:`re.search` or
         :func:`re.fullmatch` to change the anchoring behaviour.
+    :param html_pattern:
+        Controls the HTML ``pattern`` attribute emitted on supporting widgets.
+        Defaults to ``False`` (no attribute). Set to ``True`` to emit the
+        Python pattern source as-is, to a string to emit a custom
+        browser-specific pattern, or to a callable invoked as
+        ``html_pattern(regex)`` returning ``bool`` or ``str`` interpreted by
+        the same rules. Python and JavaScript regex syntaxes differ; emitting
+        a Python regex unchanged may fail in browsers.
     """
 
-    def __init__(self, regex, flags=0, message=None, matcher=re.match):
+    def __init__(
+        self,
+        regex,
+        flags=0,
+        message=None,
+        matcher=re.match,
+        html_pattern: bool | str | Callable[[re.Pattern], bool | str] = False,
+    ):
         if isinstance(regex, str):
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message
         self.matcher = matcher
-        self.field_flags = {"pattern": regex.pattern}
+        self.field_flags = self._resolve_field_flags(html_pattern)
+
+    def _resolve_field_flags(self, html_pattern):
+        if callable(html_pattern):
+            html_pattern = html_pattern(self.regex)
+        if html_pattern is True:
+            return {"pattern": self.regex.pattern}
+        if isinstance(html_pattern, str):
+            return {"pattern": html_pattern}
+        return {}
 
     def __call__(self, form, field, message=None):
         match = self.matcher(self.regex, field.data or "")
