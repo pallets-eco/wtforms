@@ -5,6 +5,7 @@ import uuid
 from collections.abc import Callable
 from datetime import date
 from datetime import datetime
+from datetime import time
 
 __all__ = (
     "DataRequired",
@@ -22,6 +23,7 @@ __all__ = (
     "NumberRange",
     "DateRange",
     "number_range",
+    "date_range",
     "Optional",
     "optional",
     "Regexp",
@@ -177,12 +179,16 @@ class NumberRange:
     This will work with any comparable number type, such as floats and
     decimals, not just integers.
 
+    ``min`` and ``max`` may be callables to compute dynamic bounds.
+
     :param min:
         The minimum required value of the number. If not provided, minimum
-        value will not be checked.
+        value will not be checked. Can also be a callable that returns the
+        minimum value.
     :param max:
         The maximum value of the number. If not provided, maximum value
-        will not be checked.
+        will not be checked. Can also be a callable that returns the maximum
+        value.
     :param message:
         Error message to raise in case of a validation error. Can be
         interpolated using `%(min)s` and `%(max)s` if desired. Useful defaults
@@ -201,13 +207,19 @@ class NumberRange:
         if self.max is not None:
             self.field_flags["max"] = self.max
 
+    @staticmethod
+    def _resolve(value):
+        return value() if callable(value) else value
+
     def __call__(self, form, field):
+        min_value = self._resolve(self.min)
+        max_value = self._resolve(self.max)
         data = field.data
         if (
             data is not None
             and not math.isnan(data)
-            and (self.min is None or data >= self.min)
-            and (self.max is None or data <= self.max)
+            and (min_value is None or data >= min_value)
+            and (max_value is None or data <= max_value)
         ):
             return
 
@@ -216,16 +228,16 @@ class NumberRange:
 
         # we use %(min)s interpolation to support floats, None, and
         # Decimals without throwing a formatting exception.
-        elif self.max is None:
+        elif max_value is None:
             message = field.gettext("Number must be at least %(min)s.")
 
-        elif self.min is None:
+        elif min_value is None:
             message = field.gettext("Number must be at most %(max)s.")
 
         else:
             message = field.gettext("Number must be between %(min)s and %(max)s.")
 
-        raise ValidationError(message % dict(min=self.min, max=self.max))
+        raise ValidationError(message % dict(min=min_value, max=max_value))
 
 
 class DateRange:
@@ -278,34 +290,35 @@ class DateRange:
         self.message = message
         self.field_flags = {}
 
-        if self.min is not None and not callable(self.min):
+        if self.min is not None:
             self.field_flags["min"] = self.min
-        if self.max is not None and not callable(self.max):
+        if self.max is not None:
             self.field_flags["max"] = self.max
 
     @staticmethod
-    def _coerce_bound(value):
+    def _to_datetime(value):
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, date):
+            return datetime.combine(value, time())
+        return value
+
+    @classmethod
+    def _coerce_bound(cls, value):
         if callable(value):
             value = value()
-
-        if isinstance(value, date):
-            return datetime(*value.timetuple()[:5])
-
-        return value
+        return cls._to_datetime(value)
 
     def __call__(self, form, field):
         min_value = self._coerce_bound(self.min)
         max_value = self._coerce_bound(self.max)
 
-        data = field.data
-        if data is not None:
-            if isinstance(data, date):
-                data = datetime(*data.timetuple()[:5])
-
-            if (min_value is None or data >= min_value) and (
-                max_value is None or data <= max_value
-            ):
-                return
+        data = self._to_datetime(field.data)
+        if data is not None and (
+            (min_value is None or data >= min_value)
+            and (max_value is None or data <= max_value)
+        ):
+            return
 
         if self.message is not None:
             message = self.message

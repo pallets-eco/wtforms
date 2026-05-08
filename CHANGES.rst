@@ -3,7 +3,9 @@
 Version 3.x.x
 -------------
 
-- Add :class:`~validators.DateRange`. :pr:`787`
+- Add :class:`~validators.DateRange`. ``min`` and ``max`` may be callables
+  to compute dynamic bounds; :class:`~validators.NumberRange` accepts
+  callables on the same terms. :pr:`787`
 - Make :class:`~fields.FloatField` render as ``<input type="number">`` with
   ``step="any"``. :issue:`677` :pr:`679`
 - :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
