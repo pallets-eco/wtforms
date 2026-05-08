@@ -340,16 +340,21 @@ class Regexp:
         `regex` is not a string.
     :param message:
         Error message to raise in case of a validation error.
+    :param matcher:
+        Callable invoked as ``matcher(pattern, value)`` to perform the match.
+        Defaults to :func:`re.match`. Pass :func:`re.search` or
+        :func:`re.fullmatch` to change the anchoring behaviour.
     """
 
-    def __init__(self, regex, flags=0, message=None):
+    def __init__(self, regex, flags=0, message=None, matcher=re.match):
         if isinstance(regex, str):
             regex = re.compile(regex, flags)
         self.regex = regex
         self.message = message
+        self.matcher = matcher
 
     def __call__(self, form, field, message=None):
-        match = self.regex.match(field.data or "")
+        match = self.matcher(self.regex, field.data or "")
         if match:
             return match
 
