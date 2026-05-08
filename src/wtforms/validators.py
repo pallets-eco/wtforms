@@ -666,21 +666,39 @@ class MacAddress(Regexp):
 
 class URL:
     """
-    Simple url validation. Much like the email validator, you
-    probably want to validate the url later by other means if the url must
-    resolve.
+    Simple url validation based on :func:`urllib.parse.urlparse`. Much like
+    the email validator, you probably want to validate the url later by
+    other means if the url must resolve.
 
     :param require_tld:
         If true, then the domain-name portion of the URL must contain a .tld
         suffix.  Set this to false if you want to allow domains like
         `localhost`.
     :param allow_ip:
-        If false, then give ip as host will fail validation
+        If false, then giving an ip as host will fail validation.
+    :param allow_userinfo:
+        If true, accept ``username[:password]@`` in the URL. Defaults to
+        false: forms collecting URLs are often displayed back to users, and
+        userinfo is a known phishing vector
+        (e.g. ``https://accounts.example.com@evil.example/``).
+    :param schemes:
+        Iterable of allowed URL schemes. Defaults to ``("http", "https")``.
+        Pass ``None`` to accept any scheme (use with caution: ``javascript:``,
+        ``data:``, etc. would be accepted).
     :param message:
         Error message to raise in case of a validation error.
     """
 
-    def __init__(self, require_tld=True, allow_ip=True, message=None):
+    def __init__(
+        self,
+        require_tld=True,
+        allow_ip=True,
+        allow_userinfo=False,
+        schemes=("http", "https"),
+        message=None,
+    ):
+        self.allow_userinfo = allow_userinfo
+        self.schemes = frozenset(schemes) if schemes is not None else None
         self.message = message
         self.validate_hostname = HostnameValidation(
             require_tld=require_tld, allow_ip=allow_ip
@@ -696,11 +714,19 @@ class URL:
         except ValueError as exc:
             raise ValidationError(message) from exc
 
-        if not r.scheme:
+        if not r.scheme or not r.hostname:
             raise ValidationError(message)
 
-        if not r.hostname:
+        if self.schemes is not None and r.scheme not in self.schemes:
             raise ValidationError(message)
+
+        if not self.allow_userinfo and (r.username or r.password):
+            raise ValidationError(message)
+
+        try:
+            _ = r.port
+        except ValueError as exc:
+            raise ValidationError(message) from exc
 
         if not self.validate_hostname(r.hostname):
             raise ValidationError(message)

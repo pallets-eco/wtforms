@@ -3,8 +3,6 @@
 Version 3.x.x
 -------------
 
-- :class:`~validators.URL` validator is based on ``urllib.urlparse`` and
-  allows ``username:password@`` values. :pr:`847`
 - Add :class:`~validators.DateRange`. ``min`` and ``max`` may be callables
   to compute dynamic bounds; :class:`~validators.NumberRange` accepts
   callables on the same terms. :pr:`787`
@@ -66,6 +64,11 @@ Version 3.x.x
 - Add an ``html_pattern`` keyword argument to :class:`~validators.Regexp`
   to control the HTML ``pattern`` attribute emitted on supporting widgets.
   :issue:`759`
+- :class:`~validators.URL` validator is based on ``urllib.parse.urlparse``
+  instead of a regex. New keyword arguments: ``allow_userinfo`` for
+  accepting ``user:password@host`` URLs; ``schemes``
+  (default ``("http", "https")``) is the allowlist of accepted schemes
+  :pr:`847`
 
 Version 3.2.2
 -------------
