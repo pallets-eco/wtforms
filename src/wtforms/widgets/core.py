@@ -1,9 +1,8 @@
-import warnings
-
 from markupsafe import escape
 from markupsafe import Markup
 
 __all__ = (
+    "Button",
     "CheckboxInput",
     "ColorInput",
     "DateInput",
@@ -81,13 +80,14 @@ def html_params(**kwargs):
         elif v is False:
             pass
         else:
-            params.append(f'{str(k)}="{escape(v)}"')  # noqa: B907
-    return " ".join(params)
+            v = escape(v).replace(Markup('"'), Markup("&quot;"))
+            params.append(Markup('{k}="{v}"').format(k=k, v=v))
+    return Markup(" ").join(params)
 
 
 class ListWidget:
     """
-    Renders a list of fields as a `ul` or `ol` list.
+    Render a list of fields as a :mdn-tag:`ul` or :mdn-tag:`ol`.
 
     This is used for fields which encapsulate many inner fields as subfields.
     The widget will try to iterate the field to get access to the subfields and
@@ -111,16 +111,16 @@ class ListWidget:
                 html.append(f"<li>{subfield.label} {subfield()}</li>")
             else:
                 html.append(f"<li>{subfield()} {subfield.label}</li>")
-        html.append("</%s>" % self.html_tag)
+        html.append(f"</{self.html_tag}>")
         return Markup("".join(html))
 
 
 class TableWidget:
     """
-    Renders a list of fields as a set of table rows with th/td pairs.
+    Render a list of fields as a :mdn-tag:`table`.
 
-    If `with_table_tag` is True, then an enclosing <table> is placed around the
-    rows.
+    If `with_table_tag` is True, then an enclosing :mdn-tag:`table` is placed
+    around the rows.
 
     Hidden fields will not be displayed with a row, instead the field will be
     pushed into a subsequent table row to ensure XHTML validity. Hidden fields
@@ -134,15 +134,15 @@ class TableWidget:
         html = []
         if self.with_table_tag:
             kwargs.setdefault("id", field.id)
-            html.append("<table %s>" % html_params(**kwargs))
+            table_params = html_params(**kwargs)
+            html.append(f"<table {table_params}>")
         hidden = ""
         for subfield in field:
             if subfield.type in ("HiddenField", "CSRFTokenField"):
                 hidden += str(subfield)
             else:
                 html.append(
-                    "<tr><th>%s</th><td>%s%s</td></tr>"
-                    % (str(subfield.label), hidden, str(subfield))
+                    f"<tr><th>{subfield.label}</th><td>{hidden}{subfield}</td></tr>"
                 )
                 hidden = ""
         if self.with_table_tag:
@@ -154,7 +154,7 @@ class TableWidget:
 
 class Input:
     """
-    Render a basic ``<input>`` field.
+    Render a basic :mdn-tag:`input` field.
 
     This is used as the basis for most of the other input fields.
 
@@ -163,7 +163,6 @@ class Input:
     """
 
     html_params = staticmethod(html_params)
-    validation_attrs = ["required", "disabled"]
 
     def __init__(self, input_type=None):
         if input_type is not None:
@@ -177,13 +176,45 @@ class Input:
         flags = getattr(field, "flags", {})
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
+                value = getattr(flags, k)
+                kwargs[k] = value() if callable(value) else value
+        input_params = self.html_params(name=field.name, **kwargs)
+        return Markup(f"<input {input_params}>")
+
+
+class Button:
+    """
+    Render a ``<button>`` element.
+
+    Pass ``label=`` when rendering to override the visible button text. The
+    label is HTML-escaped; pass a :class:`markupsafe.Markup` instance to embed
+    HTML (icons, formatted text) in the button content.
+    """
+
+    html_params = staticmethod(html_params)
+    input_type = "submit"
+    validation_attrs = ["disabled"]
+
+    def __init__(self, input_type=None):
+        if input_type is not None:
+            self.input_type = input_type
+
+    def __call__(self, field, **kwargs):
+        label = kwargs.pop("label", field.label.text)
+        kwargs.setdefault("id", field.id)
+        kwargs.setdefault("type", self.input_type)
+        kwargs.setdefault("value", field._value())
+        flags = getattr(field, "flags", {})
+        for k in dir(flags):
+            if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
-        return Markup("<input %s>" % self.html_params(name=field.name, **kwargs))
+        button_params = self.html_params(name=field.name, **kwargs)
+        return Markup(f"<button {button_params}>{escape(label)}</button>")
 
 
 class TextInput(Input):
     """
-    Render a single-line text input.
+    Render a single-line :mdn-input:`text`.
     """
 
     input_type = "text"
@@ -199,7 +230,7 @@ class TextInput(Input):
 
 class PasswordInput(Input):
     """
-    Render a password input.
+    Render an :mdn-input:`password`.
 
     For security purposes, this field will not reproduce the value on a form
     submit by default. To have the value filled in, set `hide_value` to
@@ -227,10 +258,11 @@ class PasswordInput(Input):
 
 class HiddenInput(Input):
     """
-    Render a hidden input.
+    Render an :mdn-input:`hidden`.
     """
 
     input_type = "hidden"
+    validation_attrs = ["disabled"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -239,37 +271,39 @@ class HiddenInput(Input):
 
 class CheckboxInput(Input):
     """
-    Render a checkbox.
+    Render an :mdn-input:`checkbox`.
 
     The ``checked`` HTML attribute is set if the field's data is a non-false value.
     """
 
     input_type = "checkbox"
+    validation_attrs = ["required", "disabled"]
 
     def __call__(self, field, **kwargs):
         if getattr(field, "checked", field.data):
-            kwargs["checked"] = True
+            kwargs.setdefault("checked", True)
         return super().__call__(field, **kwargs)
 
 
 class RadioInput(Input):
     """
-    Render a single radio button.
+    Render a single :mdn-input:`radio` button.
 
     This widget is most commonly used in conjunction with ListWidget or some
     other listing, as singular radio buttons are not very useful.
     """
 
     input_type = "radio"
+    validation_attrs = ["required", "disabled"]
 
     def __call__(self, field, **kwargs):
         if field.checked:
-            kwargs["checked"] = True
+            kwargs.setdefault("checked", True)
         return super().__call__(field, **kwargs)
 
 
 class FileInput(Input):
-    """Render a file chooser input.
+    """Render an :mdn-input:`file`.
 
     :param multiple: allow choosing multiple files
     """
@@ -293,13 +327,14 @@ class FileInput(Input):
 
 class SubmitInput(Input):
     """
-    Renders a submit button.
+    Renders an :mdn-input:`submit`.
 
     The field's label is used as the text of the submit button instead of the
     data on the field.
     """
 
     input_type = "submit"
+    validation_attrs = ["required", "disabled"]
 
     def __call__(self, field, **kwargs):
         kwargs.setdefault("value", field.label.text)
@@ -308,7 +343,7 @@ class SubmitInput(Input):
 
 class TextArea:
     """
-    Renders a multi-line text area.
+    Renders a multi-line :mdn-tag:`textarea`.
 
     `rows` and `cols` ought to be passed as keyword args when rendering.
     """
@@ -321,26 +356,22 @@ class TextArea:
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
+        textarea_params = html_params(name=field.name, **kwargs)
+        textarea_innerhtml = escape(field._value())
         return Markup(
-            "<textarea %s>\r\n%s</textarea>"
-            % (html_params(name=field.name, **kwargs), escape(field._value()))
+            f"<textarea {textarea_params}>\r\n{textarea_innerhtml}</textarea>"
         )
 
 
 class Select:
     """
-    Renders a select field.
+    Renders a :mdn-tag:`select` field.
 
     If `multiple` is True, then the `size` property should be specified on
     rendering to make the field useful.
 
     The field must provide an `iter_choices()` method which the widget will
-    call on rendering; this method must yield tuples of
-    `(value, label, selected)` or `(value, label, selected, render_kw)`.
-    It also must provide a `has_groups()` method which tells whether choices
-    are divided into groups, and if they do, the field must have an
-    `iter_groups()` method that yields tuples of `(label, choices)`, where
-    `choices` is a iterable of `(value, label, selected)` tuples.
+    call on rendering; this method must yield :class:`Choice`.
     """
 
     validation_attrs = ["required", "disabled"]
@@ -356,70 +387,54 @@ class Select:
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
                 kwargs[k] = getattr(flags, k)
-        html = ["<select %s>" % html_params(name=field.name, **kwargs)]
-        if field.has_groups():
-            for group, choices in field.iter_groups():
-                html.append("<optgroup %s>" % html_params(label=group))
-                for choice in choices:
-                    if len(choice) == 4:
-                        val, label, selected, render_kw = choice
-                    else:
-                        warnings.warn(
-                            "'iter_groups' is expected to return 4 items tuple since "
-                            "wtforms 3.1, this will be mandatory in wtforms 3.2",
-                            DeprecationWarning,
-                            stacklevel=2,
-                        )
-                        val, label, selected = choice
-                        render_kw = {}
-                    html.append(self.render_option(val, label, selected, **render_kw))
+        select_params = html_params(name=field.name, **kwargs)
+        html = [f"<select {select_params}>"]
+        choice_groups = self.sort_by_optgroup(field.iter_choices())
+        for optgroup, choices in choice_groups.items():
+            if optgroup:
+                optgroup_params = html_params(label=optgroup)
+                html.append(f"<optgroup {optgroup_params}>")
+            for choice in choices:
+                html.append(self.render_option(choice))
+            if optgroup:
                 html.append("</optgroup>")
-        else:
-            for choice in field.iter_choices():
-                if len(choice) == 4:
-                    val, label, selected, render_kw = choice
-                else:
-                    warnings.warn(
-                        "'iter_groups' is expected to return 4 items tuple since "
-                        "wtforms 3.1, this will be mandatory in wtforms 3.2",
-                        DeprecationWarning,
-                        stacklevel=2,
-                    )
-                    val, label, selected = choice
-                    render_kw = {}
-                html.append(self.render_option(val, label, selected, **render_kw))
         html.append("</select>")
         return Markup("".join(html))
 
     @classmethod
-    def render_option(cls, value, label, selected, **kwargs):
-        if value is True:
-            # Handle the special case of a 'True' value.
+    def render_option(cls, choice, **kwargs):
+        value = choice.value
+        if isinstance(value, bool):
             value = str(value)
-
-        options = dict(kwargs, value=value)
-        if selected:
+        options = {"value": value, **(choice.render_kw or {}), **kwargs}
+        if choice._selected:
             options["selected"] = True
-        return Markup(f"<option {html_params(**options)}>{escape(label)}</option>")
+        label = escape(choice.label or choice.value)
+        return Markup(f"<option {html_params(**options)}>{label}</option>")
+
+    @classmethod
+    def sort_by_optgroup(cls, choices):
+        optgroups = {}
+        for choice in choices:
+            optgroups.setdefault(choice.optgroup, []).append(choice)
+        return optgroups
 
 
 class Option:
     """
-    Renders the individual option from a select field.
+    Render an individual :mdn-tag:`option` from a select field.
 
     This is just a convenience for various custom rendering situations, and an
     option by itself does not constitute an entire field.
     """
 
     def __call__(self, field, **kwargs):
-        return Select.render_option(
-            field._value(), field.label.text, field.checked, **kwargs
-        )
+        return Select.render_option(field.choice, **kwargs)
 
 
 class SearchInput(Input):
     """
-    Renders an input with type "search".
+    Render an :mdn-input:`search`.
     """
 
     input_type = "search"
@@ -435,7 +450,7 @@ class SearchInput(Input):
 
 class TelInput(Input):
     """
-    Renders an input with type "tel".
+    Render an :mdn-input:`tel`.
     """
 
     input_type = "tel"
@@ -451,7 +466,7 @@ class TelInput(Input):
 
 class URLInput(Input):
     """
-    Renders an input with type "url".
+    Render an :mdn-input:`url`.
     """
 
     input_type = "url"
@@ -467,7 +482,7 @@ class URLInput(Input):
 
 class EmailInput(Input):
     """
-    Renders an input with type "email".
+    Render an :mdn-input:`email`.
     """
 
     input_type = "email"
@@ -481,63 +496,77 @@ class EmailInput(Input):
     ]
 
 
-class DateTimeInput(Input):
+class _DateTimeBaseInput(Input):
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
+
+    def __call__(self, field, **kwargs):
+        format = getattr(field, "format", None)
+        if format is not None:
+            format = format[0] if isinstance(format, list) else format
+            flags = getattr(field, "flags", {})
+            for attr in ("min", "max"):
+                value = kwargs.get(attr, getattr(flags, attr, None))
+                if callable(value):
+                    value = value()
+                if hasattr(value, "strftime"):
+                    kwargs[attr] = value.strftime(format)
+        return super().__call__(field, **kwargs)
+
+
+class DateTimeInput(_DateTimeBaseInput):
     """
-    Renders an input with type "datetime".
+    Render an ``<input type="datetime">`` control.
+
+    This is a legacy HTML input type. For modern browser support, prefer
+    :class:`DateTimeLocalInput`.
     """
 
     input_type = "datetime"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class DateInput(Input):
+class DateInput(_DateTimeBaseInput):
     """
-    Renders an input with type "date".
+    Render a :mdn-input:`date`.
     """
 
     input_type = "date"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class MonthInput(Input):
+class MonthInput(_DateTimeBaseInput):
     """
-    Renders an input with type "month".
+    Render an :mdn-input:`month`.
     """
 
     input_type = "month"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class WeekInput(Input):
+class WeekInput(_DateTimeBaseInput):
     """
-    Renders an input with type "week".
+    Render an :mdn-input:`week`.
     """
 
     input_type = "week"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class TimeInput(Input):
+class TimeInput(_DateTimeBaseInput):
     """
-    Renders an input with type "time".
+    Render a :mdn-input:`time`.
     """
 
     input_type = "time"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class DateTimeLocalInput(Input):
+class DateTimeLocalInput(_DateTimeBaseInput):
     """
-    Renders an input with type "datetime-local".
+    Render an :mdn-input:`datetime-local`.
     """
 
     input_type = "datetime-local"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class NumberInput(Input):
     """
-    Renders an input with type "number".
+    Render an :mdn-input:`number`.
     """
 
     input_type = "number"
@@ -558,26 +587,19 @@ class NumberInput(Input):
         return super().__call__(field, **kwargs)
 
 
-class RangeInput(Input):
+class RangeInput(NumberInput):
     """
-    Renders an input with type "range".
+    Render an :mdn-input:`range`.
     """
 
     input_type = "range"
-    validation_attrs = ["required", "disabled", "max", "min", "step"]
-
-    def __init__(self, step=None):
-        self.step = step
-
-    def __call__(self, field, **kwargs):
-        if self.step is not None:
-            kwargs.setdefault("step", self.step)
-        return super().__call__(field, **kwargs)
+    validation_attrs = ["disabled", "max", "min", "step"]
 
 
 class ColorInput(Input):
     """
-    Renders an input with type "color".
+    Render an :mdn-input:`color`.
     """
 
     input_type = "color"
+    validation_attrs = ["disabled"]

@@ -45,3 +45,22 @@ def test_number_range_nan(nan, dummy_form, dummy_field):
     dummy_field.data = nan
     with pytest.raises(ValidationError):
         validator(dummy_form, dummy_field)
+
+
+@pytest.mark.parametrize(
+    "min_v, max_v, test_v",
+    [(lambda: 5, lambda: 10, 7), (lambda: 5, None, 7), (None, lambda: 100, 70)],
+)
+def test_number_range_callable_bounds(min_v, max_v, test_v, dummy_form, dummy_field):
+    """Callable bounds are resolved at validation time."""
+    dummy_field.data = test_v
+    NumberRange(min_v, max_v)(dummy_form, dummy_field)
+
+
+def test_number_range_callable_bounds_stored_in_field_flags():
+    """Callable bounds are stored verbatim and resolved by widgets at render."""
+    min_cb = lambda: 5  # noqa: E731
+    max_cb = lambda: 10  # noqa: E731
+    validator = NumberRange(min=min_cb, max=max_cb)
+    assert validator.field_flags["min"] is min_cb
+    assert validator.field_flags["max"] is max_cb

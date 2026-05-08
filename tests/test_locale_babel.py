@@ -2,8 +2,8 @@ from decimal import Decimal
 from decimal import ROUND_UP
 
 import pytest
-from tests.common import DummyPostData
 
+from tests.common import DummyPostData
 from wtforms import Form
 from wtforms.fields import DecimalField
 from wtforms.utils import unset_value
@@ -60,9 +60,9 @@ def _parse_test(raw_val, expected, locales=unset_value):
     if locales is not unset_value:
         meta = {"locales": locales}
     form = F(DummyPostData(a=raw_val), meta=meta)
-    assert (
-        form.validate()
-    ), f"Expected value {raw_val} to parse as a decimal, instead got {form.a.errors}"
+    assert form.validate(), (
+        f"Expected value {raw_val} to parse as a decimal, instead got {form.a.errors}"
+    )
     assert form.a.data == expected
 
 

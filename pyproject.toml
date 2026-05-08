@@ -13,21 +13,85 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
-    "MarkupSafe",
+    "MarkupSafe>=1.1.1",
 ]
 dynamic = ["version"]
 
 [project.urls]
 Documentation = "https://wtforms.readthedocs.io"
 Changes = "https://wtforms.readthedocs.io/changes"
-"Source Code" = "https://github.com/wtforms/wtforms/"
-"Issue Tracker" = "https://github.com/wtforms/wtforms/issues"
+"Source Code" = "https://github.com/pallets-eco/wtforms/"
+"Issue Tracker" = "https://github.com/pallets-eco/wtforms/issues"
 Chat = "https://discord.gg/pallets"
 
 [project.optional-dependencies]
-email = ["email_validator"]
+email = ["email_validator>=2.0"]
+
+[dependency-groups]
+docs = [
+    "Sphinx~=7.0.0",
+    "Pallets-Sphinx-Themes~=2.2.0",
+    "sphinx-issues~=4.0.0",
+    "sphinxcontrib-log-cabinet~=1.0.1",
+]
+dev = [
+    "pytest>=7.0",
+    "babel>=2.8",
+    "email_validator>=2.0",
+    "coverage>=6.0",
+    "prek>=0.3.9",
+    "tox-uv>=1.35.1",
+]
+
+[tool.tox]
+env_list = [
+    "style",
+    "minversions",
+    "py314",
+    "py313",
+    "py312",
+    "py311",
+    "py310",
+    "pypy310",
+    "docs",
+]
+skip_missing_interpreters = true
+
+[tool.tox.env_run_base]
+dependency_groups = ["dev"]
+commands = [
+    ["pytest", "--tb=short", "-l", "--basetemp={envtmpdir}", { replace = "posargs", extend = true }],
+]
+
+[tool.tox.env.coverage]
+dependency_groups = ["dev"]
+commands = [
+    ["coverage", "erase"],
+    ["coverage", "run", "--parallel", "--module", "pytest", "--tb=short", "--basetemp={envtmpdir}", { replace = "posargs", extend = true }],
+    ["coverage", "combine"],
+    ["coverage", "html"],
+    ["coverage", "report"],
+]
+
+[tool.tox.env.style]
+skip_install = true
+dependency_groups = []
+deps = ["prek>=0.3.9"]
+commands = [["prek", "run", "--all-files", "--show-diff-on-failure"]]
+
+[tool.tox.env.docs]
+dependency_groups = ["docs"]
+commands = [["sphinx-build", "-W", "-b", "html", "-d", "{envtmpdir}/doctrees", "docs", "{envtmpdir}/html"]]
+
+[tool.tox.env.minversions]
+base_python = ["py3.10"]
+uv_resolution = "lowest-direct"
+dependency_groups = ["dev"]
+commands = [
+    ["pytest", "--tb=short", "-l", "--basetemp={envtmpdir}", { replace = "posargs", extend = true }],
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -45,7 +109,6 @@ include = [
     "docs/",
     "tests/",
     "CHANGES.rst",
-    "tox.ini",
 ]
 exclude = [
     "docs/_build/",
@@ -78,30 +141,22 @@ exclude_lines = [
     "pass",
 ]
 
-[tool.flake8]
-# B = bugbear
-# E = pycodestyle errors
-# F = flake8 pyflakes
-# W = pycodestyle warnings
-# B9 = bugbear opinions
-# ISC = implicit-str-concat
-select = ["B", "E", "F", "W", "B9", "ISC"]
-ignore = [
-    # slice notation whitespace, invalid
-    "E203",
-    # line length, handled by bugbear B950
-    "E501",
-    # bare except, handled by bugbear B001
-    "E722",
-    # bin op line break, invalid
-    "W503",
-    # requires 'strict' argument for 'zip'
-    # that needs python >= 3.10
-    "B905",
+[tool.ruff]
+src = ["src"]
+fix = true
+show-fixes = true
+output-format = "full"
+
+[tool.ruff.lint]
+select = [
+    "B",  # flake8-bugbear
+    "E",  # pycodestyle error
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycodestyle warning
 ]
-# up to 88 allowed by bugbear B950
-max-line-length = 80
-per-file-ignores = [
-    # __init__ modules export names
-    "**/__init__.py: F401, F403",
-]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+order-by-type = false

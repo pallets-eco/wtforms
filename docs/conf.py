@@ -13,6 +13,7 @@ release, version = get_version("WTForms")
 master_doc = "index"
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "pallets_sphinx_themes",
@@ -22,7 +23,21 @@ extensions = [
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
 }
-issues_github_path = "wtforms/wtforms"
+extlinks = {
+    "mdn-tag": (
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/%s",
+        "<%s>",
+    ),
+    "mdn-attr": (
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/%s",
+        "%s",
+    ),
+    "mdn-input": (
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/%s",
+        '<input type="%s">',
+    ),
+}
+issues_github_path = "pallets-eco/wtforms"
 
 # HTML -----------------------------------------------------------------
 
@@ -30,12 +45,12 @@ html_theme = "werkzeug"
 html_context = {
     "project_links": [
         ProjectLink("PyPI Releases", "https://pypi.org/project/WTForms/"),
-        ProjectLink("Source Code", "https://github.com/wtforms/wtforms/"),
+        ProjectLink("Source Code", "https://github.com/pallets-eco/wtforms/"),
         ProjectLink(
             "Discord Chat",
             "https://discord.gg/F65P7Z9",
         ),
-        ProjectLink("Issue Tracker", "https://github.com/wtforms/wtforms/issues/"),
+        ProjectLink("Issue Tracker", "https://github.com/pallets-eco/wtforms/issues/"),
     ]
 }
 html_sidebars = {

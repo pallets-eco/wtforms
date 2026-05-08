@@ -1,9 +1,10 @@
 import itertools
 
+from wtforms.utils import unset_value
+
 from .. import widgets
 from .core import Field
 from .core import UnboundField
-from wtforms.utils import unset_value
 
 __all__ = ("FieldList",)
 
@@ -49,9 +50,9 @@ class FieldList(Field):
                 "FieldList does not accept any filters. Instead, define"
                 " them on the enclosed field."
             )
-        assert isinstance(
-            unbound_field, UnboundField
-        ), "Field must be unbound, not a field class"
+        assert isinstance(unbound_field, UnboundField), (
+            "Field must be unbound, not a field class"
+        )
         self.unbound_field = unbound_field
         self.min_entries = min_entries
         self.max_entries = max_entries
@@ -67,6 +68,7 @@ class FieldList(Field):
                 " them on the enclosed field."
             )
 
+        self.last_index = -1
         self.entries = []
         if data is unset_value or not data:
             try:
@@ -77,17 +79,19 @@ class FieldList(Field):
         self.object_data = data
 
         if formdata:
-            indices = sorted(set(self._extract_indices(self.name, formdata)))
+            indices = list(dict.fromkeys(self._extract_indices(self.name, formdata)))
             if self.max_entries:
                 indices = indices[: self.max_entries]
 
-            idata = iter(data)
+            data_list = list(data) if data else []
             for index in indices:
-                try:
-                    obj_data = next(idata)
-                except StopIteration:
+                if index < len(data_list):
+                    obj_data = data_list[index]
+                else:
                     obj_data = unset_value
                 self._add_entry(formdata, obj_data, index=index)
+
+            self._compact_indices()
         else:
             for obj_data in data:
                 self._add_entry(formdata, obj_data)
@@ -143,34 +147,78 @@ class FieldList(Field):
         candidates = itertools.chain(ivalues, itertools.repeat(None))
         _fake = type("_fake", (object,), {})
         output = []
-        for field, data in zip(self.entries, candidates):
+        for field, fallback in zip(self.entries, candidates, strict=False):
             fake_obj = _fake()
-            fake_obj.data = data
+            bound = field.object_data
+            if bound is unset_value or bound is None or isinstance(bound, dict):
+                fake_obj.data = fallback
+            else:
+                fake_obj.data = bound
             field.populate_obj(fake_obj, "data")
             output.append(fake_obj.data)
 
         setattr(obj, name, output)
 
     def _add_entry(self, formdata=None, data=unset_value, index=None):
-        assert (
-            not self.max_entries or len(self.entries) < self.max_entries
-        ), "You cannot have more than max_entries entries in this FieldList"
+        assert not self.max_entries or len(self.entries) < self.max_entries, (
+            "You cannot have more than max_entries entries in this FieldList"
+        )
         if index is None:
             index = self.last_index + 1
         self.last_index = index
         name = f"{self.short_name}{self._separator}{index}"
         id = f"{self.id}{self._separator}{index}"
-        field = self.unbound_field.bind(
-            form=None,
+        options = dict(
             name=name,
             prefix=self._prefix,
             id=id,
             _meta=self.meta,
             translations=self._translations,
         )
+        field = self.meta.bind_field(None, self.unbound_field, options)
+        field.index = index
         field.process(formdata, data)
         self.entries.append(field)
         return field
+
+    def _compact_indices(self):
+        """Renumber all entries so indices form a consecutive ``[0..N-1]``."""
+        for new_index, entry in enumerate(self.entries):
+            self._rename_entry(entry, new_index)
+        self.last_index = len(self.entries) - 1
+
+    def _rename_entry(self, entry, new_index):
+        """Rename ``entry`` to ``new_index`` and propagate to its descendants."""
+        old_name = entry.name
+        old_id = entry.id
+        new_name = f"{self.short_name}{self._separator}{new_index}"
+        new_id = f"{self.id}{self._separator}{new_index}"
+
+        if old_name == new_name and old_id == new_id and entry.index == new_index:
+            return
+
+        entry.index = new_index
+        entry.name = new_name
+        entry.short_name = str(new_index)
+        entry.id = new_id
+
+        for descendant in self._iter_descendants(entry):
+            if descendant.name and descendant.name.startswith(old_name):
+                descendant.name = new_name + descendant.name[len(old_name) :]
+            if descendant.id and descendant.id.startswith(old_id):
+                descendant.id = new_id + descendant.id[len(old_id) :]
+
+    def _iter_descendants(self, field):
+        """Yield all fields below ``field`` recursively (form sub-fields and
+        FieldList entries)."""
+        if hasattr(field, "form") and hasattr(field.form, "_fields"):
+            for subfield in field.form._fields.values():
+                yield subfield
+                yield from self._iter_descendants(subfield)
+        if hasattr(field, "entries"):
+            for subfield in field.entries:
+                yield subfield
+                yield from self._iter_descendants(subfield)
 
     def append_entry(self, data=unset_value):
         """
@@ -181,10 +229,30 @@ class FieldList(Field):
         """
         return self._add_entry(data=data)
 
-    def pop_entry(self):
-        """Removes the last entry from the list and returns it."""
-        entry = self.entries.pop()
-        self.last_index -= 1
+    def insert_entry(self, index, data=unset_value):
+        """
+        Create a new entry with optional default data and insert it at the
+        given position in :attr:`entries`.
+
+        After insertion, all entries are renumbered so indices form a
+        consecutive ``[0..N-1]`` range. ``index`` follows :meth:`list.insert`
+        semantics (negative or out-of-range values are clamped). Like
+        :meth:`append_entry`, the new entry only receives object data, not
+        formdata.
+        """
+        field = self._add_entry(data=data)
+        self.entries.insert(index, self.entries.pop())
+        self._compact_indices()
+        return field
+
+    def pop_entry(self, index=-1):
+        """Remove the entry at ``index`` from :attr:`entries` and return it.
+
+        After removal, remaining entries are renumbered so indices form a
+        consecutive ``[0..N-1]`` range.
+        """
+        entry = self.entries.pop(index)
+        self._compact_indices()
         return entry
 
     def __iter__(self):

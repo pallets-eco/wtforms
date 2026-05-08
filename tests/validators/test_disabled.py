@@ -1,5 +1,4 @@
 from tests.common import DummyPostData
-
 from wtforms import Form
 from wtforms import StringField
 from wtforms.validators import Disabled
@@ -15,6 +14,9 @@ def test_disabled():
         form.disabled()
         == '<input disabled id="disabled" name="disabled" type="text" value="foobar">'
     )
+    assert form.validate()
+
+    form = F(DummyPostData())
     assert form.validate()
 
     form = F(DummyPostData(disabled=["foobar"]))

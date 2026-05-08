@@ -1,66 +1,92 @@
----
-name: tests
+name: Tests
 on:
   push:
     branches:
-      - master
+      - main
       - '*.x'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
   pull_request:
-    branches:
-      - master
-      - '*.x'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+      - '*.rst'
 jobs:
   tests:
-    name: ${{ matrix.python }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.name || matrix.python }}
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
-        python:
-          - '3.12'
-          - '3.11'
-          - '3.10'
-          - '3.9'
-          - '3.8'
-          - 'pypy-3.10'
+        include:
+          - {python: '3.14'}
+          - {python: '3.13'}
+          - {python: '3.12'}
+          - {python: '3.11'}
+          - {python: '3.10'}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
-          python-version: ${{ matrix.python }}
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
-      - run: pip install tox
-      - run: tox -e py
-  style:
+          enable-cache: true
+      - name: Set up Python ${{ matrix.python }}
+        run: uv python install ${{ matrix.python }}
+      - name: Run tests
+        run: uv run --python ${{ matrix.python }} --group dev pytest --tb=short -l
+
+  minversions:
+    name: minversions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
-          python-version: '3.12'
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
-      - uses: actions/cache@v1
-        with:
-          path: ~/.cache/pre-commit
-          key: pre-commit|${{ hashFiles('.pre-commit-config.yaml') }}
-      - run: pip install tox
-      - run: tox -e style
-  docs:
+          enable-cache: true
+      - name: Set up Python 3.10
+        run: uv python install 3.10
+      - name: Run tests with lowest-direct resolution
+        run: uv run --python 3.10 --resolution lowest-direct --group dev pytest --tb=short -l
+
+  downstream-tests:
+    name: py${{ matrix.python }} ${{ matrix.downstream }} downstream
     runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        downstream:
+          - pallets-eco/flask-wtf
+          - pallets-eco/wtforms-sqlalchemy
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout wtforms
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          python-version: '3.12'
-      - uses: actions/cache@v1
+          path: wtforms
+      - name: Checkout ${{ matrix.downstream }}
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          path: ~/.cache/pip
-          key: pip|${{ hashFiles('setup.py') }}|${{ hashFiles('tox.ini') }}
-      - run: pip install tox
-      - run: tox -e docs
+          repository: ${{ matrix.downstream }}
+          path: ${{ matrix.downstream }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: ${{ matrix.downstream }}/pyproject.toml
+      - name: Install Python ${{ matrix.python }}
+        run: uv python install ${{ matrix.python }}
+      - name: Install downstream test environment
+        working-directory: ${{ matrix.downstream }}
+        run: |
+          uv sync --python ${{ matrix.python }} --all-groups --all-extras
+          uv pip install --force-reinstall ../../wtforms
+      - name: Run downstream tests
+        working-directory: ${{ matrix.downstream }}
+        run: uv run --no-sync pytest -W default
+      - name: Emit warning on failure
+        if: failure()
+        run: echo "::warning::${{ matrix.downstream }} tests failed on Python ${{ matrix.python }}"

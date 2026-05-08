@@ -1,5 +1,4 @@
 from tests.common import DummyPostData
-
 from wtforms import Form
 from wtforms import StringField
 from wtforms.validators import readonly

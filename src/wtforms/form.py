@@ -30,6 +30,7 @@ class BaseForm:
             prefix += "-"
 
         self.meta = meta
+        self._form_error_key = ""
         self._prefix = prefix
         self._fields = OrderedDict()
 
@@ -113,7 +114,7 @@ class BaseForm:
         for name, field in self._fields.items():
             field_extra_filters = filters.get(name, [])
 
-            inline_filter = getattr(self, "filter_%s" % name, None)
+            inline_filter = getattr(self, f"filter_{name}", None)
             if inline_filter is not None:
                 field_extra_filters.append(inline_filter)
 
@@ -155,7 +156,7 @@ class BaseForm:
     def errors(self):
         errors = {name: f.errors for name, f in self._fields.items() if f.errors}
         if self.form_errors:
-            errors[None] = self.form_errors
+            errors[self._form_error_key] = self.form_errors
         return errors
 
 

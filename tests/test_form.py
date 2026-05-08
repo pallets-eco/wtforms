@@ -1,6 +1,6 @@
 import pytest
-from tests.common import DummyPostData
 
+from tests.common import DummyPostData
 from wtforms.fields import IntegerField
 from wtforms.fields import StringField
 from wtforms.form import BaseForm
@@ -46,7 +46,7 @@ def test_baseform_field_removal():
     form = get_form()
     del form["test"]
     with pytest.raises(AttributeError):
-        form.test
+        form.test  # noqa: B018
     assert "test" not in form
 
 
@@ -61,7 +61,7 @@ def test_baseform_field_adding():
     assert isinstance(form["test"], IntegerField)
     assert len(list(form)) == 2
     with pytest.raises(AttributeError):
-        form["test"].data
+        form["test"].data  # noqa: B018
     form.process(DummyPostData(test=["1"]))
     assert form["test"].data == 1
     assert form["foo"].data is None
@@ -106,7 +106,7 @@ def test_form_meta_monkeypatch():
     assert F._unbound_fields == [("a", F.a), ("b", F.b)]
     del F.a
     with pytest.raises(AttributeError):
-        F.a
+        F.a  # noqa: B018
     F()
     assert F._unbound_fields == [("b", F.b)]
     F._m = StringField()
@@ -204,7 +204,7 @@ def test_form_level_errors():
     f = F(a=0, b=1)
     assert not f.validate()
     assert ["a + b should be even"] == f.form_errors
-    assert ["a + b should be even"] == f.errors[None]
+    assert ["a + b should be even"] == f.errors[""]
 
 
 def test_field_adding_disabled():
@@ -293,7 +293,7 @@ def test_errors_access_during_validation():
 
         def validate(self):
             super().validate()
-            self.errors
+            self.errors  # noqa: B018
             self.foo.errors.append("bar")
             return True
 
