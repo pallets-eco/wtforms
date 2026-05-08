@@ -3,6 +3,9 @@ import math
 import re
 import uuid
 from collections.abc import Callable
+from datetime import date
+from datetime import datetime
+from datetime import time
 
 __all__ = (
     "DataRequired",
@@ -18,7 +21,9 @@ __all__ = (
     "Length",
     "length",
     "NumberRange",
+    "DateRange",
     "number_range",
+    "date_range",
     "Optional",
     "optional",
     "Regexp",
@@ -174,12 +179,16 @@ class NumberRange:
     This will work with any comparable number type, such as floats and
     decimals, not just integers.
 
+    ``min`` and ``max`` may be callables to compute dynamic bounds.
+
     :param min:
         The minimum required value of the number. If not provided, minimum
-        value will not be checked.
+        value will not be checked. Can also be a callable that returns the
+        minimum value.
     :param max:
         The maximum value of the number. If not provided, maximum value
-        will not be checked.
+        will not be checked. Can also be a callable that returns the maximum
+        value.
     :param message:
         Error message to raise in case of a validation error. Can be
         interpolated using `%(min)s` and `%(max)s` if desired. Useful defaults
@@ -198,13 +207,19 @@ class NumberRange:
         if self.max is not None:
             self.field_flags["max"] = self.max
 
+    @staticmethod
+    def _resolve(value):
+        return value() if callable(value) else value
+
     def __call__(self, form, field):
+        min_value = self._resolve(self.min)
+        max_value = self._resolve(self.max)
         data = field.data
         if (
             data is not None
             and not math.isnan(data)
-            and (self.min is None or data >= self.min)
-            and (self.max is None or data <= self.max)
+            and (min_value is None or data >= min_value)
+            and (max_value is None or data <= max_value)
         ):
             return
 
@@ -213,16 +228,111 @@ class NumberRange:
 
         # we use %(min)s interpolation to support floats, None, and
         # Decimals without throwing a formatting exception.
-        elif self.max is None:
+        elif max_value is None:
             message = field.gettext("Number must be at least %(min)s.")
 
-        elif self.min is None:
+        elif min_value is None:
             message = field.gettext("Number must be at most %(max)s.")
 
         else:
             message = field.gettext("Number must be between %(min)s and %(max)s.")
 
-        raise ValidationError(message % dict(min=self.min, max=self.max))
+        raise ValidationError(message % dict(min=min_value, max=max_value))
+
+
+class DateRange:
+    """
+    Validates that a date or datetime is of a minimum and/or maximum value,
+    inclusive. This will work with dates and datetimes.
+
+    ``min`` and ``max`` may be callables to compute dynamic bounds.
+
+    For example::
+
+        def in_n_days(days):
+            return datetime.now() + timedelta(days=days)
+
+
+        cb = partial(in_n_days, 5)
+
+
+        class DateForm(Form):
+            date = DateField("date", [DateRange(min=date(2023, 1, 1), max=cb)])
+            datetime = DateTimeLocalField(
+                "datetime-local",
+                [DateRange(min=datetime(2023, 1, 1, 15, 30), max=cb)],
+            )
+
+    :param min:
+        The minimum required date or datetime. If not provided, minimum
+        date or datetime will not be checked. Can also be a callable that
+        returns a date or datetime.
+    :param max:
+        The maximum date or datetime. If not provided, maximum date or datetime
+        will not be checked. Can also be a callable that returns a date or
+        datetime.
+    :param message:
+        Error message to raise in case of a validation error. Can be
+        interpolated using `%(min)s` and `%(max)s` if desired. Useful defaults
+        are provided depending on the existence of min and max.
+
+    When supported, sets the `min` and `max` attributes on widgets.
+    """
+
+    def __init__(
+        self,
+        min=None,
+        max=None,
+        message=None,
+    ):
+        self.min = min
+        self.max = max
+        self.message = message
+        self.field_flags = {}
+
+        if self.min is not None:
+            self.field_flags["min"] = self.min
+        if self.max is not None:
+            self.field_flags["max"] = self.max
+
+    @staticmethod
+    def _to_datetime(value):
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, date):
+            return datetime.combine(value, time())
+        return value
+
+    @classmethod
+    def _coerce_bound(cls, value):
+        if callable(value):
+            value = value()
+        return cls._to_datetime(value)
+
+    def __call__(self, form, field):
+        min_value = self._coerce_bound(self.min)
+        max_value = self._coerce_bound(self.max)
+
+        data = self._to_datetime(field.data)
+        if data is not None and (
+            (min_value is None or data >= min_value)
+            and (max_value is None or data <= max_value)
+        ):
+            return
+
+        if self.message is not None:
+            message = self.message
+
+        elif max_value is None:
+            message = field.gettext("Date must be at least %(min)s.")
+
+        elif min_value is None:
+            message = field.gettext("Date must be at most %(max)s.")
+
+        else:
+            message = field.gettext("Date must be between %(min)s and %(max)s.")
+
+        raise ValidationError(message % dict(min=min_value, max=max_value))
 
 
 class Optional:
@@ -775,6 +885,7 @@ ip_address = IPAddress
 mac_address = MacAddress
 length = Length
 number_range = NumberRange
+date_range = DateRange
 optional = Optional
 input_required = InputRequired
 data_required = DataRequired

@@ -57,6 +57,9 @@ Built-in validators
 
 .. autoclass:: wtforms.validators.NumberRange
 
+.. autoclass:: wtforms.validators.DateRange
+
+
 .. autoclass:: wtforms.validators.Optional
 
    This also sets the ``optional`` :attr:`flag <wtforms.fields.Field.flags>` on

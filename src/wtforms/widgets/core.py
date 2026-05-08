@@ -176,7 +176,8 @@ class Input:
         flags = getattr(field, "flags", {})
         for k in dir(flags):
             if k in self.validation_attrs and k not in kwargs:
-                kwargs[k] = getattr(flags, k)
+                value = getattr(flags, k)
+                kwargs[k] = value() if callable(value) else value
         input_params = self.html_params(name=field.name, **kwargs)
         return Markup(f"<input {input_params}>")
 
@@ -495,7 +496,24 @@ class EmailInput(Input):
     ]
 
 
-class DateTimeInput(Input):
+class _DateTimeBaseInput(Input):
+    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
+
+    def __call__(self, field, **kwargs):
+        format = getattr(field, "format", None)
+        if format is not None:
+            format = format[0] if isinstance(format, list) else format
+            flags = getattr(field, "flags", {})
+            for attr in ("min", "max"):
+                value = kwargs.get(attr, getattr(flags, attr, None))
+                if callable(value):
+                    value = value()
+                if hasattr(value, "strftime"):
+                    kwargs[attr] = value.strftime(format)
+        return super().__call__(field, **kwargs)
+
+
+class DateTimeInput(_DateTimeBaseInput):
     """
     Render an ``<input type="datetime">`` control.
 
@@ -504,52 +522,46 @@ class DateTimeInput(Input):
     """
 
     input_type = "datetime"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class DateInput(Input):
+class DateInput(_DateTimeBaseInput):
     """
     Render a :mdn-input:`date`.
     """
 
     input_type = "date"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class MonthInput(Input):
+class MonthInput(_DateTimeBaseInput):
     """
     Render an :mdn-input:`month`.
     """
 
     input_type = "month"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class WeekInput(Input):
+class WeekInput(_DateTimeBaseInput):
     """
     Render an :mdn-input:`week`.
     """
 
     input_type = "week"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class TimeInput(Input):
+class TimeInput(_DateTimeBaseInput):
     """
     Render a :mdn-input:`time`.
     """
 
     input_type = "time"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
-class DateTimeLocalInput(Input):
+class DateTimeLocalInput(_DateTimeBaseInput):
     """
     Render an :mdn-input:`datetime-local`.
     """
 
     input_type = "datetime-local"
-    validation_attrs = ["required", "disabled", "readonly", "max", "min", "step"]
 
 
 class NumberInput(Input):
