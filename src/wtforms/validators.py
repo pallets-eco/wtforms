@@ -352,7 +352,11 @@ class Regexp:
         browser-specific pattern, or to a callable invoked as
         ``html_pattern(regex)`` returning ``bool`` or ``str`` interpreted by
         the same rules. Python and JavaScript regex syntaxes differ; emitting
-        a Python regex unchanged may fail in browsers.
+        a Python regex unchanged may fail in browsers. Note that the HTML
+        ``pattern`` attribute is implicitly anchored at both ends (equivalent
+        to :func:`re.fullmatch`), so a pattern paired with ``matcher=re.match``
+        or ``matcher=re.search`` may be accepted server-side but rejected by
+        the browser.
     """
 
     def __init__(
