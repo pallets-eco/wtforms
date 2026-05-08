@@ -234,3 +234,46 @@ def test_min_max():
         form.decimalrange2() == '<input id="decimalrange2" max="3" min="1"'
         ' name="decimalrange2" step="any" type="range" value="">'
     )
+
+
+class H(Form):
+    pattern_validators = [validators.Regexp(r"^[A-Z]+$", html_pattern=True)]
+    string = StringField(validators=pattern_validators)
+    password = PasswordField(validators=pattern_validators)
+    search = SearchField(validators=pattern_validators)
+    telephone = TelField(validators=pattern_validators)
+    url = URLField(validators=pattern_validators)
+    email = EmailField(validators=pattern_validators)
+
+
+def test_pattern():
+    form = H()
+    assert form.string() == (
+        '<input id="string" name="string" pattern="^[A-Z]+$" type="text" value="">'
+    )
+    assert form.password() == (
+        '<input id="password" name="password" pattern="^[A-Z]+$"'
+        ' type="password" value="">'
+    )
+    assert form.search() == (
+        '<input id="search" name="search" pattern="^[A-Z]+$" type="search" value="">'
+    )
+    assert form.telephone() == (
+        '<input id="telephone" name="telephone" pattern="^[A-Z]+$" type="tel" value="">'
+    )
+    assert form.url() == (
+        '<input id="url" name="url" pattern="^[A-Z]+$" type="url" value="">'
+    )
+    assert form.email() == (
+        '<input id="email" name="email" pattern="^[A-Z]+$" type="email" value="">'
+    )
+
+
+def test_pattern_disabled_by_default():
+    """Without ``html_pattern``, the regex source is not exposed in HTML."""
+
+    class I(Form):  # noqa: E742
+        string = StringField(validators=[validators.Regexp(r"^[A-Z]+$")])
+
+    form = I()
+    assert "pattern" not in form.string()

@@ -58,6 +58,9 @@ Version 3.x.x
   override the matching function. Defaults to :func:`re.match`; pass
   :func:`re.search` or :func:`re.fullmatch` to change the anchoring
   behaviour. :issue:`867`
+- Add an ``html_pattern`` keyword argument to :class:`~validators.Regexp`
+  to control the HTML ``pattern`` attribute emitted on supporting widgets.
+  :issue:`759`
 
 Version 3.2.2
 -------------

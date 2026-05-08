@@ -72,3 +72,35 @@ def test_pattern_method_as_matcher(dummy_form, dummy_field):
     dummy_field.data = "123abc"
     with pytest.raises(ValidationError):
         validator(dummy_form, dummy_field)
+
+
+def test_html_pattern_disabled_by_default():
+    """No ``pattern`` field flag is emitted unless ``html_pattern`` is set."""
+    assert regexp("^a").field_flags == {}
+
+
+def test_html_pattern_true_emits_python_source():
+    """``html_pattern=True`` emits the Python regex source as the HTML pattern."""
+    assert regexp("^[A-Z]+$", html_pattern=True).field_flags == {"pattern": "^[A-Z]+$"}
+
+
+def test_html_pattern_string_overrides_source():
+    """A string ``html_pattern`` is emitted verbatim, independent of the regex."""
+    validator = regexp(r"(?P<n>\d+)", html_pattern="^[0-9]+$")
+    assert validator.field_flags == {"pattern": "^[0-9]+$"}
+
+
+def test_html_pattern_callable_returning_bool():
+    """A callable returning ``True``/``False`` toggles emission of the source."""
+    enabled = regexp("^a", html_pattern=lambda r: True)
+    assert enabled.field_flags == {"pattern": "^a"}
+    disabled = regexp("^a", html_pattern=lambda r: False)
+    assert disabled.field_flags == {}
+
+
+def test_html_pattern_callable_returning_string():
+    """A callable can return a custom string used as the HTML pattern."""
+    validator = regexp(
+        r"(?P<n>\d+)", html_pattern=lambda r: r.pattern.replace("?P", "?")
+    )
+    assert validator.field_flags == {"pattern": r"(?<n>\d+)"}
