@@ -323,8 +323,7 @@ def test_datalist():
     form = J()
     assert (
         form.string5()
-        == '<input id="string5" list="languages" name="string5" type="text"'
-        ' value="">'
+        == '<input id="string5" list="languages" name="string5" type="text" value="">'
         '<datalist id="languages">'
         '<option value="deu" label="German">'
         '<option value="eng" label="English">'
@@ -336,8 +335,7 @@ def test_datalist():
     )
     assert (
         form.search5()
-        == '<input id="search5" list="languages" name="search5" type="search"'
-        ' value="">'
+        == '<input id="search5" list="languages" name="search5" type="search" value="">'
     )
     assert (
         form.email5() == '<input id="email5" list="emails" name="email5" type="email"'
