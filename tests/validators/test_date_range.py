@@ -20,7 +20,7 @@ from wtforms.validators import ValidationError
     ),
 )
 def test_date_range_passes(min_v, max_v, test_v, dummy_form, dummy_field):
-    """Pass when data is within range."""
+    """Validation passes when data is within bounds, mixing dates and datetimes."""
     dummy_field.data = test_v
     validator = DateRange(min_v, max_v)
     validator(dummy_form, dummy_field)
@@ -39,7 +39,7 @@ def test_date_range_passes(min_v, max_v, test_v, dummy_form, dummy_field):
     ),
 )
 def test_date_range_raises(min_v, max_v, test_v, dummy_form, dummy_field):
-    """Raise when data is outside range."""
+    """ValidationError is raised when data is None or outside the bounds."""
     dummy_field.data = test_v
     validator = DateRange(min_v, max_v)
     with pytest.raises(ValidationError):
@@ -60,14 +60,14 @@ def test_date_range_raises(min_v, max_v, test_v, dummy_form, dummy_field):
     ),
 )
 def test_date_range_field_flags_are_set_date(min_v, max_v, min_flag, max_flag):
-    """Keep static bounds in field flags."""
+    """Static date/datetime bounds are exposed via field_flags for HTML rendering."""
     validator = DateRange(min_v, max_v)
     assert validator.field_flags.get("min") == min_flag
     assert validator.field_flags.get("max") == max_flag
 
 
 def test_date_range_sets_widget_attrs_using_field_format():
-    """Render min and max using the field format."""
+    """Bounds are rendered using the field's format so HTML matches the input type."""
 
     class F(Form):
         date = DateField(
@@ -120,7 +120,7 @@ def _d_max():
 def test_date_range_passes_with_callable_bounds(
     min_v, max_v, test_v, dummy_form, dummy_field
 ):
-    """Allow callable min and max bounds."""
+    """Callable bounds are invoked at validation time to compute dynamic limits."""
     dummy_field.data = test_v
     validator = DateRange(min=min_v, max=max_v)
     validator(dummy_form, dummy_field)
