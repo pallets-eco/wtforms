@@ -10,16 +10,15 @@ msgstr ""
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2024-04-26 21:07+0000\n"
 "Last-Translator: \"Sophie Sh.\" <lisp_spb@mail.ru>\n"
-"Language-Team: Russian <https://hosted.weblate.org/projects/wtforms/wtforms/"
-"ru/>\n"
 "Language: ru\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Russian "
+"<https://hosted.weblate.org/projects/wtforms/wtforms/ru/>\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.5.1\n"
-"Generated-By: Babel 2.8.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: src/wtforms/validators.py:86
 #, python-format
@@ -113,9 +112,9 @@ msgstr "Неверное значение, должно быть одним из
 msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Неверное значение, не должно быть одним из %(values)s."
 
+# | msgid "This field is required."
 #: src/wtforms/validators.py:698
 #, fuzzy
-#| msgid "This field is required."
 msgid "This field cannot be edited."
 msgstr "Данное поле не может быть изменено."
 
@@ -157,9 +156,9 @@ msgstr ""
 "Неверный вариант(варианты): одно или несколько значений невозможно "
 "преобразовать."
 
+# | msgid "'%(value)s' is not a valid choice for this field."
 #: src/wtforms/fields/choices.py:214
 #, fuzzy, python-format
-#| msgid "'%(value)s' is not a valid choice for this field."
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
 msgstr[0] "'%(value)s' - неверный вариант для этого поля."

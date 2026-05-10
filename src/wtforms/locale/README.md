@@ -32,6 +32,12 @@ To add new translatable string to the catalog:
 pybabel extract --copyright-holder="WTForms Team" --project="WTForms" --version="$(python -c 'import wtforms; print(wtforms.__version__)')" --output-file src/wtforms/locale/wtforms.pot src/wtforms
 ```
 
+Then propagate the updated template into every existing locale catalog:
+
+```
+pybabel update --input-file src/wtforms/locale/wtforms.pot --output-dir src/wtforms/locale --domain wtforms
+```
+
 Edit
 ----
 

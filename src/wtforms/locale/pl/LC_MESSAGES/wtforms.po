@@ -10,14 +10,14 @@ msgstr ""
 "POT-Creation-Date: 2024-01-11 08:20+0100\n"
 "PO-Revision-Date: 2012-05-05 23:20+0200\n"
 "Last-Translator: Aleksander Nitecki <ixendr@itogi.re>\n"
-"Language-Team: pl <wolanskim@gmail.com>\n"
 "Language: pl\n"
+"Language-Team: pl <wolanskim@gmail.com>\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
+"(n%100<10 || n%100>=20) ? 1 : 2);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2)\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: src/wtforms/validators.py:86
 #, python-format
@@ -111,9 +111,9 @@ msgstr "Wartość musi być jedną z: %(values)s."
 msgid "Invalid value, can't be any of: %(values)s."
 msgstr "Wartość nie może być żadną z: %(values)s."
 
+# | msgid "This field is required."
 #: src/wtforms/validators.py:698
 #, fuzzy
-#| msgid "This field is required."
 msgid "This field cannot be edited."
 msgstr "To pole jest wymagane."
 
@@ -151,12 +151,11 @@ msgstr "Nieprawidłowy wybór"
 
 #: src/wtforms/fields/choices.py:193
 msgid "Invalid choice(s): one or more data inputs could not be coerced."
-msgstr ""
-"Nieprawidłowy wybór: nie można skonwertować przynajmniej jednej wartości"
+msgstr "Nieprawidłowy wybór: nie można skonwertować przynajmniej jednej wartości"
 
+# | msgid "'%(value)s' is not a valid choice for this field."
 #: src/wtforms/fields/choices.py:214
 #, fuzzy, python-format
-#| msgid "'%(value)s' is not a valid choice for this field."
 msgid "'%(value)s' is not a valid choice for this field."
 msgid_plural "'%(value)s' are not valid choices for this field."
 msgstr[0] "'%(value)s' nie jest poprawnym wyborem dla tego pola"
@@ -175,9 +174,9 @@ msgstr "Nieprawidłowa data"
 msgid "Not a valid time value."
 msgstr ""
 
+# | msgid "Not a valid date value."
 #: src/wtforms/fields/datetime.py:148
 #, fuzzy
-#| msgid "Not a valid date value."
 msgid "Not a valid week value."
 msgstr "Nieprawidłowa data"
 
