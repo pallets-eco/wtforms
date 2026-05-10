@@ -37,8 +37,6 @@ Released 2026-05-10
   timezone with the input. :issue:`833`
 - Add :class:`~fields.FieldList` ``insert_entry`` and indexed ``pop_entry``.
   :issue:`256`
-- :class:`~fields.FieldList` builds entries in the order keys appear in
-  ``formdata``, instead of sorting them by numeric index. :issue:`256`
 - Add :class:`~fields.ButtonField` to render ``<button type="submit">``
   controls with string values. :issue:`784`
 - :class:`~fields.SelectField` refactor. Choices tuples and dicts are
