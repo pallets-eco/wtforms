@@ -1,7 +1,9 @@
 .. currentmodule:: wtforms
 
-Version 3.x.x
--------------
+Version 3.3.0b1
+---------------
+
+Released 2026-05-10
 
 - Add :class:`~validators.DateRange`. ``min`` and ``max`` may be callables
   to compute dynamic bounds; :class:`~validators.NumberRange` accepts

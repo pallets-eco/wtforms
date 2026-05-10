@@ -40,7 +40,7 @@ from wtforms.fields.simple import URLField
 from wtforms.form import Form
 from wtforms.validators import ValidationError
 
-__version__ = "3.2.2"
+__version__ = "3.3.0b1"
 
 __all__ = [
     "validators",
