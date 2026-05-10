@@ -12,64 +12,64 @@ Released 2026-05-10
   ``step="any"``. :issue:`677` :pr:`679`
 - :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
   consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
-  overrides were silently bypassed for all ``FieldList`` entries.
-- Add `test_environment` support to :class:`~validators.Email`. :issue:`869`
-- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874`
-- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693`
+  overrides were silently bypassed for all ``FieldList`` entries. :pr:`891`
+- Add `test_environment` support to :class:`~validators.Email`. :issue:`869` :pr:`894`
+- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874` :pr:`895`
+- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693` :pr:`898`
 - Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
-  :issue:`775`
-- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831`
+  :issue:`775` :pr:`900`
+- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831` :pr:`897`
 - Clarify that :class:`~fields.SelectField` ``choices`` is re-evaluated at
-  every form instantiation, including callables, in the documentation. :issue:`875`
+  every form instantiation, including callables, in the documentation. :issue:`875` :pr:`909`
 - Render ``False`` as ``value="False"`` in :class:`~fields.SelectField` options
-  instead of omitting the attribute. :issue:`878`
+  instead of omitting the attribute. :issue:`878` :pr:`908`
 - Accept :class:`uuid.UUID` instances in the :class:`~validators.UUID` validator,
   and translate unexpected types into :class:`~validators.ValidationError`
   instead of letting :class:`TypeError` escape. :issue:`549` :pr:`769`
 - Escape double quotes in :class:`~markupsafe.Markup` attribute values
   passed to :func:`~widgets.html_params`, and return a
-  :class:`~markupsafe.Markup`. :issue:`801`
-- Clarify documentation about filters. :issue:`859`
+  :class:`~markupsafe.Markup`. :issue:`801` :pr:`906` :pr:`907`
+- Clarify documentation about filters. :issue:`859` :pr:`896`
 - Let render-time ``checked`` kwargs take precedence over the field's value
   in :class:`~widgets.CheckboxInput` and :class:`~widgets.RadioInput`.
-  :issue:`706`
+  :issue:`706` :pr:`910`
 - Add a ``tz`` parameter to :class:`~fields.DateTimeLocalField` to associate a
-  timezone with the input. :issue:`833`
+  timezone with the input. :issue:`833` :pr:`905`
 - Add :class:`~fields.FieldList` ``insert_entry`` and indexed ``pop_entry``.
-  :issue:`256`
+  :issue:`256` :pr:`901` :pr:`912`
 - Add :class:`~fields.ButtonField` to render ``<button type="submit">``
-  controls with string values. :issue:`784`
+  controls with string values. :issue:`784` :pr:`892`
 - :class:`~fields.SelectField` refactor. Choices tuples and dicts are
-  deprecated in favor of :class:`~fields.Choice`. :pr:`739`
+  deprecated in favor of :class:`~fields.Choice`. :pr:`739` :pr:`889`
 - ``<option>`` HTML attributes can be passed using
-  :class:`~fields.Choice`. :issue:`692` :pr:`739`
+  :class:`~fields.Choice`. :issue:`692` :pr:`739` :pr:`889`
 - Add :meth:`fields.Choice.from_enum` to build choices from an
   :class:`enum.Enum` class, and let :class:`~fields.SelectField` accept an
-  Enum class as ``coerce``. :issue:`338`
+  Enum class as ``coerce``. :issue:`338` :pr:`916`
 - Defer to ``email_validator``'s module-level defaults for the
   :class:`~validators.Email` ``test_environment``, ``allow_smtputf8`` and
-  ``allow_empty_local`` options. :issue:`915`
+  ``allow_empty_local`` options. :issue:`915` :pr:`917`
 - Add ``invalid_value_message`` and ``invalid_choice_message`` keyword
   arguments for customizing built-in field error messages. On
   ``SelectMultipleField``, ``invalid_choice_message`` may also be a callable
-  for custom pluralization. :issue:`39` :issue:`832`
+  for custom pluralization. :issue:`39` :issue:`832` :pr:`902`
 - :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
   ``pre_validate`` now short-circuits when ``process_formdata`` already
   produced an error, so a single coercion failure no longer surfaces as both
-  an "invalid value" and an "invalid choice" error.
+  an "invalid value" and an "invalid choice" error. :pr:`902`
 - Add a ``matcher`` keyword argument to :class:`~validators.Regexp` to
   override the matching function. Defaults to :func:`re.match`; pass
   :func:`re.search` or :func:`re.fullmatch` to change the anchoring
-  behaviour. :issue:`867`
+  behaviour. :issue:`867` :pr:`918`
 - Add an ``html_pattern`` keyword argument to :class:`~validators.Regexp`
   to control the HTML ``pattern`` attribute emitted on supporting widgets.
-  :issue:`759`
+  :pr:`759`
 - :class:`~validators.URL` validator is based on ``urllib.parse.urlparse``
   instead of a regex. New keyword arguments: ``allow_userinfo`` for
   accepting ``user:password@host`` URLs; ``schemes``
   (default ``("http", "https")``) is the allowlist of accepted schemes
   :pr:`847`
-- Add native :class:`DataList` support. :issue:`653`
+- Add native :class:`DataList` support. :issue:`653` :pr:`921`
 
 Version 3.2.2
 -------------
