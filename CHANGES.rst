@@ -3,75 +3,27 @@
 Unreleased
 ----------
 
-- Switch :class:`~fields.Choice` and :class:`~fields.SelectChoice` from
-  ``dataclass`` to :class:`typing.NamedTuple`. Field order is ``(value,
-  label, selected, render_kw[, optgroup])``, matching the tuple shape yielded
-  by ``iter_choices`` in WTForms 3.2 and earlier, so subclasses that unpack
-  choices via ``value, label, selected, render_kw = choice`` keep working.
-  The internal ``_selected`` attribute is renamed ``selected``. Choices are
-  now immutable; ``iter_choices`` returns fresh ``SelectChoice`` instances
-  built via :meth:`~typing.NamedTuple._replace`.
-- Let the ``choices`` callable of :class:`~fields.SelectField` (and other
-  :class:`~fields.SelectFieldBase` subclasses) optionally accept ``(form,
-  field)`` as positional arguments, mirroring the validators signature. The
-  callable is invoked from :meth:`~fields.Field.post_process`, so it can read
-  processed data from any field on the form. :issue:`922`
-- :class:`~datalist.DataList` callable ``choices`` now follow the same
-  contract as :class:`~fields.SelectField`: the callable accepts ``(form,
-  field)`` (or no argument) and is invoked once per form processing cycle
-  from :meth:`~fields.Field.post_process` instead of on every render. The
-  previous single-argument ``lambda field: ...`` signature is no longer
-  supported.
-- :class:`~fields.FieldList` now propagates its enclosing form to its entries
-  via :meth:`~meta.DefaultMeta.bind_field` (previously they received
-  ``form=None``).
-- A form nested inside a :class:`~fields.FormField` keeps a private reference
-  to the enclosing form via ``_parent_form``. ``FieldList`` is transparent in
-  this chain: a ``FormField`` nested inside a ``FieldList`` points to the form
-  that owns the list, not the list itself.
-- Add :meth:`fields.Field.post_process` and :meth:`form.BaseForm.post_process`
-  hooks, invoked at the end of :meth:`form.BaseForm.process` on the root form.
-  :class:`~fields.FormField` and :class:`~fields.FieldList` propagate the hook
-  to their nested form or entries, so every nested field's hook runs exactly
-  once per processing cycle. Override to add cross-field finalization logic.
-- :class:`~fields.Choice` and :class:`~fields.SelectChoice` constructors now
-  default ``label`` to ``value`` and ``render_kw`` to an empty dict when
-  omitted, matching the WTForms 3.2 ``iter_choices`` contract. Downstream
-  code that did ``**choice.render_kw`` or assumed ``choice.label`` was
-  always set keeps working without explicit None checks. As a side-effect,
-  the :class:`~widgets.DataListWidget` no longer emits a redundant
-  ``label="x"`` attribute when the label equals the value.
-- Detect WTForms 3.2-style overrides of
-  :meth:`widgets.Select.render_option` (``(cls, value, label, selected,
-  **kwargs)``) at the call site and adapt the invocation, with a
-  ``DeprecationWarning``. The 3.3 signature ``(cls, choice, **kwargs)``
-  is the canonical one going forward and the only one supported in
-  WTForms 4.0. Restores downstream compatibility with
-  wtforms-components' ``SelectWidget`` and similar subclasses.
-- Store the user-supplied ``choices`` value as-is on ``SelectField``
-  instead of coercing it to a list of :class:`~fields.SelectChoice` at
-  ``__init__``. Subclasses iterating ``self.choices`` directly (e.g.
-  ``for value, label in self.choices``, as wtf-peewee's
-  ``SelectChoicesField`` does) see the original user-supplied shape;
-  ``iter_choices`` continues to coerce per render. Legacy-form
-  (tuple/dict) ``DeprecationWarning`` is now emitted once at
-  construction, no longer at every render.
-- Accept WTForms 3.2-style raw ``(value, label, selected[, render_kw])``
-  tuples yielded by :meth:`~fields.SelectFieldBase.iter_choices`
-  overrides. Internal consumers (validation, widgets, ``__iter__``) now
-  route through :meth:`~fields.SelectFieldBase._iter_choices_normalized`,
-  which coerces tuples to :class:`~fields.SelectChoice` and emits a
-  ``DeprecationWarning``. Restores compatibility with downstream
-  packages such as wtf-peewee, Flask-AppBuilder and wtforms-components.
-  Will be removed in WTForms 4.0.
-- Restore :meth:`~fields.SelectFieldBase.has_groups` and
-  :meth:`~fields.SelectFieldBase.iter_groups` for compatibility with WTForms
-  3.2 subclasses. ``has_groups`` returns ``True`` as soon as at least one
-  choice carries an ``optgroup``; ``iter_groups`` yields ``(label, [Choice,
-  ...])`` pairs in first-appearance order, plus a final ``(None, [...])``
-  bucket for ungrouped choices. Items inside each group are :class:`~fields.Choice`
-  instances so the 3.2 ``value, label, selected, render_kw`` unpacking keeps
-  working. Both methods will be removed in WTForms 4.0.
+- :class:`~fields.Choice` and :class:`~fields.SelectChoice` are now
+  :class:`typing.NamedTuple` subclasses with field order ``(value, label,
+  selected, render_kw[, optgroup])``. ``label`` defaults to ``value``,
+  ``render_kw`` to ``{}``. :issue:`922`
+- ``choices`` callables on :class:`~fields.SelectField` and
+  :class:`~datalist.DataList` may accept ``(form, field)``, mirroring
+  validators. Resolved once per processing cycle. :issue:`922`
+- Add :meth:`fields.Field.post_process` and
+  :meth:`form.BaseForm.post_process` hooks, propagated through
+  :class:`~fields.FormField` and :class:`~fields.FieldList` for
+  cross-field finalization. :issue:`922`
+- Add ``Field._form`` and ``BaseForm._parent_form`` so fields and nested
+  forms can reach their enclosing form. Fix :class:`~fields.FieldList`
+  entries which previously got ``form=None``. :issue:`922`
+- Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
+  tuple yields from :meth:`~fields.SelectFieldBase.iter_choices`,
+  3-positional :meth:`widgets.Select.render_option` overrides,
+  :meth:`~fields.SelectFieldBase.has_groups` /
+  :meth:`~fields.SelectFieldBase.iter_groups`, and ``self.choices``
+  keeping the user-supplied shape. Each emits a ``DeprecationWarning``;
+  will be removed in WTForms 4.0. :issue:`922`
 
 Version 3.3.0b1
 ---------------
