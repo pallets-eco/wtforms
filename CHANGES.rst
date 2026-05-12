@@ -3,6 +3,8 @@
 Unreleased
 ----------
 
+- ``choices`` callables on :class:`~fields.SelectField` may accept
+  ``(form, field)``. Resolved once per processing cycle. :issue:`922`
 - Add :meth:`fields.Field.post_process` and
   :meth:`form.BaseForm.post_process` hooks, propagated through
   :class:`~fields.FormField` and :class:`~fields.FieldList` for
