@@ -484,6 +484,53 @@ def test_choice_default_render_kw_is_not_shared():
     assert "k" not in b.render_kw
 
 
+def test_legacy_subclass_yielding_tuples_keeps_working():
+    """A subclass overriding ``iter_choices`` to yield raw 4-tuples
+    ``(value, label, selected, render_kw)`` per the WTForms 3.2 contract
+    still renders, validates and iterates — with a ``DeprecationWarning``.
+
+    Mirrors the pattern used by wtf-peewee, Flask-AppBuilder and
+    wtforms-components subclasses."""
+
+    class LegacySelect(SelectField):
+        def iter_choices(self):
+            yield ("a", "Apple", self.data == "a", {})
+            yield ("b", "Banana", self.data == "b", {})
+
+    F = make_form(s=LegacySelect(choices=[Choice("a"), Choice("b")]))
+    form = F(s="a")
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        html = form.s()
+    assert '<option selected value="a">Apple</option>' in html
+    assert '<option value="b">Banana</option>' in html
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        assert form.validate() is True
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        opts = list(form.s)
+    assert [(opt.checked, str(opt.label.text)) for opt in opts] == [
+        (True, "Apple"),
+        (False, "Banana"),
+    ]
+
+
+def test_legacy_subclass_yielding_3_tuples_keeps_working():
+    """Pre-3.1 contract: 3-tuples ``(value, label, selected)`` also work."""
+
+    class LegacySelect(SelectField):
+        def iter_choices(self):
+            yield ("a", "Apple", False)
+            yield ("b", "Banana", False)
+
+    F = make_form(s=LegacySelect(choices=[Choice("a"), Choice("b")]))
+    form = F()
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        html = form.s()
+    assert '<option value="a">Apple</option>' in html
+
+
 def test_tuple_choices_deprecation():
     F = make_form(a=SelectField(choices=[("a", "Foo")]))
     with pytest.warns(DeprecationWarning):

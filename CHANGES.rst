@@ -41,6 +41,14 @@ Unreleased
   always set keeps working without explicit None checks. As a side-effect,
   the :class:`~widgets.DataListWidget` no longer emits a redundant
   ``label="x"`` attribute when the label equals the value.
+- Accept WTForms 3.2-style raw ``(value, label, selected[, render_kw])``
+  tuples yielded by :meth:`~fields.SelectFieldBase.iter_choices`
+  overrides. Internal consumers (validation, widgets, ``__iter__``) now
+  route through :meth:`~fields.SelectFieldBase._iter_choices_normalized`,
+  which coerces tuples to :class:`~fields.SelectChoice` and emits a
+  ``DeprecationWarning``. Restores compatibility with downstream
+  packages such as wtf-peewee, Flask-AppBuilder and wtforms-components.
+  Will be removed in WTForms 4.0.
 - Restore :meth:`~fields.SelectFieldBase.has_groups` and
   :meth:`~fields.SelectFieldBase.iter_groups` for compatibility with WTForms
   3.2 subclasses. ``has_groups`` returns ``True`` as soon as at least one

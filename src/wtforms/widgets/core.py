@@ -402,7 +402,11 @@ class Select:
     rendering to make the field useful.
 
     The field must provide an `iter_choices()` method which the widget will
-    call on rendering; this method must yield :class:`Choice`.
+    call on rendering; this method must yield :class:`Choice`. If the
+    field exposes ``_iter_choices_normalized`` (as :class:`SelectFieldBase`
+    does), it is preferred — it coerces legacy tuple yields to
+    :class:`SelectChoice` so subclasses written against the WTForms 3.2
+    contract keep working.
     """
 
     validation_attrs = ["required", "disabled"]
@@ -420,7 +424,8 @@ class Select:
                 kwargs[k] = getattr(flags, k)
         select_params = html_params(name=field.name, **kwargs)
         html = [f"<select {select_params}>"]
-        choice_groups = self.sort_by_optgroup(field.iter_choices())
+        iter_choices = getattr(field, "_iter_choices_normalized", field.iter_choices)
+        choice_groups = self.sort_by_optgroup(iter_choices())
         for optgroup, choices in choice_groups.items():
             if optgroup:
                 optgroup_params = html_params(label=optgroup)
