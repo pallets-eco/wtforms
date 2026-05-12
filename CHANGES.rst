@@ -41,6 +41,13 @@ Unreleased
   always set keeps working without explicit None checks. As a side-effect,
   the :class:`~widgets.DataListWidget` no longer emits a redundant
   ``label="x"`` attribute when the label equals the value.
+- Detect WTForms 3.2-style overrides of
+  :meth:`widgets.Select.render_option` (``(cls, value, label, selected,
+  **kwargs)``) at the call site and adapt the invocation, with a
+  ``DeprecationWarning``. The 3.3 signature ``(cls, choice, **kwargs)``
+  is the canonical one going forward and the only one supported in
+  WTForms 4.0. Restores downstream compatibility with
+  wtforms-components' ``SelectWidget`` and similar subclasses.
 - Store the user-supplied ``choices`` value as-is on ``SelectField``
   instead of coercing it to a list of :class:`~fields.SelectChoice` at
   ``__init__``. Subclasses iterating ``self.choices`` directly (e.g.
