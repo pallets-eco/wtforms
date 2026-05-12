@@ -206,7 +206,7 @@ def test_select_mixed_grouped_and_ungrouped_choices(dummy_field_class):
     choices share a single bucket rendered without an ``<optgroup>`` wrapper."""
     field = dummy_field_class(
         [
-            SelectChoice("foo", "lfoo", optgroup="g1", _selected=True),
+            SelectChoice("foo", "lfoo", optgroup="g1", selected=True),
             SelectChoice("baz", "lbaz", optgroup="g2"),
             SelectChoice("abc", "labc"),
             SelectChoice("bar", "lbar", optgroup="g1"),
@@ -232,30 +232,30 @@ def test_select_mixed_grouped_and_ungrouped_choices(dummy_field_class):
 
 def test_render_option():
     assert (
-        Select.render_option(SelectChoice("bar", "foo", _selected=False))
+        Select.render_option(SelectChoice("bar", "foo", selected=False))
         == '<option value="bar">foo</option>'
     )
 
     assert (
-        Select.render_option(SelectChoice(True, "foo", _selected=True))
+        Select.render_option(SelectChoice(True, "foo", selected=True))
         == '<option selected value="True">foo</option>'
     )
 
     assert (
-        Select.render_option(SelectChoice(False, "foo", _selected=False))
+        Select.render_option(SelectChoice(False, "foo", selected=False))
         == '<option value="False">foo</option>'
     )
 
     assert (
         Select.render_option(
-            SelectChoice("bar", '<i class="bar"></i>foo', _selected=False)
+            SelectChoice("bar", '<i class="bar"></i>foo', selected=False)
         )
         == '<option value="bar">&lt;i class=&#34;bar&#34;&gt;&lt;/i&gt;foo</option>'
     )
 
     assert (
         Select.render_option(
-            SelectChoice("bar", Markup('<i class="bar"></i>foo'), _selected=False)
+            SelectChoice("bar", Markup('<i class="bar"></i>foo'), selected=False)
         )
         == '<option value="bar"><i class="bar"></i>foo</option>'
     )

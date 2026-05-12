@@ -3,6 +3,9 @@
 Unreleased
 ----------
 
+- :class:`~fields.Choice` and :class:`~fields.SelectChoice` are now
+  :class:`typing.NamedTuple` subclasses with field order ``(value, label,
+  selected, render_kw[, optgroup])``. :issue:`922`
 - ``choices`` callables on :class:`~fields.SelectField` and
   :class:`~datalist.DataList` may accept ``(form, field)``. Resolved
   once per processing cycle. :issue:`922`
