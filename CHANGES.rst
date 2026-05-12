@@ -17,6 +17,10 @@ Unreleased
   forms can reach their enclosing form. Fix :class:`~fields.FieldList`
   entries and :class:`~fields.SelectField` option subfields which
   previously got ``form=None``. :issue:`922`
+- Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
+  :meth:`~fields.SelectFieldBase.has_groups` /
+  :meth:`~fields.SelectFieldBase.iter_groups`. Each emits a
+  ``DeprecationWarning``; will be removed in WTForms 4.0. :issue:`922`
 
 Version 3.3.0b1
 ---------------
