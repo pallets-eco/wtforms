@@ -109,6 +109,28 @@ def test_no_validators_or_filters(F1):
         form.validate()
 
 
+def test_post_process_propagates_through_form_field():
+    """``post_process`` of a nested form runs before its enclosing ``FormField``."""
+    captured = []
+
+    class Inner(Form):
+        x = StringField()
+
+        def post_process(self):
+            super().post_process()
+            captured.append(("inner", self.x.data))
+
+    class Outer(Form):
+        block = FormField(Inner)
+
+        def post_process(self):
+            super().post_process()
+            captured.append(("outer", self.block.form.x.data))
+
+    Outer(DummyPostData({"block-x": "v"}))
+    assert captured == [("inner", "v"), ("outer", "v")]
+
+
 def test_populate_missing_obj(F1):
     obj = AttrDict(a=None)
     obj2 = AttrDict(a=AttrDict(a="mmm"))
