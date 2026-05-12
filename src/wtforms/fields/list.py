@@ -175,7 +175,7 @@ class FieldList(Field):
             _meta=self.meta,
             translations=self._translations,
         )
-        field = self.meta.bind_field(None, self.unbound_field, options)
+        field = self.meta.bind_field(self._form, self.unbound_field, options)
         field.index = index
         field.process(formdata, data)
         self.entries.append(field)

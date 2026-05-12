@@ -15,6 +15,8 @@ class BaseForm:
     validation, and data and error proxying.
     """
 
+    _parent_form = None
+
     def __init__(self, fields, prefix="", meta=_default_meta):
         """
         :param fields:
@@ -179,7 +181,7 @@ class FormMeta(type):
         cls._unbound_fields = None
         cls._wtforms_meta = None
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args, _parent_form=None, **kwargs):
         """
         Construct a new `Form` instance.
 
@@ -206,7 +208,12 @@ class FormMeta(type):
                 if "Meta" in mro_class.__dict__:
                     bases.append(mro_class.Meta)
             cls._wtforms_meta = type("Meta", tuple(bases), {})
-        return type.__call__(cls, *args, **kwargs)
+
+        instance = cls.__new__(cls, *args, **kwargs)
+        if _parent_form is not None:
+            instance._parent_form = _parent_form
+        instance.__init__(*args, **kwargs)
+        return instance
 
     def __setattr__(cls, name, value):
         """
