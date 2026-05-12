@@ -114,6 +114,10 @@ class FieldList(Field):
                 if k.isdigit():
                     yield int(k)
 
+    def post_process(self):
+        for entry in self.entries:
+            entry.post_process()
+
     def validate(self, form, extra_validators=()):
         """
         Validate this FieldList.

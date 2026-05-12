@@ -70,6 +70,9 @@ class FormField(Field):
                 meta={"_parent_form": self._form},
             )
 
+    def post_process(self):
+        self.form.post_process()
+
     def validate(self, form, extra_validators=()):
         if extra_validators:
             raise TypeError(

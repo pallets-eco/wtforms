@@ -3,6 +3,10 @@
 Unreleased
 ----------
 
+- Add :meth:`fields.Field.post_process` and
+  :meth:`form.BaseForm.post_process` hooks, propagated through
+  :class:`~fields.FormField` and :class:`~fields.FieldList` for
+  cross-field finalization. :issue:`922`
 - Add ``Field._form`` and ``BaseForm._parent_form`` so fields and nested
   forms can reach their enclosing form. Fix :class:`~fields.FieldList`
   entries and :class:`~fields.SelectField` option subfields which
