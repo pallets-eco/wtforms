@@ -1,3 +1,4 @@
+import inspect
 import warnings
 from dataclasses import dataclass
 from dataclasses import field
@@ -147,7 +148,7 @@ class SelectFieldBase(Field):
 
     def choices_from_input(self, choices):
         if callable(choices):
-            choices = choices()
+            choices = self._invoke_choices_callback(choices)
 
         if choices is None:
             return None
@@ -168,6 +169,17 @@ class SelectFieldBase(Field):
             ]
 
         return [SelectChoice.from_input(input) for input in choices]
+
+    def _invoke_choices_callback(self, cb):
+        try:
+            sig = inspect.signature(cb)
+        except (ValueError, TypeError):
+            return cb()
+        try:
+            sig.bind(self._form, self)
+        except TypeError:
+            return cb()
+        return cb(self._form, self)
 
     class _Option(Field):
         def _value(self):
@@ -192,7 +204,12 @@ class SelectField(SelectFieldBase):
         if isinstance(coerce, type) and issubclass(coerce, Enum):
             coerce = _enum_coerce(coerce)
         self.coerce = coerce
-        self.choices = self.choices_from_input(choices)
+        if callable(choices):
+            self._choices_callable = choices
+            self.choices = None
+        else:
+            self._choices_callable = None
+            self.choices = self.choices_from_input(choices)
         self.validate_choice = validate_choice
         self.invalid_value_message = invalid_value_message or self.gettext(
             "Invalid Choice: could not coerce."
@@ -206,6 +223,11 @@ class SelectField(SelectFieldBase):
         for choice in choices:
             choice._selected = self.coerce(choice.value) == self.data
         return choices
+
+    def post_process(self):
+        super().post_process()
+        if self._choices_callable is not None:
+            self.choices = self.choices_from_input(self._choices_callable)
 
     def process_data(self, value):
         try:

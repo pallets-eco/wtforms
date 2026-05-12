@@ -10,6 +10,7 @@ else:
     StrEnum = None
 
 from tests.common import DummyPostData
+from wtforms import StringField
 from wtforms import validators
 from wtforms import widgets
 from wtforms.fields import Choice
@@ -216,6 +217,52 @@ def test_callable_choices():
         '<option value="foo">foo</option>',
         '<option selected value="bar">bar</option>',
     ]
+
+
+def test_callable_choices_receives_form_and_field():
+    captured = []
+
+    def choices(form, field):
+        captured.append((form, field))
+        return ["foo", "bar"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F(a="bar")
+
+    assert list(str(x) for x in form.a) == [
+        '<option value="foo">foo</option>',
+        '<option selected value="bar">bar</option>',
+    ]
+    assert captured == [(form, form.a)]
+
+
+def test_callable_choices_variadic_receives_form_and_field():
+    captured = []
+
+    def choices(*args, **kwargs):
+        captured.append(args)
+        return ["foo"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F()
+
+    list(form.a)
+    assert captured[0] == (form, form.a)
+
+
+def test_callable_choices_invoked_after_process():
+    """The callable sees data from every field, regardless of declaration order."""
+    captured = []
+
+    def choices(form, field):
+        captured.append((field.data, form.b.data))
+        return ["foo", "bar"]
+
+    F = make_form(a=SelectField(choices=choices), b=StringField())
+    form = F(DummyPostData(a="foo", b="hello"))
+
+    list(form.a)
+    assert captured == [("foo", "hello")]
 
 
 def test_requried_flag():

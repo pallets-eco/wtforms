@@ -3,6 +3,11 @@
 Unreleased
 ----------
 
+- Let the ``choices`` callable of :class:`~fields.SelectField` (and other
+  :class:`~fields.SelectFieldBase` subclasses) optionally accept ``(form,
+  field)`` as positional arguments, mirroring the validators signature. The
+  callable is invoked from :meth:`~fields.Field.post_process`, so it can read
+  processed data from any field on the form. :issue:`922`
 - :class:`~fields.FieldList` now propagates its enclosing form to its entries
   via :meth:`~meta.DefaultMeta.bind_field` (previously they received
   ``form=None``).

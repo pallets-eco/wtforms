@@ -368,6 +368,18 @@ Choice Fields
     keyword arg to :class:`~wtforms.fields.SelectField` says that we use
     :func:`int()` to coerce form data. The default coerce is :func:`str()`.
 
+    The callable may optionally accept ``(form, field)`` as positional
+    arguments, mirroring the signature of validators. When this signature is
+    used, the callable is invoked after the whole form has been processed, so
+    it can read ``field.data`` and the data of any other field on the form::
+
+        def available_groups(form, field):
+            return [Choice(g.id, g.name) for g in form.tenant.data.groups]
+
+        class UserDetails(Form):
+            tenant = QuerySelectField('Tenant', ...)
+            group_id = SelectField('Group', coerce=int, choices=available_groups)
+
     **Coerce function example**::
 
         def coerce_none(value):
