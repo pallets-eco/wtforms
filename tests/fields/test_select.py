@@ -455,7 +455,33 @@ def test_iter_groups_items_unpack_as_3_2_tuples():
     form = F(a="a")
     for _label, items in form.a.iter_groups():
         for value, label, selected, render_kw in items:
-            assert (value, label, selected, render_kw) == ("a", "Foo", True, None)
+            assert (value, label, selected, render_kw) == ("a", "Foo", True, {})
+
+
+def test_choice_defaults_match_3_2_behaviour():
+    """When ``label`` is omitted it defaults to ``value``; ``render_kw``
+    defaults to ``{}``. Reproduces the WTForms 3.2 iter_choices contract
+    where downstream could safely do ``**render_kw`` and assume
+    ``label`` is non-None."""
+    c = Choice("foo")
+    assert c.label == "foo"
+    assert c.render_kw == {}
+    assert c.selected is False
+
+    sc = SelectChoice("foo")
+    assert sc.label == "foo"
+    assert sc.render_kw == {}
+    assert sc.selected is False
+    assert sc.optgroup is None
+
+
+def test_choice_default_render_kw_is_not_shared():
+    """The default ``render_kw`` is built fresh per instance — mutating one
+    does not leak into another."""
+    a = Choice("a")
+    b = Choice("b")
+    a.render_kw["k"] = "v"
+    assert "k" not in b.render_kw
 
 
 def test_tuple_choices_deprecation():

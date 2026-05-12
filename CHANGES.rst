@@ -34,6 +34,13 @@ Unreleased
   :class:`~fields.FormField` and :class:`~fields.FieldList` propagate the hook
   to their nested form or entries, so every nested field's hook runs exactly
   once per processing cycle. Override to add cross-field finalization logic.
+- :class:`~fields.Choice` and :class:`~fields.SelectChoice` constructors now
+  default ``label`` to ``value`` and ``render_kw`` to an empty dict when
+  omitted, matching the WTForms 3.2 ``iter_choices`` contract. Downstream
+  code that did ``**choice.render_kw`` or assumed ``choice.label`` was
+  always set keeps working without explicit None checks. As a side-effect,
+  the :class:`~widgets.DataListWidget` no longer emits a redundant
+  ``label="x"`` attribute when the label equals the value.
 - Restore :meth:`~fields.SelectFieldBase.has_groups` and
   :meth:`~fields.SelectFieldBase.iter_groups` for compatibility with WTForms
   3.2 subclasses. ``has_groups`` returns ``True`` as soon as at least one

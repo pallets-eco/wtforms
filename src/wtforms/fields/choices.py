@@ -28,7 +28,14 @@ def _enum_coerce(enum_cls):
     return coerce
 
 
-class Choice(NamedTuple):
+class _Choice(NamedTuple):
+    value: str
+    label: str | None = None
+    selected: bool = False
+    render_kw: dict | None = None
+
+
+class Choice(_Choice):
     """
     A named tuple representing an available choice for choice fields.
 
@@ -39,19 +46,23 @@ class Choice(NamedTuple):
     :param value:
         The value that will be sent in the request.
     :param label:
-        The label of the option.
+        The label of the option. Defaults to ``value`` when omitted.
     :param selected:
         Whether the option is currently selected. Set by ``iter_choices``;
         you rarely set this yourself.
     :param render_kw:
         A dict containing HTML attributes that will be rendered
-        with the option.
+        with the option. Defaults to an empty dict when omitted.
     """
 
-    value: str
-    label: str | None = None
-    selected: bool = False
-    render_kw: dict | None = None
+    __slots__ = ()
+
+    def __new__(cls, value, label=None, selected=False, render_kw=None):
+        if label is None:
+            label = value
+        if render_kw is None:
+            render_kw = {}
+        return _Choice.__new__(cls, value, label, selected, render_kw)
 
     @classmethod
     def from_enum(cls, enum_cls, *, label=None):
@@ -67,7 +78,15 @@ class Choice(NamedTuple):
         return [cls(value=m.name, label=label(m)) for m in enum_cls]
 
 
-class SelectChoice(NamedTuple):
+class _SelectChoice(NamedTuple):
+    value: str
+    label: str | None = None
+    selected: bool = False
+    render_kw: dict | None = None
+    optgroup: str | None = None
+
+
+class SelectChoice(_SelectChoice):
     """
     A :class:`Choice` augmented with an ``<optgroup>`` hint for
     :class:`SelectField`.
@@ -76,11 +95,14 @@ class SelectChoice(NamedTuple):
         The ``<optgroup>`` HTML tag in which the option will be rendered.
     """
 
-    value: str
-    label: str | None = None
-    selected: bool = False
-    render_kw: dict | None = None
-    optgroup: str | None = None
+    __slots__ = ()
+
+    def __new__(cls, value, label=None, selected=False, render_kw=None, optgroup=None):
+        if label is None:
+            label = value
+        if render_kw is None:
+            render_kw = {}
+        return _SelectChoice.__new__(cls, value, label, selected, render_kw, optgroup)
 
     @classmethod
     def from_enum(cls, enum_cls, *, label=None):
