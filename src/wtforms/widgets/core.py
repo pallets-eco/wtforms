@@ -420,7 +420,8 @@ class Select:
                 kwargs[k] = getattr(flags, k)
         select_params = html_params(name=field.name, **kwargs)
         html = [f"<select {select_params}>"]
-        choice_groups = self.sort_by_optgroup(field.iter_choices())
+        iter_choices = getattr(field, "_iter_choices_normalized", field.iter_choices)
+        choice_groups = self.sort_by_optgroup(iter_choices())
         for optgroup, choices in choice_groups.items():
             if optgroup:
                 optgroup_params = html_params(label=optgroup)

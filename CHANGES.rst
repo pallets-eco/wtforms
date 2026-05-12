@@ -19,6 +19,7 @@ Unreleased
   entries and :class:`~fields.SelectField` option subfields which
   previously got ``form=None``. :issue:`922`
 - Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
+  tuple yields from :meth:`~fields.SelectFieldBase.iter_choices`,
   :meth:`~fields.SelectFieldBase.has_groups` /
   :meth:`~fields.SelectFieldBase.iter_groups`. Each emits a
   ``DeprecationWarning``; will be removed in WTForms 4.0. :issue:`922`

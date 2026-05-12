@@ -119,6 +119,9 @@ class SelectChoice(_SelectChoice):
 
     @classmethod
     def from_input(cls, input, optgroup=None):
+        """Coerce a value passed by the user via ``choices=...`` into a
+        :class:`SelectChoice`.
+        """
         if isinstance(input, SelectChoice):
             if optgroup:
                 return input._replace(optgroup=optgroup)
@@ -153,6 +156,38 @@ class SelectChoice(_SelectChoice):
                 )
             return cls(*input, optgroup=optgroup)
 
+    @classmethod
+    def _normalize_choice(cls, choice):
+        """Coerce a value yielded by :meth:`SelectFieldBase.iter_choices`
+        into a :class:`SelectChoice`.
+        """
+        if isinstance(choice, cls):
+            return choice
+        if isinstance(choice, Choice):
+            return cls.from_input(choice)
+        if isinstance(choice, tuple):
+            warnings.warn(
+                "Yielding raw tuples from iter_choices() is deprecated; "
+                "yield SelectChoice instances instead. Will be removed in "
+                "WTForms 4.0.",
+                DeprecationWarning,
+                stacklevel=3,
+            )
+            if len(choice) == 4:
+                value, label, selected, render_kw = choice
+            elif len(choice) == 3:
+                value, label, selected = choice
+                render_kw = None
+            else:
+                raise TypeError(
+                    f"iter_choices() yielded a tuple of unsupported length: "
+                    f"{len(choice)}"
+                )
+            return cls(value=value, label=label, selected=selected, render_kw=render_kw)
+        raise TypeError(
+            f"iter_choices() yielded an unsupported type: {type(choice).__name__}"
+        )
+
 
 class SelectFieldBase(Field):
     option_widget = widgets.Option()
@@ -171,11 +206,16 @@ class SelectFieldBase(Field):
             self.option_widget = option_widget
 
     def iter_choices(self):
-        """
-        Provides data for choice widget rendering. Must return a sequence or
-        iterable of SelectChoice.
+        """Provide data for choice widget rendering.
+
+        Should yield :class:`SelectChoice` instances.
         """
         raise NotImplementedError()
+
+    def _iter_choices_normalized(self):
+        """Wrap :meth:`iter_choices` to always yield :class:`SelectChoice`."""
+        for choice in self.iter_choices():
+            yield SelectChoice._normalize_choice(choice)
 
     def has_groups(self):
         """Whether the field's choices include any ``optgroup`` hint."""
@@ -194,7 +234,7 @@ class SelectFieldBase(Field):
             _form=self._form,
             _meta=self.meta,
         )
-        for i, choice in enumerate(self.iter_choices()):
+        for i, choice in enumerate(self._iter_choices_normalized()):
             opt = self._Option(
                 id=f"{self.id}-{i}",
                 label=choice.label or choice.value,
@@ -292,7 +332,7 @@ class SelectField(SelectFieldBase):
     def iter_groups(self):
         groups = {}
         ungrouped = []
-        for c in self.iter_choices():
+        for c in self._iter_choices_normalized():
             item = Choice(c.value, c.label, c.selected, c.render_kw)
             if c.optgroup is None:
                 ungrouped.append(item)
@@ -333,7 +373,7 @@ class SelectField(SelectFieldBase):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        if not any(choice.selected for choice in self.iter_choices()):
+        if not any(choice.selected for choice in self._iter_choices_normalized()):
             raise ValidationError(self.invalid_choice_message)
 
 
@@ -406,7 +446,9 @@ class SelectMultipleField(SelectField):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        acceptable = {self.coerce(choice.value) for choice in self.iter_choices()}
+        acceptable = {
+            self.coerce(choice.value) for choice in self._iter_choices_normalized()
+        }
         if any(data not in acceptable for data in self.data):
             unacceptable = [
                 str(data) for data in set(self.data) if data not in acceptable
