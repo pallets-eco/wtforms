@@ -355,8 +355,11 @@ class Field:
 
         Override this when a field needs to read other fields' processed data,
         for example to resolve dynamic choices that depend on the form state.
-        The default implementation is a no-op.
+        The base implementation resolves any inline :class:`~wtforms.DataList`
+        attached to the field.
         """
+        if self._datalist is not None and not isinstance(self._datalist, str):
+            self._datalist._resolve(self)
 
     def process_data(self, value):
         """

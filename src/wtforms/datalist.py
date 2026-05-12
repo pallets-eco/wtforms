@@ -18,6 +18,7 @@ class DataList:
 
     def __init__(self, choices=None, *, render_kw=None, widget=None):
         self._raw_choices = choices
+        self._choices = None if callable(choices) else choices
         self.render_kw = render_kw or {}
         if widget is not None:
             self.widget = widget
@@ -26,16 +27,26 @@ class DataList:
     def _clone(self, id):
         clone = DataList.__new__(DataList)
         clone._raw_choices = self._raw_choices
+        clone._choices = None if callable(self._raw_choices) else self._raw_choices
         clone.render_kw = self.render_kw
         clone.widget = self.widget
         clone.id = id
         return clone
 
-    def iter_choices(self, field=None):
+    def _resolve(self, field):
         raw = self._raw_choices
-        if callable(raw):
-            n = len(inspect.signature(raw).parameters)
-            raw = raw(field) if n >= 1 else raw()
+        if not callable(raw):
+            return
+        try:
+            sig = inspect.signature(raw)
+            sig.bind(field._form, field)
+        except TypeError:
+            self._choices = raw()
+            return
+        self._choices = raw(field._form, field)
+
+    def iter_choices(self, field=None):
+        raw = self._choices
         if raw is None:
             return []
         choices = [

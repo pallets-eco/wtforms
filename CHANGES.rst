@@ -8,6 +8,12 @@ Unreleased
   field)`` as positional arguments, mirroring the validators signature. The
   callable is invoked from :meth:`~fields.Field.post_process`, so it can read
   processed data from any field on the form. :issue:`922`
+- :class:`~datalist.DataList` callable ``choices`` now follow the same
+  contract as :class:`~fields.SelectField`: the callable accepts ``(form,
+  field)`` (or no argument) and is invoked once per form processing cycle
+  from :meth:`~fields.Field.post_process` instead of on every render. The
+  previous single-argument ``lambda field: ...`` signature is no longer
+  supported.
 - :class:`~fields.FieldList` now propagates its enclosing form to its entries
   via :meth:`~meta.DefaultMeta.bind_field` (previously they received
   ``form=None``).
