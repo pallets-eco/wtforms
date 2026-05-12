@@ -172,7 +172,7 @@ class DataListWidget:
         options = []
         for choice in datalist.iter_choices(field):
             option_attrs = {"value": choice.value}
-            if choice.label is not None:
+            if choice.label is not None and choice.label != choice.value:
                 option_attrs["label"] = choice.label
             if choice.render_kw:
                 option_attrs = {**choice.render_kw, **option_attrs}
