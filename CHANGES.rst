@@ -20,6 +20,7 @@ Unreleased
   previously got ``form=None``. :issue:`922`
 - Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
   tuple yields from :meth:`~fields.SelectFieldBase.iter_choices`,
+  3-positional :meth:`widgets.Select.render_option` overrides,
   :meth:`~fields.SelectFieldBase.has_groups` /
   :meth:`~fields.SelectFieldBase.iter_groups`, and ``self.choices``
   keeping the user-supplied shape. Each emits a ``DeprecationWarning``;
