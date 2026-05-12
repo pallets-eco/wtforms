@@ -34,6 +34,14 @@ Unreleased
   :class:`~fields.FormField` and :class:`~fields.FieldList` propagate the hook
   to their nested form or entries, so every nested field's hook runs exactly
   once per processing cycle. Override to add cross-field finalization logic.
+- Restore :meth:`~fields.SelectFieldBase.has_groups` and
+  :meth:`~fields.SelectFieldBase.iter_groups` for compatibility with WTForms
+  3.2 subclasses. ``has_groups`` returns ``True`` as soon as at least one
+  choice carries an ``optgroup``; ``iter_groups`` yields ``(label, [Choice,
+  ...])`` pairs in first-appearance order, plus a final ``(None, [...])``
+  bucket for ungrouped choices. Items inside each group are :class:`~fields.Choice`
+  instances so the 3.2 ``value, label, selected, render_kw`` unpacking keeps
+  working. Both methods will be removed in WTForms 4.0.
 
 Version 3.3.0b1
 ---------------

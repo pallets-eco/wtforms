@@ -152,6 +152,25 @@ class SelectFieldBase(Field):
         """
         raise NotImplementedError()
 
+    def has_groups(self):
+        """Whether the field's choices include any ``optgroup`` hint.
+
+        Kept for compatibility with WTForms 3.2 subclasses that branch on
+        grouped vs flat rendering. It will be removed in WTForms 4.0; new
+        code should iterate :meth:`iter_choices` and inspect each
+        :class:`SelectChoice` ``optgroup`` attribute directly.
+        """
+        return False
+
+    def iter_groups(self):
+        """Yield ``(group_label, [Choice, ...])`` pairs for grouped rendering.
+
+        Kept for compatibility with WTForms 3.2 subclasses. It will be
+        removed in WTForms 4.0; new code should iterate :meth:`iter_choices`
+        and group on each :class:`SelectChoice` ``optgroup`` attribute.
+        """
+        raise NotImplementedError()
+
     def __iter__(self):
         opts = dict(
             widget=self.option_widget,
@@ -250,6 +269,23 @@ class SelectField(SelectFieldBase):
             choice._replace(selected=self.coerce(choice.value) == self.data)
             for choice in choices
         ]
+
+    def has_groups(self):
+        choices = self.choices_from_input(self.choices) or []
+        return any(c.optgroup is not None for c in choices)
+
+    def iter_groups(self):
+        groups = {}
+        ungrouped = []
+        for c in self.iter_choices():
+            item = Choice(c.value, c.label, c.selected, c.render_kw)
+            if c.optgroup is None:
+                ungrouped.append(item)
+            else:
+                groups.setdefault(c.optgroup, []).append(item)
+        yield from groups.items()
+        if ungrouped:
+            yield None, ungrouped
 
     def post_process(self):
         super().post_process()

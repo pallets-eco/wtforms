@@ -401,6 +401,63 @@ def test_optgroup_option_render_kw():
     ]
 
 
+def test_has_groups_false_without_optgroup():
+    """``has_groups()`` is False when no choice carries an ``optgroup``."""
+    F = make_form(a=SelectField(choices=[Choice("a", "Foo"), Choice("b", "Bar")]))
+    assert F().a.has_groups() is False
+
+
+def test_has_groups_true_with_any_optgroup():
+    """``has_groups()`` is True as soon as at least one choice is grouped."""
+    F = make_form(
+        a=SelectField(
+            choices=[
+                Choice("a", "Foo"),
+                SelectChoice("b", "Bar", optgroup="g1"),
+            ]
+        )
+    )
+    assert F().a.has_groups() is True
+
+
+def test_iter_groups_yields_groups_then_ungrouped():
+    """``iter_groups()`` yields groups in first-appearance order, then a
+    final ``(None, [...])`` bucket for ungrouped choices."""
+    F = make_form(
+        a=SelectField(
+            choices=[
+                SelectChoice("foo", "lfoo", optgroup="g1"),
+                SelectChoice("baz", "lbaz", optgroup="g2"),
+                Choice("abc", "labc"),
+                SelectChoice("bar", "lbar", optgroup="g1"),
+                Choice("xyz", "lxyz"),
+            ]
+        )
+    )
+    form = F(a="foo")
+    groups = list(form.a.iter_groups())
+
+    assert groups == [
+        ("g1", [Choice("foo", "lfoo", selected=True), Choice("bar", "lbar")]),
+        ("g2", [Choice("baz", "lbaz")]),
+        (None, [Choice("abc", "labc"), Choice("xyz", "lxyz")]),
+    ]
+
+
+def test_iter_groups_items_unpack_as_3_2_tuples():
+    """Items yielded inside each group unpack like the 3.2 4-tuple
+    ``(value, label, selected, render_kw)``."""
+    F = make_form(
+        a=SelectField(
+            choices=[SelectChoice("a", "Foo", optgroup="g")],
+        )
+    )
+    form = F(a="a")
+    for _label, items in form.a.iter_groups():
+        for value, label, selected, render_kw in items:
+            assert (value, label, selected, render_kw) == ("a", "Foo", True, None)
+
+
 def test_tuple_choices_deprecation():
     F = make_form(a=SelectField(choices=[("a", "Foo")]))
     with pytest.warns(DeprecationWarning):
