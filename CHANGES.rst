@@ -1,5 +1,13 @@
 .. currentmodule:: wtforms
 
+Unreleased
+----------
+
+- Add ``Field._form`` and ``BaseForm._parent_form`` so fields and nested
+  forms can reach their enclosing form. Fix :class:`~fields.FieldList`
+  entries and :class:`~fields.SelectField` option subfields which
+  previously got ``form=None``. :issue:`922`
+
 Version 3.3.0b1
 ---------------
 

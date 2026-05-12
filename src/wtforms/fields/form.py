@@ -54,9 +54,13 @@ class FormField(Field):
 
         prefix = self.name + self.separator
         if isinstance(data, dict):
-            self.form = self.form_class(formdata=formdata, prefix=prefix, **data)
+            self.form = self.form_class(
+                formdata=formdata, prefix=prefix, _parent_form=self._form, **data
+            )
         else:
-            self.form = self.form_class(formdata=formdata, obj=data, prefix=prefix)
+            self.form = self.form_class(
+                formdata=formdata, obj=data, prefix=prefix, _parent_form=self._form
+            )
 
     def validate(self, form, extra_validators=()):
         if extra_validators:

@@ -111,6 +111,15 @@ def test_iterable_options():
     )
 
 
+def test_option_subfields_carry_parent_form():
+    """Option subfields yielded by ``__iter__`` expose the enclosing form,
+    matching the propagation already done for ``_meta``."""
+    F = make_form(a=SelectField(choices=[Choice("a", "Foo"), Choice("b", "Bar")]))
+    form = F()
+    for opt in form.a:
+        assert opt._form is form
+
+
 def test_default_coerce():
     F = make_form(a=SelectField(choices=[Choice("a", "Foo")]))
     form = F(DummyPostData(a=[]))

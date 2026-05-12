@@ -110,6 +110,8 @@ class Field:
         else:
             raise TypeError("Must provide one of _form or _meta")
 
+        self._form = _form
+
         self.default = default
         self.description = description
         self.invalid_value_message = invalid_value_message
