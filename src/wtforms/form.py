@@ -15,6 +15,8 @@ class BaseForm:
     validation, and data and error proxying.
     """
 
+    _parent_form = None
+
     def __init__(self, fields, prefix="", meta=_default_meta):
         """
         :param fields:
@@ -30,6 +32,7 @@ class BaseForm:
             prefix += "-"
 
         self.meta = meta
+        self._parent_form = getattr(meta, "_parent_form", None)
         self._form_error_key = ""
         self._prefix = prefix
         self._fields = OrderedDict()
@@ -206,6 +209,7 @@ class FormMeta(type):
                 if "Meta" in mro_class.__dict__:
                     bases.append(mro_class.Meta)
             cls._wtforms_meta = type("Meta", tuple(bases), {})
+
         return type.__call__(cls, *args, **kwargs)
 
     def __setattr__(cls, name, value):

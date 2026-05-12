@@ -131,7 +131,7 @@ class SelectFieldBase(Field):
             validators=self.validators,
             name=self.name,
             render_kw=self.render_kw,
-            _form=None,
+            _form=self._form,
             _meta=self.meta,
         )
         for i, choice in enumerate(self.iter_choices()):
