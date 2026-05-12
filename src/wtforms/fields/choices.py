@@ -134,12 +134,6 @@ class SelectChoice(_SelectChoice):
             return cls(value=input, optgroup=optgroup)
 
         if isinstance(input, tuple):
-            warnings.warn(
-                "Passing SelectField choices as tuples is deprecated and will be "
-                "removed in wtforms 3.4. Please use Choice or SelectChoice instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
             if len(input) == 2:
                 value, label = input
                 return cls(value=value, label=label, optgroup=optgroup)
@@ -274,14 +268,6 @@ class SelectFieldBase(Field):
             return None
 
         if isinstance(choices, dict):
-            warnings.warn(
-                "Passing SelectField choices in a dict deprecated and will be removed "
-                "in wtforms 3.4. Please pass a list of SelectChoice objects with a "
-                "custom optgroup attribute instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
             return [
                 SelectChoice.from_input(input, optgroup)
                 for optgroup, inputs in choices.items()
@@ -289,6 +275,36 @@ class SelectFieldBase(Field):
             ]
 
         return [SelectChoice.from_input(input) for input in choices]
+
+    @staticmethod
+    def _warn_legacy_choices(choices):
+        """Emit a one-shot ``DeprecationWarning`` for legacy ``choices``
+        shapes (raw tuples or ``dict``). Called once at ``__init__`` (and
+        again after a ``choices`` callable resolves at post-process time)
+        so the user sees the warning eagerly without re-emitting it at
+        every render.
+        """
+        if isinstance(choices, dict):
+            warnings.warn(
+                "Passing SelectField choices in a dict deprecated and will be "
+                "removed in wtforms 3.4. Please pass a list of SelectChoice "
+                "objects with a custom optgroup attribute instead.",
+                DeprecationWarning,
+                stacklevel=3,
+            )
+            items = (i for v in choices.values() for i in v)
+        else:
+            items = choices
+        for item in items:
+            if isinstance(item, tuple) and not isinstance(item, (Choice, SelectChoice)):
+                warnings.warn(
+                    "Passing SelectField choices as tuples is deprecated and "
+                    "will be removed in wtforms 3.4. Please use Choice or "
+                    "SelectChoice instead.",
+                    DeprecationWarning,
+                    stacklevel=3,
+                )
+                return
 
     def _invoke_choices_callback(self, cb):
         try:
@@ -329,7 +345,13 @@ class SelectField(SelectFieldBase):
             self.choices = None
         else:
             self._choices_callable = None
-            self.choices = self.choices_from_input(choices)
+            if choices is None:
+                self.choices = None
+            else:
+                self._warn_legacy_choices(choices)
+                self.choices = (
+                    dict(choices) if isinstance(choices, dict) else list(choices)
+                )
         self.validate_choice = validate_choice
         self.invalid_value_message = invalid_value_message or self.gettext(
             "Invalid Choice: could not coerce."
@@ -365,7 +387,7 @@ class SelectField(SelectFieldBase):
     def post_process(self):
         super().post_process()
         if self._choices_callable is not None:
-            self.choices = self.choices_from_input(self._choices_callable)
+            self.choices = self._invoke_choices_callback(self._choices_callable)
 
     def process_data(self, value):
         try:

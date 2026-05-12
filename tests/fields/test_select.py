@@ -1,13 +1,9 @@
 import sys
+import warnings
 from enum import Enum
 from enum import IntEnum
 
 import pytest
-
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    StrEnum = None
 
 from tests.common import DummyPostData
 from wtforms import StringField
@@ -18,6 +14,11 @@ from wtforms.fields import Field
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
 from wtforms.form import Form
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    StrEnum = None
 
 
 def make_form(name="F", **fields):
@@ -482,6 +483,32 @@ def test_choice_default_render_kw_is_not_shared():
     b = Choice("b")
     a.render_kw["k"] = "v"
     assert "k" not in b.render_kw
+
+
+def test_self_choices_preserves_user_supplied_shape():
+    """`self.choices` keeps the shape the user passed (raw tuples remain
+    tuples), so subclasses doing ``for value, label in self.choices``
+    per the WTForms 3.2 contract keep working. Mirrors wtf-peewee's
+    ``SelectChoicesField.iter_choices`` pattern."""
+    F = make_form(a=SelectField(choices=[("a", "Apple"), ("b", "Banana")]))
+    with pytest.warns(DeprecationWarning, match="tuples"):
+        form = F()
+    for value, label in form.a.choices:
+        assert (value, label) in {("a", "Apple"), ("b", "Banana")}
+
+
+def test_self_choices_does_not_warn_at_render_time():
+    """The legacy-tuple ``DeprecationWarning`` fires at construction, not
+    on every render — otherwise it would spam every form rendering loop."""
+    F = make_form(a=SelectField(choices=[("a", "Apple")]))
+    with pytest.warns(DeprecationWarning, match="tuples"):
+        form = F()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        # No warning should be raised on render or iteration.
+        form.a()
+        list(form.a.iter_choices())
 
 
 def test_legacy_subclass_yielding_tuples_keeps_working():

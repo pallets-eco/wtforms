@@ -41,6 +41,14 @@ Unreleased
   always set keeps working without explicit None checks. As a side-effect,
   the :class:`~widgets.DataListWidget` no longer emits a redundant
   ``label="x"`` attribute when the label equals the value.
+- Store the user-supplied ``choices`` value as-is on ``SelectField``
+  instead of coercing it to a list of :class:`~fields.SelectChoice` at
+  ``__init__``. Subclasses iterating ``self.choices`` directly (e.g.
+  ``for value, label in self.choices``, as wtf-peewee's
+  ``SelectChoicesField`` does) see the original user-supplied shape;
+  ``iter_choices`` continues to coerce per render. Legacy-form
+  (tuple/dict) ``DeprecationWarning`` is now emitted once at
+  construction, no longer at every render.
 - Accept WTForms 3.2-style raw ``(value, label, selected[, render_kw])``
   tuples yielded by :meth:`~fields.SelectFieldBase.iter_choices`
   overrides. Internal consumers (validation, widgets, ``__iter__``) now
