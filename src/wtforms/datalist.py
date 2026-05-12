@@ -53,11 +53,12 @@ class DataList:
             item if isinstance(item, Choice) else Choice(value=item) for item in raw
         ]
         value = field.data if field is not None else None
-        if value is not None:
-            for choice in choices:
-                if choice.value == value:
-                    choice._selected = True
-        return choices
+        if value is None:
+            return choices
+        return [
+            choice._replace(selected=True) if choice.value == value else choice
+            for choice in choices
+        ]
 
     def __call__(self, field=None, **kwargs):
         return self.widget(self, field=field, **kwargs)

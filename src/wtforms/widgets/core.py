@@ -438,7 +438,7 @@ class Select:
         if isinstance(value, bool):
             value = str(value)
         options = {"value": value, **(choice.render_kw or {}), **kwargs}
-        if choice._selected:
+        if choice.selected:
             options["selected"] = True
         label = escape(choice.label or choice.value)
         return Markup(f"<option {html_params(**options)}>{label}</option>")

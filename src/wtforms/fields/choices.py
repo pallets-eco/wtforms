@@ -1,8 +1,7 @@
 import inspect
 import warnings
-from dataclasses import dataclass
-from dataclasses import field
 from enum import Enum
+from typing import NamedTuple
 
 from wtforms import widgets
 from wtforms.fields.core import Field
@@ -29,15 +28,21 @@ def _enum_coerce(enum_cls):
     return coerce
 
 
-@dataclass
-class Choice:
+class Choice(NamedTuple):
     """
-    A dataclass that represents an available choice for choice fields.
+    A named tuple representing an available choice for choice fields.
+
+    Field order matches the tuple shape yielded by ``iter_choices`` in
+    WTForms 3.2 and earlier (``value, label, selected, render_kw``), so
+    subclasses that unpack choices keep working.
 
     :param value:
         The value that will be sent in the request.
     :param label:
         The label of the option.
+    :param selected:
+        Whether the option is currently selected. Set by ``iter_choices``;
+        you rarely set this yourself.
     :param render_kw:
         A dict containing HTML attributes that will be rendered
         with the option.
@@ -45,8 +50,8 @@ class Choice:
 
     value: str
     label: str | None = None
+    selected: bool = False
     render_kw: dict | None = None
-    _selected: bool = field(default=False, kw_only=True)
 
     @classmethod
     def from_enum(cls, enum_cls, *, label=None):
@@ -62,8 +67,7 @@ class Choice:
         return [cls(value=m.name, label=label(m)) for m in enum_cls]
 
 
-@dataclass
-class SelectChoice(Choice):
+class SelectChoice(NamedTuple):
     """
     A :class:`Choice` augmented with an ``<optgroup>`` hint for
     :class:`SelectField`.
@@ -72,22 +76,36 @@ class SelectChoice(Choice):
         The ``<optgroup>`` HTML tag in which the option will be rendered.
     """
 
+    value: str
+    label: str | None = None
+    selected: bool = False
+    render_kw: dict | None = None
     optgroup: str | None = None
+
+    @classmethod
+    def from_enum(cls, enum_cls, *, label=None):
+        """Build a list of choices from an :class:`enum.Enum` class.
+
+        See :meth:`Choice.from_enum` for details.
+        """
+        if label is None:
+            label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
+        return [cls(value=m.name, label=label(m)) for m in enum_cls]
 
     @classmethod
     def from_input(cls, input, optgroup=None):
         if isinstance(input, SelectChoice):
             if optgroup:
-                input.optgroup = optgroup
+                return input._replace(optgroup=optgroup)
             return input
 
         if isinstance(input, Choice):
             return cls(
                 value=input.value,
                 label=input.label,
+                selected=input.selected,
                 render_kw=input.render_kw,
                 optgroup=optgroup,
-                _selected=input._selected,
             )
 
         if isinstance(input, str):
@@ -100,6 +118,14 @@ class SelectChoice(Choice):
                 DeprecationWarning,
                 stacklevel=2,
             )
+            if len(input) == 2:
+                value, label = input
+                return cls(value=value, label=label, optgroup=optgroup)
+            if len(input) == 3:
+                value, label, render_kw = input
+                return cls(
+                    value=value, label=label, render_kw=render_kw, optgroup=optgroup
+                )
             return cls(*input, optgroup=optgroup)
 
 
@@ -142,7 +168,7 @@ class SelectFieldBase(Field):
                 **opts,
             )
             opt.choice = choice
-            opt.checked = choice._selected
+            opt.checked = choice.selected
             opt.process(None, choice.value)
             yield opt
 
@@ -220,9 +246,10 @@ class SelectField(SelectFieldBase):
 
     def iter_choices(self):
         choices = self.choices_from_input(self.choices) or []
-        for choice in choices:
-            choice._selected = self.coerce(choice.value) == self.data
-        return choices
+        return [
+            choice._replace(selected=self.coerce(choice.value) == self.data)
+            for choice in choices
+        ]
 
     def post_process(self):
         super().post_process()
@@ -255,7 +282,7 @@ class SelectField(SelectFieldBase):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        if not any(choice._selected for choice in self.iter_choices()):
+        if not any(choice.selected for choice in self.iter_choices()):
             raise ValidationError(self.invalid_choice_message)
 
 
@@ -299,10 +326,12 @@ class SelectMultipleField(SelectField):
 
     def iter_choices(self):
         choices = self.choices_from_input(self.choices) or []
-        if self.data:
-            for choice in choices:
-                choice._selected = self.coerce(choice.value) in self.data
-        return choices
+        if not self.data:
+            return choices
+        return [
+            choice._replace(selected=self.coerce(choice.value) in self.data)
+            for choice in choices
+        ]
 
     def process_data(self, value):
         try:

@@ -3,6 +3,14 @@
 Unreleased
 ----------
 
+- Switch :class:`~fields.Choice` and :class:`~fields.SelectChoice` from
+  ``dataclass`` to :class:`typing.NamedTuple`. Field order is ``(value,
+  label, selected, render_kw[, optgroup])``, matching the tuple shape yielded
+  by ``iter_choices`` in WTForms 3.2 and earlier, so subclasses that unpack
+  choices via ``value, label, selected, render_kw = choice`` keep working.
+  The internal ``_selected`` attribute is renamed ``selected``. Choices are
+  now immutable; ``iter_choices`` returns fresh ``SelectChoice`` instances
+  built via :meth:`~typing.NamedTuple._replace`.
 - Let the ``choices`` callable of :class:`~fields.SelectField` (and other
   :class:`~fields.SelectFieldBase` subclasses) optionally accept ``(form,
   field)`` as positional arguments, mirroring the validators signature. The

@@ -28,8 +28,8 @@ def basic_widget_dummy_field(dummy_field_class):
 def select_dummy_field(dummy_field_class):
     return dummy_field_class(
         [
-            SelectChoice("foo", "lfoo", _selected=True),
-            SelectChoice("bar", "lbar", _selected=False),
+            SelectChoice("foo", "lfoo", selected=True),
+            SelectChoice("bar", "lbar", selected=False),
         ]
     )
 

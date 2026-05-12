@@ -273,9 +273,7 @@ def test_iter_choices_flags_selected(choices, data, selected):
 
     form = F(data=data) if data else F()
     flagged = [
-        c.value
-        for c in form.country._datalist.iter_choices(form.country)
-        if c._selected
+        c.value for c in form.country._datalist.iter_choices(form.country) if c.selected
     ]
     assert flagged == selected
 

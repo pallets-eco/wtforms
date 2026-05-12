@@ -319,7 +319,7 @@ def test_optgroup():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+        SelectChoice("a", "Foo", selected=True, optgroup="hello")
     ]
 
 
@@ -341,15 +341,17 @@ def test_optgroup_shortcut():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("foo", None, None, "hello", _selected=False),
-        SelectChoice("bar", None, None, "hello", _selected=True),
+        SelectChoice("foo", selected=False, optgroup="hello"),
+        SelectChoice("bar", selected=True, optgroup="hello"),
     ]
 
 
 def test_option_render_kw():
     F = make_form(
         a=SelectField(
-            choices=[Choice("a", "Foo", {"title": "foobar", "data-foo": "bar"})]
+            choices=[
+                Choice("a", "Foo", render_kw={"title": "foobar", "data-foo": "bar"})
+            ]
         )
     )
     form = F(a="a")
@@ -360,7 +362,10 @@ def test_option_render_kw():
     )
     assert list(form.a.iter_choices()) == [
         SelectChoice(
-            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, None, _selected=True
+            "a",
+            "Foo",
+            selected=True,
+            render_kw={"title": "foobar", "data-foo": "bar"},
         )
     ]
 
@@ -370,7 +375,10 @@ def test_optgroup_option_render_kw():
         a=SelectField(
             choices=[
                 SelectChoice(
-                    "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello"
+                    "a",
+                    "Foo",
+                    render_kw={"title": "foobar", "data-foo": "bar"},
+                    optgroup="hello",
                 )
             ]
         )
@@ -384,7 +392,11 @@ def test_optgroup_option_render_kw():
     )
     assert list(form.a.iter_choices()) == [
         SelectChoice(
-            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello", _selected=True
+            "a",
+            "Foo",
+            selected=True,
+            render_kw={"title": "foobar", "data-foo": "bar"},
+            optgroup="hello",
         )
     ]
 
@@ -395,9 +407,7 @@ def test_tuple_choices_deprecation():
         form = F(a="a")
 
     assert '<option selected value="a">Foo</option>' in form.a()
-    assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, None, _selected=True)
-    ]
+    assert list(form.a.iter_choices()) == [SelectChoice("a", "Foo", selected=True)]
 
 
 def test_dict_choices_deprecation_with_choice_object():
@@ -411,7 +421,7 @@ def test_dict_choices_deprecation_with_choice_object():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+        SelectChoice("a", "Foo", selected=True, optgroup="hello")
     ]
 
 
@@ -426,7 +436,7 @@ def test_dict_choices_deprecation_with_tuple():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+        SelectChoice("a", "Foo", selected=True, optgroup="hello")
     ]
 
 
@@ -516,6 +526,15 @@ def test_select_field_enum_coerce_invalid():
     assert not form.validate()
     assert form.a.data is None
     assert "Invalid Choice: could not coerce." in form.a.errors
+
+
+def test_select_choice_tuple_unpacking():
+    """SelectChoice is a NamedTuple — tuple unpacking matches the 3.2 yield
+    shape (value, label, selected, render_kw, ...)."""
+    F = make_form(a=SelectField(choices=[Choice("a", "Foo"), Choice("b", "Bar")]))
+    form = F(a="a")
+    unpacked = [(v, lab, sel) for v, lab, sel, *_ in form.a.iter_choices()]
+    assert unpacked == [("a", "Foo", True), ("b", "Bar", False)]
 
 
 def test_select_field_enum_renders_selected():
