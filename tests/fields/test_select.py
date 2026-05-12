@@ -1,4 +1,5 @@
 import sys
+import warnings
 from enum import Enum
 from enum import IntEnum
 
@@ -548,6 +549,60 @@ def test_legacy_subclass_yielding_3_tuples_keeps_working():
     with pytest.warns(DeprecationWarning, match="raw tuples"):
         html = form.s()
     assert '<option value="a">Apple</option>' in html
+
+
+def test_dict_str_str_flat_choices():
+    """``{value: label}`` is a flat shorthand for ``[Choice(value, label)]``."""
+    F = make_form(a=SelectField(choices={"py": "Python", "rs": "Rust"}))
+    form = F(a="py")
+    assert '<option selected value="py">Python</option>' in form.a()
+    assert '<option value="rs">Rust</option>' in form.a()
+    assert form.validate()
+
+
+def test_dict_str_dict_optgroup_choices():
+    """``{label: {value: label}}`` denotes optgroups."""
+    F = make_form(
+        a=SelectField(
+            choices={
+                "Compiled": {"rs": "Rust", "c": "C"},
+                "Interpreted": {"py": "Python"},
+            }
+        )
+    )
+    form = F(a="rs")
+    html = form.a()
+    assert '<optgroup label="Compiled">' in html
+    assert '<option selected value="rs">Rust</option>' in html
+    assert '<optgroup label="Interpreted">' in html
+    assert '<option value="py">Python</option>' in html
+
+
+def test_dict_mixed_flat_and_optgroup_choices():
+    """``str`` values are flat options; ``dict`` values are optgroups —
+    both may appear at the top level."""
+    F = make_form(
+        a=SelectField(
+            choices={
+                "py": "Python",
+                "Functional": {"hs": "Haskell", "ml": "OCaml"},
+            }
+        )
+    )
+    html = F().a()
+    assert '<option value="py">Python</option>' in html
+    assert '<optgroup label="Functional">' in html
+    assert '<option value="hs">Haskell</option>' in html
+    assert '<option value="ml">OCaml</option>' in html
+
+
+def test_dict_shorthand_choices_no_deprecation():
+    """The shorthand dict syntax does not emit a ``DeprecationWarning`` —
+    only the legacy ``dict[str, list[...]]`` form does."""
+    F = make_form(a=SelectField(choices={"py": "Python"}))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        F()
 
 
 def test_tuple_choices_deprecation():

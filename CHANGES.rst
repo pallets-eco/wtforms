@@ -3,6 +3,9 @@
 Unreleased
 ----------
 
+- :class:`~fields.SelectField` ``choices`` accepts a shorthand dict
+  syntax: ``{value: label}`` for flat options and
+  ``{label: {value: label}}`` for optgroups. :issue:`886`
 - :class:`~fields.Choice` and :class:`~fields.SelectChoice` are now
   :class:`typing.NamedTuple` subclasses with field order ``(value, label,
   selected, render_kw[, optgroup])``. ``label`` defaults to ``value``,
