@@ -227,6 +227,24 @@ def test_callable_choices():
     ]
 
 
+def test_callable_choices_receives_form_and_field():
+    """A ``(form, field)`` callable receives the bound form and field."""
+    captured = []
+
+    def choices(form, field):
+        captured.append((form, field))
+        return ["foo", "bar"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F(a="bar")
+
+    assert list(str(x) for x in form.a) == [
+        '<option value="foo">foo</option>',
+        '<option selected value="bar">bar</option>',
+    ]
+    assert captured == [(form, form.a)]
+
+
 def test_requried_flag():
     F = make_form(
         c=SelectField(
