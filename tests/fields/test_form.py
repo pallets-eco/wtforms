@@ -2,6 +2,7 @@ import pytest
 
 from tests.common import DummyPostData
 from wtforms import validators
+from wtforms.fields import FieldList
 from wtforms.fields import FormField
 from wtforms.fields import StringField
 from wtforms.form import Form
@@ -107,6 +108,28 @@ def test_no_validators_or_filters(F1):
     form = C()
     with pytest.raises(TypeError):
         form.validate()
+
+
+def test_parent_form_on_top_level_is_none():
+    F = make_form(a=StringField())
+    form = F()
+    assert form._parent_form is None
+
+
+def test_parent_form_on_nested_subform(F1):
+    form = F1()
+    assert form._parent_form is None
+    assert form.a.form._parent_form is form
+
+
+def test_parent_form_through_field_list():
+    Inner = make_form(x=StringField())
+    Outer = make_form(items=FieldList(FormField(Inner), min_entries=1))
+    outer = Outer()
+
+    entry = outer.items.entries[0]
+    assert entry._form is outer
+    assert entry.form._parent_form is outer
 
 
 def test_populate_missing_obj(F1):

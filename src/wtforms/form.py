@@ -15,7 +15,7 @@ class BaseForm:
     validation, and data and error proxying.
     """
 
-    def __init__(self, fields, prefix="", meta=_default_meta):
+    def __init__(self, fields, prefix="", meta=_default_meta, _parent_form=None):
         """
         :param fields:
             A dict or sequence of 2-tuples of partially-constructed fields.
@@ -32,6 +32,7 @@ class BaseForm:
         self.meta = meta
         self._form_error_key = ""
         self._prefix = prefix
+        self._parent_form = _parent_form
         self._fields = OrderedDict()
 
         if hasattr(fields, "items"):
@@ -246,6 +247,7 @@ class Form(BaseForm, metaclass=FormMeta):
         prefix="",
         data=None,
         meta=None,
+        _parent_form=None,
         **kwargs,
     ):
         """
@@ -282,6 +284,7 @@ class Form(BaseForm, metaclass=FormMeta):
             self._unbound_fields,
             meta=meta_obj,
             prefix=prefix,
+            _parent_form=_parent_form,
         )
 
         for name, field in self._fields.items():

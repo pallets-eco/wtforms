@@ -1,5 +1,16 @@
 .. currentmodule:: wtforms
 
+Unreleased
+----------
+
+- :class:`~fields.FieldList` now propagates its enclosing form to its entries
+  via :meth:`~meta.DefaultMeta.bind_field` (previously they received
+  ``form=None``).
+- A form nested inside a :class:`~fields.FormField` keeps a private reference
+  to the enclosing form via ``_parent_form``. ``FieldList`` is transparent in
+  this chain: a ``FormField`` nested inside a ``FieldList`` points to the form
+  that owns the list, not the list itself.
+
 Version 3.3.0b1
 ---------------
 
