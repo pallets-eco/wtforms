@@ -1,15 +1,12 @@
 import sys
+import warnings
 from enum import Enum
 from enum import IntEnum
 
 import pytest
 
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    StrEnum = None
-
 from tests.common import DummyPostData
+from wtforms import StringField
 from wtforms import validators
 from wtforms import widgets
 from wtforms.fields import Choice
@@ -17,6 +14,11 @@ from wtforms.fields import Field
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
 from wtforms.form import Form
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    StrEnum = None
 
 
 def make_form(name="F", **fields):
@@ -109,6 +111,15 @@ def test_iterable_options():
         first_option(disabled=True)
         == '<option disabled selected value="a">hello</option>'
     )
+
+
+def test_option_subfields_carry_parent_form():
+    """Option subfields yielded by ``__iter__`` expose the enclosing form,
+    matching the propagation already done for ``_meta``."""
+    F = make_form(a=SelectField(choices=[Choice("a", "Foo"), Choice("b", "Bar")]))
+    form = F()
+    for opt in form.a:
+        assert opt._form is form
 
 
 def test_default_coerce():
@@ -218,6 +229,54 @@ def test_callable_choices():
     ]
 
 
+def test_callable_choices_receives_form_and_field():
+    """A ``(form, field)`` callable receives the bound form and field."""
+    captured = []
+
+    def choices(form, field):
+        captured.append((form, field))
+        return ["foo", "bar"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F(a="bar")
+
+    assert list(str(x) for x in form.a) == [
+        '<option value="foo">foo</option>',
+        '<option selected value="bar">bar</option>',
+    ]
+    assert captured == [(form, form.a)]
+
+
+def test_callable_choices_variadic_receives_form_and_field():
+    """Variadic ``*args, **kwargs`` callables also receive ``(form, field)``."""
+    captured = []
+
+    def choices(*args, **kwargs):
+        captured.append(args)
+        return ["foo"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F()
+
+    list(form.a)
+    assert captured[0] == (form, form.a)
+
+
+def test_callable_choices_invoked_after_process():
+    """The callable sees data from every field, regardless of declaration order."""
+    captured = []
+
+    def choices(form, field):
+        captured.append((field.data, form.b.data))
+        return ["foo", "bar"]
+
+    F = make_form(a=SelectField(choices=choices), b=StringField())
+    form = F(DummyPostData(a="foo", b="hello"))
+
+    list(form.a)
+    assert captured == [("foo", "hello")]
+
+
 def test_requried_flag():
     F = make_form(
         c=SelectField(
@@ -272,7 +331,7 @@ def test_optgroup():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+        SelectChoice("a", "Foo", selected=True, optgroup="hello")
     ]
 
 
@@ -294,15 +353,17 @@ def test_optgroup_shortcut():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("foo", None, None, "hello", _selected=False),
-        SelectChoice("bar", None, None, "hello", _selected=True),
+        SelectChoice("foo", selected=False, optgroup="hello"),
+        SelectChoice("bar", selected=True, optgroup="hello"),
     ]
 
 
 def test_option_render_kw():
     F = make_form(
         a=SelectField(
-            choices=[Choice("a", "Foo", {"title": "foobar", "data-foo": "bar"})]
+            choices=[
+                Choice("a", "Foo", render_kw={"title": "foobar", "data-foo": "bar"})
+            ]
         )
     )
     form = F(a="a")
@@ -313,7 +374,10 @@ def test_option_render_kw():
     )
     assert list(form.a.iter_choices()) == [
         SelectChoice(
-            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, None, _selected=True
+            "a",
+            "Foo",
+            selected=True,
+            render_kw={"title": "foobar", "data-foo": "bar"},
         )
     ]
 
@@ -323,7 +387,10 @@ def test_optgroup_option_render_kw():
         a=SelectField(
             choices=[
                 SelectChoice(
-                    "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello"
+                    "a",
+                    "Foo",
+                    render_kw={"title": "foobar", "data-foo": "bar"},
+                    optgroup="hello",
                 )
             ]
         )
@@ -337,9 +404,205 @@ def test_optgroup_option_render_kw():
     )
     assert list(form.a.iter_choices()) == [
         SelectChoice(
-            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello", _selected=True
+            "a",
+            "Foo",
+            selected=True,
+            render_kw={"title": "foobar", "data-foo": "bar"},
+            optgroup="hello",
         )
     ]
+
+
+def test_has_groups_false_without_optgroup():
+    """``has_groups()`` is False when no choice carries an ``optgroup``."""
+    F = make_form(a=SelectField(choices=[Choice("a", "Foo"), Choice("b", "Bar")]))
+    assert F().a.has_groups() is False
+
+
+def test_has_groups_true_with_any_optgroup():
+    """``has_groups()`` is True as soon as at least one choice is grouped."""
+    F = make_form(
+        a=SelectField(
+            choices=[
+                Choice("a", "Foo"),
+                SelectChoice("b", "Bar", optgroup="g1"),
+            ]
+        )
+    )
+    assert F().a.has_groups() is True
+
+
+def test_iter_groups_yields_groups_then_ungrouped():
+    """``iter_groups()`` yields groups in first-appearance order, then a
+    final ``(None, [...])`` bucket for ungrouped choices."""
+    F = make_form(
+        a=SelectField(
+            choices=[
+                SelectChoice("foo", "lfoo", optgroup="g1"),
+                SelectChoice("baz", "lbaz", optgroup="g2"),
+                Choice("abc", "labc"),
+                SelectChoice("bar", "lbar", optgroup="g1"),
+                Choice("xyz", "lxyz"),
+            ]
+        )
+    )
+    form = F(a="foo")
+    groups = list(form.a.iter_groups())
+
+    assert groups == [
+        ("g1", [Choice("foo", "lfoo", selected=True), Choice("bar", "lbar")]),
+        ("g2", [Choice("baz", "lbaz")]),
+        (None, [Choice("abc", "labc"), Choice("xyz", "lxyz")]),
+    ]
+
+
+def test_iter_groups_items_unpack_as_3_2_tuples():
+    """Items yielded inside each group unpack like the 3.2 4-tuple
+    ``(value, label, selected, render_kw)``."""
+    F = make_form(
+        a=SelectField(
+            choices=[SelectChoice("a", "Foo", optgroup="g")],
+        )
+    )
+    form = F(a="a")
+    for _label, items in form.a.iter_groups():
+        for value, label, selected, render_kw in items:
+            assert (value, label, selected, render_kw) == ("a", "Foo", True, {})
+
+
+def test_choice_defaults_match_3_2_behaviour():
+    """When ``label`` is omitted it defaults to ``value``; ``render_kw``
+    defaults to ``{}``. Reproduces the WTForms 3.2 iter_choices contract
+    where downstream could safely do ``**render_kw`` and assume
+    ``label`` is non-None."""
+    c = Choice("foo")
+    assert c.label == "foo"
+    assert c.render_kw == {}
+    assert c.selected is False
+
+    sc = SelectChoice("foo")
+    assert sc.label == "foo"
+    assert sc.render_kw == {}
+    assert sc.selected is False
+    assert sc.optgroup is None
+
+
+def test_choice_default_render_kw_is_not_shared():
+    """The default ``render_kw`` is built fresh per instance — mutating one
+    does not leak into another."""
+    a = Choice("a")
+    b = Choice("b")
+    a.render_kw["k"] = "v"
+    assert "k" not in b.render_kw
+
+
+def test_self_choices_preserves_user_supplied_shape():
+    """`self.choices` keeps the shape the user passed (raw tuples remain
+    tuples), so subclasses doing ``for value, label in self.choices``
+    per the WTForms 3.2 contract keep working."""
+    F = make_form(a=SelectField(choices=[("a", "Apple"), ("b", "Banana")]))
+    with pytest.warns(DeprecationWarning, match="tuples"):
+        form = F()
+    for value, label in form.a.choices:
+        assert (value, label) in {("a", "Apple"), ("b", "Banana")}
+
+
+def test_legacy_subclass_yielding_tuples_keeps_working():
+    """A subclass overriding ``iter_choices`` to yield raw 4-tuples
+    ``(value, label, selected, render_kw)`` per the WTForms 3.2 contract
+    still renders, validates and iterates — with a ``DeprecationWarning``."""
+
+    class LegacySelect(SelectField):
+        def iter_choices(self):
+            yield ("a", "Apple", self.data == "a", {})
+            yield ("b", "Banana", self.data == "b", {})
+
+    F = make_form(s=LegacySelect(choices=[Choice("a"), Choice("b")]))
+    form = F(s="a")
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        html = form.s()
+    assert '<option selected value="a">Apple</option>' in html
+    assert '<option value="b">Banana</option>' in html
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        assert form.validate() is True
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        opts = list(form.s)
+    assert [(opt.checked, str(opt.label.text)) for opt in opts] == [
+        (True, "Apple"),
+        (False, "Banana"),
+    ]
+
+
+def test_legacy_subclass_yielding_3_tuples_keeps_working():
+    """Pre-3.1 contract: 3-tuples ``(value, label, selected)`` also work."""
+
+    class LegacySelect(SelectField):
+        def iter_choices(self):
+            yield ("a", "Apple", False)
+            yield ("b", "Banana", False)
+
+    F = make_form(s=LegacySelect(choices=[Choice("a"), Choice("b")]))
+    form = F()
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        html = form.s()
+    assert '<option value="a">Apple</option>' in html
+
+
+def test_dict_str_str_flat_choices():
+    """``{value: label}`` is a flat shorthand for ``[Choice(value, label)]``."""
+    F = make_form(a=SelectField(choices={"py": "Python", "rs": "Rust"}))
+    form = F(a="py")
+    assert '<option selected value="py">Python</option>' in form.a()
+    assert '<option value="rs">Rust</option>' in form.a()
+    assert form.validate()
+
+
+def test_dict_str_dict_optgroup_choices():
+    """``{label: {value: label}}`` denotes optgroups."""
+    F = make_form(
+        a=SelectField(
+            choices={
+                "Compiled": {"rs": "Rust", "c": "C"},
+                "Interpreted": {"py": "Python"},
+            }
+        )
+    )
+    form = F(a="rs")
+    html = form.a()
+    assert '<optgroup label="Compiled">' in html
+    assert '<option selected value="rs">Rust</option>' in html
+    assert '<optgroup label="Interpreted">' in html
+    assert '<option value="py">Python</option>' in html
+
+
+def test_dict_mixed_flat_and_optgroup_choices():
+    """``str`` values are flat options; ``dict`` values are optgroups —
+    both may appear at the top level."""
+    F = make_form(
+        a=SelectField(
+            choices={
+                "py": "Python",
+                "Functional": {"hs": "Haskell", "ml": "OCaml"},
+            }
+        )
+    )
+    html = F().a()
+    assert '<option value="py">Python</option>' in html
+    assert '<optgroup label="Functional">' in html
+    assert '<option value="hs">Haskell</option>' in html
+    assert '<option value="ml">OCaml</option>' in html
+
+
+def test_dict_shorthand_choices_no_deprecation():
+    """The shorthand dict syntax does not emit a ``DeprecationWarning`` —
+    only the legacy ``dict[str, list[...]]`` form does."""
+    F = make_form(a=SelectField(choices={"py": "Python"}))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        F()
 
 
 def test_tuple_choices_deprecation():
@@ -348,9 +611,7 @@ def test_tuple_choices_deprecation():
         form = F(a="a")
 
     assert '<option selected value="a">Foo</option>' in form.a()
-    assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, None, _selected=True)
-    ]
+    assert list(form.a.iter_choices()) == [SelectChoice("a", "Foo", selected=True)]
 
 
 def test_dict_choices_deprecation_with_choice_object():
@@ -364,7 +625,7 @@ def test_dict_choices_deprecation_with_choice_object():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+        SelectChoice("a", "Foo", selected=True, optgroup="hello")
     ]
 
 
@@ -379,7 +640,7 @@ def test_dict_choices_deprecation_with_tuple():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+        SelectChoice("a", "Foo", selected=True, optgroup="hello")
     ]
 
 
@@ -469,6 +730,15 @@ def test_select_field_enum_coerce_invalid():
     assert not form.validate()
     assert form.a.data is None
     assert "Invalid Choice: could not coerce." in form.a.errors
+
+
+def test_select_choice_tuple_unpacking():
+    """SelectChoice is a NamedTuple — tuple unpacking matches the 3.2 yield
+    shape (value, label, selected, render_kw, ...)."""
+    F = make_form(a=SelectField(choices=[Choice("a", "Foo"), Choice("b", "Bar")]))
+    form = F(a="a")
+    unpacked = [(v, lab, sel) for v, lab, sel, *_ in form.a.iter_choices()]
+    assert unpacked == [("a", "Foo", True), ("b", "Bar", False)]
 
 
 def test_select_field_enum_renders_selected():

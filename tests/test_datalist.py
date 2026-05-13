@@ -49,13 +49,13 @@ def test_choice_choices_render_value_and_label():
         pytest.param(None, "default", id="data-is-none"),
     ],
 )
-def test_callable_choices_receives_field(postdata, expected):
-    """A callable ``DataList`` is invoked with the bound field — its
+def test_callable_choices_receives_form_and_field(postdata, expected):
+    """A callable ``DataList`` is invoked with ``(form, field)`` — its
     ``field.data`` (or ``None`` when no value is bound) drives the result."""
 
     class F(Form):
         query = StringField(
-            datalist=DataList(lambda field: [f"{field.data or 'default'}-x"])
+            datalist=DataList(lambda form, field: [f"{field.data or 'default'}-x"])
         )
 
     html = str(F(postdata).query.datalist())
@@ -172,7 +172,7 @@ def test_inline_callable_datalist_per_fieldlist_entry():
         items = FieldList(
             StringField(
                 datalist=DataList(
-                    choices=lambda field: [
+                    choices=lambda form, field: [
                         f"{field.data}-1",
                         f"{field.data}-2",
                     ]
@@ -258,7 +258,7 @@ def test_none_choices_renders_empty_datalist():
             id="no-data-no-flag",
         ),
         pytest.param(
-            lambda field: [Choice("FR")] if field.data == "FR" else [],
+            lambda form, field: [Choice("FR")] if field.data == "FR" else [],
             {"country": "FR"},
             ["FR"],
             id="callable-match",
@@ -273,9 +273,7 @@ def test_iter_choices_flags_selected(choices, data, selected):
 
     form = F(data=data) if data else F()
     flagged = [
-        c.value
-        for c in form.country._datalist.iter_choices(form.country)
-        if c._selected
+        c.value for c in form.country._datalist.iter_choices(form.country) if c.selected
     ]
     assert flagged == selected
 
@@ -314,7 +312,7 @@ def test_widget_receives_field_for_callable_choices():
     class F(Form):
         query = StringField(
             datalist=DataList(
-                choices=lambda field: [f"{field.data}-x"],
+                choices=lambda form, field: [f"{field.data}-x"],
                 widget=widget,
             )
         )

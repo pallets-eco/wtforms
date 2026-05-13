@@ -206,7 +206,7 @@ def test_select_mixed_grouped_and_ungrouped_choices(dummy_field_class):
     choices share a single bucket rendered without an ``<optgroup>`` wrapper."""
     field = dummy_field_class(
         [
-            SelectChoice("foo", "lfoo", optgroup="g1", _selected=True),
+            SelectChoice("foo", "lfoo", optgroup="g1", selected=True),
             SelectChoice("baz", "lbaz", optgroup="g2"),
             SelectChoice("abc", "labc"),
             SelectChoice("bar", "lbar", optgroup="g1"),
@@ -230,32 +230,79 @@ def test_select_mixed_grouped_and_ungrouped_choices(dummy_field_class):
     )
 
 
+def test_select_dispatches_to_legacy_render_option_signature(dummy_field_class):
+    """A subclass overriding ``Select.render_option`` with the WTForms 3.2
+    signature ``(cls, value, label, selected, **kwargs)`` keeps working,
+    emitting a ``DeprecationWarning``."""
+
+    captured = {}
+
+    class LegacySelect(Select):
+        @classmethod
+        def render_option(cls, value, label, selected, **kwargs):
+            captured["args"] = (value, label, selected, kwargs)
+            return Markup(f"<option value={value!r}>{label}</option>")
+
+    field = dummy_field_class(
+        [SelectChoice("foo", "lfoo", selected=True)],
+    )
+    field.name = "f"
+
+    with pytest.warns(DeprecationWarning, match="pre-3.3 signature"):
+        html = LegacySelect()(field)
+    assert "<option value='foo'>lfoo</option>" in html
+    assert captured["args"] == ("foo", "lfoo", True, {})
+
+
+def test_select_dispatches_to_legacy_no_kwargs_signature(dummy_field_class):
+    """Strict 3-positional signature without ``**kwargs`` is supported:
+    render_kw is dropped on the floor rather than crashing."""
+
+    captured = {}
+
+    class StrictLegacySelect(Select):
+        @classmethod
+        def render_option(cls, value, label, mixed):
+            captured["args"] = (value, label, mixed)
+            return Markup(f"<option value={value!r}>{label}</option>")
+
+    field = dummy_field_class(
+        [SelectChoice("foo", "lfoo", selected=True, render_kw={"class_": "x"})],
+    )
+    field.name = "f"
+
+    with pytest.warns(DeprecationWarning, match="pre-3.3 signature"):
+        html = StrictLegacySelect()(field)
+    assert "<option value='foo'>lfoo</option>" in html
+    assert captured["args"] == ("foo", "lfoo", True)
+
+
 def test_render_option():
     assert (
-        Select.render_option(SelectChoice("bar", "foo", _selected=False))
+        Select.render_option(SelectChoice("bar", "foo", selected=False))
         == '<option value="bar">foo</option>'
     )
 
     assert (
-        Select.render_option(SelectChoice(True, "foo", _selected=True))
+        Select.render_option(SelectChoice(True, "foo", selected=True))
         == '<option selected value="True">foo</option>'
     )
 
     assert (
-        Select.render_option(SelectChoice(False, "foo", _selected=False))
+        Select.render_option(SelectChoice(False, "foo", selected=False))
         == '<option value="False">foo</option>'
     )
 
     assert (
         Select.render_option(
-            SelectChoice("bar", '<i class="bar"></i>foo', _selected=False)
+            SelectChoice("bar", '<i class="bar"></i>foo', selected=False)
         )
         == '<option value="bar">&lt;i class=&#34;bar&#34;&gt;&lt;/i&gt;foo</option>'
     )
 
     assert (
         Select.render_option(
-            SelectChoice("bar", Markup('<i class="bar"></i>foo'), _selected=False)
+            SelectChoice("bar", Markup('<i class="bar"></i>foo'), selected=False)
         )
         == '<option value="bar"><i class="bar"></i>foo</option>'
     )

@@ -110,6 +110,8 @@ class Field:
         else:
             raise TypeError("Must provide one of _form or _meta")
 
+        self._form = _form
+
         self.default = default
         self.description = description
         self.invalid_value_message = invalid_value_message
@@ -347,6 +349,17 @@ class Field:
                 self.data = filter(self.data)
         except ValueError as e:
             self.process_errors.append(e.args[0])
+
+    def post_process(self):
+        """Hook called after every field in the enclosing form has been processed.
+
+        Override this when a field needs to read other fields' processed data,
+        for example to resolve dynamic choices that depend on the form state.
+        The base implementation resolves any inline :class:`~wtforms.DataList`
+        attached to the field.
+        """
+        if self._datalist is not None and not isinstance(self._datalist, str):
+            self._datalist._resolve(self)
 
     def process_data(self, value):
         """

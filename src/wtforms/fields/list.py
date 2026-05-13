@@ -114,6 +114,10 @@ class FieldList(Field):
                 if k.isdigit():
                     yield int(k)
 
+    def post_process(self):
+        for entry in self.entries:
+            entry.post_process()
+
     def validate(self, form, extra_validators=()):
         """
         Validate this FieldList.
@@ -175,7 +179,7 @@ class FieldList(Field):
             _meta=self.meta,
             translations=self._translations,
         )
-        field = self.meta.bind_field(None, self.unbound_field, options)
+        field = self.meta.bind_field(self._form, self.unbound_field, options)
         field.index = index
         field.process(formdata, data)
         self.entries.append(field)

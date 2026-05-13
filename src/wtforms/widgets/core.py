@@ -1,3 +1,6 @@
+import inspect
+import warnings
+
 from markupsafe import escape
 from markupsafe import Markup
 
@@ -172,7 +175,7 @@ class DataListWidget:
         options = []
         for choice in datalist.iter_choices(field):
             option_attrs = {"value": choice.value}
-            if choice.label is not None:
+            if choice.label is not None and choice.label != choice.value:
                 option_attrs["label"] = choice.label
             if choice.render_kw:
                 option_attrs = {**choice.render_kw, **option_attrs}
@@ -420,13 +423,15 @@ class Select:
                 kwargs[k] = getattr(flags, k)
         select_params = html_params(name=field.name, **kwargs)
         html = [f"<select {select_params}>"]
-        choice_groups = self.sort_by_optgroup(field.iter_choices())
+        iter_choices = getattr(field, "_iter_choices_normalized", field.iter_choices)
+        choice_groups = self.sort_by_optgroup(iter_choices())
+        render = type(self)._dispatch_render_option()
         for optgroup, choices in choice_groups.items():
             if optgroup:
                 optgroup_params = html_params(label=optgroup)
                 html.append(f"<optgroup {optgroup_params}>")
             for choice in choices:
-                html.append(self.render_option(choice))
+                html.append(render(choice))
             if optgroup:
                 html.append("</optgroup>")
         html.append("</select>")
@@ -438,10 +443,48 @@ class Select:
         if isinstance(value, bool):
             value = str(value)
         options = {"value": value, **(choice.render_kw or {}), **kwargs}
-        if choice._selected:
+        if choice.selected:
             options["selected"] = True
         label = escape(choice.label or choice.value)
         return Markup(f"<option {html_params(**options)}>{label}</option>")
+
+    @classmethod
+    def _dispatch_render_option(cls):
+        """Return a callable ``(choice) -> str`` that invokes :meth:`render_option`.
+
+        Picks the right signature for the override.
+        """
+        ro = cls.render_option
+        try:
+            sig = inspect.signature(ro)
+        except (ValueError, TypeError):
+            return ro
+        positional_required = [
+            p
+            for p in sig.parameters.values()
+            if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)
+            and p.default is p.empty
+        ]
+        if len(positional_required) <= 1:
+            return ro
+        warnings.warn(
+            f"{cls.__module__}.{cls.__qualname__}.render_option uses the "
+            "pre-3.3 signature (value, label, selected, **kwargs). Override "
+            "render_option(cls, choice, **kwargs) instead — choice is a "
+            "SelectChoice. The legacy signature will be removed in WTForms "
+            "4.0.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        accepts_kwargs = any(p.kind == p.VAR_KEYWORD for p in sig.parameters.values())
+
+        def adapter(choice):
+            args = (choice.value, choice.label or choice.value, choice.selected)
+            if accepts_kwargs:
+                return ro(*args, **(choice.render_kw or {}))
+            return ro(*args)
+
+        return adapter
 
     @classmethod
     def sort_by_optgroup(cls, choices):
