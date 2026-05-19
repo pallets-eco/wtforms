@@ -172,7 +172,7 @@ class DataListWidget:
         options = []
         for choice in datalist.iter_choices(field):
             option_attrs = {"value": choice.value}
-            if choice.label is not None:
+            if choice.label is not None and choice.label != choice.value:
                 option_attrs["label"] = choice.label
             if choice.render_kw:
                 option_attrs = {**choice.render_kw, **option_attrs}
@@ -420,15 +420,18 @@ class Select:
                 kwargs[k] = getattr(flags, k)
         select_params = html_params(name=field.name, **kwargs)
         html = [f"<select {select_params}>"]
-        choice_groups = self.sort_by_optgroup(field.iter_choices())
-        for optgroup, choices in choice_groups.items():
-            if optgroup:
-                optgroup_params = html_params(label=optgroup)
-                html.append(f"<optgroup {optgroup_params}>")
-            for choice in choices:
+        if field.has_groups():
+            for optgroup, choices in field.iter_groups():
+                if optgroup is not None:
+                    optgroup_params = html_params(label=optgroup)
+                    html.append(f"<optgroup {optgroup_params}>")
+                for choice in choices:
+                    html.append(self.render_option(choice))
+                if optgroup is not None:
+                    html.append("</optgroup>")
+        else:
+            for choice in field.iter_choices():
                 html.append(self.render_option(choice))
-            if optgroup:
-                html.append("</optgroup>")
         html.append("</select>")
         return Markup("".join(html))
 
@@ -438,17 +441,10 @@ class Select:
         if isinstance(value, bool):
             value = str(value)
         options = {"value": value, **(choice.render_kw or {}), **kwargs}
-        if choice._selected:
+        if choice.selected:
             options["selected"] = True
         label = escape(choice.label or choice.value)
         return Markup(f"<option {html_params(**options)}>{label}</option>")
-
-    @classmethod
-    def sort_by_optgroup(cls, choices):
-        optgroups = {}
-        for choice in choices:
-            optgroups.setdefault(choice.optgroup, []).append(choice)
-        return optgroups
 
 
 class Option:

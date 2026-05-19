@@ -287,9 +287,9 @@ refer to a single input from the form.
 Choice Fields
 -------------
 
-.. autoclass:: Choice
-
 .. autoclass:: SelectChoice
+
+.. autoclass:: Choice
 
 .. autoclass:: RadioField(default field arguments, choices=None, coerce=str)
 
@@ -310,23 +310,23 @@ Choice Fields
 
     Select fields take a ``choices`` parameter which is either:
 
-    * a list of :class:`Choice`.
+    * a list of :class:`SelectChoice`.
       It can also be a list of only values, in which case the value is used
-      as the label. The :class:`Choice` ``render_kw`` mapping is rendered as
+      as the label. The :class:`SelectChoice` ``render_kw`` mapping is rendered as
       HTML :mdn-tag:`option` parameters. The value can be of any
       type, but because form data is sent to the browser as strings, you
       will need to provide a ``coerce`` function that converts a string
       back to the expected type.
-    * a function taking no argument, and returning a list of :class:`Choice`.
+    * a function taking no argument, and returning a list of :class:`SelectChoice`.
 
 
     **Select fields with static choice values**::
 
         class PastebinEntry(Form):
             language = SelectField('Programming Language', choices=[
-                Choice('cpp', 'C++'),
-                Choice('py', 'Python'),
-                Choice('text', 'Plain Text'),
+                SelectChoice('cpp', 'C++'),
+                SelectChoice('py', 'Python'),
+                SelectChoice('text', 'Plain Text'),
             ])
 
     Note that the `choices` keyword is evaluated each time the form is
@@ -352,7 +352,7 @@ Choice Fields
     **Select fields with dynamic choice values**::
 
         def available_groups():
-            return [Choice(g.id, g.name) for g in Group.query.order_by('name')]
+            return [SelectChoice(g.id, g.name) for g in Group.query.order_by('name')]
 
         class UserDetails(Form):
             group_id = SelectField('Group', coerce=int, choices=available_groups)
@@ -374,7 +374,7 @@ Choice Fields
     of any other field on the form::
 
         def available_groups(form, field):
-            return [Choice(g.id, g.name) for g in form.tenant.data.groups]
+            return [SelectChoice(g.id, g.name) for g in form.tenant.data.groups]
 
         class UserDetails(Form):
             tenant = QuerySelectField('Tenant', ...)
@@ -389,9 +389,9 @@ Choice Fields
 
         class NonePossible(Form):
             my_select_field = SelectField('Select an option', choices=[
-                Choice('1', 'Option 1'),
-                Choice('2', 'Option 2'),
-                Choice('None', 'No option'),
+                SelectChoice('1', 'Option 1'),
+                SelectChoice('2', 'Option 2'),
+                SelectChoice('None', 'No option'),
             ], coerce=coerce_none)
 
     Note when the option None is selected a 'None' str will be passed. By using a coerce
@@ -407,9 +407,9 @@ Choice Fields
             BLUE = 3
 
         class PaintForm(Form):
-            color = SelectField(choices=Choice.from_enum(Color), coerce=Color)
+            color = SelectField(choices=SelectChoice.from_enum(Color), coerce=Color)
 
-    :meth:`Choice.from_enum` builds the option list from the Enum items;
+    :meth:`SelectChoice.from_enum` builds the option list from the Enum items;
     the HTML ``value`` of each option is the item's ``name``. Passing the
     Enum class itself as ``coerce`` installs the matching coercion, so
     ``form.color.data`` is a ``Color`` item after submit. Pre-selecting
@@ -420,8 +420,8 @@ Choice Fields
     ``item.name``. To customise, pass a ``label`` callable taking an Enum
     item and returning the label string::
 
-        Choice.from_enum(Color, label=lambda item: item.name.title())
-        # → [Choice('RED', 'Red'), Choice('GREEN', 'Green'), Choice('BLUE', 'Blue')]
+        SelectChoice.from_enum(Color, label=lambda item: item.name.title())
+        # → [SelectChoice('RED', 'Red'), SelectChoice('GREEN', 'Green'), SelectChoice('BLUE', 'Blue')]
 
     **Skipping choice validation**::
 
@@ -566,7 +566,7 @@ complex data structures such as lists and nested objects can be represented.
     FormField::
 
         class IMForm(Form):
-            protocol = SelectField(choices=[Choice('aim', 'AIM'), Choice('msn', 'MSN')])
+            protocol = SelectField(choices=[SelectChoice('aim', 'AIM'), SelectChoice('msn', 'MSN')])
             username = StringField()
 
         class ContactForm(Form):
@@ -580,6 +580,8 @@ Data Lists
 
 .. currentmodule:: wtforms
 
+.. autoclass:: DataListChoice
+
 .. class:: DataList(choices=None, *, render_kw=None, widget=None)
 
     A :mdn-tag:`datalist` of suggestions. Unlike
@@ -588,7 +590,7 @@ Data Lists
     suggestions but the user may type any value. Combine with
     :class:`~wtforms.validators.AnyOf` if you need a closed set.
 
-    ``choices`` is either a list of :class:`~wtforms.fields.Choice`
+    ``choices`` is either a list of :class:`~wtforms.DataListChoice`
     (or plain strings, in which case the string is used as both value
     and label), or a callable invoked at render time. The callable
     may take no argument (``fn()``) for a static list, or ``(field)``
