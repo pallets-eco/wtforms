@@ -421,7 +421,7 @@ class Select:
         select_params = html_params(name=field.name, **kwargs)
         html = [f"<select {select_params}>"]
         if field.has_groups():
-            for optgroup, choices in field.iter_groups():
+            for optgroup, choices in field._iter_groups_normalized():
                 if optgroup is not None:
                     optgroup_params = html_params(label=optgroup)
                     html.append(f"<optgroup {optgroup_params}>")
@@ -430,7 +430,7 @@ class Select:
                 if optgroup is not None:
                     html.append("</optgroup>")
         else:
-            for choice in field.iter_choices():
+            for choice in field._iter_choices_normalized():
                 html.append(self.render_option(choice))
         html.append("</select>")
         return Markup("".join(html))

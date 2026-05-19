@@ -449,6 +449,72 @@ def test_iter_groups_items_unpack_as_3_2_tuples():
             assert (value, label, selected, render_kw) == ("a", "Foo", True, {})
 
 
+def test_legacy_subclass_yielding_tuples_keeps_working():
+    """A subclass overriding ``iter_choices`` to yield raw 4-tuples
+    ``(value, label, selected, render_kw)`` per the WTForms 3.2 contract
+    still renders, validates and iterates — with a ``DeprecationWarning``."""
+
+    class LegacySelect(SelectField):
+        def iter_choices(self):
+            yield ("a", "Apple", self.data == "a", {})
+            yield ("b", "Banana", self.data == "b", {})
+
+    F = make_form(s=LegacySelect(choices=[SelectChoice("a"), SelectChoice("b")]))
+    form = F(s="a")
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        html = form.s()
+    assert '<option selected value="a">Apple</option>' in html
+    assert '<option value="b">Banana</option>' in html
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        assert form.validate() is True
+
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        opts = list(form.s)
+    assert [(opt.checked, str(opt.label.text)) for opt in opts] == [
+        (True, "Apple"),
+        (False, "Banana"),
+    ]
+
+
+def test_legacy_subclass_yielding_3_tuples_keeps_working():
+    """Pre-3.1 contract: 3-tuples ``(value, label, selected)`` also work."""
+
+    class LegacySelect(SelectField):
+        def iter_choices(self):
+            yield ("a", "Apple", False)
+            yield ("b", "Banana", False)
+
+    F = make_form(s=LegacySelect(choices=[SelectChoice("a"), SelectChoice("b")]))
+    form = F()
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        html = form.s()
+    assert '<option value="a">Apple</option>' in html
+
+
+def test_iter_groups_override_yielding_tuples_keeps_working():
+    """A subclass overriding ``iter_groups`` to yield raw tuples inside the
+    group list still renders — with a ``DeprecationWarning``."""
+
+    class GroupedSelect(SelectField):
+        def has_groups(self):
+            return True
+
+        def iter_groups(self):
+            yield "Fruits", [("a", "Apple", self.data == "a", {})]
+            yield "Veggies", [("c", "Carrot", self.data == "c", {})]
+
+    F = make_form(s=GroupedSelect(choices=[SelectChoice("a"), SelectChoice("c")]))
+    form = F(s="a")
+    with pytest.warns(DeprecationWarning, match="raw tuples"):
+        html = form.s()
+    assert '<optgroup label="Fruits">' in html
+    assert '<option selected value="a">Apple</option>' in html
+    assert '<optgroup label="Veggies">' in html
+    assert '<option value="c">Carrot</option>' in html
+
+
 class _Plain(Enum):
     RED = 1
     GREEN = 2
