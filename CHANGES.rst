@@ -20,10 +20,11 @@ Unreleased
   previously got ``form=None``. :issue:`922`
 - Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
   tuple yields from :meth:`~fields.SelectFieldBase.iter_choices` /
-  :meth:`~fields.SelectFieldBase.iter_groups`, and
+  :meth:`~fields.SelectFieldBase.iter_groups`,
   :meth:`~fields.SelectFieldBase.has_groups` /
-  :meth:`~fields.SelectFieldBase.iter_groups`. Each emits a
-  ``DeprecationWarning``; will be removed in WTForms 4.0. :issue:`922`
+  :meth:`~fields.SelectFieldBase.iter_groups`, and ``self.choices``
+  keeping the user-supplied shape. Each emits a ``DeprecationWarning``;
+  will be removed in WTForms 4.0. :issue:`922`
 
 Version 3.3.0b1
 ---------------
