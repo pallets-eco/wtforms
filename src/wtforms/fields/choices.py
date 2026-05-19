@@ -151,6 +151,37 @@ class SelectChoice:
             return cls(*input, optgroup=optgroup)
 
 
+def _normalize_iter_choice(choice):
+    """Coerce a value yielded by :meth:`SelectFieldBase.iter_choices` or
+    :meth:`SelectFieldBase.iter_groups` into a :class:`Choice`.
+    """
+    if isinstance(choice, Choice):
+        return choice
+    if isinstance(choice, tuple):
+        warnings.warn(
+            "Yielding raw tuples from iter_choices() or iter_groups() is "
+            "deprecated; yield Choice instances instead. Will be removed "
+            "in WTForms 4.0.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+        if len(choice) == 4:
+            value, label, selected, render_kw = choice
+        elif len(choice) == 3:
+            value, label, selected = choice
+            render_kw = None
+        else:
+            raise TypeError(
+                f"iter_choices()/iter_groups() yielded a tuple of unsupported "
+                f"length: {len(choice)}"
+            )
+        return Choice(value=value, label=label, selected=selected, render_kw=render_kw)
+    raise TypeError(
+        f"iter_choices()/iter_groups() yielded an unsupported type: "
+        f"{type(choice).__name__}"
+    )
+
+
 class SelectFieldBase(Field):
     option_widget = widgets.Option()
 
@@ -174,6 +205,11 @@ class SelectFieldBase(Field):
         """
         raise NotImplementedError()
 
+    def _iter_choices_normalized(self):
+        """Wrap :meth:`iter_choices` to always yield :class:`Choice`."""
+        for choice in self.iter_choices():
+            yield _normalize_iter_choice(choice)
+
     def has_groups(self):
         """Whether the field's choices include any ``optgroup`` hint."""
         return False
@@ -181,6 +217,11 @@ class SelectFieldBase(Field):
     def iter_groups(self):
         """Yield ``(group_label, [Choice, ...])`` pairs for grouped rendering."""
         raise NotImplementedError()
+
+    def _iter_groups_normalized(self):
+        """Wrap :meth:`iter_groups` to always yield ``(name, [Choice, ...])``."""
+        for name, group in self.iter_groups():
+            yield name, [_normalize_iter_choice(c) for c in group]
 
     def __iter__(self):
         opts = dict(
@@ -191,7 +232,7 @@ class SelectFieldBase(Field):
             _form=self._form,
             _meta=self.meta,
         )
-        for i, choice in enumerate(self.iter_choices()):
+        for i, choice in enumerate(self._iter_choices_normalized()):
             opt = self._Option(
                 id=f"{self.id}-{i}",
                 label=choice.label or choice.value,
@@ -330,7 +371,7 @@ class SelectField(SelectFieldBase):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        if not any(choice.selected for choice in self.iter_choices()):
+        if not any(choice.selected for choice in self._iter_choices_normalized()):
             raise ValidationError(self.invalid_choice_message)
 
 
@@ -424,7 +465,9 @@ class SelectMultipleField(SelectField):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        acceptable = {self.coerce(choice.value) for choice in self.iter_choices()}
+        acceptable = {
+            self.coerce(choice.value) for choice in self._iter_choices_normalized()
+        }
         if any(data not in acceptable for data in self.data):
             unacceptable = [
                 str(data) for data in set(self.data) if data not in acceptable
