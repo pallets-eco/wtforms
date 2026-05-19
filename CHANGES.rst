@@ -3,6 +3,9 @@
 Unreleased
 ----------
 
+- :class:`~fields.SelectField` ``choices`` accepts a shorthand dict
+  syntax: ``{value: label}`` for flat options and
+  ``{label: {value: label}}`` for optgroups. :issue:`886`
 - Split choice types by role: :class:`~fields.SelectChoice` and
   :class:`~fields.DataListChoice` to declare options via ``choices=``,
   :class:`~fields.Choice` for what ``iter_choices`` / ``iter_groups``

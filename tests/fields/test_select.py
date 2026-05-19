@@ -449,6 +449,92 @@ def test_iter_groups_items_unpack_as_3_2_tuples():
             assert (value, label, selected, render_kw) == ("a", "Foo", True, {})
 
 
+def test_dict_str_str_flat_choices():
+    """``{value: label}`` is a flat shorthand for ``[SelectChoice(value, label)]``."""
+    F = make_form(a=SelectField(choices={"py": "Python", "rs": "Rust"}))
+    form = F(a="py")
+    assert '<option selected value="py">Python</option>' in form.a()
+    assert '<option value="rs">Rust</option>' in form.a()
+    assert form.validate()
+
+
+def test_dict_str_dict_optgroup_choices():
+    """``{label: {value: label}}`` denotes optgroups."""
+    F = make_form(
+        a=SelectField(
+            choices={
+                "Compiled": {"rs": "Rust", "c": "C"},
+                "Interpreted": {"py": "Python"},
+            }
+        )
+    )
+    form = F(a="rs")
+    html = form.a()
+    assert '<optgroup label="Compiled">' in html
+    assert '<option selected value="rs">Rust</option>' in html
+    assert '<optgroup label="Interpreted">' in html
+    assert '<option value="py">Python</option>' in html
+
+
+def test_dict_mixed_flat_and_optgroup_choices():
+    """``str`` values are flat options; ``dict`` values are optgroups —
+    both may appear at the top level."""
+    F = make_form(
+        a=SelectField(
+            choices={
+                "py": "Python",
+                "Functional": {"hs": "Haskell", "ml": "OCaml"},
+            }
+        )
+    )
+    html = F().a()
+    assert '<option value="py">Python</option>' in html
+    assert '<optgroup label="Functional">' in html
+    assert '<option value="hs">Haskell</option>' in html
+    assert '<option value="ml">OCaml</option>' in html
+
+
+def test_tuple_choices_deprecation():
+    F = make_form(a=SelectField(choices=[("a", "Foo")]))
+    with pytest.warns(DeprecationWarning):
+        form = F(a="a")
+
+    assert '<option selected value="a">Foo</option>' in form.a()
+    assert list(form.a.iter_choices()) == [
+        Choice("a", "Foo", selected=True, render_kw={})
+    ]
+
+
+def test_dict_choices_deprecation_with_choice_object():
+    F = make_form(a=SelectField(choices={"hello": [SelectChoice("a", "Foo")]}))
+    with pytest.warns(DeprecationWarning):
+        form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option selected value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        Choice("a", "Foo", selected=True, render_kw={})
+    ]
+
+
+def test_dict_choices_deprecation_with_tuple():
+    F = make_form(a=SelectField(choices={"hello": [("a", "Foo")]}))
+    with pytest.warns(DeprecationWarning):
+        form = F(a="a")
+
+    assert (
+        '<optgroup label="hello">'
+        '<option selected value="a">Foo</option>'
+        "</optgroup>" in form.a()
+    )
+    assert list(form.a.iter_choices()) == [
+        Choice("a", "Foo", selected=True, render_kw={})
+    ]
+
+
 def test_self_choices_preserves_user_supplied_shape():
     """`self.choices` keeps the shape the user passed (raw tuples remain
     tuples), so subclasses doing ``for value, label in self.choices``
