@@ -1,7 +1,11 @@
 import warnings
 from dataclasses import dataclass
 from dataclasses import field
+from dataclasses import replace
 from enum import Enum
+from itertools import groupby
+from operator import attrgetter
+from typing import NamedTuple
 
 from wtforms import widgets
 from wtforms._compat import get_signature
@@ -29,24 +33,62 @@ def _enum_coerce(enum_cls):
     return coerce
 
 
-@dataclass
-class Choice:
+class Choice(NamedTuple):
     """
-    A dataclass that represents an available choice for choice fields.
+    A rendered option yielded by
+    :meth:`SelectFieldBase.iter_choices` and
+    :meth:`SelectFieldBase.iter_groups`.
+
+    ``selected`` is computed against the field's current data. To
+    declare options on a :class:`SelectField`, use
+    :class:`SelectChoice` instead.
 
     :param value:
         The value that will be sent in the request.
     :param label:
         The label of the option.
+    :param selected:
+        Whether the option is currently selected. Set by ``iter_choices``;
+        you rarely set this yourself.
     :param render_kw:
         A dict containing HTML attributes that will be rendered
         with the option.
     """
 
     value: str
-    label: str | None = None
-    render_kw: dict | None = None
-    _selected: bool = field(default=False, kw_only=True)
+    label: str
+    selected: bool
+    render_kw: dict
+
+
+@dataclass
+class SelectChoice:
+    """
+    An option declared via :class:`SelectField` and
+    :class:`SelectMultipleField`'s ``choices=`` parameter.
+
+    :param value:
+        The value that will be sent in the request.
+    :param label:
+        The label of the option. Defaults to ``value`` when omitted.
+    :param render_kw:
+        A dict containing HTML attributes that will be rendered
+        with the option. Defaults to an empty dict when omitted.
+    :param optgroup:
+        The ``<optgroup>`` HTML tag in which the option will be rendered.
+    """
+
+    value: str
+    label: str = None  # type: ignore[assignment]
+    render_kw: dict = field(default_factory=dict)
+    optgroup: str | None = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.value
+
+    def __iter__(self):
+        return iter((self.value, self.label, self.render_kw, self.optgroup))
 
     @classmethod
     def from_enum(cls, enum_cls, *, label=None):
@@ -61,45 +103,41 @@ class Choice:
             label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
         return [cls(value=m.name, label=label(m)) for m in enum_cls]
 
-
-@dataclass
-class SelectChoice(Choice):
-    """
-    A :class:`Choice` augmented with an ``<optgroup>`` hint for
-    :class:`SelectField`.
-
-    :param optgroup:
-        The ``<optgroup>`` HTML tag in which the option will be rendered.
-    """
-
-    optgroup: str | None = None
-
     @classmethod
     def from_input(cls, input, optgroup=None):
+        """Coerce a value passed by the user via ``choices=...`` into a
+        :class:`SelectChoice`.
+        """
         if isinstance(input, SelectChoice):
             if optgroup:
-                input.optgroup = optgroup
+                return replace(input, optgroup=optgroup)
             return input
 
         if isinstance(input, Choice):
+            warnings.warn(
+                "Passing Choice to a SelectField is deprecated; Choice is the "
+                "output type returned by iter_choices(). Use SelectChoice "
+                "instead. Support for Choice as input will be removed in "
+                "WTForms 4.0.",
+                DeprecationWarning,
+                stacklevel=4,
+            )
             return cls(
                 value=input.value,
                 label=input.label,
                 render_kw=input.render_kw,
                 optgroup=optgroup,
-                _selected=input._selected,
             )
 
         if isinstance(input, str):
             return cls(value=input, optgroup=optgroup)
 
         if isinstance(input, tuple):
-            warnings.warn(
-                "Passing SelectField choices as tuples is deprecated and will be "
-                "removed in wtforms 3.4. Please use Choice or SelectChoice instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+            if len(input) not in (2, 3):
+                raise ValueError(
+                    f"SelectField choice tuple must have 2 or 3 elements, "
+                    f"got {len(input)}"
+                )
             return cls(*input, optgroup=optgroup)
 
 
@@ -120,10 +158,18 @@ class SelectFieldBase(Field):
             self.option_widget = option_widget
 
     def iter_choices(self):
+        """Provide data for choice widget rendering.
+
+        Should yield :class:`Choice` instances.
         """
-        Provides data for choice widget rendering. Must return a sequence or
-        iterable of SelectChoice.
-        """
+        raise NotImplementedError()
+
+    def has_groups(self):
+        """Whether the field's choices include any ``optgroup`` hint."""
+        return False
+
+    def iter_groups(self):
+        """Yield ``(group_label, [Choice, ...])`` pairs for grouped rendering."""
         raise NotImplementedError()
 
     def __iter__(self):
@@ -142,11 +188,12 @@ class SelectFieldBase(Field):
                 **opts,
             )
             opt.choice = choice
-            opt.checked = choice._selected
+            opt.checked = choice.selected
             opt.process(None, choice.value)
             yield opt
 
-    def choices_from_input(self, choices):
+    def _choices_from_input(self, choices):
+        """Parse the user-supplied ``choices`` into a list of :class:`SelectChoice`."""
         if callable(choices):
             choices = self._invoke_choices_callback(choices)
 
@@ -154,14 +201,6 @@ class SelectFieldBase(Field):
             return None
 
         if isinstance(choices, dict):
-            warnings.warn(
-                "Passing SelectField choices in a dict deprecated and will be removed "
-                "in wtforms 3.4. Please pass a list of SelectChoice objects with a "
-                "custom optgroup attribute instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
             return [
                 SelectChoice.from_input(input, optgroup)
                 for optgroup, inputs in choices.items()
@@ -209,7 +248,7 @@ class SelectField(SelectFieldBase):
             self.choices = None
         else:
             self._choices_callable = None
-            self.choices = self.choices_from_input(choices)
+            self.choices = self._choices_from_input(choices)
         self.validate_choice = validate_choice
         self.invalid_value_message = invalid_value_message or self.gettext(
             "Invalid Choice: could not coerce."
@@ -219,15 +258,41 @@ class SelectField(SelectFieldBase):
         )
 
     def iter_choices(self):
-        choices = self.choices_from_input(self.choices) or []
-        for choice in choices:
-            choice._selected = self.coerce(choice.value) == self.data
-        return choices
+        choices = self._choices_from_input(self.choices) or []
+        return [
+            Choice(
+                value=c.value,
+                label=c.label,
+                selected=self.coerce(c.value) == self.data,
+                render_kw=c.render_kw,
+            )
+            for c in choices
+        ]
+
+    def has_groups(self):
+        choices = self._choices_from_input(self.choices) or []
+        return any(c.optgroup is not None for c in choices)
+
+    def iter_groups(self):
+        choices = self._choices_from_input(self.choices) or []
+        for optgroup, group in groupby(choices, key=attrgetter("optgroup")):
+            yield (
+                optgroup,
+                [
+                    Choice(
+                        value=c.value,
+                        label=c.label,
+                        selected=self.coerce(c.value) == self.data,
+                        render_kw=c.render_kw,
+                    )
+                    for c in group
+                ],
+            )
 
     def post_process(self):
         super().post_process()
         if self._choices_callable is not None:
-            self.choices = self.choices_from_input(self._choices_callable)
+            self.choices = self._invoke_choices_callback(self._choices_callable)
 
     def process_data(self, value):
         try:
@@ -255,7 +320,7 @@ class SelectField(SelectFieldBase):
         if self.choices is None:
             raise TypeError(self.gettext("Choices cannot be None."))
 
-        if not any(choice._selected for choice in self.iter_choices()):
+        if not any(choice.selected for choice in self.iter_choices()):
             raise ValidationError(self.invalid_choice_message)
 
 
@@ -298,11 +363,34 @@ class SelectMultipleField(SelectField):
         self.invalid_choice_message = invalid_choice_message
 
     def iter_choices(self):
-        choices = self.choices_from_input(self.choices) or []
-        if self.data:
-            for choice in choices:
-                choice._selected = self.coerce(choice.value) in self.data
-        return choices
+        choices = self._choices_from_input(self.choices) or []
+        data = self.data or ()
+        return [
+            Choice(
+                value=c.value,
+                label=c.label,
+                selected=self.coerce(c.value) in data,
+                render_kw=c.render_kw,
+            )
+            for c in choices
+        ]
+
+    def iter_groups(self):
+        choices = self._choices_from_input(self.choices) or []
+        data = self.data or ()
+        for optgroup, group in groupby(choices, key=attrgetter("optgroup")):
+            yield (
+                optgroup,
+                [
+                    Choice(
+                        value=c.value,
+                        label=c.label,
+                        selected=self.coerce(c.value) in data,
+                        render_kw=c.render_kw,
+                    )
+                    for c in group
+                ],
+            )
 
     def process_data(self, value):
         try:

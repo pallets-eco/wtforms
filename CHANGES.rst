@@ -3,6 +3,10 @@
 Unreleased
 ----------
 
+- Split choice types by role: :class:`~fields.SelectChoice` and
+  :class:`~fields.DataListChoice` to declare options via ``choices=``,
+  :class:`~fields.Choice` for what ``iter_choices`` / ``iter_groups``
+  yield. :issue:`922`
 - ``choices`` callables on :class:`~fields.SelectField` and
   :class:`~datalist.DataList` may accept ``(form, field)``. Resolved
   once per processing cycle. :issue:`922`
@@ -14,6 +18,10 @@ Unreleased
   forms can reach their enclosing form. Fix :class:`~fields.FieldList`
   entries and :class:`~fields.SelectField` option subfields which
   previously got ``form=None``. :issue:`922`
+- Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
+  :meth:`~fields.SelectFieldBase.has_groups` /
+  :meth:`~fields.SelectFieldBase.iter_groups`. Each emits a
+  ``DeprecationWarning``; will be removed in WTForms 4.0. :issue:`922`
 
 Version 3.3.0b1
 ---------------

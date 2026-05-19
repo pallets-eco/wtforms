@@ -4,11 +4,6 @@ from enum import IntEnum
 
 import pytest
 
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    StrEnum = None
-
 from tests.common import DummyPostData
 from wtforms import validators
 from wtforms import widgets
@@ -17,6 +12,11 @@ from wtforms.fields import Field
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
 from wtforms.form import Form
+
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    StrEnum = None
 
 
 def make_form(name="F", **fields):
@@ -31,7 +31,7 @@ def test_select_field_copies_choices():
             super().__init__(*args, **kwargs)
 
         def add_choice(self, choice):
-            self.items.choices.append(Choice(choice, choice))
+            self.items.choices.append(SelectChoice(choice, choice))
 
     f1 = F()
     f2 = F()
@@ -39,23 +39,23 @@ def test_select_field_copies_choices():
     f1.add_choice("a")
     f2.add_choice("b")
 
-    assert f1.items.choices == [Choice("a", "a")]
-    assert f2.items.choices == [Choice("b", "b")]
+    assert f1.items.choices == [SelectChoice("a", "a")]
+    assert f2.items.choices == [SelectChoice("b", "b")]
     assert f1.items.choices is not f2.items.choices
 
 
 class F(Form):
     a = SelectField(
         choices=[
-            Choice("a", "hello"),
-            Choice("btest", "bye"),
+            SelectChoice("a", "hello"),
+            SelectChoice("btest", "bye"),
         ],
         default="a",
     )
     b = SelectField(
         choices=[
-            Choice(1, "Item 1"),
-            Choice(2, "Item 2"),
+            SelectChoice(1, "Item 1"),
+            SelectChoice(2, "Item 2"),
         ],
         coerce=int,
         option_widget=widgets.TextInput(),
@@ -114,14 +114,16 @@ def test_iterable_options():
 def test_option_subfields_carry_parent_form():
     """Option subfields yielded by ``__iter__`` expose the enclosing form,
     matching the propagation already done for ``_meta``."""
-    F = make_form(a=SelectField(choices=[Choice("a", "Foo"), Choice("b", "Bar")]))
+    F = make_form(
+        a=SelectField(choices=[SelectChoice("a", "Foo"), SelectChoice("b", "Bar")])
+    )
     form = F()
     for opt in form.a:
         assert opt._form is form
 
 
 def test_default_coerce():
-    F = make_form(a=SelectField(choices=[Choice("a", "Foo")]))
+    F = make_form(a=SelectField(choices=[SelectChoice("a", "Foo")]))
     form = F(DummyPostData(a=[]))
     assert not form.validate()
     assert form.a.data is None
@@ -130,7 +132,7 @@ def test_default_coerce():
 
 
 def test_validate_choices():
-    F = make_form(a=SelectField(choices=[Choice("a", "Foo")]))
+    F = make_form(a=SelectField(choices=[SelectChoice("a", "Foo")]))
     form = F(DummyPostData(a=["b"]))
     assert not form.validate()
     assert form.a.data == "b"
@@ -150,7 +152,7 @@ def test_validate_choices_when_empty():
 def test_invalid_value_message():
     F = make_form(
         a=SelectField(
-            choices=[Choice(1, "Foo")],
+            choices=[SelectChoice(1, "Foo")],
             coerce=int,
             invalid_value_message="Submitted value could not be parsed.",
         )
@@ -163,7 +165,7 @@ def test_invalid_value_message():
 def test_invalid_choice_message():
     F = make_form(
         a=SelectField(
-            choices=[Choice("a", "Foo")],
+            choices=[SelectChoice("a", "Foo")],
             invalid_choice_message="Pick one of the available options.",
         )
     )
@@ -180,7 +182,9 @@ def test_validate_choices_when_none():
 
 
 def test_dont_validate_choices():
-    F = make_form(a=SelectField(choices=[Choice("a", "Foo")], validate_choice=False))
+    F = make_form(
+        a=SelectField(choices=[SelectChoice("a", "Foo")], validate_choice=False)
+    )
     form = F(DummyPostData(a=["b"]))
     assert form.validate()
     assert form.a.data == "b"
@@ -248,7 +252,7 @@ def test_callable_choices_receives_form_and_field():
 def test_requried_flag():
     F = make_form(
         c=SelectField(
-            choices=[Choice("a", "hello"), Choice("b", "bye")],
+            choices=[SelectChoice("a", "hello"), SelectChoice("b", "bye")],
             validators=[validators.InputRequired()],
         )
     )
@@ -264,7 +268,7 @@ def test_requried_flag():
 def test_required_validator():
     F = make_form(
         c=SelectField(
-            choices=[Choice("a", "hello"), Choice("b", "bye")],
+            choices=[SelectChoice("a", "hello"), SelectChoice("b", "bye")],
             validators=[validators.InputRequired()],
         )
     )
@@ -299,7 +303,7 @@ def test_optgroup():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+        Choice("a", "Foo", selected=True, render_kw={})
     ]
 
 
@@ -321,15 +325,19 @@ def test_optgroup_shortcut():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice("foo", None, None, "hello", _selected=False),
-        SelectChoice("bar", None, None, "hello", _selected=True),
+        Choice("foo", "foo", selected=False, render_kw={}),
+        Choice("bar", "bar", selected=True, render_kw={}),
     ]
 
 
 def test_option_render_kw():
     F = make_form(
         a=SelectField(
-            choices=[Choice("a", "Foo", {"title": "foobar", "data-foo": "bar"})]
+            choices=[
+                SelectChoice(
+                    "a", "Foo", render_kw={"title": "foobar", "data-foo": "bar"}
+                )
+            ]
         )
     )
     form = F(a="a")
@@ -339,8 +347,11 @@ def test_option_render_kw():
         in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice(
-            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, None, _selected=True
+        Choice(
+            "a",
+            "Foo",
+            selected=True,
+            render_kw={"title": "foobar", "data-foo": "bar"},
         )
     ]
 
@@ -350,7 +361,10 @@ def test_optgroup_option_render_kw():
         a=SelectField(
             choices=[
                 SelectChoice(
-                    "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello"
+                    "a",
+                    "Foo",
+                    render_kw={"title": "foobar", "data-foo": "bar"},
+                    optgroup="hello",
                 )
             ]
         )
@@ -363,51 +377,76 @@ def test_optgroup_option_render_kw():
         "</optgroup>" in form.a()
     )
     assert list(form.a.iter_choices()) == [
-        SelectChoice(
-            "a", "Foo", {"title": "foobar", "data-foo": "bar"}, "hello", _selected=True
+        Choice(
+            "a",
+            "Foo",
+            selected=True,
+            render_kw={"title": "foobar", "data-foo": "bar"},
         )
     ]
 
 
-def test_tuple_choices_deprecation():
-    F = make_form(a=SelectField(choices=[("a", "Foo")]))
-    with pytest.warns(DeprecationWarning):
-        form = F(a="a")
-
-    assert '<option selected value="a">Foo</option>' in form.a()
-    assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, None, _selected=True)
-    ]
-
-
-def test_dict_choices_deprecation_with_choice_object():
-    F = make_form(a=SelectField(choices={"hello": [Choice("a", "Foo")]}))
-    with pytest.warns(DeprecationWarning):
-        form = F(a="a")
-
-    assert (
-        '<optgroup label="hello">'
-        '<option selected value="a">Foo</option>'
-        "</optgroup>" in form.a()
+def test_has_groups_false_without_optgroup():
+    """``has_groups()`` is False when no choice carries an ``optgroup``."""
+    F = make_form(
+        a=SelectField(choices=[SelectChoice("a", "Foo"), SelectChoice("b", "Bar")])
     )
-    assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
-    ]
+    assert F().a.has_groups() is False
 
 
-def test_dict_choices_deprecation_with_tuple():
-    F = make_form(a=SelectField(choices={"hello": [("a", "Foo")]}))
-    with pytest.warns(DeprecationWarning):
-        form = F(a="a")
-
-    assert (
-        '<optgroup label="hello">'
-        '<option selected value="a">Foo</option>'
-        "</optgroup>" in form.a()
+def test_has_groups_true_with_any_optgroup():
+    """``has_groups()`` is True as soon as at least one choice is grouped."""
+    F = make_form(
+        a=SelectField(
+            choices=[
+                SelectChoice("a", "Foo"),
+                SelectChoice("b", "Bar", optgroup="g1"),
+            ]
+        )
     )
-    assert list(form.a.iter_choices()) == [
-        SelectChoice("a", "Foo", None, "hello", _selected=True)
+    assert F().a.has_groups() is True
+
+
+def test_iter_groups_preserves_order():
+    """``iter_groups()`` preserves choice order: consecutive choices sharing
+    the same ``optgroup`` form one group, non-consecutive ones yield
+    separate ``(optgroup, [...])`` pairs (``itertools.groupby`` semantics).
+    Ungrouped choices are yielded as ``(None, [...])`` at their position."""
+    F = make_form(
+        a=SelectField(
+            choices=[
+                SelectChoice("foo", "lfoo", optgroup="g1"),
+                SelectChoice("baz", "lbaz", optgroup="g2"),
+                SelectChoice("abc", "labc"),
+                SelectChoice("bar", "lbar", optgroup="g1"),
+                SelectChoice("xyz", "lxyz"),
+            ]
+        )
+    )
+    form = F(a="foo")
+    groups = list(form.a.iter_groups())
+
+    assert groups == [
+        ("g1", [Choice("foo", "lfoo", selected=True, render_kw={})]),
+        ("g2", [Choice("baz", "lbaz", selected=False, render_kw={})]),
+        (None, [Choice("abc", "labc", selected=False, render_kw={})]),
+        ("g1", [Choice("bar", "lbar", selected=False, render_kw={})]),
+        (None, [Choice("xyz", "lxyz", selected=False, render_kw={})]),
     ]
+
+
+def test_iter_groups_items_unpack_as_3_2_tuples():
+    """Items yielded inside each group unpack like the 3.2 4-tuple
+    ``(value, label, selected, render_kw)``."""
+    F = make_form(
+        a=SelectField(
+            choices=[SelectChoice("a", "Foo", optgroup="g")],
+        )
+    )
+    form = F(a="a")
+    for _label, items in form.a.iter_groups():
+        for value, label, selected, render_kw in items:
+            assert (value, label, selected, render_kw) == ("a", "Foo", True, {})
 
 
 class _Plain(Enum):
@@ -430,17 +469,17 @@ class _Level(IntEnum):
 
 def test_choice_from_enum_plain():
     """Plain Enum without ``__str__`` falls back to ``member.name`` for the label."""
-    assert Choice.from_enum(_Plain) == [
-        Choice(value="RED", label="RED"),
-        Choice(value="GREEN", label="GREEN"),
+    assert SelectChoice.from_enum(_Plain) == [
+        SelectChoice(value="RED", label="RED"),
+        SelectChoice(value="GREEN", label="GREEN"),
     ]
 
 
 def test_choice_from_enum_with_dunder_str():
     """An Enum that overrides ``__str__`` uses ``str(member)`` as label."""
-    assert Choice.from_enum(_Pretty) == [
-        Choice(value="RED", label="Red"),
-        Choice(value="GREEN", label="Green"),
+    assert SelectChoice.from_enum(_Pretty) == [
+        SelectChoice(value="RED", label="Red"),
+        SelectChoice(value="GREEN", label="Green"),
     ]
 
 
@@ -452,31 +491,31 @@ def test_choice_from_enum_strenum():
         ACTIVE = "active"
         INACTIVE = "inactive"
 
-    assert Choice.from_enum(_Status) == [
-        Choice(value="ACTIVE", label="active"),
-        Choice(value="INACTIVE", label="inactive"),
+    assert SelectChoice.from_enum(_Status) == [
+        SelectChoice(value="ACTIVE", label="active"),
+        SelectChoice(value="INACTIVE", label="inactive"),
     ]
 
 
 def test_choice_from_enum_intenum():
     """IntEnum has no ``__str__`` injected; falls back to ``member.name``."""
-    assert Choice.from_enum(_Level) == [
-        Choice(value="LOW", label="LOW"),
-        Choice(value="HIGH", label="HIGH"),
+    assert SelectChoice.from_enum(_Level) == [
+        SelectChoice(value="LOW", label="LOW"),
+        SelectChoice(value="HIGH", label="HIGH"),
     ]
 
 
 def test_choice_from_enum_custom_label():
     """A ``label=`` callable overrides the default."""
-    assert Choice.from_enum(_Plain, label=lambda m: m.name.title()) == [
-        Choice(value="RED", label="Red"),
-        Choice(value="GREEN", label="Green"),
+    assert SelectChoice.from_enum(_Plain, label=lambda m: m.name.title()) == [
+        SelectChoice(value="RED", label="Red"),
+        SelectChoice(value="GREEN", label="Green"),
     ]
 
 
 def test_select_field_enum_coerce_round_trip():
     """``coerce=EnumCls`` round-trips form data back to an Enum member."""
-    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
     form = F(DummyPostData(a=["RED"]))
     assert form.a.data is _Plain.RED
     assert form.validate()
@@ -484,22 +523,33 @@ def test_select_field_enum_coerce_round_trip():
 
 def test_select_field_enum_coerce_accepts_member():
     """``coerce=EnumCls`` accepts an already-coerced member without re-lookup."""
-    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
     form = F(a=_Plain.GREEN)
     assert form.a.data is _Plain.GREEN
 
 
 def test_select_field_enum_coerce_invalid():
     """An unknown name fails validation cleanly (KeyError → ValueError)."""
-    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
     form = F(DummyPostData(a=["BAD"]))
     assert not form.validate()
     assert form.a.data is None
     assert "Invalid Choice: could not coerce." in form.a.errors
 
 
+def test_iter_choices_tuple_unpacking():
+    """``iter_choices()`` yields ``Choice`` 4-tuples — unpacking matches the
+    3.2 yield shape ``(value, label, selected, render_kw)``."""
+    F = make_form(
+        a=SelectField(choices=[SelectChoice("a", "Foo"), SelectChoice("b", "Bar")])
+    )
+    form = F(a="a")
+    unpacked = [(v, lab, sel, rk) for v, lab, sel, rk in form.a.iter_choices()]
+    assert unpacked == [("a", "Foo", True, {}), ("b", "Bar", False, {})]
+
+
 def test_select_field_enum_renders_selected():
     """Pre-selecting a member highlights the right option."""
-    F = make_form(a=SelectField(choices=Choice.from_enum(_Plain), coerce=_Plain))
+    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
     form = F(a=_Plain.GREEN)
     assert '<option selected value="GREEN">GREEN</option>' in form.a()
