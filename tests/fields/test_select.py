@@ -449,6 +449,17 @@ def test_iter_groups_items_unpack_as_3_2_tuples():
             assert (value, label, selected, render_kw) == ("a", "Foo", True, {})
 
 
+def test_self_choices_preserves_user_supplied_shape():
+    """`self.choices` keeps the shape the user passed (raw tuples remain
+    tuples), so subclasses doing ``for value, label in self.choices``
+    per the WTForms 3.2 contract keep working."""
+    F = make_form(a=SelectField(choices=[("a", "Apple"), ("b", "Banana")]))
+    with pytest.warns(DeprecationWarning, match="tuples"):
+        form = F()
+    for value, label in form.a.choices:
+        assert (value, label) in {("a", "Apple"), ("b", "Banana")}
+
+
 def test_legacy_subclass_yielding_tuples_keeps_working():
     """A subclass overriding ``iter_choices`` to yield raw 4-tuples
     ``(value, label, selected, render_kw)`` per the WTForms 3.2 contract
