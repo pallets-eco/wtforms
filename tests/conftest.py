@@ -82,10 +82,16 @@ class DummyField:
     def iter_choices(self):
         return iter(self.data)
 
+    def _iter_choices_normalized(self):
+        return iter(self.data)
+
     def has_groups(self):
         return self._groups is not None
 
     def iter_groups(self):
+        return iter(self._groups or [])
+
+    def _iter_groups_normalized(self):
         return iter(self._groups or [])
 
     def gettext(self, string):
