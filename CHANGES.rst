@@ -21,6 +21,7 @@ Unreleased
 - Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
   tuple yields from :meth:`~fields.SelectFieldBase.iter_choices` /
   :meth:`~fields.SelectFieldBase.iter_groups`,
+  3-positional :meth:`widgets.Select.render_option` overrides,
   :meth:`~fields.SelectFieldBase.has_groups` /
   :meth:`~fields.SelectFieldBase.iter_groups`, and ``self.choices``
   keeping the user-supplied shape. Each emits a ``DeprecationWarning``;
