@@ -252,6 +252,19 @@ class SelectFieldBase(Field):
             return None
 
         if isinstance(choices, dict):
+            if self._is_shorthand_dict(choices):
+                result = []
+                for key, value in choices.items():
+                    if isinstance(value, dict):
+                        for inner_value, inner_label in value.items():
+                            result.append(
+                                SelectChoice(
+                                    value=inner_value, label=inner_label, optgroup=key
+                                )
+                            )
+                    else:
+                        result.append(SelectChoice(value=key, label=value))
+                return result
             return [
                 SelectChoice.from_input(input, optgroup)
                 for optgroup, inputs in choices.items()
@@ -261,12 +274,22 @@ class SelectFieldBase(Field):
         return [SelectChoice.from_input(input) for input in choices]
 
     @staticmethod
+    def _is_shorthand_dict(choices):
+        """``True`` if ``choices`` matches the shorthand dict syntax.
+
+        Shorthand is ``dict[str, str | dict[str, str]]``.
+        """
+        return all(isinstance(v, (str, dict)) for v in choices.values())
+
+    @staticmethod
     def _warn_legacy_choices(choices):
         """Emit a one-shot ``DeprecationWarning`` for legacy ``choices`` shapes.
 
         Legacy shapes are raw tuples or ``dict``.
         """
         if isinstance(choices, dict):
+            if SelectFieldBase._is_shorthand_dict(choices):
+                return
             warnings.warn(
                 "Passing SelectField choices in a dict is deprecated and will be "
                 "removed in wtforms 3.4. Please pass a list of SelectChoice "
