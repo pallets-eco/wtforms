@@ -1,7 +1,9 @@
 .. currentmodule:: wtforms
 
-Unreleased
-----------
+Version 3.3.0b2
+---------------
+
+Released 2026-05-24
 
 - :class:`~fields.SelectField` ``choices`` accepts a shorthand dict
   syntax: ``{value: label}`` for flat options and
