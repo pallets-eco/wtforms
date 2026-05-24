@@ -1,8 +1,8 @@
 import pytest
 
 from tests.common import DummyPostData
-from wtforms import Choice
 from wtforms import DataList
+from wtforms import DataListChoice
 from wtforms import EmailField
 from wtforms import FieldList
 from wtforms import Form
@@ -17,7 +17,10 @@ class StrForm(Form):
 class ChoiceForm(Form):
     country = StringField(
         datalist=DataList(
-            choices=[Choice("FR", "France"), Choice("US", "United States")]
+            choices=[
+                DataListChoice("FR", "France"),
+                DataListChoice("US", "United States"),
+            ]
         )
     )
 
@@ -33,7 +36,7 @@ def test_str_choices_render_options():
 
 
 def test_choice_choices_render_value_and_label():
-    """``Choice`` instances render both ``value=`` and ``label=`` attributes."""
+    """``DataListChoice`` instances render both ``value=`` and ``label=`` attributes."""
     form = ChoiceForm()
     html = str(form.country.datalist())
     assert 'value="FR"' in html
@@ -49,13 +52,13 @@ def test_choice_choices_render_value_and_label():
         pytest.param(None, "default", id="data-is-none"),
     ],
 )
-def test_callable_choices_receives_field(postdata, expected):
-    """A callable ``DataList`` is invoked with the bound field — its
+def test_callable_choices_receives_form_and_field(postdata, expected):
+    """A callable ``DataList`` is invoked with ``(form, field)`` — its
     ``field.data`` (or ``None`` when no value is bound) drives the result."""
 
     class F(Form):
         query = StringField(
-            datalist=DataList(lambda field: [f"{field.data or 'default'}-x"])
+            datalist=DataList(lambda form, field: [f"{field.data or 'default'}-x"])
         )
 
     html = str(F(postdata).query.datalist())
@@ -172,7 +175,7 @@ def test_inline_callable_datalist_per_fieldlist_entry():
         items = FieldList(
             StringField(
                 datalist=DataList(
-                    choices=lambda field: [
+                    choices=lambda form, field: [
                         f"{field.data}-1",
                         f"{field.data}-2",
                     ]
@@ -223,10 +226,13 @@ def test_render_kw_on_datalist():
 
 
 def test_choice_render_kw_on_option():
-    """``render_kw`` on a ``Choice`` is applied as attributes on its ``<option>``."""
+    """``render_kw`` on a ``DataListChoice`` is applied as attributes on its
+    ``<option>``."""
 
     class F(Form):
-        x = StringField(datalist=DataList([Choice("x", render_kw={"disabled": True})]))
+        x = StringField(
+            datalist=DataList([DataListChoice("x", render_kw={"disabled": True})])
+        )
 
     html = str(F().x.datalist())
     assert "disabled" in html
@@ -240,44 +246,6 @@ def test_none_choices_renders_empty_datalist():
 
     html = str(F().x.datalist())
     assert html == '<datalist id="x-datalist"></datalist>'
-
-
-@pytest.mark.parametrize(
-    ("choices", "data", "selected"),
-    [
-        pytest.param(
-            [Choice("FR", "France"), Choice("US", "United States")],
-            {"country": "FR"},
-            ["FR"],
-            id="static-match",
-        ),
-        pytest.param(
-            [Choice("FR"), Choice("US")],
-            None,
-            [],
-            id="no-data-no-flag",
-        ),
-        pytest.param(
-            lambda field: [Choice("FR")] if field.data == "FR" else [],
-            {"country": "FR"},
-            ["FR"],
-            id="callable-match",
-        ),
-    ],
-)
-def test_iter_choices_flags_selected(choices, data, selected):
-    """``iter_choices(field)`` flags Choices whose value matches ``field.data``."""
-
-    class F(Form):
-        country = StringField(datalist=DataList(choices))
-
-    form = F(data=data) if data else F()
-    flagged = [
-        c.value
-        for c in form.country._datalist.iter_choices(form.country)
-        if c._selected
-    ]
-    assert flagged == selected
 
 
 def test_widget_replaces_default_rendering():
@@ -314,7 +282,7 @@ def test_widget_receives_field_for_callable_choices():
     class F(Form):
         query = StringField(
             datalist=DataList(
-                choices=lambda field: [f"{field.data}-x"],
+                choices=lambda form, field: [f"{field.data}-x"],
                 widget=widget,
             )
         )

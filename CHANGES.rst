@@ -1,5 +1,35 @@
 .. currentmodule:: wtforms
 
+Unreleased
+----------
+
+- :class:`~fields.SelectField` ``choices`` accepts a shorthand dict
+  syntax: ``{value: label}`` for flat options and
+  ``{label: {value: label}}`` for optgroups. :issue:`886`
+- Split choice types by role: :class:`~fields.SelectChoice` and
+  :class:`~fields.DataListChoice` to declare options via ``choices=``,
+  :class:`~fields.Choice` for what ``iter_choices`` / ``iter_groups``
+  yield. :issue:`922`
+- ``choices`` callables on :class:`~fields.SelectField` and
+  :class:`~datalist.DataList` may accept ``(form, field)``. Resolved
+  once per processing cycle. :issue:`922`
+- Add :meth:`fields.Field.post_process` and
+  :meth:`form.BaseForm.post_process` hooks, propagated through
+  :class:`~fields.FormField` and :class:`~fields.FieldList` for
+  cross-field finalization. :issue:`922`
+- Add ``Field._form`` and ``BaseForm._parent_form`` so fields and nested
+  forms can reach their enclosing form. Fix :class:`~fields.FieldList`
+  entries and :class:`~fields.SelectField` option subfields which
+  previously got ``form=None``. :issue:`922`
+- Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
+  tuple yields from :meth:`~fields.SelectFieldBase.iter_choices` /
+  :meth:`~fields.SelectFieldBase.iter_groups`,
+  3-positional :meth:`widgets.Select.render_option` overrides,
+  :meth:`~fields.SelectFieldBase.has_groups` /
+  :meth:`~fields.SelectFieldBase.iter_groups`, and ``self.choices``
+  keeping the user-supplied shape. Each emits a ``DeprecationWarning``;
+  will be removed in WTForms 4.0. :issue:`922`
+
 Version 3.3.0b1
 ---------------
 

@@ -1,7 +1,7 @@
 import pytest
 from markupsafe import Markup
 
-from wtforms.fields.choices import SelectChoice
+from wtforms.fields.choices import Choice
 from wtforms.widgets.core import CheckboxInput
 from wtforms.widgets.core import ColorInput
 from wtforms.widgets.core import FileInput
@@ -201,16 +201,17 @@ def test_select(select_dummy_field):
 
 
 def test_select_mixed_grouped_and_ungrouped_choices(dummy_field_class):
-    """Choices with and without ``optgroup`` render in groups by first
-    appearance, preserving each choice's intra-group order; ungrouped
-    choices share a single bucket rendered without an ``<optgroup>`` wrapper."""
+    """Choices with and without ``optgroup`` render in order: consecutive
+    choices sharing the same ``optgroup`` form one ``<optgroup>``, non-
+    consecutive ones yield separate ``<optgroup>`` wrappers
+    (``itertools.groupby`` semantics)."""
     field = dummy_field_class(
-        [
-            SelectChoice("foo", "lfoo", optgroup="g1", _selected=True),
-            SelectChoice("baz", "lbaz", optgroup="g2"),
-            SelectChoice("abc", "labc"),
-            SelectChoice("bar", "lbar", optgroup="g1"),
-            SelectChoice("xyz", "lxyz"),
+        groups=[
+            ("g1", [Choice("foo", "lfoo", selected=True, render_kw={})]),
+            ("g2", [Choice("baz", "lbaz", selected=False, render_kw={})]),
+            (None, [Choice("abc", "labc", selected=False, render_kw={})]),
+            ("g1", [Choice("bar", "lbar", selected=False, render_kw={})]),
+            (None, [Choice("xyz", "lxyz", selected=False, render_kw={})]),
         ]
     )
     field.name = "f"
@@ -219,43 +220,94 @@ def test_select_mixed_grouped_and_ungrouped_choices(dummy_field_class):
         '<select id="" name="f">'
         '<optgroup label="g1">'
         '<option selected value="foo">lfoo</option>'
-        '<option value="bar">lbar</option>'
         "</optgroup>"
         '<optgroup label="g2">'
         '<option value="baz">lbaz</option>'
         "</optgroup>"
         '<option value="abc">labc</option>'
+        '<optgroup label="g1">'
+        '<option value="bar">lbar</option>'
+        "</optgroup>"
         '<option value="xyz">lxyz</option>'
         "</select>"
     )
 
 
+def test_select_dispatches_to_legacy_render_option_signature(dummy_field_class):
+    """A subclass overriding ``Select.render_option`` with the WTForms 3.2
+    signature ``(cls, value, label, selected, **kwargs)`` keeps working,
+    emitting a ``DeprecationWarning``."""
+
+    captured = {}
+
+    class LegacySelect(Select):
+        @classmethod
+        def render_option(cls, value, label, selected, **kwargs):
+            captured["args"] = (value, label, selected, kwargs)
+            return Markup(f"<option value={value!r}>{label}</option>")
+
+    field = dummy_field_class(
+        [Choice("foo", "lfoo", selected=True, render_kw={})],
+    )
+    field.name = "f"
+
+    with pytest.warns(DeprecationWarning, match="pre-3.3 signature"):
+        html = LegacySelect()(field)
+    assert "<option value='foo'>lfoo</option>" in html
+    assert captured["args"] == ("foo", "lfoo", True, {})
+
+
+def test_select_dispatches_to_legacy_no_kwargs_signature(dummy_field_class):
+    """Strict 3-positional signature without ``**kwargs`` is supported:
+    render_kw is dropped on the floor rather than crashing."""
+
+    captured = {}
+
+    class StrictLegacySelect(Select):
+        @classmethod
+        def render_option(cls, value, label, mixed):
+            captured["args"] = (value, label, mixed)
+            return Markup(f"<option value={value!r}>{label}</option>")
+
+    field = dummy_field_class(
+        [Choice("foo", "lfoo", selected=True, render_kw={"class_": "x"})],
+    )
+    field.name = "f"
+
+    with pytest.warns(DeprecationWarning, match="pre-3.3 signature"):
+        html = StrictLegacySelect()(field)
+    assert "<option value='foo'>lfoo</option>" in html
+    assert captured["args"] == ("foo", "lfoo", True)
+
+
 def test_render_option():
     assert (
-        Select.render_option(SelectChoice("bar", "foo", _selected=False))
+        Select.render_option(Choice("bar", "foo", selected=False, render_kw={}))
         == '<option value="bar">foo</option>'
     )
 
     assert (
-        Select.render_option(SelectChoice(True, "foo", _selected=True))
+        Select.render_option(Choice(True, "foo", selected=True, render_kw={}))
         == '<option selected value="True">foo</option>'
     )
 
     assert (
-        Select.render_option(SelectChoice(False, "foo", _selected=False))
+        Select.render_option(Choice(False, "foo", selected=False, render_kw={}))
         == '<option value="False">foo</option>'
     )
 
     assert (
         Select.render_option(
-            SelectChoice("bar", '<i class="bar"></i>foo', _selected=False)
+            Choice("bar", '<i class="bar"></i>foo', selected=False, render_kw={})
         )
         == '<option value="bar">&lt;i class=&#34;bar&#34;&gt;&lt;/i&gt;foo</option>'
     )
 
     assert (
         Select.render_option(
-            SelectChoice("bar", Markup('<i class="bar"></i>foo'), _selected=False)
+            Choice(
+                "bar", Markup('<i class="bar"></i>foo'), selected=False, render_kw={}
+            )
         )
         == '<option value="bar"><i class="bar"></i>foo</option>'
     )

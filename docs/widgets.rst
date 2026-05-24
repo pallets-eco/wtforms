@@ -85,9 +85,8 @@ Inside the widget, the following ``field`` attributes are commonly used:
 - ``field._value()`` — the string representation of the current value, used
   for the ``value=`` attribute of inputs.
 - ``field.iter_choices()`` — for :class:`~wtforms.fields.SelectField` and
-  similar; yields :class:`~wtforms.fields.SelectChoice` objects with
-  ``value``, ``label``, ``render_kw`` and a ``_selected`` flag reflecting the
-  current selection.
+  similar; yields :class:`~wtforms.fields.Choice` objects with
+  ``value``, ``label``, ``selected`` and ``render_kw``.
 
 To assemble the HTML, use :func:`~wtforms.widgets.html_params` for attribute
 strings, :class:`markupsafe.Markup` to mark the result as safe, and
