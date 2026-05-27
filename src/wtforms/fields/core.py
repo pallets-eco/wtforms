@@ -350,13 +350,16 @@ class Field:
         except ValueError as e:
             self.process_errors.append(e.args[0])
 
-    def post_process(self):
+    def post_process(self, formdata=None):
         """Hook called after every field in the enclosing form has been processed.
 
         Override this when a field needs to read other fields' processed data,
         for example to resolve dynamic choices that depend on the form state.
         The base implementation resolves any inline :class:`~wtforms.DataList`
         attached to the field.
+
+        :param formdata: The resolved formdata the enclosing form was bound
+            with, or ``None`` for non-formdata cycles.
         """
         if self._datalist is not None and not isinstance(self._datalist, str):
             self._datalist._resolve(self)

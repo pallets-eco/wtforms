@@ -389,8 +389,8 @@ class SelectField(SelectFieldBase):
                 ],
             )
 
-    def post_process(self):
-        super().post_process()
+    def post_process(self, formdata=None):
+        super().post_process(formdata)
         if self._choices_callable is not None:
             self.choices = self._invoke_choices_callback(self._choices_callable)
 
