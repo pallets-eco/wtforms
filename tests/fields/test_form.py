@@ -118,15 +118,15 @@ def test_post_process_propagates_through_form_field():
     class Inner(Form):
         x = StringField()
 
-        def post_process(self):
-            super().post_process()
+        def post_process(self, formdata=None):
+            super().post_process(formdata)
             captured.append(("inner", self.x.data))
 
     class Outer(Form):
         block = FormField(Inner)
 
-        def post_process(self):
-            super().post_process()
+        def post_process(self, formdata=None):
+            super().post_process(formdata)
             captured.append(("outer", self.block.form.x.data))
 
     Outer(DummyPostData({"block-x": "v"}))
@@ -182,9 +182,9 @@ def test_post_process_mutation_propagates_top_down():
         tenant = StringField()
         block = FormField(Inner)
 
-        def post_process(self):
+        def post_process(self, formdata=None):
             self.tenant.data = (self.tenant.data or "").upper()
-            super().post_process()
+            super().post_process(formdata)
 
     Outer(DummyPostData({"tenant": "acme", "block-item": "a"}))
     assert captured == ["ACME"]

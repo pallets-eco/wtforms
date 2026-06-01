@@ -131,15 +131,20 @@ class BaseForm:
             field.process(formdata, data, extra_filters=field_extra_filters)
 
         if self._parent_form is None:
-            self.post_process()
+            self.post_process(formdata)
 
-    def post_process(self):
+    def post_process(self, formdata=None):
         """Hook called at the end of :meth:`process` on the root form.
 
         Runs the :meth:`~fields.Field.post_process` hook on every field, after
         all fields have been processed. Override this on a form subclass to add
-        cross-field finalization logic; call ``super().post_process()`` to keep
-        per-field hooks running.
+        cross-field finalization logic; call ``super().post_process(formdata)``
+        to keep per-field hooks running.
+
+        :param formdata: The resolved formdata the form was bound with
+            (already passed through :meth:`~meta.DefaultMeta.wrap_formdata`),
+            or ``None`` for non-formdata cycles. Forwarded to every nested
+            ``post_process``.
 
         ``post_process`` is only triggered automatically on the root form. Forms
         nested inside a :class:`~fields.FormField` (or via :class:`~fields.FieldList`
@@ -148,7 +153,7 @@ class BaseForm:
         ``post_process`` runs exactly once per processing cycle.
         """
         for field in self._fields.values():
-            field.post_process()
+            field.post_process(formdata)
 
     def validate(self, extra_validators=None):
         """
