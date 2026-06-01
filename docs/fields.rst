@@ -407,13 +407,27 @@ Choice Fields
             BLUE = 3
 
         class PaintForm(Form):
-            color = SelectField(choices=SelectChoice.from_enum(Color), coerce=Color)
+            color = SelectField(
+                choices=SelectChoice.from_enum(Color),
+                coerce=SelectChoice.coerce_by_name(Color),
+            )
 
-    :meth:`SelectChoice.from_enum` builds the option list from the Enum items;
-    the HTML ``value`` of each option is the item's ``name``. Passing the
-    Enum class itself as ``coerce`` installs the matching coercion, so
+    :meth:`SelectChoice.from_enum` builds the option list from the Enum
+    items; the HTML ``value`` of each option is the item's ``name``.
+    :meth:`SelectChoice.coerce_by_name` returns the matching ``coerce``
+    callable that resolves names back into members, so
     ``form.color.data`` is a ``Color`` item after submit. Pre-selecting
     works the usual way, with an Enum item: ``PaintForm(color=Color.RED)``.
+
+    If you'd rather submit ``item.value`` instead of ``item.name``,
+    pass the Enum class directly as ``coerce``; ``EnumCls(value)`` is
+    then used to resolve the submitted string::
+
+        class PaintForm(Form):
+            color = SelectField(
+                choices=[(m.value, m.name) for m in Color],
+                coerce=Color,
+            )
 
     By default the option label is ``str(item)`` if the Enum defines its
     own ``__str__`` (also the case for :class:`enum.StrEnum`), otherwise

@@ -2,7 +2,6 @@ import warnings
 from dataclasses import dataclass
 from dataclasses import field
 from dataclasses import replace
-from enum import Enum
 from itertools import groupby
 from operator import attrgetter
 from typing import NamedTuple
@@ -19,18 +18,6 @@ __all__ = (
     "SelectMultipleField",
     "RadioField",
 )
-
-
-def _enum_coerce(enum_cls):
-    def coerce(v):
-        if isinstance(v, enum_cls):
-            return v
-        try:
-            return enum_cls[v]
-        except KeyError as e:
-            raise ValueError(str(e)) from e
-
-    return coerce
 
 
 class Choice(NamedTuple):
@@ -98,10 +85,34 @@ class SelectChoice:
         defaults to ``str(item)`` when the Enum defines its own
         ``__str__``, otherwise to ``item.name``. Pass ``label=`` (a
         callable taking an item) to override.
+
+        Pair with :meth:`coerce_by_name` to round-trip the submitted
+        name back into an Enum member.
         """
         if label is None:
             label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
         return [cls(value=m.name, label=label(m)) for m in enum_cls]
+
+    @staticmethod
+    def coerce_by_name(enum_cls):
+        """Return a ``coerce`` callable that resolves member names back
+        into Enum members.
+
+        Use this when ``choices`` come from :meth:`from_enum`, which
+        emits ``member.name`` as the HTML ``value=``. If you build
+        choices with ``member.value`` instead, pass ``coerce=EnumCls``
+        directly — that performs the standard ``EnumCls(value)`` lookup.
+        """
+
+        def coerce(v):
+            if isinstance(v, enum_cls):
+                return v
+            try:
+                return enum_cls[v]
+            except KeyError as e:
+                raise ValueError(str(e)) from e
+
+        return coerce
 
     @classmethod
     def from_input(cls, input, optgroup=None):
@@ -334,8 +345,6 @@ class SelectField(SelectFieldBase):
         **kwargs,
     ):
         super().__init__(label, validators, **kwargs)
-        if isinstance(coerce, type) and issubclass(coerce, Enum):
-            coerce = _enum_coerce(coerce)
         self.coerce = coerce
         if callable(choices):
             self._choices_callable = choices

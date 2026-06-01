@@ -677,27 +677,66 @@ def test_choice_from_enum_custom_label():
 
 
 def test_select_field_enum_coerce_round_trip():
-    """``coerce=EnumCls`` round-trips form data back to an Enum member."""
-    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
+    """``coerce_by_name`` round-trips form data back to an Enum member."""
+    F = make_form(
+        a=SelectField(
+            choices=SelectChoice.from_enum(_Plain),
+            coerce=SelectChoice.coerce_by_name(_Plain),
+        )
+    )
     form = F(DummyPostData(a=["RED"]))
     assert form.a.data is _Plain.RED
     assert form.validate()
 
 
 def test_select_field_enum_coerce_accepts_member():
-    """``coerce=EnumCls`` accepts an already-coerced member without re-lookup."""
-    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
+    """``coerce_by_name`` accepts an already-coerced member without re-lookup."""
+    F = make_form(
+        a=SelectField(
+            choices=SelectChoice.from_enum(_Plain),
+            coerce=SelectChoice.coerce_by_name(_Plain),
+        )
+    )
     form = F(a=_Plain.GREEN)
     assert form.a.data is _Plain.GREEN
 
 
 def test_select_field_enum_coerce_invalid():
     """An unknown name fails validation cleanly (KeyError → ValueError)."""
-    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
+    F = make_form(
+        a=SelectField(
+            choices=SelectChoice.from_enum(_Plain),
+            coerce=SelectChoice.coerce_by_name(_Plain),
+        )
+    )
     form = F(DummyPostData(a=["BAD"]))
     assert not form.validate()
     assert form.a.data is None
     assert "Invalid Choice: could not coerce." in form.a.errors
+
+
+def test_select_field_enum_value_lookup():
+    """``coerce=EnumCls`` keeps the standard ``EnumCls(value)`` lookup."""
+
+    class _GH(Enum):
+        GITHUB = "github"
+        GITLAB = "gitlab"
+
+    F = make_form(
+        a=SelectField(
+            choices=[SelectChoice(m.value, m.name) for m in _GH],
+            coerce=_GH,
+        )
+    )
+    form = F(DummyPostData(a=["github"]))
+    assert form.a.data is _GH.GITHUB
+    assert form.validate()
+
+
+def test_select_field_coerce_passed_through():
+    """``coerce`` is stored as provided — no implicit wrapping."""
+    F = make_form(a=SelectField(choices=[SelectChoice("x", "X")], coerce=_Plain))
+    assert F().a.coerce is _Plain
 
 
 def test_iter_choices_tuple_unpacking():
@@ -713,6 +752,11 @@ def test_iter_choices_tuple_unpacking():
 
 def test_select_field_enum_renders_selected():
     """Pre-selecting a member highlights the right option."""
-    F = make_form(a=SelectField(choices=SelectChoice.from_enum(_Plain), coerce=_Plain))
+    F = make_form(
+        a=SelectField(
+            choices=SelectChoice.from_enum(_Plain),
+            coerce=SelectChoice.coerce_by_name(_Plain),
+        )
+    )
     form = F(a=_Plain.GREEN)
     assert '<option selected value="GREEN">GREEN</option>' in form.a()

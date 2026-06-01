@@ -296,10 +296,31 @@ class _Color(Enum):
 
 
 def test_select_multiple_enum_round_trip():
-    """``coerce=EnumCls`` works for SelectMultipleField too."""
+    """``coerce_by_name`` works for SelectMultipleField too."""
     F = make_form(
-        a=SelectMultipleField(choices=SelectChoice.from_enum(_Color), coerce=_Color)
+        a=SelectMultipleField(
+            choices=SelectChoice.from_enum(_Color),
+            coerce=SelectChoice.coerce_by_name(_Color),
+        )
     )
     form = F(DummyPostData(a=["RED", "BLUE"]))
     assert form.validate()
     assert form.a.data == [_Color.RED, _Color.BLUE]
+
+
+def test_select_multiple_enum_value_lookup():
+    """``coerce=EnumCls`` keeps the standard value lookup on multi-select."""
+
+    class _Kind(Enum):
+        SMALL = "2-5"
+        BIG = "5-10"
+
+    F = make_form(
+        a=SelectMultipleField(
+            choices=[SelectChoice(m.value, m.name) for m in _Kind],
+            coerce=_Kind,
+        )
+    )
+    form = F(DummyPostData(a=["2-5", "5-10"]))
+    assert form.validate()
+    assert form.a.data == [_Kind.SMALL, _Kind.BIG]

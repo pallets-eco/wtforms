@@ -1,5 +1,15 @@
 .. currentmodule:: wtforms
 
+Version 3.3.0b3
+---------------
+
+Unreleased
+
+- Stop wrapping ``coerce=EnumCls`` into a name lookup on
+  :class:`~fields.SelectField`. Pair
+  :meth:`fields.SelectChoice.from_enum` with the new
+  :meth:`fields.SelectChoice.coerce_by_name` instead. :issue:`922`
+
 Version 3.3.0b2
 ---------------
 
