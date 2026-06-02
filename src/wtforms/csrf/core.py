@@ -1,3 +1,5 @@
+import hmac
+
 from wtforms.fields import HiddenField
 from wtforms.validators import ValidationError
 
@@ -92,5 +94,11 @@ class CSRF:
         :param form: The form which has this CSRF token.
         :param field: The CSRF token field.
         """
-        if field.current_token != field.data:
+        if (
+            not field.current_token
+            or not field.data
+            or not hmac.compare_digest(
+                field.current_token.encode("utf8"), field.data.encode("utf8")
+            )
+        ):
             raise ValidationError(field.gettext("Invalid CSRF Token."))

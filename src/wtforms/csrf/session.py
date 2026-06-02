@@ -68,7 +68,9 @@ class SessionCSRF(CSRF):
         check_val = (self.session["csrf"] + expires).encode("utf8")
 
         hmac_compare = hmac.new(meta.csrf_secret, check_val, digestmod=sha1)
-        if hmac_compare.hexdigest() != hmac_csrf:
+        if not hmac.compare_digest(
+            hmac_compare.hexdigest().encode("utf8"), hmac_csrf.encode("utf8")
+        ):
             raise ValidationError(field.gettext("CSRF failed."))
 
         if self.time_limit:
