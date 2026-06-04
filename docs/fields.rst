@@ -425,7 +425,7 @@ Choice Fields
 
         class PaintForm(Form):
             color = SelectField(
-                choices=[(m.value, m.name) for m in Color],
+                choices=[SelectChoice(m.value, m.name) for m in Color],
                 coerce=Color,
             )
 
