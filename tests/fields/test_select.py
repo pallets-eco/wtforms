@@ -446,7 +446,13 @@ def test_iter_groups_items_unpack_as_3_2_tuples():
     form = F(a="a")
     for _label, items in form.a.iter_groups():
         for value, label, selected, render_kw, disabled in items:
-            assert (value, label, selected, render_kw, disabled) == ("a", "Foo", True, {}, False)
+            assert (value, label, selected, render_kw, disabled) == (
+                "a",
+                "Foo",
+                True,
+                {},
+                False,
+            )
 
 
 def test_dict_str_str_flat_choices():
@@ -707,7 +713,10 @@ def test_iter_choices_tuple_unpacking():
         a=SelectField(choices=[SelectChoice("a", "Foo"), SelectChoice("b", "Bar")])
     )
     form = F(a="a")
-    unpacked = [(v, lab, sel, rk, disabled) for v, lab, sel, rk, disabled in form.a.iter_choices()]
+    unpacked = [
+        (v, lab, sel, rk, disabled)
+        for v, lab, sel, rk, disabled in form.a.iter_choices()
+    ]
     assert unpacked == [("a", "Foo", True, {}, False), ("b", "Bar", False, {}, False)]
 
 
@@ -717,8 +726,9 @@ def test_select_field_enum_renders_selected():
     form = F(a=_Plain.GREEN)
     assert '<option selected value="GREEN">GREEN</option>' in form.a()
 
+
 def test_disabled_option():
-    """SelectChoice supports disable=True, which renders the option with the disabled attribute."""
+    """SelectChoice supports disable=True, rendering <option disabled>."""
     F = make_form(
         a=SelectField(
             choices=[
@@ -729,5 +739,5 @@ def test_disabled_option():
     )
     form = F(a="a")
     html = form.a()
-    assert 'disabled' in html
+    assert "disabled" in html
     assert html.count("disabled") == 1
