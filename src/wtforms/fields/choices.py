@@ -59,6 +59,7 @@ class Choice(NamedTuple):
     label: str
     selected: bool
     render_kw: dict
+    disabled: bool = False
 
 
 @dataclass
@@ -82,6 +83,7 @@ class SelectChoice:
     label: str = None  # type: ignore[assignment]
     render_kw: dict = field(default_factory=dict)
     optgroup: str | None = None
+    disabled: bool = False
 
     def __post_init__(self):
         if self.label is None:
@@ -365,6 +367,7 @@ class SelectField(SelectFieldBase):
                 label=c.label,
                 selected=self.coerce(c.value) == self.data,
                 render_kw=c.render_kw,
+                disabled=c.disabled,
             )
             for c in choices
         ]

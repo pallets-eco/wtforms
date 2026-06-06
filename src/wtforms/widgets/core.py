@@ -448,6 +448,8 @@ class Select:
         options = {"value": value, **(choice.render_kw or {}), **kwargs}
         if choice.selected:
             options["selected"] = True
+        if choice.disabled:
+            options["disabled"] = True
         label = escape(choice.label or choice.value)
         return Markup(f"<option {html_params(**options)}>{label}</option>")
 
