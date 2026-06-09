@@ -1,9 +1,12 @@
+from enum import Enum
+
 import pytest
 
 from tests.common import DummyPostData
 from wtforms import DataList
 from wtforms import DataListChoice
 from wtforms import EmailField
+from wtforms import enum_datalist
 from wtforms import FieldList
 from wtforms import Form
 from wtforms import FormField
@@ -337,3 +340,20 @@ def test_default_widget_is_datalist_widget():
     assert isinstance(DataList.widget, DataListWidget)
     dl = DataList(["a"])
     assert isinstance(dl.widget, DataListWidget)
+
+
+def test_enum_datalist():
+    """``enum_datalist`` mirrors ``enum_choices`` for DataListChoice."""
+
+    class Provider(Enum):
+        GITHUB = "github"
+        GITLAB = "gitlab"
+
+    assert enum_datalist(Provider) == [
+        DataListChoice(value="github", label="GITHUB"),
+        DataListChoice(value="gitlab", label="GITLAB"),
+    ]
+    assert enum_datalist(Provider, by="name") == [
+        DataListChoice(value="GITHUB", label="GITHUB"),
+        DataListChoice(value="GITLAB", label="GITLAB"),
+    ]

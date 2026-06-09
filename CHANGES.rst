@@ -5,10 +5,11 @@ Version 3.3.0b3
 
 Unreleased
 
-- Stop wrapping ``coerce=EnumCls`` into a name lookup on
-  :class:`~fields.SelectField`. Pair
-  :meth:`fields.SelectChoice.from_enum` with the new
-  :meth:`fields.SelectChoice.coerce_by_name` instead. :issue:`922`
+- Add :func:`fields.enum_choices`, :func:`fields.enum_coerce` and
+  :func:`~wtforms.datalist.enum_datalist` for Enum-backed choices,
+  replacing ``SelectChoice.from_enum`` and friends. :issue:`922`
+- An Enum ``coerce`` is no longer wrapped, and options default to
+  ``member.value``. :issue:`922`
 
 Version 3.3.0b2
 ---------------

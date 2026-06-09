@@ -8,6 +8,8 @@ from tests.common import DummyPostData
 from wtforms import validators
 from wtforms import widgets
 from wtforms.fields import Choice
+from wtforms.fields import enum_choices
+from wtforms.fields import enum_coerce
 from wtforms.fields import Field
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
@@ -630,58 +632,103 @@ class _Level(IntEnum):
     HIGH = 2
 
 
-def test_choice_from_enum_plain():
-    """Plain Enum without ``__str__`` falls back to ``member.name`` for the label."""
-    assert SelectChoice.from_enum(_Plain) == [
+class _Provider(Enum):
+    GITHUB = "github"
+    GITLAB = "gitlab"
+
+
+def test_enum_choices_default_value():
+    """By default the HTML value is ``member.value``."""
+    assert enum_choices(_Provider) == [
+        SelectChoice(value="github", label="GITHUB"),
+        SelectChoice(value="gitlab", label="GITLAB"),
+    ]
+
+
+def test_enum_choices_by_name():
+    """``by="name"`` puts ``member.name`` on the wire."""
+    assert enum_choices(_Plain, by="name") == [
         SelectChoice(value="RED", label="RED"),
         SelectChoice(value="GREEN", label="GREEN"),
     ]
 
 
-def test_choice_from_enum_with_dunder_str():
-    """An Enum that overrides ``__str__`` uses ``str(member)`` as label."""
-    assert SelectChoice.from_enum(_Pretty) == [
-        SelectChoice(value="RED", label="Red"),
-        SelectChoice(value="GREEN", label="Green"),
+def test_enum_choices_dunder_str_label():
+    """An Enum overriding ``__str__`` uses ``str(member)`` as label."""
+    assert enum_choices(_Pretty) == [
+        SelectChoice(value=1, label="Red"),
+        SelectChoice(value=2, label="Green"),
     ]
 
 
 @pytest.mark.skipif(sys.version_info < (3, 11), reason="StrEnum requires 3.11+")
-def test_choice_from_enum_strenum():
-    """StrEnum uses ``str(member)`` (the value) as label."""
+def test_enum_choices_strenum():
+    """StrEnum uses ``str(member)`` (the value) for both value and label."""
 
     class _Status(StrEnum):
         ACTIVE = "active"
         INACTIVE = "inactive"
 
-    assert SelectChoice.from_enum(_Status) == [
-        SelectChoice(value="ACTIVE", label="active"),
-        SelectChoice(value="INACTIVE", label="inactive"),
+    assert enum_choices(_Status) == [
+        SelectChoice(value="active", label="active"),
+        SelectChoice(value="inactive", label="inactive"),
     ]
 
 
-def test_choice_from_enum_intenum():
-    """IntEnum has no ``__str__`` injected; falls back to ``member.name``."""
-    assert SelectChoice.from_enum(_Level) == [
-        SelectChoice(value="LOW", label="LOW"),
-        SelectChoice(value="HIGH", label="HIGH"),
+def test_enum_choices_intenum_label():
+    """IntEnum has no ``__str__`` injected; label falls back to ``member.name``."""
+    assert enum_choices(_Level) == [
+        SelectChoice(value=1, label="LOW"),
+        SelectChoice(value=2, label="HIGH"),
     ]
 
 
-def test_choice_from_enum_custom_label():
+def test_enum_choices_custom_label():
     """A ``label=`` callable overrides the default."""
-    assert SelectChoice.from_enum(_Plain, label=lambda m: m.name.title()) == [
-        SelectChoice(value="RED", label="Red"),
-        SelectChoice(value="GREEN", label="Green"),
+    assert enum_choices(_Provider, label=lambda m: m.name.title()) == [
+        SelectChoice(value="github", label="Github"),
+        SelectChoice(value="gitlab", label="Gitlab"),
     ]
 
 
-def test_select_field_enum_coerce_round_trip():
-    """``coerce_by_name`` round-trips form data back to an Enum member."""
+def test_enum_choices_invalid_by():
+    """An unknown ``by`` is rejected."""
+    with pytest.raises(ValueError):
+        enum_choices(_Provider, by="bogus")
+
+
+def test_enum_coerce_value_round_trip():
+    """The default ``enum_coerce`` round-trips ``member.value``."""
     F = make_form(
         a=SelectField(
-            choices=SelectChoice.from_enum(_Plain),
-            coerce=SelectChoice.coerce_by_name(_Plain),
+            choices=enum_choices(_Provider),
+            coerce=enum_coerce(_Provider),
+        )
+    )
+    form = F(DummyPostData(a=["github"]))
+    assert form.a.data is _Provider.GITHUB
+    assert form.validate()
+
+
+def test_enum_coerce_intenum_value_round_trip():
+    """``enum_coerce`` resolves through ``str(value)``, so IntEnum round-trips."""
+    F = make_form(
+        a=SelectField(
+            choices=enum_choices(_Level),
+            coerce=enum_coerce(_Level),
+        )
+    )
+    form = F(DummyPostData(a=["1"]))
+    assert form.a.data is _Level.LOW
+    assert form.validate()
+
+
+def test_enum_coerce_by_name_round_trip():
+    """``by="name"`` round-trips ``member.name``."""
+    F = make_form(
+        a=SelectField(
+            choices=enum_choices(_Plain, by="name"),
+            coerce=enum_coerce(_Plain, by="name"),
         )
     )
     form = F(DummyPostData(a=["RED"]))
@@ -689,47 +736,48 @@ def test_select_field_enum_coerce_round_trip():
     assert form.validate()
 
 
-def test_select_field_enum_coerce_accepts_member():
-    """``coerce_by_name`` accepts an already-coerced member without re-lookup."""
+def test_enum_coerce_accepts_member():
+    """``enum_coerce`` accepts an already-coerced member without re-lookup."""
     F = make_form(
         a=SelectField(
-            choices=SelectChoice.from_enum(_Plain),
-            coerce=SelectChoice.coerce_by_name(_Plain),
+            choices=enum_choices(_Provider),
+            coerce=enum_coerce(_Provider),
         )
     )
-    form = F(a=_Plain.GREEN)
-    assert form.a.data is _Plain.GREEN
+    form = F(a=_Provider.GITLAB)
+    assert form.a.data is _Provider.GITLAB
 
 
-def test_select_field_enum_coerce_invalid():
-    """An unknown name fails validation cleanly (KeyError → ValueError)."""
+def test_enum_coerce_invalid():
+    """An unknown submitted value fails validation cleanly (KeyError → ValueError)."""
     F = make_form(
         a=SelectField(
-            choices=SelectChoice.from_enum(_Plain),
-            coerce=SelectChoice.coerce_by_name(_Plain),
+            choices=enum_choices(_Provider),
+            coerce=enum_coerce(_Provider),
         )
     )
-    form = F(DummyPostData(a=["BAD"]))
+    form = F(DummyPostData(a=["nope"]))
     assert not form.validate()
     assert form.a.data is None
     assert "Invalid Choice: could not coerce." in form.a.errors
 
 
-def test_select_field_enum_value_lookup():
-    """``coerce=EnumCls`` keeps the standard ``EnumCls(value)`` lookup."""
+def test_enum_coerce_invalid_by():
+    """An unknown ``by`` is rejected."""
+    with pytest.raises(ValueError):
+        enum_coerce(_Provider, by="bogus")
 
-    class _GH(Enum):
-        GITHUB = "github"
-        GITLAB = "gitlab"
 
+def test_select_field_enum_class_as_coerce():
+    """A string-valued Enum works as ``coerce`` directly (standard lookup)."""
     F = make_form(
         a=SelectField(
-            choices=[SelectChoice(m.value, m.name) for m in _GH],
-            coerce=_GH,
+            choices=enum_choices(_Provider),
+            coerce=_Provider,
         )
     )
     form = F(DummyPostData(a=["github"]))
-    assert form.a.data is _GH.GITHUB
+    assert form.a.data is _Provider.GITHUB
     assert form.validate()
 
 
@@ -754,9 +802,9 @@ def test_select_field_enum_renders_selected():
     """Pre-selecting a member highlights the right option."""
     F = make_form(
         a=SelectField(
-            choices=SelectChoice.from_enum(_Plain),
-            coerce=SelectChoice.coerce_by_name(_Plain),
+            choices=enum_choices(_Provider),
+            coerce=enum_coerce(_Provider),
         )
     )
-    form = F(a=_Plain.GREEN)
-    assert '<option selected value="GREEN">GREEN</option>' in form.a()
+    form = F(a=_Provider.GITLAB)
+    assert '<option selected value="gitlab">GITLAB</option>' in form.a()

@@ -1,10 +1,13 @@
 from enum import Enum
+from enum import IntEnum
 
 import pytest
 
 from tests.common import DummyPostData
 from wtforms import validators
 from wtforms.fields import Choice
+from wtforms.fields import enum_choices
+from wtforms.fields import enum_coerce
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
 from wtforms.fields import SelectMultipleField
@@ -290,17 +293,30 @@ def test_can_supply_coercable_values_as_options():
 
 
 class _Color(Enum):
-    RED = 1
-    GREEN = 2
-    BLUE = 3
+    RED = "red"
+    GREEN = "green"
+    BLUE = "blue"
 
 
-def test_select_multiple_enum_round_trip():
-    """``coerce_by_name`` works for SelectMultipleField too."""
+def test_select_multiple_enum_value_round_trip():
+    """The default value coercion works for SelectMultipleField too."""
     F = make_form(
         a=SelectMultipleField(
-            choices=SelectChoice.from_enum(_Color),
-            coerce=SelectChoice.coerce_by_name(_Color),
+            choices=enum_choices(_Color),
+            coerce=enum_coerce(_Color),
+        )
+    )
+    form = F(DummyPostData(a=["red", "blue"]))
+    assert form.validate()
+    assert form.a.data == [_Color.RED, _Color.BLUE]
+
+
+def test_select_multiple_enum_by_name_round_trip():
+    """``by="name"`` round-trips member names on multi-select."""
+    F = make_form(
+        a=SelectMultipleField(
+            choices=enum_choices(_Color, by="name"),
+            coerce=enum_coerce(_Color, by="name"),
         )
     )
     form = F(DummyPostData(a=["RED", "BLUE"]))
@@ -308,19 +324,19 @@ def test_select_multiple_enum_round_trip():
     assert form.a.data == [_Color.RED, _Color.BLUE]
 
 
-def test_select_multiple_enum_value_lookup():
-    """``coerce=EnumCls`` keeps the standard value lookup on multi-select."""
+def test_select_multiple_enum_intenum_round_trip():
+    """``enum_coerce`` resolves through ``str(value)``, so IntEnum round-trips."""
 
-    class _Kind(Enum):
-        SMALL = "2-5"
-        BIG = "5-10"
+    class _Kind(IntEnum):
+        SMALL = 2
+        BIG = 5
 
     F = make_form(
         a=SelectMultipleField(
-            choices=[SelectChoice(m.value, m.name) for m in _Kind],
-            coerce=_Kind,
+            choices=enum_choices(_Kind),
+            coerce=enum_coerce(_Kind),
         )
     )
-    form = F(DummyPostData(a=["2-5", "5-10"]))
+    form = F(DummyPostData(a=["2", "5"]))
     assert form.validate()
     assert form.a.data == [_Kind.SMALL, _Kind.BIG]
