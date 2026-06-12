@@ -3,7 +3,7 @@
 Version 3.3.0b3
 ---------------
 
-Unreleased
+Released 2026-06-12
 
 - Add :func:`fields.enum_choices`, :func:`fields.enum_coerce` and
   :func:`~wtforms.datalist.enum_datalist` for Enum-backed choices,
