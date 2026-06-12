@@ -2,6 +2,7 @@ from wtforms import validators
 from wtforms import widgets
 from wtforms.datalist import DataList
 from wtforms.datalist import DataListChoice
+from wtforms.datalist import enum_datalist
 from wtforms.fields.choices import Choice
 from wtforms.fields.choices import RadioField
 from wtforms.fields.choices import SelectChoice
@@ -86,4 +87,5 @@ __all__ = [
     "Choice",
     "SelectChoice",
     "DataListChoice",
+    "enum_datalist",
 ]

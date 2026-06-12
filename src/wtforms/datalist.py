@@ -4,9 +4,10 @@ from dataclasses import field
 
 from wtforms import widgets
 from wtforms._compat import get_signature
+from wtforms.fields.choices import _enum_options
 from wtforms.fields.choices import Choice
 
-__all__ = ("DataList", "DataListChoice")
+__all__ = ("DataList", "DataListChoice", "enum_datalist")
 
 
 @dataclass
@@ -36,16 +37,6 @@ class DataListChoice:
         return iter((self.value, self.label, self.render_kw))
 
     @classmethod
-    def from_enum(cls, enum_cls, *, label=None):
-        """Build a list of choices from an :class:`enum.Enum` class.
-
-        See :meth:`SelectChoice.from_enum` for details.
-        """
-        if label is None:
-            label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
-        return [cls(value=m.name, label=label(m)) for m in enum_cls]
-
-    @classmethod
     def from_input(cls, input):
         """Coerce a value passed by the user into a :class:`DataListChoice`."""
         if isinstance(input, DataListChoice):
@@ -71,6 +62,20 @@ class DataListChoice:
 
         if isinstance(input, tuple):
             return cls(*input)
+
+
+def enum_datalist(enum_cls, *, by="value", label=None):
+    """Build a list of :class:`DataListChoice` from an :class:`enum.Enum` class.
+
+    Same semantics as :func:`~wtforms.fields.enum_choices`: ``by`` selects
+    which member attribute becomes the ``<option>`` value (``"value"`` by
+    default, ``"name"`` otherwise) and ``label`` defaults to ``str(member)``
+    when the Enum defines its own ``__str__``, else ``member.name``.
+
+    A ``<datalist>`` only suggests values for a free-text field, so there is
+    no coercion counterpart — the field stores whatever string is submitted.
+    """
+    return _enum_options(enum_cls, by, label, DataListChoice)
 
 
 class DataList:

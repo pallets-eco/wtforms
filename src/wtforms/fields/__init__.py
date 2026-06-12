@@ -1,4 +1,6 @@
 from wtforms.fields.choices import Choice
+from wtforms.fields.choices import enum_choices
+from wtforms.fields.choices import enum_coerce
 from wtforms.fields.choices import RadioField
 from wtforms.fields.choices import SelectChoice
 from wtforms.fields.choices import SelectField
@@ -46,6 +48,8 @@ __all__ = [
     "SelectMultipleField",
     "SelectFieldBase",
     "RadioField",
+    "enum_choices",
+    "enum_coerce",
     "DateTimeField",
     "DateField",
     "TimeField",

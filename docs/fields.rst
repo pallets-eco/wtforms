@@ -337,9 +337,7 @@ Choice Fields
     option cannot be applied to your problem you may wish to skip choice
     validation (see below).
 
-    **Select fields with ``<optgroup>``**::
-
-        Use :class:`SelectChoice` to assign an option to an ``<optgroup>``.
+    **Select fields with optgroup**::
 
         class PastebinEntry(Form):
             language = SelectField('Programming Language', choices=[
@@ -348,6 +346,8 @@ Choice Fields
                 SelectChoice('py', 'Python', optgroup='Interpreted'),
                 SelectChoice('text', 'Plain Text'),
             ])
+
+    Use :class:`SelectChoice` to assign an option to an ``<optgroup>``.
 
     **Select fields with dynamic choice values**::
 
@@ -400,28 +400,44 @@ Choice Fields
     **Select fields backed by an Enum**::
 
         from enum import Enum
+        from wtforms.fields import enum_choices, enum_coerce
 
         class Color(Enum):
-            RED = 1
-            GREEN = 2
-            BLUE = 3
+            RED = "red"
+            GREEN = "green"
+            BLUE = "blue"
 
         class PaintForm(Form):
-            color = SelectField(choices=SelectChoice.from_enum(Color), coerce=Color)
+            color = SelectField(
+                choices=enum_choices(Color),
+                coerce=enum_coerce(Color),
+            )
 
-    :meth:`SelectChoice.from_enum` builds the option list from the Enum items;
-    the HTML ``value`` of each option is the item's ``name``. Passing the
-    Enum class itself as ``coerce`` installs the matching coercion, so
-    ``form.color.data`` is a ``Color`` item after submit. Pre-selecting
-    works the usual way, with an Enum item: ``PaintForm(color=Color.RED)``.
+    :func:`~wtforms.fields.enum_choices` builds the option list from
+    the Enum members; by default the HTML ``value`` of each option is the
+    member's ``value`` (``"red"``, ``"green"``, ...).
+    :func:`~wtforms.fields.enum_coerce` returns the matching ``coerce``
+    callable that resolves the submitted string back into a member, so
+    ``form.color.data`` is a ``Color`` member after submit. Pre-selecting
+    works the usual way, with an Enum member: ``PaintForm(color=Color.RED)``.
 
-    By default the option label is ``str(item)`` if the Enum defines its
+    Use ``by="name"`` on **both** helpers when the Enum value is not a good
+    transport identifier — non-unique, non-serialisable, or when you simply
+    want ``member.name`` on the wire::
+
+        class PaintForm(Form):
+            color = SelectField(
+                choices=enum_choices(Color, by="name"),
+                coerce=enum_coerce(Color, by="name"),
+            )
+
+    By default the option label is ``str(member)`` if the Enum defines its
     own ``__str__`` (also the case for :class:`enum.StrEnum`), otherwise
-    ``item.name``. To customise, pass a ``label`` callable taking an Enum
-    item and returning the label string::
+    ``member.name``. To customise, pass a ``label`` callable taking an Enum
+    member and returning the label string::
 
-        SelectChoice.from_enum(Color, label=lambda item: item.name.title())
-        # → [SelectChoice('RED', 'Red'), SelectChoice('GREEN', 'Green'), SelectChoice('BLUE', 'Blue')]
+        enum_choices(Color, label=lambda member: member.name.title())
+        # → [SelectChoice('red', 'Red'), SelectChoice('green', 'Green'), SelectChoice('blue', 'Blue')]
 
     **Skipping choice validation**::
 
@@ -453,6 +469,10 @@ Choice Fields
    which is checked and coerced from the form input.  Any submitted choices
    which are not in the given choices list will cause validation on the field
    to fail.
+
+.. autofunction:: wtforms.fields.enum_choices
+
+.. autofunction:: wtforms.fields.enum_coerce
 
 Submit fields
 -------------
@@ -580,8 +600,6 @@ Data Lists
 
 .. currentmodule:: wtforms
 
-.. autoclass:: DataListChoice
-
 .. class:: DataList(choices=None, *, render_kw=None, widget=None)
 
     A :mdn-tag:`datalist` of suggestions. Unlike
@@ -658,6 +676,9 @@ Data Lists
     :class:`~wtforms.fields.TextAreaField` is silently ignored by the
     browser.
 
+.. autoclass:: DataListChoice
+
+.. autofunction:: wtforms.datalist.enum_datalist
 
 .. currentmodule:: wtforms.fields
 

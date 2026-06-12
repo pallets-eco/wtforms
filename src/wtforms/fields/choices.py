@@ -2,7 +2,6 @@ import warnings
 from dataclasses import dataclass
 from dataclasses import field
 from dataclasses import replace
-from enum import Enum
 from itertools import groupby
 from operator import attrgetter
 from typing import NamedTuple
@@ -19,18 +18,6 @@ __all__ = (
     "SelectMultipleField",
     "RadioField",
 )
-
-
-def _enum_coerce(enum_cls):
-    def coerce(v):
-        if isinstance(v, enum_cls):
-            return v
-        try:
-            return enum_cls[v]
-        except KeyError as e:
-            raise ValueError(str(e)) from e
-
-    return coerce
 
 
 class Choice(NamedTuple):
@@ -91,19 +78,6 @@ class SelectChoice:
         return iter((self.value, self.label, self.render_kw, self.optgroup))
 
     @classmethod
-    def from_enum(cls, enum_cls, *, label=None):
-        """Build a list of choices from an :class:`enum.Enum` class.
-
-        The HTML value of each option is the item ``name``. The label
-        defaults to ``str(item)`` when the Enum defines its own
-        ``__str__``, otherwise to ``item.name``. Pass ``label=`` (a
-        callable taking an item) to override.
-        """
-        if label is None:
-            label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
-        return [cls(value=m.name, label=label(m)) for m in enum_cls]
-
-    @classmethod
     def from_input(cls, input, optgroup=None):
         """Coerce a value passed by the user via ``choices=...`` into a
         :class:`SelectChoice`.
@@ -139,6 +113,60 @@ class SelectChoice:
                     f"got {len(input)}"
                 )
             return cls(*input, optgroup=optgroup)
+
+
+def _enum_options(enum_cls, by, label, factory):
+    if by not in ("value", "name"):
+        raise ValueError(f"by must be 'value' or 'name', got {by!r}")
+    if label is None:
+        label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
+    return [factory(value=getattr(m, by), label=label(m)) for m in enum_cls]
+
+
+def enum_choices(enum_cls, *, by="value", label=None):
+    """Build a list of :class:`SelectChoice` from an :class:`enum.Enum` class.
+
+    ``by`` selects which member attribute becomes the HTML ``value=``:
+    ``"value"`` (the default) emits ``member.value``, ``"name"`` emits
+    ``member.name``. Use ``"name"`` for enums whose values are not good
+    transport identifiers (non-string, non-unique or non-serialisable).
+
+    The label defaults to ``str(member)`` when the Enum defines its own
+    ``__str__``, otherwise to ``member.name``. Pass ``label=`` (a callable
+    taking a member) to override.
+
+    Pair with :func:`enum_coerce` using the same ``by`` to round-trip the
+    submitted string back into a member.
+    """
+    return _enum_options(enum_cls, by, label, SelectChoice)
+
+
+def enum_coerce(enum_cls, *, by="value"):
+    """Return a ``coerce`` callable mapping a submitted string back to an
+    :class:`enum.Enum` member.
+
+    ``by`` must match the one passed to :func:`enum_choices`: ``"value"``
+    (the default) resolves ``str(member.value)`` — so ``IntEnum`` values
+    round-trip too — and ``"name"`` resolves ``member.name``. Already-coerced
+    members pass through unchanged.
+    """
+    if by not in ("value", "name"):
+        raise ValueError(f"by must be 'value' or 'name', got {by!r}")
+
+    def coerce(v):
+        if isinstance(v, enum_cls):
+            return v
+
+        try:
+            if by == "value":
+                by_value = {str(m.value): m for m in enum_cls}
+                return by_value[str(v)]
+            else:
+                return enum_cls[v]
+        except KeyError as e:
+            raise ValueError(str(e)) from e
+
+    return coerce
 
 
 def _normalize_iter_choice(choice):
@@ -334,8 +362,6 @@ class SelectField(SelectFieldBase):
         **kwargs,
     ):
         super().__init__(label, validators, **kwargs)
-        if isinstance(coerce, type) and issubclass(coerce, Enum):
-            coerce = _enum_coerce(coerce)
         self.coerce = coerce
         if callable(choices):
             self._choices_callable = choices

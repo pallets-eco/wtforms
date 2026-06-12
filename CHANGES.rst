@@ -1,5 +1,16 @@
 .. currentmodule:: wtforms
 
+Version 3.3.0b3
+---------------
+
+Unreleased
+
+- Add :func:`fields.enum_choices`, :func:`fields.enum_coerce` and
+  :func:`~wtforms.datalist.enum_datalist` for Enum-backed choices,
+  replacing ``SelectChoice.from_enum`` and friends. :issue:`922`
+- An Enum ``coerce`` is no longer wrapped, and options default to
+  ``member.value``. :issue:`922`
+
 Version 3.3.0b2
 ---------------
 
