@@ -26,6 +26,25 @@ def test_basic():
     assert form.c() == '<input id="c" name="c" type="week" value="2023-W03-0">'
 
 
+def test_iso_week():
+    class G(Form):
+        a = WeekField()
+
+    # HTML type=week is an ISO week. 2015-W01 starts on Monday 2014-12-29.
+    # %Y-W%W counted the first Monday of 2015 and returned January 5.
+    form = G(DummyPostData(a=["2015-W01"]))
+    assert form.a.data == date(2014, 12, 29)
+    assert form.a._value() == "2015-W01"
+
+    form = G(DummyPostData(a=["2026-W53"]))
+    assert form.a.data == date(2026, 12, 28)
+    assert form.a._value() == "2026-W53"
+
+    form = G(DummyPostData(a=["2020-W01"]))
+    assert form.a.data == date(2019, 12, 30)
+    assert form.a._value() == "2020-W01"
+
+
 def test_invalid_data():
     form = F(DummyPostData(a=["2008-Wbb"]))
 

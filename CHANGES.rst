@@ -5,6 +5,9 @@ Version 3.3.0b4
 
 Unreleased
 
+- :class:`~fields.WeekField` parsed an HTML week (``YYYY-Www``) with
+  ``%W`` instead of the ISO week. ``2015-W01`` became January 5, 2015
+  instead of December 29, 2014.
 - :class:`~datalist.DataList` ``choices`` accepts the shorthand
   ``{value: label}`` dict syntax. :issue:`886`
 - ``choices`` callables on fields nested in a :class:`~fields.FieldList` are
