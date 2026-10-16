@@ -23,7 +23,7 @@ class DateTimeField(Field):
     format will be accepted, and the first format in the list will be used
     to produce HTML values.
 
-    .. deprecated:: 3.2.3
+    .. deprecated:: 3.3.0
        ``DateTimeField`` renders ``<input type="datetime">``, which is
        obsolete. Use :class:`DateTimeLocalField` instead. ``DateTimeField``
        will be removed in WTForms 3.4.
