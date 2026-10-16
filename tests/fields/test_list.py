@@ -432,8 +432,8 @@ def test_formdata_with_sparse_indices_keeps_entry_obj_alignment():
 def test_append_entry_runs_choices_callback():
     """A SelectField choices callable nested in a FormField entry must be
     evaluated when the entry is added via append_entry, just as it would be
-    during the form's normal processing cycle. The callable is invoked in
-    SelectField.post_process, so append_entry must trigger it."""
+    during the form's normal processing cycle. SelectField.post_process marks
+    the choices for a refresh, so append_entry must call it."""
 
     def get_choices(form, field):
         return [("a", "A"), ("b", "B")]
@@ -465,3 +465,24 @@ def test_insert_entry_runs_choices_callback():
     assert 'name="items-0-sel"' in html
     assert '<option value="a">A</option>' in html
     assert '<option value="b">B</option>' in html
+
+
+def test_post_process_rerun_refreshes_field_list_entries():
+    """Running ``post_process`` again on the root form refreshes every entry."""
+
+    def choices(form, field):
+        return [form._parent_form.tenant.data]
+
+    class Inner(Form):
+        sel = SelectField(choices=choices)
+
+    F = make_form(
+        tenant=StringField(), items=FieldList(FormField(Inner), min_entries=2)
+    )
+    formdata = DummyPostData({"tenant": "acme"})
+    form = F(formdata)
+    assert [e.form.sel.choices for e in form.items] == [["acme"], ["acme"]]
+
+    form.tenant.data = "globex"
+    form.post_process(formdata)
+    assert [e.form.sel.choices for e in form.items] == [["globex"], ["globex"]]

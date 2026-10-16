@@ -134,19 +134,19 @@ def test_post_process_propagates_through_form_field():
 
 
 def test_post_process_runs_once_per_field():
-    """The ``choices`` callable runs exactly once per processing cycle."""
-    counter = {"n": 0}
+    """Processing runs each nested field's ``post_process`` exactly once."""
+    calls = []
 
-    def choices(form, field):
-        counter["n"] += 1
-        return ["a", "b"]
+    class CountingField(StringField):
+        def post_process(self, formdata=None):
+            super().post_process(formdata)
+            calls.append(self.name)
 
-    Inner = make_form(item=SelectField(choices=choices))
+    Inner = make_form(item=CountingField())
     Outer = make_form(block=FormField(Inner))
 
-    form = Outer(DummyPostData({"block-item": "a"}))
-    assert counter["n"] == 1
-    assert form.block.form.item.choices is not None
+    Outer(DummyPostData({"block-item": "a"}))
+    assert calls == ["block-item"]
 
 
 def test_post_process_propagates_through_field_list():
@@ -161,9 +161,9 @@ def test_post_process_propagates_through_field_list():
     Outer = make_form(items=FieldList(FormField(Inner), min_entries=2))
 
     form = Outer()
-    assert counter["n"] == 2
     for entry in form.items.entries:
         assert entry.form.item.choices is not None
+    assert counter["n"] == 2
 
 
 def test_post_process_mutation_propagates_top_down():
@@ -186,7 +186,8 @@ def test_post_process_mutation_propagates_top_down():
             self.tenant.data = (self.tenant.data or "").upper()
             super().post_process(formdata)
 
-    Outer(DummyPostData({"tenant": "acme", "block-item": "a"}))
+    form = Outer(DummyPostData({"tenant": "acme", "block-item": "a"}))
+    assert form.block.form.item.choices == ["a"]
     assert captured == ["ACME"]
 
 

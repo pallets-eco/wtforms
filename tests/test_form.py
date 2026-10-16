@@ -2,6 +2,7 @@ import pytest
 
 from tests.common import DummyPostData
 from wtforms.fields import IntegerField
+from wtforms.fields import SelectField
 from wtforms.fields import StringField
 from wtforms.form import BaseForm
 from wtforms.form import Form
@@ -344,3 +345,24 @@ def test_meta_basic():
 def test_meta_missing_diamond():
     meta = MissingDiamond().meta
     assert type(meta).__bases__ == (H.Meta, G.Meta, DefaultMeta)
+
+
+def test_post_process_rerun_refreshes_choices():
+    """Running ``post_process`` again after a data change refreshes the choices."""
+
+    def choices(form, field):
+        return [form.tenant.data]
+
+    class F(Form):
+        tenant = StringField()
+        item = SelectField(choices=choices)
+
+    formdata = DummyPostData({"tenant": "acme"})
+    form = F(formdata)
+    assert form.item.choices == ["acme"]
+
+    form.tenant.data = "globex"
+    assert form.item.choices == ["acme"]
+
+    form.post_process(formdata)
+    assert form.item.choices == ["globex"]

@@ -352,3 +352,20 @@ def test_invalid_value_type():
     assert form.a.errors == [
         "Invalid choice(s): one or more data inputs could not be coerced."
     ]
+
+
+def test_callable_choices_are_lazy():
+    """The callable runs on render, and validation without data does not call it."""
+    calls = {"n": 0}
+
+    def choices(form, field):
+        calls["n"] += 1
+        return ["a", "b"]
+
+    F = make_form(a=SelectMultipleField(choices=choices))
+    form = F(DummyPostData())
+    assert form.validate()
+    assert calls["n"] == 0
+
+    assert 'value="a"' in form.a()
+    assert calls["n"] == 1

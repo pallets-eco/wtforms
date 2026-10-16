@@ -294,6 +294,8 @@ fields.
         this to provide form data to the enclosed fields. Accessing the field's
         data before calling process is not recommended.
 
+    .. automethod:: post_process
+
     .. automethod:: validate
 
     .. automethod:: __iter__

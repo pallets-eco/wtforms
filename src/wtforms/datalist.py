@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from dataclasses import field
 
 from wtforms import widgets
-from wtforms._compat import get_signature
 from wtforms.fields.choices import _enum_options
+from wtforms.fields.choices import _invoke_choices_callable
 from wtforms.fields.choices import Choice
 
 __all__ = ("DataList", "DataListChoice", "enum_datalist")
@@ -92,6 +92,7 @@ class DataList:
     def __init__(self, choices=None, *, render_kw=None, widget=None):
         self._raw_choices = choices
         self._choices = None if callable(choices) else choices
+        self._field = None
         self.render_kw = render_kw or {}
         if widget is not None:
             self.widget = widget
@@ -101,24 +102,23 @@ class DataList:
         clone = DataList.__new__(DataList)
         clone._raw_choices = self._raw_choices
         clone._choices = None if callable(self._raw_choices) else self._raw_choices
+        clone._field = None
         clone.render_kw = self.render_kw
         clone.widget = self.widget
         clone.id = id
         return clone
 
-    def _resolve(self, field):
-        raw = self._raw_choices
-        if not callable(raw):
-            return
-        try:
-            sig = get_signature(raw)
-            sig.bind(field._form, field)
-        except TypeError:
-            self._choices = raw()
-            return
-        self._choices = raw(field._form, field)
+    def _invalidate(self, field):
+        """Mark the choices for a lazy refresh on the next :meth:`iter_choices`."""
+        if callable(self._raw_choices):
+            self._field = field
 
     def iter_choices(self, field=None):
+        if (bound := self._field) is not None:
+            self._field = None
+            self._choices = _invoke_choices_callable(
+                self._raw_choices, bound._form, bound
+            )
         raw = self._choices
         if raw is None:
             return []

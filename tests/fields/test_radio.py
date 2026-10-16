@@ -129,3 +129,20 @@ def test_render_kw_preserved():
         '<input disabled id="a-1" name="a" type="radio" value="False"> '
         '<label for="a-1">no</label></li></ul>'
     )
+
+
+def test_callable_choices_are_lazy():
+    """The callable runs on the first read and its result is cached."""
+    calls = {"n": 0}
+
+    def choices(form, field):
+        calls["n"] += 1
+        return ["a", "b"]
+
+    F = make_form(a=RadioField(choices=choices))
+    form = F(DummyPostData(a=["a"]))
+    assert calls["n"] == 0
+
+    assert form.validate()
+    assert 'value="b"' in form.a()
+    assert calls["n"] == 1

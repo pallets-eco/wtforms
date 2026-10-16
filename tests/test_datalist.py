@@ -83,6 +83,47 @@ def test_callable_choices_receives_form_and_field(postdata, expected):
     assert f'<option value="{expected}-x">' in html
 
 
+def test_callable_choices_refresh_after_post_process():
+    """A callable ``DataList`` runs at render, and again after ``post_process``."""
+    calls = {"n": 0}
+
+    def suggest(form, field):
+        calls["n"] += 1
+        return [f"{field.data}-x"]
+
+    class F(Form):
+        query = StringField(datalist=DataList(suggest))
+
+    formdata = DummyPostData({"query": ["hello"]})
+    form = F(formdata)
+    assert calls["n"] == 0
+    assert '<option value="hello-x">' in str(form.query.datalist())
+
+    form.query.data = "world"
+    form.post_process(formdata)
+    assert '<option value="world-x">' in str(form.query.datalist())
+    assert '<option value="world-x">' in str(form.query.datalist())
+    assert calls["n"] == 2
+
+
+def test_zero_arg_callable_choices_are_lazy():
+    """A 0-argument callable runs at render, then its result is cached."""
+    calls = {"n": 0}
+
+    def suggest():
+        calls["n"] += 1
+        return ["FR"]
+
+    class F(Form):
+        country = StringField(datalist=DataList(suggest))
+
+    form = F()
+    assert calls["n"] == 0
+    form.country.datalist()
+    form.country.datalist()
+    assert calls["n"] == 1
+
+
 def test_zero_arg_callable_choices():
     """A 0-argument callable is allowed (lazy constant)."""
     calls = {"n": 0}
