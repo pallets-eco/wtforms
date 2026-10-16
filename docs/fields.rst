@@ -643,7 +643,7 @@ Data Lists
         class F(Form):
             items = FieldList(
                 StringField(
-                    datalist=DataList(lambda field: suggest(field.data))
+                    datalist=DataList(lambda form, field: suggest(field.data))
                 ),
                 min_entries=3,
             )
