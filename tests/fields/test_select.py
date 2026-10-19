@@ -808,3 +808,13 @@ def test_select_field_enum_renders_selected():
     )
     form = F(a=_Provider.GITLAB)
     assert '<option selected value="gitlab">GITLAB</option>' in form.a()
+
+
+def test_invalid_value_type():
+    """A non-string input gives a validation error instead of a TypeError."""
+    F = make_form(a=SelectField(choices=[SelectChoice(1, "Foo")], coerce=int))
+    form = F(DummyPostData(a={"not a": "choice"}))
+
+    assert form.a.data is None
+    assert not form.validate()
+    assert form.a.errors == ["Invalid Choice: could not coerce."]

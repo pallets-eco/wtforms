@@ -42,3 +42,16 @@ def test_invalid_value_message():
     form = G(DummyPostData(a=["bogus"]))
     assert not form.validate()
     assert form.a.errors == ["Enter a week as YYYY-Www."]
+
+
+def test_invalid_value_type():
+    """A non-string input gives a validation error instead of a TypeError."""
+
+    class F(Form):
+        a = WeekField()
+
+    form = F(DummyPostData(a={"not a": "week"}))
+
+    assert form.a.data is None
+    assert not form.validate()
+    assert form.a.errors == ["Not a valid week value."]

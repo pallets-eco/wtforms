@@ -92,7 +92,7 @@ class IntegerField(Field):
 
         try:
             self.data = int(valuelist[0])
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             self.data = None
             raise ValueError(
                 self.invalid_value_message or self.gettext("Not a valid integer value.")
@@ -177,7 +177,7 @@ class DecimalField(LocaleAwareNumberField):
                 self.data = self._parse_decimal(valuelist[0])
             else:
                 self.data = decimal.Decimal(valuelist[0])
-        except (decimal.InvalidOperation, ValueError) as exc:
+        except (decimal.InvalidOperation, ValueError, TypeError) as exc:
             self.data = None
             raise ValueError(
                 self.invalid_value_message or self.gettext("Not a valid decimal value.")
@@ -214,7 +214,7 @@ class FloatField(Field):
 
         try:
             self.data = float(valuelist[0])
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             self.data = None
             raise ValueError(
                 self.invalid_value_message or self.gettext("Not a valid float value.")

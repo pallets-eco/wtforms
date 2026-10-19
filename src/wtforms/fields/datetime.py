@@ -62,12 +62,12 @@ class DateTimeField(Field):
         if not valuelist:
             return
 
-        date_str = " ".join(valuelist)
         for format in self.strptime_format:
             try:
+                date_str = " ".join(valuelist)
                 self.data = datetime.datetime.strptime(date_str, format)
                 return
-            except ValueError:
+            except (ValueError, TypeError):
                 self.data = None
 
         raise ValueError(
@@ -103,12 +103,12 @@ class DateField(DateTimeField):
         if not valuelist:
             return
 
-        date_str = " ".join(valuelist)
         for format in self.strptime_format:
             try:
+                date_str = " ".join(valuelist)
                 self.data = datetime.datetime.strptime(date_str, format).date()
                 return
-            except ValueError:
+            except (ValueError, TypeError):
                 self.data = None
 
         raise ValueError(
@@ -144,12 +144,12 @@ class TimeField(DateTimeField):
         if not valuelist:
             return
 
-        time_str = " ".join(valuelist)
         for format in self.strptime_format:
             try:
+                time_str = " ".join(valuelist)
                 self.data = datetime.datetime.strptime(time_str, format).time()
                 return
-            except ValueError:
+            except (ValueError, TypeError):
                 self.data = None
 
         raise ValueError(
@@ -199,9 +199,9 @@ class WeekField(DateField):
         if not valuelist:
             return
 
-        time_str = " ".join(valuelist)
         for format in self.strptime_format:
             try:
+                time_str = " ".join(valuelist)
                 if "%w" not in format:
                     # The '%w' week starting day is needed. This defaults it to monday
                     # like ISO 8601 indicates.
@@ -211,7 +211,7 @@ class WeekField(DateField):
                 else:
                     self.data = datetime.datetime.strptime(time_str, format).date()
                 return
-            except ValueError:
+            except (ValueError, TypeError):
                 self.data = None
 
         raise ValueError(

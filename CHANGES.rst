@@ -15,6 +15,8 @@ Unreleased
   :meth:`~fields.FieldList.append_entry` or
   :meth:`~fields.FieldList.insert_entry`, which now run ``post_process`` on the
   new entry.
+- Numeric, date, time and select fields report a validation error instead of
+  raising a :class:`TypeError` when the input is not a string.
 
 Version 3.3.0b3
 ---------------
