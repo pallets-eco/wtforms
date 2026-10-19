@@ -38,3 +38,16 @@ def test_invalid_value_message():
     form = G(DummyPostData(a=["bogus"]))
     assert not form.validate()
     assert form.a.errors == ["Enter a date as YYYY-MM-DD."]
+
+
+def test_invalid_value_type():
+    """A non-string input gives a validation error instead of a TypeError."""
+
+    class F(Form):
+        a = DateField()
+
+    form = F(DummyPostData(a={"not a": "date"}))
+
+    assert form.a.data is None
+    assert not form.validate()
+    assert form.a.errors == ["Not a valid date value."]

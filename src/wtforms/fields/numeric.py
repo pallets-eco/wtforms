@@ -92,7 +92,7 @@ class IntegerField(Field):
 
         try:
             self.data = int(valuelist[0])
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             self.data = None
             raise ValueError(
                 self.invalid_value_message or self.gettext("Not a valid integer value.")
@@ -214,7 +214,7 @@ class FloatField(Field):
 
         try:
             self.data = float(valuelist[0])
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             self.data = None
             raise ValueError(
                 self.invalid_value_message or self.gettext("Not a valid float value.")

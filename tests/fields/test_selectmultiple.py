@@ -340,3 +340,15 @@ def test_select_multiple_enum_intenum_round_trip():
     form = F(DummyPostData(a=["2", "5"]))
     assert form.validate()
     assert form.a.data == [_Kind.SMALL, _Kind.BIG]
+
+
+def test_invalid_value_type():
+    """A non-string input gives a validation error instead of a TypeError."""
+    F = make_form(a=SelectMultipleField(choices=[SelectChoice(1, "Foo")], coerce=int))
+    form = F(DummyPostData(a=[{"not a": "choice"}]))
+
+    assert form.a.data is None
+    assert not form.validate()
+    assert form.a.errors == [
+        "Invalid choice(s): one or more data inputs could not be coerced."
+    ]

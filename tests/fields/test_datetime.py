@@ -114,3 +114,16 @@ def test_invalid_value_message():
     form = F(DummyPostData(a=["2020-03-04"]))
     assert not form.validate()
     assert form.a.errors == ["Enter a complete date and time."]
+
+
+def test_invalid_value_type():
+    """A non-string input gives a validation error instead of a TypeError."""
+
+    class F(Form):
+        a = DateTimeLocalField()
+
+    form = F(DummyPostData(a={"not a": "datetime"}))
+
+    assert form.a.data is None
+    assert not form.validate()
+    assert form.a.errors == ["Not a valid datetime value."]

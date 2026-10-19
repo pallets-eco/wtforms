@@ -51,6 +51,7 @@ def test_invalid_value_message():
 
 
 def test_invalid_value_type():
+    """A non-string input gives a validation error instead of a TypeError."""
     F = make_form(a=DecimalField())
     form = F(DummyPostData(a={"not a": "decimal"}))
 

@@ -429,7 +429,7 @@ class SelectField(SelectFieldBase):
 
         try:
             self.data = self.coerce(valuelist[0])
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             raise ValueError(
                 self.invalid_value_message
                 or self.gettext("Invalid Choice: could not coerce.")
@@ -526,7 +526,7 @@ class SelectMultipleField(SelectField):
     def process_formdata(self, valuelist):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
-        except ValueError as exc:
+        except (ValueError, TypeError) as exc:
             raise ValueError(
                 self.invalid_value_message
                 or self.gettext(
