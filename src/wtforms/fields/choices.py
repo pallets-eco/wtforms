@@ -2,6 +2,7 @@ import warnings
 from dataclasses import dataclass
 from dataclasses import field
 from dataclasses import replace
+from enum import StrEnum
 from itertools import groupby
 from operator import attrgetter
 from typing import NamedTuple
@@ -115,11 +116,22 @@ class SelectChoice:
             return cls(*input, optgroup=optgroup)
 
 
+def _has_custom_str(enum_cls):
+    """Tell whether the enum or one of its user bases defines ``__str__``."""
+    stdlib = [
+        cls.__str__
+        for cls in enum_cls.__mro__
+        if cls.__module__ in ("enum", "builtins")
+    ]
+    return enum_cls.__str__ not in stdlib
+
+
 def _enum_options(enum_cls, by, label, factory):
     if by not in ("value", "name"):
         raise ValueError(f"by must be 'value' or 'name', got {by!r}")
     if label is None:
-        label = str if "__str__" in enum_cls.__dict__ else lambda m: m.name
+        use_str = issubclass(enum_cls, StrEnum) or _has_custom_str(enum_cls)
+        label = str if use_str else lambda m: m.name
     return [factory(value=getattr(m, by), label=label(m)) for m in enum_cls]
 
 
@@ -132,8 +144,8 @@ def enum_choices(enum_cls, *, by="value", label=None):
     transport identifiers (non-string, non-unique or non-serialisable).
 
     The label defaults to ``str(member)`` when the Enum defines its own
-    ``__str__``, otherwise to ``member.name``. Pass ``label=`` (a callable
-    taking a member) to override.
+    ``__str__`` or is a :class:`enum.StrEnum`, otherwise to ``member.name``.
+    Pass ``label=`` (a callable taking a member) to override.
 
     Pair with :func:`enum_coerce` using the same ``by`` to round-trip the
     submitted string back into a member.

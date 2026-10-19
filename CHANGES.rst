@@ -6,6 +6,9 @@ Version 3.3.0b4
 Unreleased
 
 - Drop support for Python 3.10. Add support for Python 3.15.
+- :func:`fields.enum_choices` and :func:`~wtforms.datalist.enum_datalist`
+  label :class:`enum.IntEnum` members with their name on PyPy too, instead of
+  their value.
 - :class:`~datalist.DataList` ``choices`` accepts the shorthand
   ``{value: label}`` dict syntax. :issue:`886`
 - Default ``invalid_value_message`` and ``invalid_choice_message`` are

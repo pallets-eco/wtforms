@@ -677,6 +677,28 @@ def test_enum_choices_intenum_label():
     ]
 
 
+def test_enum_choices_inherited_dunder_str_label():
+    """A ``__str__`` inherited from a user base Enum is used as label."""
+
+    class _Base(Enum):
+        def __str__(self):
+            return self.name.lower()
+
+    class _Color(_Base):
+        RED = 1
+
+    assert enum_choices(_Color) == [SelectChoice(value=1, label="red")]
+
+
+def test_enum_choices_str_mixin_label():
+    """A ``(str, Enum)`` mixin is not a StrEnum; label falls back to the name."""
+
+    class _Mode(str, Enum):  # noqa: UP042
+        FAST = "fast"
+
+    assert enum_choices(_Mode) == [SelectChoice(value="fast", label="FAST")]
+
+
 def test_enum_choices_custom_label():
     """A ``label=`` callable overrides the default."""
     assert enum_choices(_Provider, label=lambda m: m.name.title()) == [
