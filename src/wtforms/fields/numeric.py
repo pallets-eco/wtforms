@@ -64,9 +64,7 @@ class IntegerField(Field):
         self, label=None, validators=None, invalid_value_message=None, **kwargs
     ):
         super().__init__(label, validators, **kwargs)
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Not a valid integer value."
-        )
+        self.invalid_value_message = invalid_value_message
 
     def _value(self):
         if self.raw_data:
@@ -84,7 +82,9 @@ class IntegerField(Field):
             self.data = int(value)
         except (ValueError, TypeError) as exc:
             self.data = None
-            raise ValueError(self.invalid_value_message) from exc
+            raise ValueError(
+                self.invalid_value_message or self.gettext("Not a valid integer value.")
+            ) from exc
 
     def process_formdata(self, valuelist):
         if not valuelist:
@@ -94,7 +94,9 @@ class IntegerField(Field):
             self.data = int(valuelist[0])
         except ValueError as exc:
             self.data = None
-            raise ValueError(self.invalid_value_message) from exc
+            raise ValueError(
+                self.invalid_value_message or self.gettext("Not a valid integer value.")
+            ) from exc
 
 
 class DecimalField(LocaleAwareNumberField):
@@ -138,9 +140,7 @@ class DecimalField(LocaleAwareNumberField):
             places = 2
         self.places = places
         self.rounding = rounding
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Not a valid decimal value."
-        )
+        self.invalid_value_message = invalid_value_message
 
     def _value(self):
         if self.raw_data:
@@ -179,7 +179,9 @@ class DecimalField(LocaleAwareNumberField):
                 self.data = decimal.Decimal(valuelist[0])
         except (decimal.InvalidOperation, ValueError, TypeError) as exc:
             self.data = None
-            raise ValueError(self.invalid_value_message) from exc
+            raise ValueError(
+                self.invalid_value_message or self.gettext("Not a valid decimal value.")
+            ) from exc
 
 
 class FloatField(Field):
@@ -197,9 +199,7 @@ class FloatField(Field):
         self, label=None, validators=None, invalid_value_message=None, **kwargs
     ):
         super().__init__(label, validators, **kwargs)
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Not a valid float value."
-        )
+        self.invalid_value_message = invalid_value_message
 
     def _value(self):
         if self.raw_data:
@@ -216,7 +216,9 @@ class FloatField(Field):
             self.data = float(valuelist[0])
         except ValueError as exc:
             self.data = None
-            raise ValueError(self.invalid_value_message) from exc
+            raise ValueError(
+                self.invalid_value_message or self.gettext("Not a valid float value.")
+            ) from exc
 
 
 class IntegerRangeField(IntegerField):

@@ -7,6 +7,9 @@ Unreleased
 
 - :class:`~datalist.DataList` ``choices`` accepts the shorthand
   ``{value: label}`` dict syntax. :issue:`886`
+- Default ``invalid_value_message`` and ``invalid_choice_message`` are
+  translated when the error is raised, not when the field is built. Forms can
+  be built again outside of a translation context.
 - ``choices`` callables on fields nested in a :class:`~fields.FieldList` are
   now evaluated when entries are added via
   :meth:`~fields.FieldList.append_entry` or

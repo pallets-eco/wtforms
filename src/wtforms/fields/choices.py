@@ -376,12 +376,8 @@ class SelectField(SelectFieldBase):
                     dict(choices) if isinstance(choices, dict) else list(choices)
                 )
         self.validate_choice = validate_choice
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Invalid Choice: could not coerce."
-        )
-        self.invalid_choice_message = invalid_choice_message or self.gettext(
-            "Not a valid choice."
-        )
+        self.invalid_value_message = invalid_value_message
+        self.invalid_choice_message = invalid_choice_message
 
     def iter_choices(self):
         choices = self._choices_from_input(self.choices) or []
@@ -434,7 +430,10 @@ class SelectField(SelectFieldBase):
         try:
             self.data = self.coerce(valuelist[0])
         except ValueError as exc:
-            raise ValueError(self.invalid_value_message) from exc
+            raise ValueError(
+                self.invalid_value_message
+                or self.gettext("Invalid Choice: could not coerce.")
+            ) from exc
 
     def pre_validate(self, form):
         if self.process_errors:
@@ -447,7 +446,9 @@ class SelectField(SelectFieldBase):
             raise TypeError(self.gettext("Choices cannot be None."))
 
         if not any(choice.selected for choice in self._iter_choices_normalized()):
-            raise ValidationError(self.invalid_choice_message)
+            raise ValidationError(
+                self.invalid_choice_message or self.gettext("Not a valid choice.")
+            )
 
 
 class SelectMultipleField(SelectField):
@@ -483,9 +484,7 @@ class SelectMultipleField(SelectField):
             validate_choice=validate_choice,
             **kwargs,
         )
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Invalid choice(s): one or more data inputs could not be coerced."
-        )
+        self.invalid_value_message = invalid_value_message
         self.invalid_choice_message = invalid_choice_message
 
     def iter_choices(self):
@@ -528,7 +527,12 @@ class SelectMultipleField(SelectField):
         try:
             self.data = list(self.coerce(x) for x in valuelist)
         except ValueError as exc:
-            raise ValueError(self.invalid_value_message) from exc
+            raise ValueError(
+                self.invalid_value_message
+                or self.gettext(
+                    "Invalid choice(s): one or more data inputs could not be coerced."
+                )
+            ) from exc
 
     def pre_validate(self, form):
         if self.process_errors:
