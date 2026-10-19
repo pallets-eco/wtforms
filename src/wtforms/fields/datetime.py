@@ -50,9 +50,7 @@ class DateTimeField(Field):
             )
         self.format = format if isinstance(format, list) else [format]
         self.strptime_format = clean_datetime_format_for_strptime(self.format)
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Not a valid datetime value."
-        )
+        self.invalid_value_message = invalid_value_message
 
     def _value(self):
         if self.raw_data:
@@ -72,7 +70,9 @@ class DateTimeField(Field):
             except ValueError:
                 self.data = None
 
-        raise ValueError(self.invalid_value_message)
+        raise ValueError(
+            self.invalid_value_message or self.gettext("Not a valid datetime value.")
+        )
 
 
 class DateField(DateTimeField):
@@ -98,9 +98,6 @@ class DateField(DateTimeField):
             invalid_value_message=invalid_value_message,
             **kwargs,
         )
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Not a valid date value."
-        )
 
     def process_formdata(self, valuelist):
         if not valuelist:
@@ -114,7 +111,9 @@ class DateField(DateTimeField):
             except ValueError:
                 self.data = None
 
-        raise ValueError(self.invalid_value_message)
+        raise ValueError(
+            self.invalid_value_message or self.gettext("Not a valid date value.")
+        )
 
 
 class TimeField(DateTimeField):
@@ -140,9 +139,6 @@ class TimeField(DateTimeField):
             invalid_value_message=invalid_value_message,
             **kwargs,
         )
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Not a valid time value."
-        )
 
     def process_formdata(self, valuelist):
         if not valuelist:
@@ -156,7 +152,9 @@ class TimeField(DateTimeField):
             except ValueError:
                 self.data = None
 
-        raise ValueError(self.invalid_value_message)
+        raise ValueError(
+            self.invalid_value_message or self.gettext("Not a valid time value.")
+        )
 
 
 class MonthField(DateField):
@@ -196,9 +194,6 @@ class WeekField(DateField):
             invalid_value_message=invalid_value_message,
             **kwargs,
         )
-        self.invalid_value_message = invalid_value_message or self.gettext(
-            "Not a valid week value."
-        )
 
     def process_formdata(self, valuelist):
         if not valuelist:
@@ -219,7 +214,9 @@ class WeekField(DateField):
             except ValueError:
                 self.data = None
 
-        raise ValueError(self.invalid_value_message)
+        raise ValueError(
+            self.invalid_value_message or self.gettext("Not a valid week value.")
+        )
 
 
 class DateTimeLocalField(DateTimeField):
