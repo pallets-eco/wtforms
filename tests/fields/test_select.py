@@ -1,6 +1,6 @@
-import sys
 from enum import Enum
 from enum import IntEnum
+from enum import StrEnum
 
 import pytest
 
@@ -14,11 +14,6 @@ from wtforms.fields import Field
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
 from wtforms.form import Form
-
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    StrEnum = None
 
 
 def make_form(name="F", **fields):
@@ -661,7 +656,6 @@ def test_enum_choices_dunder_str_label():
     ]
 
 
-@pytest.mark.skipif(sys.version_info < (3, 11), reason="StrEnum requires 3.11+")
 def test_enum_choices_strenum():
     """StrEnum uses ``str(member)`` (the value) for both value and label."""
 

@@ -13,7 +13,7 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "MarkupSafe>=1.1.1",
 ]
@@ -49,12 +49,12 @@ dev = [
 env_list = [
     "style",
     "minversions",
+    "py315",
     "py314",
     "py313",
     "py312",
     "py311",
-    "py310",
-    "pypy310",
+    "pypy311",
     "docs",
 ]
 skip_missing_interpreters = true
@@ -86,7 +86,7 @@ dependency_groups = ["docs"]
 commands = [["sphinx-build", "-W", "-b", "html", "-d", "{envtmpdir}/doctrees", "docs", "{envtmpdir}/html"]]
 
 [tool.tox.env.minversions]
-base_python = ["py3.10"]
+base_python = ["py3.11"]
 uv_resolution = "lowest-direct"
 dependency_groups = ["dev"]
 commands = [

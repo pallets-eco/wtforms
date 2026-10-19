@@ -21,11 +21,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - {python: '3.15'}
           - {python: '3.14'}
           - {python: '3.13'}
           - {python: '3.12'}
           - {python: '3.11'}
-          - {python: '3.10'}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Install uv
@@ -46,10 +46,10 @@ jobs:
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           enable-cache: true
-      - name: Set up Python 3.10
-        run: uv python install 3.10
+      - name: Set up Python 3.11
+        run: uv python install 3.11
       - name: Run tests with lowest-direct resolution
-        run: uv run --python 3.10 --resolution lowest-direct --group dev pytest --tb=short -l
+        run: uv run --python 3.11 --resolution lowest-direct --group dev pytest --tb=short -l
 
   downstream-tests:
     name: py${{ matrix.python }} ${{ matrix.downstream }} downstream
@@ -58,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        python: ['3.11', '3.12', '3.13', '3.14', '3.15']
         downstream:
           - pallets-eco/flask-wtf
           - pallets-eco/wtforms-sqlalchemy

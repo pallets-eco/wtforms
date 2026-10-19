@@ -5,6 +5,7 @@ Version 3.3.0b4
 
 Unreleased
 
+- Drop support for Python 3.10. Add support for Python 3.15.
 - :class:`~datalist.DataList` ``choices`` accepts the shorthand
   ``{value: label}`` dict syntax. :issue:`886`
 - Default ``invalid_value_message`` and ``invalid_choice_message`` are
