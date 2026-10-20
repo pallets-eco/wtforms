@@ -70,7 +70,8 @@ def enum_datalist(enum_cls, *, by="value", label=None):
     Same semantics as :func:`~wtforms.fields.enum_choices`: ``by`` selects
     which member attribute becomes the ``<option>`` value (``"value"`` by
     default, ``"name"`` otherwise) and ``label`` defaults to ``str(member)``
-    when the Enum defines its own ``__str__``, else ``member.name``.
+    when the Enum defines its own ``__str__`` or is a :class:`enum.StrEnum`,
+    else ``member.name``.
 
     A ``<datalist>`` only suggests values for a free-text field, so there is
     no coercion counterpart — the field stores whatever string is submitted.

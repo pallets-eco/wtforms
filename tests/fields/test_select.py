@@ -1,6 +1,6 @@
-import sys
 from enum import Enum
 from enum import IntEnum
+from enum import StrEnum
 
 import pytest
 
@@ -14,11 +14,6 @@ from wtforms.fields import Field
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
 from wtforms.form import Form
-
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    StrEnum = None
 
 
 def make_form(name="F", **fields):
@@ -661,7 +656,6 @@ def test_enum_choices_dunder_str_label():
     ]
 
 
-@pytest.mark.skipif(sys.version_info < (3, 11), reason="StrEnum requires 3.11+")
 def test_enum_choices_strenum():
     """StrEnum uses ``str(member)`` (the value) for both value and label."""
 
@@ -681,6 +675,28 @@ def test_enum_choices_intenum_label():
         SelectChoice(value=1, label="LOW"),
         SelectChoice(value=2, label="HIGH"),
     ]
+
+
+def test_enum_choices_inherited_dunder_str_label():
+    """A ``__str__`` inherited from a user base Enum is used as label."""
+
+    class _Base(Enum):
+        def __str__(self):
+            return self.name.lower()
+
+    class _Color(_Base):
+        RED = 1
+
+    assert enum_choices(_Color) == [SelectChoice(value=1, label="red")]
+
+
+def test_enum_choices_str_mixin_label():
+    """A ``(str, Enum)`` mixin is not a StrEnum; label falls back to the name."""
+
+    class _Mode(str, Enum):  # noqa: UP042
+        FAST = "fast"
+
+    assert enum_choices(_Mode) == [SelectChoice(value="fast", label="FAST")]
 
 
 def test_enum_choices_custom_label():

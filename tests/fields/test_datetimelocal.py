@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from datetime import timezone
+from datetime import UTC
 from zoneinfo import ZoneInfo
 
 from tests.common import DummyPostData
@@ -88,7 +88,7 @@ def test_tz_converts_aware_data_at_render():
     """Aware ``data`` is converted to ``tz`` and stripped before rendering."""
     paris = ZoneInfo("Europe/Paris")
     F = make_form(a=DateTimeLocalField(tz=paris))
-    form = F(a=datetime(2026, 5, 6, 14, 0, tzinfo=timezone.utc))
+    form = F(a=datetime(2026, 5, 6, 14, 0, tzinfo=UTC))
     # 14:00 UTC == 16:00 Europe/Paris on 2026-05-06 (CEST, UTC+2)
     assert form.a._value() == "2026-05-06 16:00:00"
 
@@ -99,8 +99,8 @@ def test_tz_round_trip_through_utc():
     F = make_form(a=DateTimeLocalField(tz=paris))
     form = F(DummyPostData(a=["2026-05-06T16:00:00"]))
     assert form.a.data is not None
-    stored = form.a.data.astimezone(timezone.utc)
-    assert stored == datetime(2026, 5, 6, 14, 0, tzinfo=timezone.utc)
+    stored = form.a.data.astimezone(UTC)
+    assert stored == datetime(2026, 5, 6, 14, 0, tzinfo=UTC)
 
 
 def test_tz_callable_resolved_lazily():
