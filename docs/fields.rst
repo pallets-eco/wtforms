@@ -67,6 +67,7 @@ The Field base class
     .. automethod:: process(formdata [, data])
     .. automethod:: process_data
     .. automethod:: process_formdata
+    .. automethod:: post_process
     .. attribute:: data
 
         Contains the resulting (sanitized) value of calling either of the
@@ -329,8 +330,8 @@ Choice Fields
                 SelectChoice('text', 'Plain Text'),
             ])
 
-    Note that the `choices` keyword is evaluated each time the form is
-    instantiated, so callables passed as `choices` are re-evaluated per instance.
+    A callable passed as `choices` is resolved separately for each form
+    instance, the first time its choices are read.
     For dynamic options, either pass a callable to `choices` or assign
     `field.choices` after instantiation. Any submitted choices which are not in
     the given choices list will cause validation on the field to fail. If this
@@ -361,17 +362,22 @@ Choice Fields
             user = User.query.get(id)
             form = UserDetails(request.POST, obj=user)
 
-    Note we passed a callable to `choices` rather than a static list; it is
-    invoked each time the form is instantiated, producing fresh options per
-    request. If the choices depend on data only available in the view, you can
-    instead assign `form.group_id.choices` after instantiation. The `coerce`
-    keyword arg to :class:`~wtforms.fields.SelectField` says that we use
-    :func:`int()` to coerce form data. The default coerce is :func:`str()`.
+    Note we passed a callable to `choices` rather than a static list; it
+    produces fresh options per request. Its result is cached. Calling
+    :meth:`~wtforms.form.BaseForm.post_process` again refreshes it.
+
+    If the choices depend on data only available in the view, you can instead
+    assign `form.group_id.choices` after instantiation. A list assigned this
+    way replaces the callable.
+
+    The `coerce` keyword arg to :class:`~wtforms.fields.SelectField` says
+    that we use :func:`int()` to coerce form data. The default coerce is
+    :func:`str()`.
 
     The callable may optionally accept ``(form, field)`` as positional
-    arguments. When this signature is used, the callable is invoked after the
-    whole form has been processed, so it can read ``field.data`` and the data
-    of any other field on the form::
+    arguments. The callable is invoked when the choices are read, normally
+    after the whole form has been processed, so it can read ``field.data`` and
+    the data of any other field on the form::
 
         def available_groups(form, field):
             return [SelectChoice(g.id, g.name) for g in form.tenant.data.groups]
@@ -610,8 +616,10 @@ Data Lists
 
     ``choices`` is either a list of :class:`~wtforms.DataListChoice`
     (or plain strings, in which case the string is used as both value
-    and label), a shorthand ``{value: label}`` dict, or a callable
-    invoked once the whole form has been processed. The callable may
+    and label), a shorthand ``{value: label}`` dict, or a callable. The
+    callable runs when the datalist is rendered, after the whole form has been
+    processed. Its result is cached until the next
+    :meth:`~wtforms.form.BaseForm.post_process`. The callable may
     take no argument (``fn()``) for a static list, or ``(form, field)``
     to adapt the suggestions to the form data, for example the current
     field value. This is convenient for server-side filtering::

@@ -13,6 +13,8 @@ from wtforms.fields import enum_coerce
 from wtforms.fields import Field
 from wtforms.fields import SelectChoice
 from wtforms.fields import SelectField
+from wtforms.fields import StringField
+from wtforms.form import BaseForm
 from wtforms.form import Form
 
 
@@ -244,6 +246,118 @@ def test_callable_choices_receives_form_and_field():
         '<option selected value="bar">bar</option>',
     ]
     assert captured == [(form, form.a)]
+
+
+def test_callable_choices_are_lazy_and_cached():
+    """The ``choices`` callable runs on the first read, then its result is cached."""
+    calls = {"n": 0}
+
+    def choices(form, field):
+        calls["n"] += 1
+        return ["a", "b"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F(DummyPostData({"a": "a"}))
+    assert calls["n"] == 0
+
+    assert form.a.choices == ["a", "b"]
+    assert form.a.choices == ["a", "b"]
+    assert calls["n"] == 1
+
+
+def test_callable_reading_its_own_choices_gets_previous_value():
+    """A callable that reads its field's ``choices`` gets the previous value."""
+
+    def choices(form, field):
+        return [*(field.choices or []), "x"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F(DummyPostData({"a": "x"}))
+    assert form.a.choices == ["x"]
+
+
+def test_assigning_choices_replaces_callable():
+    """An assigned ``choices`` value survives a ``post_process`` rerun."""
+
+    def choices():
+        return ["foo", "bar"]
+
+    F = make_form(a=SelectField(choices=choices))
+    form = F(a="bar")
+    form.a.choices = ["baz"]
+    form.post_process()
+
+    assert form.a.choices == ["baz"]
+
+
+def test_assigning_callable_choices_is_lazy_and_cached():
+    """An assigned callable replaces the constructor one and is cached until
+    the next ``post_process``."""
+    calls = {"n": 0}
+
+    def choices(form, field):
+        calls["n"] += 1
+        return [form.t.data]
+
+    F = make_form(t=StringField(), a=SelectField(choices=["x"]))
+    formdata = DummyPostData({"t": "acme", "a": "acme"})
+    form = F(formdata)
+    form.a.choices = choices
+
+    assert form.a.choices == ["acme"]
+    assert form.validate()
+    form.a()
+    assert calls["n"] == 1
+
+    form.t.data = "globex"
+    form.post_process(formdata)
+    assert form.a.choices == ["globex"]
+    assert calls["n"] == 2
+
+
+def test_choices_from_input_callable_is_deprecated():
+    """Passing a callable to ``_choices_from_input`` warns."""
+    form = make_form(a=SelectField(choices=["x"]))()
+    with pytest.warns(DeprecationWarning):
+        assert form.a._choices_from_input(lambda: ["y"])[0].value == "y"
+
+
+def test_assigning_none_drops_callable():
+    """Assigning ``None`` drops the constructor callable."""
+    F = make_form(a=SelectField(choices=lambda: ["foo"]))
+    form = F()
+    form.a.choices = None
+    form.post_process()
+
+    assert form.a.choices is None
+
+
+def test_choices_callable_resolves_before_post_process():
+    """Reading ``choices`` before ``post_process`` runs the callable, and
+    ``post_process`` refreshes it."""
+    state = {"v": "before"}
+    form = BaseForm({"a": SelectField(choices=lambda: [state["v"]])})
+    assert form["a"].choices == ["before"]
+
+    state["v"] = "after"
+    form.process()
+    assert form["a"].choices == ["after"]
+
+
+def test_subclass_init_can_extend_callable_choices():
+    """A subclass ``__init__`` that extends the callable's choices keeps the
+    3.2 behavior."""
+
+    class Blank(SelectField):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.choices = [SelectChoice("", "---"), *(self.choices or [])]
+
+    F = make_form(a=Blank(choices=lambda: [SelectChoice("acme", "Acme")]))
+    form = F(DummyPostData({"a": "acme"}))
+
+    assert [c.value for c in form.a.choices] == ["", "acme"]
+    assert form.validate()
 
 
 def test_requried_flag():

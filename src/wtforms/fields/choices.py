@@ -126,6 +126,19 @@ def _has_custom_str(enum_cls):
     return enum_cls.__str__ not in stdlib
 
 
+def _invoke_choices_callable(cb, form, field):
+    """Call a ``choices`` callable with ``(form, field)``, or with no argument."""
+    try:
+        sig = get_signature(cb)
+    except (ValueError, TypeError):
+        return cb()
+    try:
+        sig.bind(form, field)
+    except TypeError:
+        return cb()
+    return cb(form, field)
+
+
 def _enum_options(enum_cls, by, label, factory):
     if by not in ("value", "name"):
         raise ValueError(f"by must be 'value' or 'name', got {by!r}")
@@ -276,6 +289,13 @@ class SelectFieldBase(Field):
     def _choices_from_input(self, choices):
         """Parse the user-supplied ``choices`` into a list of :class:`SelectChoice`."""
         if callable(choices):
+            warnings.warn(
+                "Passing a callable to _choices_from_input() is deprecated; "
+                "resolve the callable before the call. Will be removed in "
+                "WTForms 3.4.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             choices = self._invoke_choices_callback(choices)
 
         if choices is None:
@@ -344,15 +364,7 @@ class SelectFieldBase(Field):
                 return
 
     def _invoke_choices_callback(self, cb):
-        try:
-            sig = get_signature(cb)
-        except (ValueError, TypeError):
-            return cb()
-        try:
-            sig.bind(self._form, self)
-        except TypeError:
-            return cb()
-        return cb(self._form, self)
+        return _invoke_choices_callable(cb, self._form, self)
 
     class _Option(Field):
         def _value(self):
@@ -377,19 +389,40 @@ class SelectField(SelectFieldBase):
         self.coerce = coerce
         if callable(choices):
             self._choices_callable = choices
-            self.choices = None
+            self._choices_stale = True
+            self._choices = None
         else:
             self._choices_callable = None
+            self._choices_stale = False
             if choices is None:
-                self.choices = None
+                self._choices = None
             else:
                 self._warn_legacy_choices(choices)
-                self.choices = (
+                self._choices = (
                     dict(choices) if isinstance(choices, dict) else list(choices)
                 )
         self.validate_choice = validate_choice
         self.invalid_value_message = invalid_value_message
         self.invalid_choice_message = invalid_choice_message
+
+    @property
+    def choices(self):
+        """The field's choices, resolved from the callable on first read."""
+        if self._choices_stale:
+            self._choices_stale = False
+            self._choices = self._invoke_choices_callback(self._choices_callable)
+        return self._choices
+
+    @choices.setter
+    def choices(self, value):
+        if callable(value):
+            self._choices_callable = value
+            self._choices_stale = True
+            self._choices = None
+        else:
+            self._choices_callable = None
+            self._choices_stale = False
+            self._choices = value
 
     def iter_choices(self):
         choices = self._choices_from_input(self.choices) or []
@@ -426,7 +459,7 @@ class SelectField(SelectFieldBase):
     def post_process(self, formdata=None):
         super().post_process(formdata)
         if self._choices_callable is not None:
-            self.choices = self._invoke_choices_callback(self._choices_callable)
+            self._choices_stale = True
 
     def process_data(self, value):
         try:

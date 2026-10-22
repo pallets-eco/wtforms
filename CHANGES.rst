@@ -14,11 +14,14 @@ Unreleased
 - Default ``invalid_value_message`` and ``invalid_choice_message`` are
   translated when the error is raised, not when the field is built. Forms can
   be built again outside of a translation context.
-- ``choices`` callables on fields nested in a :class:`~fields.FieldList` are
-  now evaluated when entries are added via
-  :meth:`~fields.FieldList.append_entry` or
-  :meth:`~fields.FieldList.insert_entry`, which now run ``post_process`` on the
-  new entry.
+- ``choices`` callables on :class:`~fields.SelectField` and
+  :class:`~datalist.DataList` run on the first read and their result is
+  cached. Calling :meth:`~form.BaseForm.post_process` again refreshes them.
+  This also applies to entries added with
+  :meth:`~fields.FieldList.append_entry` and
+  :meth:`~fields.FieldList.insert_entry`.
+- Passing a callable to ``SelectFieldBase._choices_from_input`` is
+  deprecated.
 - Numeric, date, time and select fields report a validation error instead of
   raising a :class:`TypeError` when the input is not a string.
 - The labels of :class:`~fields.FieldList` entries point to the right field

@@ -136,21 +136,27 @@ class BaseForm:
     def post_process(self, formdata=None):
         """Hook called at the end of :meth:`process` on the root form.
 
-        Runs the :meth:`~fields.Field.post_process` hook on every field, after
-        all fields have been processed. Override this on a form subclass to add
-        cross-field finalization logic; call ``super().post_process(formdata)``
-        to keep per-field hooks running.
+        Runs the :meth:`~wtforms.fields.Field.post_process` hook on every
+        field, after all fields have been processed. Override this on a form
+        subclass to add cross-field finalization logic; call
+        ``super().post_process(formdata)`` to keep per-field hooks running.
 
-        :param formdata: The resolved formdata the form was bound with
-            (already passed through :meth:`~meta.DefaultMeta.wrap_formdata`),
-            or ``None`` for non-formdata cycles. Forwarded to every nested
+        :param formdata: The resolved formdata the form was bound with (already
+            passed through :meth:`~wtforms.meta.DefaultMeta.wrap_formdata`), or
+            ``None`` for non-formdata cycles. Forwarded to every nested
             ``post_process``.
 
-        ``post_process`` is only triggered automatically on the root form. Forms
-        nested inside a :class:`~fields.FormField` (or via :class:`~fields.FieldList`
-        entries) propagate the call through :meth:`fields.FormField.post_process`
-        and :meth:`fields.FieldList.post_process`, so every nested field's
-        ``post_process`` runs exactly once per processing cycle.
+        :meth:`process` only triggers ``post_process`` on the root form. Forms
+        nested inside a :class:`~wtforms.fields.FormField` (or via
+        :class:`~wtforms.fields.FieldList` entries) propagate the call through
+        ``FormField.post_process`` and ``FieldList.post_process``, so
+        :meth:`process` runs every nested field's ``post_process`` once.
+
+        After changing field data, call ``post_process(formdata)`` again with
+        the same ``formdata``, so that derived state such as ``choices``
+        callables reflects the new data. Overrides must therefore be
+        idempotent: derive state from ``data``, do not reload ``data`` from
+        ``formdata``.
         """
         for field in self._fields.values():
             field.post_process(formdata)
