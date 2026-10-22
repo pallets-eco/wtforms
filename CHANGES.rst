@@ -21,6 +21,9 @@ Unreleased
   new entry.
 - Numeric, date, time and select fields report a validation error instead of
   raising a :class:`TypeError` when the input is not a string.
+- The labels of :class:`~fields.FieldList` entries point to the right field
+  after :meth:`~fields.FieldList.insert_entry` or
+  :meth:`~fields.FieldList.pop_entry` renumbers the entries.
 
 Version 3.3.0b3
 ---------------

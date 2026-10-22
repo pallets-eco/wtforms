@@ -219,6 +219,23 @@ def test_entry_management_by_index_with_subforms():
     assert [entry.foo.name for entry in a.entries] == ["a-0-foo", "a-1-foo"]
 
 
+def test_renumbered_entries_keep_their_labels_in_sync():
+    """Labels follow their entry when :meth:`pop_entry` or
+    :meth:`insert_entry` renumbers it."""
+
+    class Inside(Form):
+        foo = StringField()
+
+    F = make_form(a=FieldList(t), b=FieldList(FormField(Inside)))
+    form = F(a=["A", "B", "C"], b=[{"foo": "x"}, {"foo": "y"}])
+
+    form.a.pop_entry(0)
+    form.a.insert_entry(0, "X")
+    form.b.pop_entry(0)
+    assert [e.label.field_id for e in form.a.entries] == ["a-0", "a-1", "a-2"]
+    assert [e.foo.label.field_id for e in form.b.entries] == ["b-0-foo"]
+
+
 def test_gap_compacted_through_formdata_round_trip():
     """A formdata with gaps in indices is compacted on read: entries are
     rebuilt with consecutive indices, preserving formdata key order."""

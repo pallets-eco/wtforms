@@ -205,12 +205,21 @@ class FieldList(Field):
         entry.name = new_name
         entry.short_name = str(new_index)
         entry.id = new_id
+        self._sync_label(entry, old_id)
 
         for descendant in self._iter_descendants(entry):
             if descendant.name and descendant.name.startswith(old_name):
                 descendant.name = new_name + descendant.name[len(old_name) :]
             if descendant.id and descendant.id.startswith(old_id):
+                old_descendant_id = descendant.id
                 descendant.id = new_id + descendant.id[len(old_id) :]
+                self._sync_label(descendant, old_descendant_id)
+
+    @staticmethod
+    def _sync_label(field, old_id):
+        label = getattr(field, "label", None)
+        if label is not None and label.field_id == old_id:
+            label.field_id = field.id
 
     def _iter_descendants(self, field):
         """Yield all fields below ``field`` recursively (form sub-fields and
