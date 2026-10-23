@@ -195,7 +195,7 @@ class FieldList(Field):
         """Rename ``entry`` to ``new_index`` and propagate to its descendants."""
         old_name = entry.name
         old_id = entry.id
-        new_name = f"{self.short_name}{self._separator}{new_index}"
+        new_name = f"{self.name}{self._separator}{new_index}"
         new_id = f"{self.id}{self._separator}{new_index}"
 
         if old_name == new_name and old_id == new_id and entry.index == new_index:
