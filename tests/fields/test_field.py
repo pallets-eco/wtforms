@@ -77,6 +77,15 @@ def test_render_kw():
     )
 
 
+def test_render_kw_is_not_shared_between_form_instances():
+    """Changing render_kw on one form instance does not change it on the others."""
+    first, second = F(), F()
+    first.a.render_kw["readonly"] = False
+    del first.a.render_kw["foo"]
+    assert second.a.render_kw == {"readonly": True, "foo": "bar"}
+    assert F.a.kwargs["render_kw"] == {"readonly": True, "foo": "bar"}
+
+
 def test_render_special():
     class F(Form):
         s = StringField(render_kw={"class_": "foo"})

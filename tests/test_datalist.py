@@ -413,3 +413,27 @@ def test_enum_datalist():
         DataListChoice(value="GITHUB", label="GITHUB"),
         DataListChoice(value="GITLAB", label="GITLAB"),
     ]
+
+
+def test_datalist_render_kw_is_not_shared_between_form_instances():
+    """Changing the render_kw of a field's datalist does not change the other forms."""
+
+    class F(Form):
+        x = StringField(datalist=DataList(["a"], render_kw={"class": "dl"}))
+
+    first, second = F(), F()
+    first.x._datalist.render_kw["hidden"] = True
+    assert second.x._datalist.render_kw == {"class": "dl"}
+
+
+def test_datalist_choice_render_kw_is_not_shared_between_form_instances():
+    """Changing the render_kw of a datalist option does not change the other forms."""
+
+    class F(Form):
+        x = StringField(
+            datalist=DataList([DataListChoice("a", render_kw={"data-y": "1"})])
+        )
+
+    first, second = F(), F()
+    first.x._datalist.iter_choices()[0].render_kw["disabled"] = True
+    assert second.x._datalist.iter_choices()[0].render_kw == {"data-y": "1"}

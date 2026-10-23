@@ -1,5 +1,14 @@
 .. currentmodule:: wtforms
 
+Version 3.3.0
+-------------
+
+Unreleased
+
+- Each bound field gets its own copy of ``render_kw``, and so does its
+  :class:`~datalist.DataList`. Changing one of them on a form instance no
+  longer changes it on the other ones. :issue:`942`
+
 Version 3.3.0b4
 ---------------
 
