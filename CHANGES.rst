@@ -3,153 +3,113 @@
 Version 3.3.0
 -------------
 
-Unreleased
-
-- Each bound field gets its own copy of ``render_kw``, and so does its
-  :class:`~datalist.DataList`. Changing one of them on a form instance no
-  longer changes it on the other ones. :issue:`942`
-
-Version 3.3.0b4
----------------
-
 Released 2026-10-23
 
 - Drop support for Python 3.10. Add support for Python 3.15.
-- :func:`fields.enum_choices` and :func:`~wtforms.datalist.enum_datalist`
-  label :class:`enum.IntEnum` members with their name on PyPy too, instead of
-  their value.
-- :class:`~datalist.DataList` ``choices`` accepts the shorthand
-  ``{value: label}`` dict syntax. :issue:`886`
-- Default ``invalid_value_message`` and ``invalid_choice_message`` are
-  translated when the error is raised, not when the field is built. Forms can
-  be built again outside of a translation context.
-- ``choices`` callables on :class:`~fields.SelectField` and
-  :class:`~datalist.DataList` run on the first read and their result is
-  cached. Calling :meth:`~form.BaseForm.post_process` again refreshes them.
-  This also applies to entries added with
-  :meth:`~fields.FieldList.append_entry` and
-  :meth:`~fields.FieldList.insert_entry`.
-- Passing a callable to ``SelectFieldBase._choices_from_input`` is
-  deprecated.
-- Numeric, date, time and select fields report a validation error instead of
-  raising a :class:`TypeError` when the input is not a string.
-- The labels of :class:`~fields.FieldList` entries point to the right field
-  after :meth:`~fields.FieldList.insert_entry` or
-  :meth:`~fields.FieldList.pop_entry` renumbers the entries.
-
-Version 3.3.0b3
----------------
-
-Released 2026-06-12
-
-- Add :func:`fields.enum_choices`, :func:`fields.enum_coerce` and
-  :func:`~wtforms.datalist.enum_datalist` for Enum-backed choices,
-  replacing ``SelectChoice.from_enum`` and friends. :issue:`922`
-- An Enum ``coerce`` is no longer wrapped, and options default to
-  ``member.value``. :issue:`922`
-
-Version 3.3.0b2
----------------
-
-Released 2026-05-24
-
-- :class:`~fields.SelectField` ``choices`` accepts a shorthand dict
-  syntax: ``{value: label}`` for flat options and
-  ``{label: {value: label}}`` for optgroups. :issue:`886`
-- Split choice types by role: :class:`~fields.SelectChoice` and
-  :class:`~fields.DataListChoice` to declare options via ``choices=``,
-  :class:`~fields.Choice` for what ``iter_choices`` / ``iter_groups``
-  yield. :issue:`922`
-- ``choices`` callables on :class:`~fields.SelectField` and
-  :class:`~datalist.DataList` may accept ``(form, field)``. Resolved
-  once per processing cycle. :issue:`922`
-- Add :meth:`fields.Field.post_process` and
-  :meth:`form.BaseForm.post_process` hooks, propagated through
-  :class:`~fields.FormField` and :class:`~fields.FieldList` for
-  cross-field finalization. :issue:`922`
-- Add ``Field._form`` and ``BaseForm._parent_form`` so fields and nested
-  forms can reach their enclosing form. Fix :class:`~fields.FieldList`
-  entries and :class:`~fields.SelectField` option subfields which
-  previously got ``form=None``. :issue:`922`
-- Restore 3.2 compatibility for :class:`~fields.SelectField` subclasses:
-  tuple yields from :meth:`~fields.SelectFieldBase.iter_choices` /
-  :meth:`~fields.SelectFieldBase.iter_groups`,
-  3-positional :meth:`widgets.Select.render_option` overrides,
-  :meth:`~fields.SelectFieldBase.has_groups` /
-  :meth:`~fields.SelectFieldBase.iter_groups`, and ``self.choices``
-  keeping the user-supplied shape. Each emits a ``DeprecationWarning``;
-  will be removed in WTForms 4.0. :issue:`922`
-
-Version 3.3.0b1
----------------
-
-Released 2026-05-10
-
+- Add native :class:`DataList` support. Options are declared with
+  :class:`DataListChoice`, or with the shorthand ``{value: label}``
+  dict syntax. :issue:`653` :issue:`886` :pr:`921`
+- Add :class:`~fields.ButtonField` to render ``<button type="submit">``
+  controls with string values. :issue:`784` :pr:`892`
 - Add :class:`~validators.DateRange`. ``min`` and ``max`` may be callables
   to compute dynamic bounds; :class:`~validators.NumberRange` accepts
   callables on the same terms. :pr:`787`
+- Add :class:`~fields.FieldList` ``insert_entry`` and indexed ``pop_entry``.
+  The following entries are renumbered, with their ids and labels.
+  :issue:`256` :pr:`901` :pr:`912`
+- :class:`~fields.SelectField` refactor. Options are declared with
+  :class:`~fields.SelectChoice`, which takes HTML attributes in
+  ``render_kw`` and an ``optgroup``. ``iter_choices``
+  and ``iter_groups`` yield
+  :class:`~fields.Choice` objects. ``choices`` also accepts the shorthand
+  dict syntax: ``{value: label}`` for flat options and
+  ``{label: {value: label}}`` for optgroups. :issue:`692` :issue:`886`
+  :issue:`922` :pr:`739` :pr:`889`
+- ``choices`` callables on :class:`~fields.SelectField` and
+  :class:`DataList` may accept ``(form, field)``. They run on the
+  first read and their result is cached. Calling
+  :meth:`~form.BaseForm.post_process` again refreshes them, also for the
+  entries added with :meth:`~fields.FieldList.append_entry` and
+  :meth:`~fields.FieldList.insert_entry`. :issue:`922`
+- Add :func:`fields.enum_choices`, :func:`fields.enum_coerce` and
+  :func:`~datalist.enum_datalist` for Enum-backed choices. :issue:`338`
+  :issue:`922` :pr:`916`
+- Add :meth:`fields.Field.post_process` and
+  :meth:`form.BaseForm.post_process` hooks, propagated through
+  :class:`~fields.FormField` and :class:`~fields.FieldList`, for
+  cross-field finalization. :issue:`922`
+- Add ``Field._form`` and ``BaseForm._parent_form`` so fields and nested
+  forms can reach their enclosing form. :class:`~fields.FieldList` entries
+  and :class:`~fields.SelectField` option subfields no longer get
+  ``form=None``. :issue:`922`
+- Add ``invalid_value_message`` and ``invalid_choice_message`` keyword
+  arguments for customizing built-in field error messages. On
+  :class:`~fields.SelectMultipleField`, ``invalid_choice_message`` may also
+  be a callable for custom pluralization. :issue:`39` :issue:`832` :pr:`902`
+- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
+  ``pre_validate`` short-circuits when ``process_formdata`` already produced
+  an error, so a single coercion failure no longer surfaces as both an
+  "invalid value" and an "invalid choice" error. :pr:`902`
+- Numeric, date, time and select fields report a validation error instead of
+  raising a :class:`TypeError` when the input is not a string. :pr:`936`
+- Each bound field gets its own copy of ``render_kw``, and so does its
+  :class:`DataList`. Changing one of them on a form instance no
+  longer changes it on the other ones. :issue:`942`
 - Make :class:`~fields.FloatField` render as ``<input type="number">`` with
   ``step="any"``. :issue:`677` :pr:`679`
-- :meth:`~fields.FieldList._add_entry` now routes through :meth:`~meta.DefaultMeta.bind_field`,
-  consistent with how the form constructor binds top-level fields. Custom ``Meta.bind_field``
-  overrides were silently bypassed for all ``FieldList`` entries. :pr:`891`
-- Add `test_environment` support to :class:`~validators.Email`. :issue:`869` :pr:`894`
-- Reset :class:`~fields.FieldList` index state when reprocessing entries. :issue:`874` :pr:`895`
-- Let :class:`~widgets.RangeInput` accept `min` and `max` at construction time. :issue:`693` :pr:`898`
-- Do not render a ``for`` attribute on the main label of :class:`~fields.RadioField`.
-  :issue:`775` :pr:`900`
-- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms 3.4. :issue:`831` :pr:`897`
-- Clarify that :class:`~fields.SelectField` ``choices`` is re-evaluated at
-  every form instantiation, including callables, in the documentation. :issue:`875` :pr:`909`
-- Render ``False`` as ``value="False"`` in :class:`~fields.SelectField` options
-  instead of omitting the attribute. :issue:`878` :pr:`908`
-- Accept :class:`uuid.UUID` instances in the :class:`~validators.UUID` validator,
-  and translate unexpected types into :class:`~validators.ValidationError`
-  instead of letting :class:`TypeError` escape. :issue:`549` :pr:`769`
-- Escape double quotes in :class:`~markupsafe.Markup` attribute values
-  passed to :func:`~widgets.html_params`, and return a
-  :class:`~markupsafe.Markup`. :issue:`801` :pr:`906` :pr:`907`
-- Clarify documentation about filters. :issue:`859` :pr:`896`
+- Add a ``tz`` parameter to :class:`~fields.DateTimeLocalField` to associate a
+  timezone with the input. :issue:`833` :pr:`905`
+- Let :class:`~widgets.RangeInput` accept ``min`` and ``max`` at construction
+  time. :issue:`693` :pr:`898`
+- ``FieldList._add_entry`` routes through
+  :meth:`~meta.DefaultMeta.bind_field`, like the top-level fields. Custom
+  ``Meta.bind_field`` overrides were silently bypassed for
+  :class:`~fields.FieldList` entries. :pr:`891`
+- Reset :class:`~fields.FieldList` index state when reprocessing entries.
+  :issue:`874` :pr:`895`
+- Do not render a ``for`` attribute on the main label of
+  :class:`~fields.RadioField`. :issue:`775` :pr:`900`
+- Render ``False`` as ``value="False"`` in :class:`~fields.SelectField`
+  options instead of omitting the attribute. :issue:`878` :pr:`908`
 - Let render-time ``checked`` kwargs take precedence over the field's value
   in :class:`~widgets.CheckboxInput` and :class:`~widgets.RadioInput`.
   :issue:`706` :pr:`910`
-- Add a ``tz`` parameter to :class:`~fields.DateTimeLocalField` to associate a
-  timezone with the input. :issue:`833` :pr:`905`
-- Add :class:`~fields.FieldList` ``insert_entry`` and indexed ``pop_entry``.
-  :issue:`256` :pr:`901` :pr:`912`
-- Add :class:`~fields.ButtonField` to render ``<button type="submit">``
-  controls with string values. :issue:`784` :pr:`892`
-- :class:`~fields.SelectField` refactor. Choices tuples and dicts are
-  deprecated in favor of :class:`~fields.Choice`. :pr:`739` :pr:`889`
-- ``<option>`` HTML attributes can be passed using
-  :class:`~fields.Choice`. :issue:`692` :pr:`739` :pr:`889`
-- Add :meth:`fields.Choice.from_enum` to build choices from an
-  :class:`enum.Enum` class, and let :class:`~fields.SelectField` accept an
-  Enum class as ``coerce``. :issue:`338` :pr:`916`
-- Defer to ``email_validator``'s module-level defaults for the
-  :class:`~validators.Email` ``test_environment``, ``allow_smtputf8`` and
-  ``allow_empty_local`` options. :issue:`915` :pr:`917`
-- Add ``invalid_value_message`` and ``invalid_choice_message`` keyword
-  arguments for customizing built-in field error messages. On
-  ``SelectMultipleField``, ``invalid_choice_message`` may also be a callable
-  for custom pluralization. :issue:`39` :issue:`832` :pr:`902`
-- :class:`~fields.SelectField` and :class:`~fields.SelectMultipleField`
-  ``pre_validate`` now short-circuits when ``process_formdata`` already
-  produced an error, so a single coercion failure no longer surfaces as both
-  an "invalid value" and an "invalid choice" error. :pr:`902`
-- Add a ``matcher`` keyword argument to :class:`~validators.Regexp` to
-  override the matching function. Defaults to :func:`re.match`; pass
-  :func:`re.search` or :func:`re.fullmatch` to change the anchoring
-  behaviour. :issue:`867` :pr:`918`
-- Add an ``html_pattern`` keyword argument to :class:`~validators.Regexp`
-  to control the HTML ``pattern`` attribute emitted on supporting widgets.
-  :pr:`759`
+- Escape double quotes in ``Markup`` attribute values
+  passed to :func:`~widgets.html_params`, and return a
+  ``Markup``. :issue:`801` :pr:`906` :pr:`907`
+- Add ``test_environment`` support to :class:`~validators.Email`, and defer
+  to ``email_validator``'s module-level defaults for its
+  ``test_environment``, ``allow_smtputf8`` and ``allow_empty_local``
+  options. :issue:`869` :issue:`915` :pr:`894` :pr:`917`
+- Add ``matcher`` and ``html_pattern`` keyword arguments to
+  :class:`~validators.Regexp`. ``matcher`` overrides the matching function,
+  :func:`re.match` by default: pass :func:`re.search` or :func:`re.fullmatch`
+  to change the anchoring. ``html_pattern`` controls the HTML ``pattern``
+  attribute emitted on supporting widgets. :issue:`867` :pr:`759` :pr:`918`
 - :class:`~validators.URL` validator is based on ``urllib.parse.urlparse``
   instead of a regex. New keyword arguments: ``allow_userinfo`` for
   accepting ``user:password@host`` URLs; ``schemes``
-  (default ``("http", "https")``) is the allowlist of accepted schemes
+  (default ``("http", "https")``) is the allowlist of accepted schemes.
   :pr:`847`
-- Add native :class:`DataList` support. :issue:`653` :pr:`921`
+- Accept :class:`uuid.UUID` instances in the :class:`~validators.UUID`
+  validator, and translate unexpected types into
+  :class:`~validators.ValidationError` instead of letting
+  :class:`TypeError` escape. :issue:`549` :pr:`769`
+- Clarify the documentation of filters, and of :class:`~fields.SelectField`
+  ``choices``. :issue:`859` :issue:`875` :pr:`896` :pr:`909`
+- Update the Dutch and Serbian translations.
+- Deprecate :class:`~fields.DateTimeField`, which will be removed in WTForms
+  3.4. :issue:`831` :pr:`897`
+- Passing :class:`~fields.SelectField` ``choices`` as tuples, or as a dict
+  that is not the shorthand syntax, is deprecated and will be removed in
+  WTForms 3.4. Use :class:`~fields.SelectChoice` instead. :issue:`922`
+- Passing a callable to ``SelectFieldBase._choices_from_input`` is
+  deprecated and will be removed in WTForms 3.4.
+- For :class:`~fields.SelectField` subclasses, yielding raw tuples from
+  ``iter_choices`` or
+  ``iter_groups``, and overriding
+  ``Select.render_option`` with the pre-3.3 signature, are
+  deprecated and will be removed in WTForms 4.0. :issue:`922`
 
 Version 3.2.2
 -------------

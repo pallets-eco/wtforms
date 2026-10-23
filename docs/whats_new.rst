@@ -4,7 +4,22 @@ What's New in WTForms 3
 New Features
 ------------
 
-WTForms 3 is something something TODO
+WTForms 3.3 adds:
+
+- native :class:`~wtforms.DataList` support, to suggest values in a text
+  input;
+- :class:`~wtforms.fields.ButtonField`, to render ``<button type="submit">``
+  controls;
+- the :class:`~wtforms.validators.DateRange` validator;
+- :meth:`~wtforms.fields.FieldList.insert_entry` and an indexed
+  :meth:`~wtforms.fields.FieldList.pop_entry`;
+- a reworked :class:`~wtforms.fields.SelectField`: options are declared with
+  :class:`~wtforms.fields.SelectChoice`, which takes HTML attributes and an
+  optgroup, and ``choices`` callables run on the first read;
+- :meth:`~wtforms.form.BaseForm.post_process` hooks for cross-field
+  finalization.
+
+See :doc:`changes` for the full list, including the deprecations.
 
 
 Past Major Releases
