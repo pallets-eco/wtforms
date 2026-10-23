@@ -1,5 +1,13 @@
 .. currentmodule:: wtforms
 
+Version 3.3.1
+-------------
+
+Unreleased
+
+- Fix :class:`~fields.FieldList` entries losing the form prefix in their
+  ``name`` when the list renumbers them. :issue:`944`
+
 Version 3.3.0
 -------------
 

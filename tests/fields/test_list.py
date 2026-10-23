@@ -236,6 +236,34 @@ def test_renumbered_entries_keep_their_labels_in_sync():
     assert [e.foo.label.field_id for e in form.b.entries] == ["b-0-foo"]
 
 
+def test_renumbered_entries_keep_the_form_prefix():
+    """Renumbered entries keep the form prefix in their name."""
+    F = make_form(a=FieldList(t, min_entries=2))
+
+    form = F(DummyPostData({"p-a-0": "x", "p-a-2": "y"}), prefix="p")
+    assert [e.name for e in form.a.entries] == ["p-a-0", "p-a-1"]
+
+    form = F(prefix="p")
+    form.a.insert_entry(0, "x")
+    assert [e.name for e in form.a.entries] == ["p-a-0", "p-a-1", "p-a-2"]
+    form.a.pop_entry(0)
+    assert [e.name for e in form.a.entries] == ["p-a-0", "p-a-1"]
+
+
+def test_renumbered_entries_in_a_subform_keep_the_subform_prefix():
+    """Renumbered entries of a list inside a :class:`FormField` keep the
+    subform prefix in their name."""
+
+    class Inside(Form):
+        a = FieldList(FormField(make_form(foo=StringField())), min_entries=2)
+
+    F = make_form(sub=FormField(Inside))
+    form = F()
+    form.sub.a.pop_entry(0)
+    assert form.sub.a[0].name == "sub-a-0"
+    assert form.sub.a[0].foo.name == "sub-a-0-foo"
+
+
 def test_gap_compacted_through_formdata_round_trip():
     """A formdata with gaps in indices is compacted on read: entries are
     rebuilt with consecutive indices, preserving formdata key order."""
