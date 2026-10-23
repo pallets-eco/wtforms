@@ -3,7 +3,7 @@
 Version 3.3.0b4
 ---------------
 
-Unreleased
+Released 2026-10-23
 
 - Drop support for Python 3.10. Add support for Python 3.15.
 - :func:`fields.enum_choices` and :func:`~wtforms.datalist.enum_datalist`
