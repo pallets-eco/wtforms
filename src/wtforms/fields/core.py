@@ -115,7 +115,7 @@ class Field:
         self.default = default
         self.description = description
         self.invalid_value_message = invalid_value_message
-        self.render_kw = render_kw
+        self.render_kw = dict(render_kw) if render_kw is not None else None
         self.filters = filters
         self.flags = Flags()
         self.name = _prefix + name

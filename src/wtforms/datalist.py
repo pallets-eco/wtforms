@@ -1,6 +1,7 @@
 import warnings
 from dataclasses import dataclass
 from dataclasses import field
+from dataclasses import replace
 
 from wtforms import widgets
 from wtforms.fields.choices import _enum_options
@@ -103,7 +104,7 @@ class DataList:
         clone._raw_choices = self._raw_choices
         clone._choices = None if callable(self._raw_choices) else self._raw_choices
         clone._field = None
-        clone.render_kw = self.render_kw
+        clone.render_kw = dict(self.render_kw)
         clone.widget = self.widget
         clone.id = id
         return clone
@@ -126,7 +127,10 @@ class DataList:
             return [
                 DataListChoice(value=value, label=label) for value, label in raw.items()
             ]
-        return [DataListChoice.from_input(item) for item in raw]
+        return [
+            replace(choice, render_kw=dict(choice.render_kw or {}))
+            for choice in map(DataListChoice.from_input, raw)
+        ]
 
     def __call__(self, field=None, **kwargs):
         return self.widget(self, field=field, **kwargs)
