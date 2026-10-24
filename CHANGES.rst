@@ -3,7 +3,7 @@
 Version 3.3.1
 -------------
 
-Unreleased
+Released 2026-10-24
 
 - Fix :class:`~fields.FieldList` entries losing the form prefix in their
   ``name`` when the list renumbers them. :issue:`944`
