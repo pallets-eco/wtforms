@@ -7,6 +7,8 @@ Unreleased
 
 - Fix :class:`~fields.FieldList` entries losing the form prefix in their
   ``name`` when the list renumbers them. :issue:`944`
+- Speed up :class:`~validators.URL` on hostnames with many consecutive
+  dashes. :issue:`945`
 
 Version 3.3.0
 -------------

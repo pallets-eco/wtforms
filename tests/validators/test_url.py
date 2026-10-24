@@ -69,6 +69,14 @@ def test_bad_url_raises(url_val, dummy_form, dummy_field):
         validator(dummy_form, dummy_field)
 
 
+def test_hostname_with_many_dashes_is_rejected_quickly(dummy_form, dummy_field):
+    """An invalid label with many dashes is rejected quickly."""
+    validator = url()
+    dummy_field.data = "http://a" + "-" * 61 + "!.com/"
+    with pytest.raises(ValidationError):
+        validator(dummy_form, dummy_field)
+
+
 USERINFO_URLS = [
     "http://username:password@foobar.dk",
     "http://username@foobar.dk",
