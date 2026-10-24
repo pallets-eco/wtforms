@@ -40,6 +40,8 @@ with frameworks even better.
     framework, based on the features of Flask-WTF.
 -   `Bootstrap-Flask`_ Bootstrap-Flask is a collection of Jinja macros
     for Bootstrap 4 & 5 and Flask using Flask-WTF.
+-   `WTForms-htmx`_ Interactive WTForms forms with no hand-written
+    JavaScript, powered by htmx and dark magic.
 
 .. _Flask-WTF: https://flask-wtf.readthedocs.io/
 .. _WTForms-Alchemy: https://wtforms-alchemy.readthedocs.io/
@@ -47,6 +49,7 @@ with frameworks even better.
 .. _WTForms-Bootstrap5: https://github.com/LaunchPlatform/wtforms-bootstrap5
 .. _Starlette-WTF: https://github.com/muicss/starlette-wtf
 .. _Bootstrap-Flask: https://github.com/helloflask/bootstrap-flask
+.. _WTForms-htmx: https://github.com/yaal-coop/wtforms-htmx
 
 
 Links
