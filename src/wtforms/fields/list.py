@@ -57,7 +57,6 @@ class FieldList(Field):
         self.min_entries = min_entries
         self.max_entries = max_entries
         self.last_index = -1
-        self._prefix = kwargs.get("_prefix", "")
         self._separator = separator
         self._field_separator = unbound_field.kwargs.get("separator", "-")
 
@@ -170,17 +169,17 @@ class FieldList(Field):
         if index is None:
             index = self.last_index + 1
         self.last_index = index
-        name = f"{self.short_name}{self._separator}{index}"
+        name = f"{self.name}{self._separator}{index}"
         id = f"{self.id}{self._separator}{index}"
         options = dict(
             name=name,
-            prefix=self._prefix,
             id=id,
             _meta=self.meta,
             translations=self._translations,
         )
         field = self.meta.bind_field(self._form, self.unbound_field, options)
         field.index = index
+        field.short_name = str(index)
         field.process(formdata, data)
         self.entries.append(field)
         return field

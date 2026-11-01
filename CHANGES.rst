@@ -1,5 +1,14 @@
 .. currentmodule:: wtforms
 
+Version 3.3.2
+-------------
+
+Unreleased
+
+- Fix nested :class:`~fields.FieldList` entries getting the old index of
+  their parent entry when they are appended after the parent list
+  renumbers its entries. :issue:`948`
+
 Version 3.3.1
 -------------
 

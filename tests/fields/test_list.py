@@ -264,6 +264,53 @@ def test_renumbered_entries_in_a_subform_keep_the_subform_prefix():
     assert form.sub.a[0].foo.name == "sub-a-0-foo"
 
 
+@pytest.mark.parametrize("prefix", ["", "p"])
+def test_renumbered_entries_append_to_their_nested_list(prefix):
+    """A list inside a renumbered entry appends entries under the new
+    index."""
+
+    class Component(Form):
+        code = StringField()
+
+    class Block(Form):
+        components = FieldList(FormField(Component), min_entries=1)
+
+    F = make_form(blocks=FieldList(FormField(Block), min_entries=2))
+    p = f"{prefix}-" if prefix else ""
+
+    form = F(DummyPostData({f"{p}blocks-1-components-0-code": "A"}), prefix=prefix)
+    appended = form.blocks[0].components.append_entry()
+    assert appended.code.name == f"{p}blocks-0-components-1-code"
+
+    form = F(prefix=prefix)
+    form.blocks.pop_entry(0)
+    appended = form.blocks[0].components.append_entry()
+    assert appended.code.name == f"{p}blocks-0-components-1-code"
+
+    form = F(prefix=prefix)
+    form.blocks.insert_entry(0)
+    appended = form.blocks[1].components.append_entry()
+    assert appended.code.name == f"{p}blocks-1-components-1-code"
+
+
+@pytest.mark.parametrize("prefix", ["", "p"])
+def test_renumbered_entries_append_to_their_directly_nested_list(prefix):
+    """A list directly inside a renumbered list entry appends entries under
+    the new index, at any depth."""
+    F = make_form(
+        a=FieldList(
+            FieldList(FieldList(StringField(), min_entries=1), min_entries=1),
+            min_entries=2,
+        )
+    )
+    p = f"{prefix}-" if prefix else ""
+
+    form = F(prefix=prefix)
+    form.a.pop_entry(0)
+    assert form.a[0].append_entry()[0].name == f"{p}a-0-1-0"
+    assert form.a[0][0].append_entry().name == f"{p}a-0-0-1"
+
+
 def test_gap_compacted_through_formdata_round_trip():
     """A formdata with gaps in indices is compacted on read: entries are
     rebuilt with consecutive indices, preserving formdata key order."""
