@@ -3,7 +3,7 @@
 Version 3.3.2
 -------------
 
-Unreleased
+Released 2026-11-01
 
 - Fix nested :class:`~fields.FieldList` entries getting the old index of
   their parent entry when they are appended after the parent list
