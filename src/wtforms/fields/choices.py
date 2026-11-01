@@ -327,9 +327,12 @@ class SelectFieldBase(Field):
     def _is_shorthand_dict(choices):
         """``True`` if ``choices`` matches the shorthand dict syntax.
 
-        Shorthand is ``dict[str, str | dict[str, str]]``.
+        Shorthand is ``{value: label}`` and ``{optgroup: {value: label}}``.
+        The legacy syntax is ``{optgroup: [choices]}``, so only list and tuple
+        values mark it. Lazy translation strings are not ``str`` but are
+        iterable, so they cannot be told apart from groups otherwise.
         """
-        return all(isinstance(v, (str, dict)) for v in choices.values())
+        return not any(isinstance(v, (list, tuple)) for v in choices.values())
 
     @staticmethod
     def _warn_legacy_choices(choices):

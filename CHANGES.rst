@@ -1,5 +1,14 @@
 .. currentmodule:: wtforms
 
+Version 3.3.3
+-------------
+
+Unreleased
+
+- Fix :class:`~fields.SelectField` shorthand ``{value: label}`` choices
+  with lazy labels, such as Flask-Babel's ``lazy_gettext``. Each character
+  of the label was rendered as an option of an optgroup.
+
 Version 3.3.2
 -------------
 

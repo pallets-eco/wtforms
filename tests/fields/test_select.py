@@ -605,6 +605,43 @@ def test_dict_mixed_flat_and_optgroup_choices():
     assert '<option value="ml">OCaml</option>' in html
 
 
+class LazyLabel:
+    """Iterable lazy string that is not a ``str``, like Flask-Babel's."""
+
+    def __init__(self, text):
+        self.text = text
+
+    def __str__(self):
+        return self.text
+
+    def __html__(self):
+        return self.text
+
+    def __iter__(self):
+        return iter(self.text)
+
+
+def test_dict_shorthand_choices_with_lazy_labels(recwarn):
+    """Lazy labels in the shorthand dict render as labels, not as optgroups."""
+    F = make_form(
+        a=SelectField(
+            choices={
+                "fr": LazyLabel("French"),
+                "Asia": {"ja": LazyLabel("Japanese")},
+            }
+        )
+    )
+    form = F(a="fr")
+    assert form.a() == (
+        '<select id="a" name="a">'
+        '<option selected value="fr">French</option>'
+        '<optgroup label="Asia"><option value="ja">Japanese</option></optgroup>'
+        "</select>"
+    )
+    assert form.validate()
+    assert not [w for w in recwarn if issubclass(w.category, DeprecationWarning)]
+
+
 def test_tuple_choices_deprecation():
     F = make_form(a=SelectField(choices=[("a", "Foo")]))
     with pytest.warns(DeprecationWarning):
